@@ -122,12 +122,12 @@ import net.corda.node.services.network.NetworkParameterUpdateListener
 import net.corda.node.services.network.NetworkParametersHotloader
 import net.corda.node.services.network.NodeInfoWatcher
 import net.corda.node.services.network.PersistentNetworkMapCache
-import net.corda.node.services.network.PersistentPartyInfoCache
 import net.corda.node.services.persistence.AbstractPartyDescriptor
 import net.corda.node.services.persistence.AbstractPartyToX500NameAsStringConverter
 import net.corda.node.services.persistence.AttachmentStorageInternal
 import net.corda.node.services.persistence.DBCheckpointPerformanceRecorder
 import net.corda.node.services.persistence.DBCheckpointStorage
+import net.corda.node.services.persistence.DBEncryptionService
 import net.corda.node.services.persistence.DBTransactionMappingStorage
 import net.corda.node.services.persistence.DBTransactionStorageLedgerRecovery
 import net.corda.node.services.persistence.NodeAttachmentService
@@ -285,7 +285,7 @@ abstract class AbstractNode<S>(val configuration: NodeConfiguration,
     }
 
     val networkMapCache = PersistentNetworkMapCache(cacheFactory, database, identityService).tokenize()
-    val partyInfoCache = PersistentPartyInfoCache(networkMapCache, cacheFactory, database)
+    val encryptionService = DBEncryptionService(database)
     @Suppress("LeakingThis")
     val cryptoService = makeCryptoService()
     @Suppress("LeakingThis")
@@ -657,7 +657,7 @@ abstract class AbstractNode<S>(val configuration: NodeConfiguration,
             tokenizableServices = null
 
             verifyCheckpointsCompatible(frozenTokenizableServices)
-            partyInfoCache.start()
+            encryptionService.start(nodeInfo.legalIdentities[0])
 
             /* Note the .get() at the end of the distributeEvent call, below.
                This will block until all Corda Services have returned from processing the event, allowing a service to prevent the
@@ -1080,7 +1080,7 @@ abstract class AbstractNode<S>(val configuration: NodeConfiguration,
     }
 
     protected open fun makeTransactionStorage(transactionCacheSizeBytes: Long): WritableTransactionStorage {
-        return DBTransactionStorageLedgerRecovery(database, cacheFactory, platformClock, cryptoService, partyInfoCache)
+        return DBTransactionStorageLedgerRecovery(database, cacheFactory, platformClock, encryptionService)
     }
 
     protected open fun makeNetworkParametersStorage(): NetworkParametersStorage {

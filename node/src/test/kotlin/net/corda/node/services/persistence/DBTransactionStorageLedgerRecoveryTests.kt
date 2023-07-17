@@ -9,22 +9,16 @@ import net.corda.core.crypto.sign
 import net.corda.core.flows.DistributionList
 import net.corda.core.flows.RecoveryTimeWindow
 import net.corda.core.flows.TransactionMetadata
-import net.corda.core.node.NodeInfo
 import net.corda.core.node.StatesToRecord.ALL_VISIBLE
 import net.corda.core.node.StatesToRecord.NONE
 import net.corda.core.node.StatesToRecord.ONLY_RELEVANT
+import net.corda.core.serialization.serialize
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.WireTransaction
-import net.corda.core.utilities.NetworkHostAndPort
 import net.corda.node.CordaClock
 import net.corda.node.SimpleClock
-import net.corda.node.services.identity.InMemoryIdentityService
-import net.corda.node.services.network.PersistentNetworkMapCache
-import net.corda.node.services.network.PersistentPartyInfoCache
 import net.corda.node.services.persistence.DBTransactionStorage.TransactionStatus.IN_FLIGHT
 import net.corda.node.services.persistence.DBTransactionStorage.TransactionStatus.VERIFIED
-import net.corda.nodeapi.internal.DEV_ROOT_CA
-import net.corda.nodeapi.internal.cryptoservice.CryptoService
 import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.testing.core.ALICE_NAME
@@ -38,7 +32,7 @@ import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.internal.createWireTransaction
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
-import net.corda.testing.node.internal.MockCryptoService
+import net.corda.testing.node.internal.MockEncryptionService
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
@@ -55,7 +49,6 @@ class DBTransactionStorageLedgerRecoveryTests {
     private companion object {
         val ALICE = TestIdentity(ALICE_NAME, 70)
         val BOB = TestIdentity(BOB_NAME, 80)
-        val CHARLIE = TestIdentity(CHARLIE_NAME, 90)
         val DUMMY_NOTARY = TestIdentity(DUMMY_NOTARY_NAME, 20)
     }
 
@@ -65,7 +58,8 @@ class DBTransactionStorageLedgerRecoveryTests {
 
     private lateinit var database: CordaPersistence
     private lateinit var transactionRecovery: DBTransactionStorageLedgerRecovery
-    private lateinit var partyInfoCache: PersistentPartyInfoCache
+
+    private val encryptionService = MockEncryptionService()
 
     @Before
     fun setUp() {
@@ -125,12 +119,12 @@ class DBTransactionStorageLedgerRecoveryTests {
         val timeWindow = RecoveryTimeWindow(fromTime = now().minus(1, ChronoUnit.DAYS))
         transactionRecovery.queryDistributionRecords(timeWindow, recordType = DistributionRecordType.SENDER).let {
             assertEquals(1, it.size)
-            assertEquals(BOB_NAME.hashCode().toLong(), (it[0] as SenderDistributionRecord).peerPartyId)
+            assertEquals(BOB_NAME, (it[0] as SenderDistributionRecord).peer)
             assertEquals(ALL_VISIBLE, (it[0] as SenderDistributionRecord).statesToRecord)
         }
         transactionRecovery.queryDistributionRecords(timeWindow, recordType = DistributionRecordType.RECEIVER).let {
             assertEquals(1, it.size)
-            assertEquals(BOB_NAME.hashCode().toLong(), (it[0] as ReceiverDistributionRecord).initiatorPartyId)
+            assertEquals(BOB_NAME, (it[0] as ReceiverDistributionRecord).initiator)
             assertEquals(ALL_VISIBLE, (it[0] as ReceiverDistributionRecord).statesToRecord)
         }
         val resultsAll = transactionRecovery.queryDistributionRecords(timeWindow, recordType = DistributionRecordType.ALL)
@@ -220,7 +214,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         readSenderDistributionRecordFromDB(senderTransaction.id).let {
             assertEquals(1, it.size)
             assertEquals(ALL_VISIBLE, it[0].statesToRecord)
-            assertEquals(BOB_NAME, partyInfoCache.getCordaX500NameByPartyId(it[0].peerPartyId))
+            assertEquals(BOB_NAME, it[0].peer)
         }
 
         val receiverTransaction = newTransaction()
@@ -231,8 +225,8 @@ class DBTransactionStorageLedgerRecoveryTests {
         readReceiverDistributionRecordFromDB(receiverTransaction.id).let {
             assertEquals(ALL_VISIBLE, it.statesToRecord)
             assertEquals(ONLY_RELEVANT, it.senderStatesToRecord)
-            assertEquals(ALICE_NAME, partyInfoCache.getCordaX500NameByPartyId(it.initiatorPartyId))
-            assertEquals(setOf(BOB_NAME), it.peersToStatesToRecord.map { (peer, _) -> partyInfoCache.getCordaX500NameByPartyId(peer) }.toSet() )
+            assertEquals(ALICE_NAME, it.initiator)
+            assertEquals(setOf(BOB_NAME), it.peersToStatesToRecord.keys)
         }
     }
 
@@ -276,19 +270,12 @@ class DBTransactionStorageLedgerRecoveryTests {
         assertNull(transactionRecovery.getTransactionInternal(receiverTransaction.id))
     }
 
-    @Test(timeout = 300_000)
-    fun `test lightweight serialization and deserialization of hashed distribution list payload`() {
-        val dl = HashedDistributionList(ALL_VISIBLE,
-                mapOf(BOB.name.hashCode().toLong() to NONE, CHARLIE_NAME.hashCode().toLong() to ONLY_RELEVANT))
-        assertEquals(dl, dl.serialize().let { HashedDistributionList.deserialize(it) })
-    }
-
     private fun readTransactionFromDB(id: SecureHash): DBTransactionStorage.DBTransaction {
         val fromDb = database.transaction {
             session.createQuery(
-                    "from ${DBTransactionStorage.DBTransaction::class.java.name} where tx_id = :transactionId",
+                    "from ${DBTransactionStorage.DBTransaction::class.java.name} where txId = :transactionId",
                     DBTransactionStorage.DBTransaction::class.java
-            ).setParameter("transactionId", id.toString()).resultList.map { it }
+            ).setParameter("transactionId", id.toString()).resultList
         }
         assertEquals(1, fromDb.size)
         return fromDb[0]
@@ -298,7 +285,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         return database.transaction {
             if (id != null)
                 session.createQuery(
-                        "from ${DBTransactionStorageLedgerRecovery.DBSenderDistributionRecord::class.java.name} where tx_id = :transactionId",
+                        "from ${DBTransactionStorageLedgerRecovery.DBSenderDistributionRecord::class.java.name} where txId = :transactionId",
                         DBTransactionStorageLedgerRecovery.DBSenderDistributionRecord::class.java
                 ).setParameter("transactionId", id.toString()).resultList.map { it.toSenderDistributionRecord() }
             else
@@ -312,36 +299,20 @@ class DBTransactionStorageLedgerRecoveryTests {
     private fun readReceiverDistributionRecordFromDB(id: SecureHash): ReceiverDistributionRecord {
         val fromDb = database.transaction {
             session.createQuery(
-                    "from ${DBTransactionStorageLedgerRecovery.DBReceiverDistributionRecord::class.java.name} where tx_id = :transactionId",
+                    "from ${DBTransactionStorageLedgerRecovery.DBReceiverDistributionRecord::class.java.name} where txId = :transactionId",
                     DBTransactionStorageLedgerRecovery.DBReceiverDistributionRecord::class.java
             ).setParameter("transactionId", id.toString()).resultList.map { it }
         }
         assertEquals(1, fromDb.size)
-        return fromDb[0].toReceiverDistributionRecord(MockCryptoService(emptyMap()))
+        return fromDb[0].toReceiverDistributionRecord(encryptionService)
     }
 
-    private fun newTransactionRecovery(cacheSizeBytesOverride: Long? = null, clock: CordaClock = SimpleClock(Clock.systemUTC()),
-                                       cryptoService: CryptoService = MockCryptoService(emptyMap())) {
-
-        val networkMapCache = PersistentNetworkMapCache(TestingNamedCacheFactory(), database, InMemoryIdentityService(trustRoot = DEV_ROOT_CA.certificate))
-        val alice = createNodeInfo(listOf(ALICE))
-        val bob = createNodeInfo(listOf(BOB))
-        val charlie = createNodeInfo(listOf(CHARLIE))
-        networkMapCache.addOrUpdateNodes(listOf(alice, bob, charlie))
-        partyInfoCache = PersistentPartyInfoCache(networkMapCache, TestingNamedCacheFactory(), database)
-        partyInfoCache.start()
-        transactionRecovery = DBTransactionStorageLedgerRecovery(database, TestingNamedCacheFactory(cacheSizeBytesOverride
-                ?: 1024), clock, cryptoService, partyInfoCache)
-    }
-
-    private var portCounter = 1000
-    private fun createNodeInfo(identities: List<TestIdentity>,
-                               address: NetworkHostAndPort = NetworkHostAndPort("localhost", portCounter++)): NodeInfo {
-        return NodeInfo(
-                addresses = listOf(address),
-                legalIdentitiesAndCerts = identities.map { it.identity },
-                platformVersion = 3,
-                serial = 1
+    private fun newTransactionRecovery(cacheSizeBytesOverride: Long? = null, clock: CordaClock = SimpleClock(Clock.systemUTC())) {
+        transactionRecovery = DBTransactionStorageLedgerRecovery(
+                database,
+                TestingNamedCacheFactory(cacheSizeBytesOverride ?: 1024),
+                clock,
+                encryptionService
         )
     }
 
@@ -370,10 +341,7 @@ class DBTransactionStorageLedgerRecoveryTests {
     private fun notarySig(txId: SecureHash) =
             DUMMY_NOTARY.keyPair.sign(SignableData(txId, SignatureMetadata(1, Crypto.findSignatureScheme(DUMMY_NOTARY.publicKey).schemeNumberID)))
 
-    private fun DistributionList.toWire(cryptoService: CryptoService = MockCryptoService(emptyMap())): ByteArray {
-        val hashedPeersToStatesToRecord = this.peersToStatesToRecord.map { (peer, statesToRecord) ->
-            partyInfoCache.getPartyIdByCordaX500Name(peer) to statesToRecord }.toMap()
-        val hashedDistributionList = HashedDistributionList(this.senderStatesToRecord, hashedPeersToStatesToRecord)
-        return cryptoService.encrypt(hashedDistributionList.serialize())
+    private fun DistributionList.toWire(): ByteArray {
+        return encryptionService.encrypt(serialize().bytes)
     }
 }
