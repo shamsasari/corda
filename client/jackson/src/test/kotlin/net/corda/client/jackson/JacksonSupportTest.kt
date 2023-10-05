@@ -705,12 +705,17 @@ class JacksonSupportTest(@Suppress("unused") private val name: String, factory: 
 //    @Ignore("TODO JDK17: Fixme")
 	fun `X509Certificate serialization when extendedKeyUsage is null`() {
         mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        val cert: X509Certificate = spy(MINI_CORP.identity.certificate) /*mock<X509Certificate>(name = X509Certificate::class.java.name)*/
-        println(cert)
-        whenever(cert.extendedKeyUsage).thenReturn(emptyList())
-        whenever(cert.criticalExtensionOIDs).thenReturn(emptySet())
-        whenever(cert.nonCriticalExtensionOIDs).thenReturn(emptySet())
-        whenever(cert.encoded).thenReturn(byteArrayOf(0))
+        val cert = spy<X509Certificate>(MINI_CORP.identity.certificate) {
+            on { extendedKeyUsage } doReturn null
+            on { criticalExtensionOIDs } doReturn emptySet()
+            on { nonCriticalExtensionOIDs } doReturn emptySet()
+        }
+//        val cert: X509Certificate = spy(MINI_CORP.identity.certificate) /*mock<X509Certificate>(name = X509Certificate::class.java.name)*/
+//        println(cert)
+//        whenever(cert.extendedKeyUsage).thenReturn(null)
+//        whenever(cert.criticalExtensionOIDs).thenReturn(emptySet())
+//        whenever(cert.nonCriticalExtensionOIDs).thenReturn(emptySet())
+//        whenever(cert.encoded).thenReturn(byteArrayOf(0))
         // should work even if extendedKeyUsage is null
         mapper.valueToTree<ObjectNode>(cert)
     }
