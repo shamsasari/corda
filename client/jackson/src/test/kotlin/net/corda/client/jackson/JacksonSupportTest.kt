@@ -1,6 +1,5 @@
 package net.corda.client.jackson
 
-import com.fasterxml.jackson.annotation.JsonInclude
 import com.fasterxml.jackson.core.JsonFactory
 import com.fasterxml.jackson.databind.JsonNode
 import com.fasterxml.jackson.databind.node.BinaryNode
@@ -9,19 +8,34 @@ import com.fasterxml.jackson.databind.node.ObjectNode
 import com.fasterxml.jackson.databind.node.TextNode
 import com.fasterxml.jackson.dataformat.yaml.YAMLFactory
 import com.fasterxml.jackson.module.kotlin.convertValue
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
-import org.mockito.kotlin.spy
 import net.corda.client.jackson.internal.childrenAs
 import net.corda.client.jackson.internal.valueAs
-import net.corda.core.contracts.*
+import net.corda.core.contracts.Amount
+import net.corda.core.contracts.Command
+import net.corda.core.contracts.ContractAttachment
+import net.corda.core.contracts.LinearState
+import net.corda.core.contracts.PrivacySalt
+import net.corda.core.contracts.StateRef
+import net.corda.core.contracts.TimeWindow
+import net.corda.core.contracts.TransactionState
+import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.cordapp.CordappProvider
-import net.corda.core.crypto.*
 import net.corda.core.crypto.CompositeKey
+import net.corda.core.crypto.Crypto
+import net.corda.core.crypto.DigestService
+import net.corda.core.crypto.DigitalSignature
+import net.corda.core.crypto.PartialMerkleTree
 import net.corda.core.crypto.PartialMerkleTree.PartialTree
-import net.corda.core.identity.*
+import net.corda.core.crypto.SecureHash
+import net.corda.core.crypto.SignatureMetadata
+import net.corda.core.crypto.SignatureScheme
+import net.corda.core.crypto.TransactionSignature
+import net.corda.core.crypto.secureRandomBytes
+import net.corda.core.identity.AbstractParty
+import net.corda.core.identity.AnonymousParty
+import net.corda.core.identity.CordaX500Name
+import net.corda.core.identity.Party
+import net.corda.core.identity.PartyAndCertificate
 import net.corda.core.internal.AbstractAttachment
 import net.corda.core.internal.DigitalSignatureWithCert
 import net.corda.core.node.NodeInfo
@@ -38,33 +52,70 @@ import net.corda.core.transactions.CoreTransaction
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.transactions.WireTransaction
-import net.corda.core.utilities.*
+import net.corda.core.utilities.ByteSequence
+import net.corda.core.utilities.NetworkHostAndPort
+import net.corda.core.utilities.OpaqueBytes
+import net.corda.core.utilities.days
+import net.corda.core.utilities.hours
+import net.corda.core.utilities.toBase58String
+import net.corda.core.utilities.toBase64
+import net.corda.core.utilities.toHexString
+import net.corda.coretesting.internal.createNodeInfoAndSigned
+import net.corda.coretesting.internal.rigorousMock
 import net.corda.finance.USD
 import net.corda.nodeapi.internal.crypto.x509Certificates
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.contracts.DummyContract
-import net.corda.testing.core.*
-import net.corda.coretesting.internal.createNodeInfoAndSigned
-import net.corda.coretesting.internal.rigorousMock
+import net.corda.testing.core.ALICE_NAME
+import net.corda.testing.core.BOB_NAME
+import net.corda.testing.core.DUMMY_NOTARY_NAME
+import net.corda.testing.core.DummyCommandData
+import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.TestIdentity
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
-import org.junit.Ignore
 import org.junit.Rule
 import org.junit.Test
 import org.junit.jupiter.api.TestFactory
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.spy
+import org.mockito.kotlin.whenever
 import java.math.BigInteger
 import java.nio.charset.StandardCharsets.UTF_8
 import java.security.PublicKey
 import java.security.cert.CertPath
 import java.security.cert.X509Certificate
 import java.time.Instant
-import java.util.*
+import java.util.Currency
+import java.util.Date
+import java.util.UUID
 import javax.security.auth.x500.X500Principal
 import kotlin.collections.ArrayList
+import kotlin.collections.List
+import kotlin.collections.Map
+import kotlin.collections.Set
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.component3
+import kotlin.collections.component4
+import kotlin.collections.contains
+import kotlin.collections.emptyList
+import kotlin.collections.filter
+import kotlin.collections.find
+import kotlin.collections.forEach
+import kotlin.collections.listOf
+import kotlin.collections.map
+import kotlin.collections.mapOf
+import kotlin.collections.mutableListOf
+import kotlin.collections.plusAssign
+import kotlin.collections.setOf
+import kotlin.collections.toSet
 
 @RunWith(Parameterized::class)
 class JacksonSupportTest(@Suppress("unused") private val name: String, factory: JsonFactory) {
@@ -702,20 +753,9 @@ class JacksonSupportTest(@Suppress("unused") private val name: String, factory: 
     }
 
     @Test(timeout=300_000)
-//    @Ignore("TODO JDK17: Fixme")
 	fun `X509Certificate serialization when extendedKeyUsage is null`() {
-        mapper.setSerializationInclusion(JsonInclude.Include.NON_NULL)
-        val cert = spy<X509Certificate>(MINI_CORP.identity.certificate) {
-            on { extendedKeyUsage } doReturn null
-            on { criticalExtensionOIDs } doReturn emptySet()
-            on { nonCriticalExtensionOIDs } doReturn emptySet()
-        }
-//        val cert: X509Certificate = spy(MINI_CORP.identity.certificate) /*mock<X509Certificate>(name = X509Certificate::class.java.name)*/
-//        println(cert)
-//        whenever(cert.extendedKeyUsage).thenReturn(null)
-//        whenever(cert.criticalExtensionOIDs).thenReturn(emptySet())
-//        whenever(cert.nonCriticalExtensionOIDs).thenReturn(emptySet())
-//        whenever(cert.encoded).thenReturn(byteArrayOf(0))
+        val cert: X509Certificate = spy(MINI_CORP.identity.certificate)
+        whenever(cert.extendedKeyUsage).thenReturn(null)
         // should work even if extendedKeyUsage is null
         mapper.valueToTree<ObjectNode>(cert)
     }
