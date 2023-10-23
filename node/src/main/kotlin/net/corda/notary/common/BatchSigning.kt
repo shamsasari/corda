@@ -10,6 +10,7 @@ import net.corda.core.crypto.TransactionSignature
 import net.corda.core.crypto.algorithm
 import net.corda.core.flows.NotaryError
 import net.corda.core.internal.digestService
+import net.corda.core.internal.mapToSet
 import net.corda.core.node.ServiceHub
 import java.security.PublicKey
 
@@ -21,8 +22,8 @@ fun signBatch(
         notaryIdentityKey: PublicKey,
         services: ServiceHub
 ): BatchSignature {
-    val algorithms = txIds.mapTo(HashSet(), SecureHash::algorithm)
-    require(algorithms.size > 0) {
+    val algorithms = txIds.mapToSet(SecureHash::algorithm)
+    require(algorithms.isNotEmpty()) {
         "Cannot sign an empty batch"
     }
     require(algorithms.size == 1) {

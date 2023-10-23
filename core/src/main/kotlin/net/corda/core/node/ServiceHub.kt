@@ -10,7 +10,9 @@ import net.corda.core.crypto.SignatureMetadata
 import net.corda.core.crypto.TransactionSignature
 import net.corda.core.flows.ContractUpgradeFlow
 import net.corda.core.internal.PlatformVersionSwitches.TWO_PHASE_FINALITY
+import net.corda.core.internal.loadStates
 import net.corda.core.internal.telemetry.TelemetryComponent
+import net.corda.core.internal.resolveBaseTransaction
 import net.corda.core.node.services.*
 import net.corda.core.node.services.diagnostics.DiagnosticsService
 import net.corda.core.serialization.CordaSerializable
@@ -81,7 +83,6 @@ interface ServicesForResolution {
     /**
      * Provides a callback for the Node to customise the [LedgerTransaction].
      */
-    @JvmDefault
     fun specialise(ltx: LedgerTransaction): LedgerTransaction = ltx
 }
 
@@ -172,12 +173,6 @@ interface ServiceHub : ServicesForResolution {
     val telemetryService: TelemetryService
 
     /**
-     * INTERNAL. DO NOT USE.
-     * @suppress
-     */
-    val transactionVerifierService: TransactionVerifierService
-
-    /**
      * A [Clock] representing the node's current time. This should be used in preference to directly accessing the
      * clock so the current time can be controlled during unit testing.
      */
@@ -199,6 +194,12 @@ interface ServiceHub : ServicesForResolution {
      * @throws IllegalArgumentException If the instance is not found.
      */
     fun <T : TelemetryComponent> cordaTelemetryComponent(type: Class<T>): T
+
+    @Throws(TransactionResolutionException::class)
+    override fun loadState(stateRef: StateRef): TransactionState<*> = resolveBaseTransaction(stateRef.txhash).outputs[stateRef.index]
+
+    @Throws(TransactionResolutionException::class)
+    override fun loadStates(stateRefs: Set<StateRef>): Set<StateAndRef<ContractState>> = loadStates(stateRefs, LinkedHashSet())
 
     /**
      * Stores the given [SignedTransaction]s in the local transaction storage and then sends them to the vault for
@@ -283,10 +284,7 @@ interface ServiceHub : ServicesForResolution {
      * @throws TransactionResolutionException if [stateRef] points to a non-existent transaction.
      */
     @Throws(TransactionResolutionException::class)
-    fun <T : ContractState> toStateAndRef(stateRef: StateRef): StateAndRef<T> {
-        val stx = validatedTransactions.getTransaction(stateRef.txhash) ?: throw TransactionResolutionException(stateRef.txhash)
-        return stx.resolveBaseTransaction(this).outRef(stateRef.index)
-    }
+    fun <T : ContractState> toStateAndRef(stateRef: StateRef): StateAndRef<T> = resolveBaseTransaction(stateRef.txhash).outRef(stateRef.index)
 
     private val legalIdentityKey: PublicKey get() = this.myInfo.legalIdentitiesAndCerts.first().owningKey
 
@@ -425,8 +423,8 @@ interface ServiceHub : ServicesForResolution {
      * When used within a flow, this session automatically forms part of the enclosing flow transaction boundary,
      * and thus queryable data will include everything committed as of the last checkpoint.
      *
-     * We want to make sure users have a restricted access to administrative functions, this function will return a [RestrictedConnection] instance.
-     * The following methods are blocked:
+     * We want to make sure users have a restricted access to administrative functions, this function will return a [Connection] instance
+     * with the following methods blocked:
      * - abort(executor: Executor?)
      * - clearWarnings()
      * - close()

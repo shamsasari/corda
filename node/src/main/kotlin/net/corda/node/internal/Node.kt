@@ -66,7 +66,7 @@ import net.corda.node.utilities.DemoClock
 import net.corda.node.utilities.errorAndTerminate
 import net.corda.nodeapi.internal.ArtemisMessagingClient
 import net.corda.common.logging.errorReporting.NodeDatabaseErrors
-import net.corda.node.internal.classloading.scanForCustomSerializationScheme
+import net.corda.core.transactions.CoreTransaction
 import net.corda.nodeapi.internal.ShutdownHook
 import net.corda.nodeapi.internal.addShutdownHook
 import net.corda.nodeapi.internal.bridging.BridgeControlListener
@@ -81,6 +81,7 @@ import net.corda.serialization.internal.AMQP_STORAGE_CONTEXT
 import net.corda.serialization.internal.SerializationFactoryImpl
 import net.corda.serialization.internal.amqp.SerializationFactoryCacheKey
 import net.corda.serialization.internal.amqp.SerializerFactory
+import net.corda.serialization.internal.verifier.loadCustomSerializationScheme
 import org.apache.commons.lang3.JavaVersion
 import org.apache.commons.lang3.SystemUtils
 import org.h2.jdbc.JdbcSQLNonTransientConnectionException
@@ -194,12 +195,13 @@ open class Node(configuration: NodeConfiguration,
     }
 
     override val log: Logger get() = staticLog
-    override val transactionVerifierWorkerCount: Int get() = 4
 
     private var internalRpcMessagingClient: InternalRPCMessagingClient? = null
     private var rpcBroker: ArtemisBroker? = null
 
     protected open val journalBufferTimeout : Int? = null
+
+    private val externalVerifierHandle = ExternalVerifierHandle(services).also { runOnStop += it::close }
 
     private var shutdownHook: ShutdownHook? = null
 
@@ -572,7 +574,7 @@ open class Node(configuration: NodeConfiguration,
         if (!initialiseSerialization) return
         val classloader = cordappLoader.appClassLoader
         val customScheme = System.getProperty("experimental.corda.customSerializationScheme")?.let {
-            scanForCustomSerializationScheme(it, classloader)
+            loadCustomSerializationScheme(it, classloader)
         }
         nodeSerializationEnv = SerializationEnvironment.with(
                 SerializationFactoryImpl().apply {
@@ -588,6 +590,13 @@ open class Node(configuration: NodeConfiguration,
                 checkpointSerializer = KryoCheckpointSerializer,
                 checkpointContext = KRYO_CHECKPOINT_CONTEXT.withClassLoader(classloader).withCheckpointCustomSerializers(cordappLoader.cordapps.flatMap { it.checkpointCustomSerializers })
         )
+    }
+
+    override fun tryExternalVerification(transaction: CoreTransaction): Boolean {
+        // TODO Determine from transaction whether it should be verified externally
+        externalVerifierHandle.verifyTransaction(transaction)
+        // TODO If both old and new attachments are present then return true
+        return false
     }
 
     /** Starts a blocking event loop for message dispatch. */

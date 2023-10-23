@@ -6,7 +6,6 @@ import co.paralleluniverse.fibers.instrument.JavaAgent
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import com.typesafe.config.Config
 import com.typesafe.config.ConfigFactory
-import net.corda.core.internal.uncheckedCast
 import com.typesafe.config.ConfigRenderOptions
 import com.typesafe.config.ConfigValue
 import com.typesafe.config.ConfigValueFactory
@@ -41,10 +40,12 @@ import net.corda.core.internal.deleteIfExists
 import net.corda.core.internal.div
 import net.corda.core.internal.isRegularFile
 import net.corda.core.internal.list
+import net.corda.core.internal.mapToSet
 import net.corda.core.internal.packageName_
 import net.corda.core.internal.readObject
 import net.corda.core.internal.readText
 import net.corda.core.internal.toPath
+import net.corda.core.internal.uncheckedCast
 import net.corda.core.internal.writeText
 import net.corda.core.messaging.CordaRPCOps
 import net.corda.core.node.NetworkParameters
@@ -128,9 +129,6 @@ import java.util.concurrent.TimeoutException
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.jar.JarInputStream
 import java.util.jar.Manifest
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
 import kotlin.concurrent.thread
 import net.corda.nodeapi.internal.config.User as InternalUser
 
@@ -715,7 +713,7 @@ class DriverDSLImpl(
 
         TestCordappInternal.installCordapps(
                 baseDirectory,
-                parameters.additionalCordapps.mapTo(HashSet()) { it as TestCordappInternal },
+                parameters.additionalCordapps.mapToSet { it as TestCordappInternal },
                 extraCustomCordapps + (cordappsForAllNodes ?: emptySet())
         )
 

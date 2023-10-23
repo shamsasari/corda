@@ -27,6 +27,7 @@ dependencies {
     testImplementation project(':test-common')
     testImplementation project(':core-test-utils')
     testImplementation project(':test-utils')
+    testImplementation project(":node-driver")
     testImplementation project(path: ':core', configuration: 'testArtifacts')
 
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}"

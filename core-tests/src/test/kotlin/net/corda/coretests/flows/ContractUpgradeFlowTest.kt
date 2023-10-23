@@ -6,6 +6,7 @@ import net.corda.core.contracts.*
 import net.corda.core.flows.UnexpectedFlowEndException
 import net.corda.core.identity.AbstractParty
 import net.corda.core.internal.Emoji
+import net.corda.core.internal.getRequiredTransaction
 import net.corda.core.transactions.ContractUpgradeLedgerTransaction
 import net.corda.core.transactions.LedgerTransaction
 import net.corda.core.utilities.OpaqueBytes
@@ -182,8 +183,7 @@ class ContractUpgradeFlowTest : WithContracts, WithFinality {
                     isUpgrade<FROM, TO>())
 
     private fun TestStartedNode.getContractUpgradeTransaction(state: StateAndRef<ContractState>) =
-            services.validatedTransactions.getTransaction(state.ref.txhash)!!
-                    .resolveContractUpgradeTransaction(services)
+            services.getRequiredTransaction(state.ref.txhash).resolveContractUpgradeTransaction(services)
 
     private inline fun <reified FROM : Any, reified TO : Any> isUpgrade() =
             isUpgradeFrom<FROM>() and isUpgradeTo<TO>()

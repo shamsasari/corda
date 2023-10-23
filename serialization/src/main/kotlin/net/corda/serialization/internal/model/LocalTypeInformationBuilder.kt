@@ -3,17 +3,23 @@ package net.corda.serialization.internal.model
 import net.corda.core.internal.isAbstractClass
 import net.corda.core.internal.isConcreteClass
 import net.corda.core.internal.kotlinObjectInstance
+import net.corda.core.internal.mapToSet
 import net.corda.core.serialization.ConstructorForDeserialization
 import net.corda.core.serialization.DeprecatedConstructorForDeserialization
 import net.corda.serialization.internal.NotSerializableDetailedException
-import net.corda.serialization.internal.amqp.*
+import net.corda.serialization.internal.amqp.PropertyDescriptor
+import net.corda.serialization.internal.amqp.TransformsAnnotationProcessor
+import net.corda.serialization.internal.amqp.asClass
+import net.corda.serialization.internal.amqp.calculatedPropertyDescriptors
+import net.corda.serialization.internal.amqp.componentType
+import net.corda.serialization.internal.amqp.propertyDescriptors
+import net.corda.serialization.internal.model.LocalTypeInformation.ACollection
+import net.corda.serialization.internal.model.LocalTypeInformation.AMap
 import net.corda.serialization.internal.model.LocalTypeInformation.Abstract
 import net.corda.serialization.internal.model.LocalTypeInformation.AnArray
 import net.corda.serialization.internal.model.LocalTypeInformation.AnEnum
 import net.corda.serialization.internal.model.LocalTypeInformation.AnInterface
 import net.corda.serialization.internal.model.LocalTypeInformation.Atomic
-import net.corda.serialization.internal.model.LocalTypeInformation.ACollection
-import net.corda.serialization.internal.model.LocalTypeInformation.AMap
 import net.corda.serialization.internal.model.LocalTypeInformation.Composable
 import net.corda.serialization.internal.model.LocalTypeInformation.Cycle
 import net.corda.serialization.internal.model.LocalTypeInformation.NonComposable
@@ -25,7 +31,6 @@ import java.io.NotSerializableException
 import java.lang.reflect.Method
 import java.lang.reflect.ParameterizedType
 import java.lang.reflect.Type
-import kotlin.collections.LinkedHashMap
 import kotlin.reflect.KFunction
 import kotlin.reflect.full.findAnnotation
 import kotlin.reflect.full.memberProperties
@@ -276,9 +281,7 @@ internal data class LocalTypeInformationBuilder(val lookup: LocalTypeLookup,
                 superclass = superclassInformation,
                 interfaces = interfaceInformation,
                 typeParameters = typeParameterInformation,
-                nonComposableSubtypes = nonComposableProperties.values.mapTo(LinkedHashSet()) {
-                    it.type as NonComposable
-                },
+                nonComposableSubtypes = nonComposableProperties.values.mapToSet { it.type as NonComposable },
                 reason = nonComposablePropertiesErrorReason(nonComposableProperties),
                 remedy = "Either ensure that the properties ${nonComposableProperties.keys} are serializable, or provide a custom serializer for this type"
             )

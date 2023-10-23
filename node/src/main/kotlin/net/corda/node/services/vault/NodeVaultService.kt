@@ -19,10 +19,13 @@ import net.corda.core.internal.ThreadBox
 import net.corda.core.internal.TransactionDeserialisationException
 import net.corda.core.internal.VisibleForTesting
 import net.corda.core.internal.bufferUntilSubscribed
+import net.corda.core.internal.loadStates
+import net.corda.core.internal.mapToSet
 import net.corda.core.internal.tee
 import net.corda.core.internal.uncheckedCast
 import net.corda.core.internal.warnOnce
 import net.corda.core.messaging.DataFeed
+import net.corda.core.node.ServiceHub
 import net.corda.core.node.StatesToRecord
 import net.corda.core.node.services.KeyManagementService
 import net.corda.core.node.services.StatesNotAvailableException
@@ -50,7 +53,6 @@ import net.corda.core.utilities.contextLogger
 import net.corda.core.utilities.debug
 import net.corda.core.utilities.toNonEmptySet
 import net.corda.core.utilities.trace
-import net.corda.node.internal.NodeServicesForResolution
 import net.corda.node.services.api.SchemaService
 import net.corda.node.services.api.VaultServiceInternal
 import net.corda.node.services.schema.PersistentStateService
@@ -80,8 +82,6 @@ import javax.persistence.criteria.CriteriaQuery
 import javax.persistence.criteria.CriteriaUpdate
 import javax.persistence.criteria.Predicate
 import javax.persistence.criteria.Root
-import kotlin.collections.ArrayList
-import kotlin.collections.LinkedHashSet
 import kotlin.collections.component1
 import kotlin.collections.component2
 
@@ -98,7 +98,7 @@ import kotlin.collections.component2
 class NodeVaultService(
         private val clock: Clock,
         private val keyManagementService: KeyManagementService,
-        private val servicesForResolution: NodeServicesForResolution,
+        private val serviceHub: ServiceHub,
         private val database: CordaPersistence,
         schemaService: SchemaService,
         private val appClassloader: ClassLoader
@@ -383,7 +383,7 @@ class NodeVaultService(
                     StatesToRecord.ALL_VISIBLE, StatesToRecord.ONLY_RELEVANT -> {
                         val notSeenReferences = tx.references - loadStates(tx.references).map { it.ref }
                         // TODO: This is expensive - is there another way?
-                        tx.toLedgerTransaction(servicesForResolution).deserializableRefStates()
+                        tx.toLedgerTransaction(serviceHub).deserializableRefStates()
                                 .filter { (_, stateAndRef) -> stateAndRef.ref in notSeenReferences }
                                 .values
                     }
@@ -398,8 +398,8 @@ class NodeVaultService(
             // We also can't do filtering beforehand, since for notary change transactions output encumbrance pointers
             // get recalculated based on input positions.
             val ltx: FullTransaction = when (tx) {
-                is NotaryChangeWireTransaction -> tx.resolve(servicesForResolution, emptyList())
-                is ContractUpgradeWireTransaction -> tx.resolve(servicesForResolution, emptyList())
+                is NotaryChangeWireTransaction -> tx.resolve(serviceHub, emptyList())
+                is ContractUpgradeWireTransaction -> tx.resolve(serviceHub, emptyList())
                 else -> throw IllegalArgumentException("Unsupported transaction type: ${tx.javaClass.name}")
             }
             val myKeys by lazy { keyManagementService.filterMyKeys(ltx.outputs.flatMap { it.data.participants.map { it.owningKey } }) }
@@ -754,8 +754,8 @@ class NodeVaultService(
             }
         }
 
-        val states: List<StateAndRef<T>> = servicesForResolution.loadStates(
-                statesMetadata.mapTo(LinkedHashSet()) { it.ref },
+        val states: List<StateAndRef<T>> = serviceHub.loadStates(
+                statesMetadata.mapToSet { it.ref },
                 ArrayList()
         )
 

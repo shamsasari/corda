@@ -3,7 +3,6 @@ package net.corda.testing.dsl
 import com.google.common.util.concurrent.ThreadFactoryBuilder
 import net.corda.core.DoNotImplement
 import net.corda.core.contracts.*
-import net.corda.core.cordapp.CordappProvider
 import net.corda.core.crypto.NullKeys.NULL_SIGNATURE
 import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.TransactionSignature
@@ -12,7 +11,10 @@ import net.corda.core.flows.TransactionMetadata
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.identity.Party
 import net.corda.core.internal.*
+import net.corda.core.internal.cordapp.CordappProviderInternal
 import net.corda.core.internal.notary.NotaryService
+import net.corda.core.internal.verification.VerifyingServiceHub
+import net.corda.core.internal.verification.toVerifyingServiceHub
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.ServicesForResolution
 import net.corda.core.node.StatesToRecord
@@ -95,7 +97,6 @@ data class TestTransactionDSLInterpreter private constructor(
 
     // Implementing [ServiceHubCoreInternal] allows better use in internal Corda tests
     val services: ServicesForResolution = object : ServiceHubCoreInternal, ServiceHub by ledgerInterpreter.services {
-
         // [validatedTransactions.getTransaction] needs overriding as there are no calls to
         // [ServiceHub.recordTransactions] in the test dsl
         override val validatedTransactions: TransactionStorage =
@@ -133,12 +134,16 @@ data class TestTransactionDSLInterpreter private constructor(
             return stateRefs.map { StateAndRef(loadState(it), it) }.toSet()
         }
 
-        override val cordappProvider: CordappProvider =
-            ledgerInterpreter.services.cordappProvider
+        override val cordappProvider: CordappProviderInternal
+            get() = ledgerInterpreter.services.cordappProvider as CordappProviderInternal
 
         override val notaryService: NotaryService? = null
 
         override val attachmentsClassLoaderCache: AttachmentsClassLoaderCache = AttachmentsClassLoaderCacheImpl(TestingNamedCacheFactory())
+
+        override fun loadContractAttachment(stateRef: StateRef): Attachment {
+            return ledgerInterpreter.services.loadContractAttachment(stateRef)
+        }
 
         override fun recordUnnotarisedTransaction(txn: SignedTransaction) {}
 
@@ -169,7 +174,6 @@ data class TestTransactionDSLInterpreter private constructor(
 
     override fun reference(stateRef: StateRef) {
         val state = ledgerInterpreter.resolveStateRef<ContractState>(stateRef)
-        @Suppress("DEPRECATION") // Will remove when feature finalised.
         transactionBuilder.addReferenceState(StateAndRef(state, stateRef).referenced())
     }
 

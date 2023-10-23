@@ -1,29 +1,27 @@
 @file:Suppress("TooManyFunctions")
 package net.corda.core.internal
 
-import net.corda.core.contracts.Attachment
 import net.corda.core.contracts.ContractClassName
-import net.corda.core.cordapp.CordappProvider
+import net.corda.core.contracts.ContractState
+import net.corda.core.contracts.StateAndRef
+import net.corda.core.contracts.StateRef
+import net.corda.core.contracts.TransactionResolutionException
+import net.corda.core.crypto.SecureHash
 import net.corda.core.flows.DataVendingFlow
 import net.corda.core.flows.FlowLogic
 import net.corda.core.node.NetworkParameters
+import net.corda.core.node.ServiceHub
 import net.corda.core.node.ServicesForResolution
 import net.corda.core.node.ZoneVersionTooLowException
-import net.corda.core.node.services.AttachmentId
-import net.corda.core.node.services.AttachmentStorage
-import net.corda.core.node.services.vault.AttachmentQueryCriteria
-import net.corda.core.node.services.vault.AttachmentSort
-import net.corda.core.node.services.vault.Builder
-import net.corda.core.node.services.vault.Sort
 import net.corda.core.serialization.CordaSerializable
 import net.corda.core.serialization.SerializationContext
+import net.corda.core.transactions.BaseTransaction
 import net.corda.core.transactions.LedgerTransaction
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.transactions.WireTransaction
 import org.slf4j.MDC
 import java.security.PublicKey
-import java.util.jar.JarInputStream
 
 // *Internal* Corda-specific utilities.
 
@@ -125,40 +123,18 @@ fun noPackageOverlap(packages: Collection<String>): Boolean {
     return packages.all { outer -> packages.none { inner -> inner != outer && inner.startsWith("$outer.") } }
 }
 
-/**
- * @return The set of [AttachmentId]s after the node's fix-up rules have been applied to [attachmentIds].
- */
-fun CordappProvider.internalFixupAttachmentIds(attachmentIds: Collection<AttachmentId>): Set<AttachmentId> {
-    return (this as CordappFixupInternal).fixupAttachmentIds(attachmentIds)
+fun <T : ContractState, C : MutableCollection<StateAndRef<T>>> ServiceHub.loadStates(input: Iterable<StateRef>, output: C): C {
+    val baseTxs = HashMap<SecureHash, BaseTransaction>()
+    return input.mapTo(output) { stateRef ->
+        val baseTx = baseTxs.computeIfAbsent(stateRef.txhash, ::resolveBaseTransaction)
+        StateAndRef(uncheckedCast(baseTx.outputs[stateRef.index]), stateRef)
+    }
 }
 
-/**
- * Scans trusted (installed locally) attachments to find all that contain the [className].
- * This is required as a workaround until explicit cordapp dependencies are implemented.
- * DO NOT USE IN CLIENT code.
- *
- * @return the attachments with the highest version.
- *
- * TODO: Should throw when the class is found in multiple contract attachments (not different versions).
- */
-fun AttachmentStorage.internalFindTrustedAttachmentForClass(className: String): Attachment? {
-    val allTrusted = queryAttachments(
-            AttachmentQueryCriteria.AttachmentsQueryCriteria().withUploader(Builder.`in`(TRUSTED_UPLOADERS)),
-            AttachmentSort(listOf(AttachmentSort.AttachmentSortColumn(AttachmentSort.AttachmentSortAttribute.VERSION, Sort.Direction.DESC))))
-
-    // TODO - add caching if performance is affected.
-    for (attId in allTrusted) {
-        val attch = openAttachment(attId)!!
-        if (attch.openAsJAR().use { hasFile(it, "$className.class") }) return attch
-    }
-    return null
+fun ServiceHub.resolveBaseTransaction(txhash: SecureHash): BaseTransaction {
+    return getRequiredTransaction(txhash).resolveBaseTransaction(this)
 }
 
-private fun hasFile(jarStream: JarInputStream, className: String): Boolean {
-    while (true) {
-        val e = jarStream.nextJarEntry ?: return false
-        if (e.name == className) {
-            return true
-        }
-    }
+fun ServiceHub.getRequiredTransaction(txhash: SecureHash): SignedTransaction {
+    return validatedTransactions.getTransaction(txhash) ?: throw TransactionResolutionException(txhash)
 }

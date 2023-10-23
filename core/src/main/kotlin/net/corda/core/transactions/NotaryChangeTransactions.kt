@@ -6,12 +6,12 @@ import net.corda.core.crypto.DigestService
 import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.TransactionSignature
 import net.corda.core.identity.Party
+import net.corda.core.internal.SerializedTransactionState
 import net.corda.core.node.NetworkParameters
 import net.corda.core.node.ServiceHub
 import net.corda.core.node.ServicesForResolution
 import net.corda.core.serialization.CordaSerializable
 import net.corda.core.serialization.DeprecatedConstructorForDeserialization
-import net.corda.core.serialization.SerializedBytes
 import net.corda.core.serialization.deserialize
 import net.corda.core.serialization.serialize
 import net.corda.core.transactions.NotaryChangeWireTransaction.Component.*
@@ -108,11 +108,8 @@ data class NotaryChangeWireTransaction(
      * TODO - currently this uses the main classloader.
      */
     @CordaInternal
-    internal fun resolveOutputComponent(
-            services: ServicesForResolution,
-            stateRef: StateRef,
-            @Suppress("UNUSED_PARAMETER") params: NetworkParameters
-    ): SerializedBytes<TransactionState<ContractState>> {
+    @JvmSynthetic
+    internal fun resolveOutput(stateRef: StateRef, services: ServicesForResolution): SerializedTransactionState {
         return services.loadState(stateRef).serialize()
     }
 
