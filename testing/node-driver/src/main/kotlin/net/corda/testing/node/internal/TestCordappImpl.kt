@@ -1,7 +1,12 @@
 package net.corda.testing.node.internal
 
 import io.github.classgraph.ClassGraph
-import net.corda.core.internal.*
+import net.corda.core.internal.attributes
+import net.corda.core.internal.div
+import net.corda.core.internal.exists
+import net.corda.core.internal.list
+import net.corda.core.internal.mapToSet
+import net.corda.core.internal.pooledScan
 import net.corda.core.utilities.contextLogger
 import net.corda.testing.node.TestCordapp
 import org.gradle.tooling.GradleConnector
@@ -9,7 +14,6 @@ import org.gradle.tooling.ProgressEvent
 import java.io.File
 import java.io.RandomAccessFile
 import java.nio.file.Path
-import java.util.*
 import java.util.concurrent.ConcurrentHashMap
 
 /**
@@ -49,7 +53,7 @@ data class TestCordappImpl(val scanPackage: String, override val config: Map<Str
                 rootPaths
             } else {
                 // Otherwise we need to build those paths which are local projects and extract the built jar from them
-                rootPaths.mapTo(HashSet()) { if (it.toString().endsWith(".jar")) it else buildCordappJar(it) }
+                rootPaths.mapToSet { if (it.toString().endsWith(".jar")) it else buildCordappJar(it) }
             }
         }
 

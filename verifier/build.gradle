@@ -1,0 +1,47 @@
+plugins {
+    id "org.jetbrains.kotlin.jvm"
+    id "application"
+    id "com.github.johnrengelman.shadow"
+}
+
+application {
+    mainClass.set("net.corda.verifier.Main")
+}
+
+dependencies {
+    implementation project(":core")
+    implementation project(":serialization")
+    implementation "org.slf4j:slf4j-api:$slf4j_version"
+    implementation "org.slf4j:jul-to-slf4j:$slf4j_version"
+
+    runtimeOnly "org.apache.logging.log4j:log4j-slf4j-impl:${log4j_version}"
+}
+
+configurations {
+    // Remove dependencies not needed for transaction verification
+    runtimeClasspath
+            .exclude(group: "org.hibernate", module: "hibernate-core")
+            .exclude(group: "co.paralleluniverse", module: "quasar-core")
+            .exclude(group: "io.opentelemetry", module: "opentelemetry-api")
+            .exclude(group: "io.netty", module: "netty-buffer")
+            .exclude(group: "io.netty", module: "netty-transport")
+            .exclude(group: "io.netty", module: "netty-handler")
+            .exclude(group: "commons-beanutils", module: "commons-beanutils")
+}
+
+jar {
+    manifest {
+        attributes("Add-Opens":
+                "java.base/java.lang " +
+                        "java.base/java.lang.reflect " +
+                        "java.base/java.lang.invoke " +
+                        "java.base/java.util " +
+                        "java.base/java.time " +
+                        "java.base/java.io " +
+                        "java.base/java.net " +
+                        "java.base/javax.net.ssl " +
+                        "java.base/java.security.cert " +
+                        "java.base/java.nio"
+        )
+    }
+}

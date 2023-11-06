@@ -23,7 +23,6 @@ import rx.subjects.UnicastSubject
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
-import java.io.OutputStream
 import java.lang.reflect.Field
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
@@ -142,6 +141,11 @@ fun <T> List<T>.indexOfOrThrow(item: T): Int {
     return i
 }
 
+/**
+ * Similar to [Iterable.map] except it maps to a [Set] which preserves the iteration order.
+ */
+inline fun <T, R> Iterable<T>.mapToSet(transform: (T) -> R): Set<R> = mapTo(LinkedHashSet(), transform)
+
 fun InputStream.copyTo(target: Path, vararg options: CopyOption): Long = Files.copy(this, target, *options)
 
 /** Same as [InputStream.readBytes] but also closes the stream. */
@@ -164,12 +168,6 @@ fun InputStream.hash(): SecureHash {
 }
 
 inline fun <reified T : Any> InputStream.readObject(): T = readFully().deserialize()
-
-object NullOutputStream : OutputStream() {
-    override fun write(b: Int) = Unit
-    override fun write(b: ByteArray) = Unit
-    override fun write(b: ByteArray, off: Int, len: Int) = Unit
-}
 
 fun String.abbreviate(maxWidth: Int): String = if (length <= maxWidth) this else take(maxWidth - 1) + "…"
 
@@ -532,11 +530,6 @@ fun ByteBuffer.copyBytes(): ByteArray = ByteArray(remaining()).also { get(it) }
 
 val PublicKey.hash: SecureHash get() = Crypto.encodePublicKey(this).sha256()
 
-/**
- * Extension method for providing a sumBy method that processes and returns a Long
- */
-fun <T> Iterable<T>.sumByLong(selector: (T) -> Long): Long = this.map { selector(it) }.sum()
-
 fun <T : Any> SerializedBytes<Any>.checkPayloadIs(type: Class<T>): UntrustworthyData<T> {
     val payloadData: T = try {
         val serializer = SerializationDefaults.SERIALIZATION_FACTORY
@@ -562,6 +555,10 @@ fun <K, V> createSimpleCache(maxSize: Int, onEject: (MutableMap.MutableEntry<K, 
 fun <K, V> MutableMap<K, V>.toSynchronised(): MutableMap<K, V> = Collections.synchronizedMap(this)
 /** @see Collections.synchronizedSet */
 fun <E> MutableSet<E>.toSynchronised(): MutableSet<E> = Collections.synchronizedSet(this)
+
+fun Collection<*>.equivalent(other: Collection<*>): Boolean {
+    return this.size == other.size && this.containsAll(other) && other.containsAll(this)
+}
 
 /**
  * List implementation that applies the expensive [transform] function only when the element is accessed and caches calculated values.

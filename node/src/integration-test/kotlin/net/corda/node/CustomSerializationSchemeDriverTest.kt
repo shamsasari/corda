@@ -50,6 +50,7 @@ import net.corda.testing.core.TestIdentity
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.NodeParameters
 import net.corda.testing.driver.driver
+import net.corda.testing.node.internal.cordappWithPackages
 import net.corda.testing.node.internal.enclosedCordapp
 import org.junit.Test
 import org.objenesis.instantiator.ObjectInstantiator
@@ -58,7 +59,7 @@ import org.objenesis.strategy.StdInstantiatorStrategy
 import java.io.ByteArrayOutputStream
 import java.lang.reflect.Modifier
 import java.security.PublicKey
-import java.util.*
+import java.util.Arrays
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -94,7 +95,18 @@ class CustomSerializationSchemeDriverTest {
 
     @Test(timeout = 300_000)
     fun `flow can write a wire transaction serialized with custom kryo serializer to the ledger`() {
-        driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
+        driver(DriverParameters(
+                cordappsForAllNodes = listOf(
+                        enclosedCordapp(),
+                        // Our CustomSerializationScheme uses Kryo and so we need to add Kryo and its dependencies as a CorDapp jar. This is
+                        // actually only needed for the external verifier as it uses a cut-down version of the core module. The normal core
+                        // module pulls in Kryo due to its dependency on Quasar, something which the external verifier doesn't need.
+                        // Further, since CustomSerializationScheme is an experimental feature, which requires a system property to enable,
+                        // it is not expected this will actually cause issues with pre-4.12 CorDapps.
+                        cordappWithPackages("com.esotericsoftware", "de.javakaffee.kryoserializers", "org.objenesis")
+                ),
+                systemProperties = mapOf("experimental.corda.customSerializationScheme" to KryoScheme::class.java.name)
+        )) {
             val (alice, bob) = listOf(
                 startNode(NodeParameters(providedName = ALICE_NAME)),
                 startNode(NodeParameters(providedName = BOB_NAME))
@@ -157,17 +169,17 @@ class CustomSerializationSchemeDriverTest {
         }
     }
 
+    @Suppress("unused")
     @InitiatedBy(WriteTxToLedgerFlow::class)
     class SignWireTxFlow(private val session: FlowSession): FlowLogic<SignedTransaction>() {
         @Suspendable
         override fun call(): SignedTransaction {
-            val signTransactionFlow = object : SignTransactionFlow(session) {
-                override fun checkTransaction(stx: SignedTransaction) {
-                    return
-                }
-            }
-            val txId = subFlow(signTransactionFlow).id
+            val txId = subFlow(NoCheckSignTransactionFlow(session)).id
             return subFlow(ReceiveFinalityFlow(session, expectedTxId = txId))
+        }
+
+        class NoCheckSignTransactionFlow(session: FlowSession) : SignTransactionFlow(session) {
+            override fun checkTransaction(stx: SignedTransaction) = Unit
         }
     }
 
@@ -226,7 +238,7 @@ class CustomSerializationSchemeDriverTest {
 
     @StartableByRPC
     @InitiatingFlow
-    class SendFlow(val counterparty: Party) : FlowLogic<Boolean>() {
+    class SendFlow(private val counterparty: Party) : FlowLogic<Boolean>() {
         @Suspendable
         override fun call(): Boolean {
             val wtx = createWireTx(serviceHub, counterparty, counterparty.owningKey, KryoScheme.SCHEME_ID)
@@ -237,13 +249,14 @@ class CustomSerializationSchemeDriverTest {
     }
 
     @StartableByRPC
-    class CreateWireTxFlow(val counterparty: Party) : FlowLogic<WireTransaction>() {
+    class CreateWireTxFlow(private val counterparty: Party) : FlowLogic<WireTransaction>() {
         @Suspendable
         override fun call(): WireTransaction {
             return createWireTx(serviceHub, counterparty, counterparty.owningKey, KryoScheme.SCHEME_ID)
         }
     }
 
+    @Suppress("unused")
     @InitiatedBy(SendFlow::class)
     class ReceiveFlow(private val session: FlowSession): FlowLogic<Unit>() {
         @Suspendable

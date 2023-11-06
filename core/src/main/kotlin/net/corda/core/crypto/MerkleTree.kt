@@ -1,5 +1,7 @@
 package net.corda.core.crypto
 
+import net.corda.core.internal.mapToSet
+import net.corda.core.transactions.WireTransaction
 import java.util.*
 
 /**
@@ -23,7 +25,7 @@ sealed class MerkleTree {
 
         @Throws(MerkleTreeException::class)
         fun getMerkleTree(allLeavesHashes: List<SecureHash>): MerkleTree {
-            return getMerkleTree(allLeavesHashes, DigestService.sha2_256);
+            return getMerkleTree(allLeavesHashes, DigestService.sha2_256)
         }
 
         /**
@@ -33,7 +35,7 @@ sealed class MerkleTree {
         fun getMerkleTree(allLeavesHashes: List<SecureHash>, nodeDigestService: DigestService): MerkleTree {
             if (allLeavesHashes.isEmpty())
                 throw MerkleTreeException("Cannot calculate Merkle root on empty hash list.")
-            val algorithms = allLeavesHashes.mapTo(HashSet(), SecureHash::algorithm)
+            val algorithms = allLeavesHashes.mapToSet(SecureHash::algorithm)
             require(algorithms.size == 1) {
                 "Cannot build Merkle tree with multiple hash algorithms: $algorithms"
             }

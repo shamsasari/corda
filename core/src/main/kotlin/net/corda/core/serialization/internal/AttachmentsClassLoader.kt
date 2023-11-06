@@ -8,8 +8,8 @@ import net.corda.core.contracts.TransactionVerificationException
 import net.corda.core.contracts.TransactionVerificationException.OverlappingAttachmentsException
 import net.corda.core.contracts.TransactionVerificationException.PackageOwnershipException
 import net.corda.core.crypto.SecureHash
-import net.corda.core.internal.JDK1_2_CLASS_FILE_FORMAT_MAJOR_VERSION
 import net.corda.core.internal.JDK11_CLASS_FILE_FORMAT_MAJOR_VERSION
+import net.corda.core.internal.JDK1_2_CLASS_FILE_FORMAT_MAJOR_VERSION
 import net.corda.core.internal.JarSignatureCollector
 import net.corda.core.internal.NamedCacheFactory
 import net.corda.core.internal.PlatformVersionSwitches
@@ -17,6 +17,7 @@ import net.corda.core.internal.VisibleForTesting
 import net.corda.core.internal.cordapp.targetPlatformVersion
 import net.corda.core.internal.createInstancesOfClassesImplementing
 import net.corda.core.internal.createSimpleCache
+import net.corda.core.internal.mapToSet
 import net.corda.core.internal.toSynchronised
 import net.corda.core.node.NetworkParameters
 import net.corda.core.serialization.AMQP_ENVELOPE_CACHE_INITIAL_CAPACITY
@@ -183,7 +184,6 @@ class AttachmentsClassLoader(attachments: List<Attachment>,
                 if (entry.name.endsWith(".class", ignoreCase = true)) return true
             }
         }
-        return false
     }
 
     // This function attempts to strike a balance between security and usability when it comes to the no-overlap rule.
@@ -355,10 +355,10 @@ object AttachmentsClassLoaderBuilder {
                                               parent: ClassLoader = ClassLoader.getSystemClassLoader(),
                                               attachmentsClassLoaderCache: AttachmentsClassLoaderCache?,
                                               block: (SerializationContext) -> T): T {
-        val attachmentIds = attachments.mapTo(LinkedHashSet(), Attachment::id)
+        val attachmentIds = attachments.mapToSet(Attachment::id)
 
         val cache = attachmentsClassLoaderCache ?: fallBackCache
-        val cachedSerializationContext = cache.computeIfAbsent(AttachmentsClassLoaderKey(attachmentIds, params), Function { key ->
+        val cachedSerializationContext = cache.computeIfAbsent(AttachmentsClassLoaderKey(attachmentIds, params)) { key ->
             // Create classloader and load serializers, whitelisted classes
             val transactionClassLoader = AttachmentsClassLoader(attachments, key.params, txId, isAttachmentTrusted, parent)
             val serializers = try {
@@ -380,7 +380,7 @@ object AttachmentsClassLoaderBuilder {
                     .withWhitelist(whitelistedClasses)
                     .withCustomSerializers(serializers)
                     .withoutCarpenter()
-        })
+        }
 
         val serializationContext = cachedSerializationContext.withProperties(mapOf<Any, Any>(
                 // Duplicate the SerializationContext from the cache and give

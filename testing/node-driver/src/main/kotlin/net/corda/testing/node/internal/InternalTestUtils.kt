@@ -11,6 +11,7 @@ import net.corda.core.internal.FlowStateMachineHandle
 import net.corda.core.internal.VisibleForTesting
 import net.corda.core.internal.concurrent.openFuture
 import net.corda.core.internal.div
+import net.corda.core.internal.mapToSet
 import net.corda.core.internal.readText
 import net.corda.core.internal.times
 import net.corda.core.messaging.CordaRPCOps
@@ -22,14 +23,14 @@ import net.corda.core.utilities.NetworkHostAndPort
 import net.corda.core.utilities.getOrThrow
 import net.corda.core.utilities.millis
 import net.corda.core.utilities.seconds
+import net.corda.coretesting.internal.createTestSerializationEnv
+import net.corda.coretesting.internal.inVMExecutors
 import net.corda.node.services.api.StartedNodeServices
 import net.corda.node.services.messaging.Message
 import net.corda.node.services.statemachine.Checkpoint
 import net.corda.testing.driver.DriverDSL
 import net.corda.testing.driver.NodeHandle
 import net.corda.testing.internal.chooseIdentity
-import net.corda.coretesting.internal.createTestSerializationEnv
-import net.corda.coretesting.internal.inVMExecutors
 import net.corda.testing.node.InMemoryMessagingNetwork
 import net.corda.testing.node.TestCordapp
 import net.corda.testing.node.User
@@ -87,7 +88,7 @@ private const val SECONDS_TO_WAIT_FOR_P2P: Long = 20
 fun cordappsForPackages(vararg packageNames: String): Set<CustomCordapp> = cordappsForPackages(packageNames.asList())
 
 fun cordappsForPackages(packageNames: Iterable<String>): Set<CustomCordapp> {
-    return simplifyScanPackages(packageNames).mapTo(HashSet()) { cordappWithPackages(it) }
+    return simplifyScanPackages(packageNames).mapToSet { cordappWithPackages(it) }
 }
 
 /**
