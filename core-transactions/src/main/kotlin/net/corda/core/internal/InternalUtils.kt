@@ -2,24 +2,13 @@
 package net.corda.core.internal
 
 import net.corda.core.crypto.Crypto
-import net.corda.core.crypto.DigitalSignature
 import net.corda.core.crypto.SecureHash
-import net.corda.core.crypto.SignedData
 import net.corda.core.crypto.sha256
-import net.corda.core.crypto.sign
-import net.corda.core.serialization.SerializationDefaults
-import net.corda.core.serialization.SerializedBytes
 import net.corda.core.serialization.deserialize
 import net.corda.core.serialization.serialize
 import net.corda.core.utilities.OpaqueBytes
-import net.corda.core.utilities.UntrustworthyData
 import net.corda.core.utilities.seconds
 import org.slf4j.Logger
-import rx.Observable
-import rx.Observer
-import rx.observers.Subscribers
-import rx.subjects.PublishSubject
-import rx.subjects.UnicastSubject
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.io.InputStream
@@ -173,27 +162,6 @@ fun String.abbreviate(maxWidth: Int): String = if (length <= maxWidth) this else
 
 /** Return the sum of an Iterable of [BigDecimal]s. */
 fun Iterable<BigDecimal>.sum(): BigDecimal = fold(BigDecimal.ZERO) { a, b -> a + b }
-
-/**
- * Returns an Observable that buffers events until subscribed.
- * @see UnicastSubject
- */
-fun <T> Observable<T>.bufferUntilSubscribed(): Observable<T> {
-    val subject = UnicastSubject.create<T>()
-    val subscription = subscribe(subject)
-    return subject.doOnUnsubscribe { subscription.unsubscribe() }
-}
-
-/** Copy an [Observer] to multiple other [Observer]s. */
-fun <T> Observer<T>.tee(vararg teeTo: Observer<T>): Observer<T> {
-    val subject = PublishSubject.create<T>()
-    // use unsafe subscribe, so that the teed subscribers will not get wrapped with SafeSubscribers,
-    // therefore a potential raw exception (non Rx) coming from a child -unsafe subscribed- observer
-    // will not unsubscribe all of the subscribers under the PublishSubject.
-    subject.unsafeSubscribe(Subscribers.from(this))
-    teeTo.forEach { subject.unsafeSubscribe(Subscribers.from(it)) }
-    return subject
-}
 
 /** Executes the given code block and returns a [Duration] of how long it took to execute in nanosecond precision. */
 inline fun elapsedTime(block: () -> Unit): Duration {
@@ -501,45 +469,9 @@ $trustAnchors""", e, this, e.index)
     }
 }
 
-inline fun <T : Any> T.signWithCert(signer: (SerializedBytes<T>) -> DigitalSignatureWithCert): SignedDataWithCert<T> {
-    val serialised = serialize()
-    return SignedDataWithCert(serialised, signer(serialised))
-}
-
-fun <T : Any> T.signWithCert(privateKey: PrivateKey, certificate: X509Certificate): SignedDataWithCert<T> {
-    return signWithCert {
-        val signature = Crypto.doSign(privateKey, it.bytes)
-        DigitalSignatureWithCert(certificate, signature)
-    }
-}
-
-fun <T : Any> T.signWithCertPath(privateKey: PrivateKey, certPath: List<X509Certificate>): SignedDataWithCert<T> {
-    return signWithCert {
-        val signature = Crypto.doSign(privateKey, it.bytes)
-        DigitalSignatureWithCert(certPath.first(), certPath.takeLast(certPath.size - 1), signature)
-    }
-}
-
-inline fun <T : Any> SerializedBytes<T>.sign(signer: (SerializedBytes<T>) -> DigitalSignature.WithKey): SignedData<T> {
-    return SignedData(this, signer(this))
-}
-
-fun <T : Any> SerializedBytes<T>.sign(keyPair: KeyPair): SignedData<T> = SignedData(this, keyPair.sign(this.bytes))
-
 fun ByteBuffer.copyBytes(): ByteArray = ByteArray(remaining()).also { get(it) }
 
 val PublicKey.hash: SecureHash get() = Crypto.encodePublicKey(this).sha256()
-
-fun <T : Any> SerializedBytes<Any>.checkPayloadIs(type: Class<T>): UntrustworthyData<T> {
-    val payloadData: T = try {
-        val serializer = SerializationDefaults.SERIALIZATION_FACTORY
-        serializer.deserialize(this, type, SerializationDefaults.P2P_CONTEXT)
-    } catch (ex: Exception) {
-        throw IllegalArgumentException("Payload invalid", ex)
-    }
-    return type.castIfPossible(payloadData)?.let { UntrustworthyData(it) }
-            ?: throw IllegalArgumentException("We were expecting a ${type.name} but we instead got a ${payloadData.javaClass.name} ($payloadData)")
-}
 
 fun <K, V> createSimpleCache(maxSize: Int, onEject: (MutableMap.MutableEntry<K, V>) -> Unit = {}): MutableMap<K, V> {
     return object : LinkedHashMap<K, V>() {

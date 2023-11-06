@@ -44,7 +44,7 @@ sealed class DigestAlgorithmFactory {
         private val factories = ConcurrentHashMap<String, DigestAlgorithmFactory>()
 
         private fun check(algorithm: String) {
-            require(algorithm.toUpperCase() == algorithm) { "Hash algorithm name $this must be in the upper case" }
+            require(algorithm.uppercase() == algorithm) { "Hash algorithm name $this must be in the upper case" }
             require(algorithm !in BANNED) { "$algorithm is forbidden!" }
         }
 

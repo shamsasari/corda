@@ -19,6 +19,8 @@ configurations {
 }
 
 dependencies {
+    api project(":core-transactions")
+
     implementation "io.opentelemetry:opentelemetry-api:${open_telemetry_version}"
     compileOnly project(':opentelemetry')
 

@@ -1,7 +1,7 @@
 package net.corda.core
 
 import net.corda.core.serialization.CordaSerializable
-import java.util.*
+import java.util.Objects
 
 @CordaSerializable
 interface CordaThrowable {
@@ -46,7 +46,7 @@ open class CordaException internal constructor(override var originalExceptionCla
         get() = _message
 
     override fun hashCode(): Int {
-        return Arrays.deepHashCode(stackTrace) xor Objects.hash(originalExceptionClassName, originalMessage)
+        return stackTrace.contentDeepHashCode() xor Objects.hash(originalExceptionClassName, originalMessage)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -54,8 +54,8 @@ open class CordaException internal constructor(override var originalExceptionCla
                 originalExceptionClassName == other.originalExceptionClassName &&
                 message == other.message &&
                 cause == other.cause &&
-                Arrays.equals(stackTrace, other.stackTrace) &&
-                Arrays.equals(suppressed, other.suppressed)
+                stackTrace.contentEquals(other.stackTrace) &&
+                suppressed.contentEquals(other.suppressed)
     }
 }
 
@@ -92,7 +92,7 @@ open class CordaRuntimeException(override var originalExceptionClassName: String
         get() = _message
 
     override fun hashCode(): Int {
-        return Arrays.deepHashCode(stackTrace) xor Objects.hash(originalExceptionClassName, originalMessage)
+        return stackTrace.contentDeepHashCode() xor Objects.hash(originalExceptionClassName, originalMessage)
     }
 
     override fun equals(other: Any?): Boolean {
@@ -100,7 +100,7 @@ open class CordaRuntimeException(override var originalExceptionClassName: String
                 originalExceptionClassName == other.originalExceptionClassName &&
                 message == other.message &&
                 cause == other.cause &&
-                Arrays.equals(stackTrace, other.stackTrace) &&
-                Arrays.equals(suppressed, other.suppressed)
+                stackTrace.contentEquals(other.stackTrace) &&
+                suppressed.contentEquals(other.suppressed)
     }
 }

@@ -39,7 +39,7 @@ abstract class AbstractParty(val owningKey: PublicKey): Destination {
     @CordaInternal
     companion object : Internable<AbstractParty> {
         @CordaInternal
-        override val interner = PrivateInterner<AbstractParty>(object : IternabilityVerifier<AbstractParty> {
+        override val interner = PrivateInterner(object : IternabilityVerifier<AbstractParty> {
             override fun choose(original: AbstractParty, interned: AbstractParty): AbstractParty {
                 // Because Party does not compare name in equals(), don't intern if there's a clash
                 return if (original.nameOrNull() != interned.nameOrNull()) original else interned

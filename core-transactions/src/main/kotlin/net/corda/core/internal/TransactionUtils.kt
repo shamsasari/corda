@@ -5,7 +5,6 @@ import net.corda.core.crypto.DigestService
 import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.algorithm
 import net.corda.core.crypto.internal.DigestAlgorithmFactory
-import net.corda.core.flows.FlowLogic
 import net.corda.core.identity.Party
 import net.corda.core.node.ServicesForResolution
 import net.corda.core.serialization.*
@@ -186,23 +185,6 @@ data class SerializedStateAndRef(val serializedState: SerializedTransactionState
     }
 }
 
-/** Check that network parameters hash on this transaction is the current hash for the network. */
-fun FlowLogic<*>.checkParameterHash(networkParametersHash: SecureHash?) {
-    // Transactions created on Corda 3.x or below do not contain network parameters,
-    // so no checking is done until the minimum platform version is at least 4.
-    if (networkParametersHash == null) {
-        if (serviceHub.networkParameters.minimumPlatformVersion < PlatformVersionSwitches.NETWORK_PARAMETERS_COMPONENT_GROUP) return
-        else throw IllegalArgumentException("Transaction for notarisation doesn't contain network parameters hash.")
-    } else {
-        serviceHub.networkParametersService.lookup(networkParametersHash) ?: throw IllegalArgumentException("Transaction for notarisation contains unknown parameters hash: $networkParametersHash")
-    }
-
-    // TODO: [ENT-2666] Implement network parameters fuzzy checking. By design in Corda network we have propagation time delay.
-    //       We will never end up in perfect synchronization with all the nodes. However, network parameters update process
-    //       lets us predict what is the reasonable time window for changing parameters on most of the nodes.
-    //       For now we don't check whether the attached network parameters match the current ones.
-}
-
 val SignedTransaction.dependencies: Set<SecureHash>
     get() = (inputs.asSequence() + references.asSequence()).map { it.txhash }.toSet()
 
@@ -228,18 +210,6 @@ class HashAgility {
         internal fun isAlgorithmSupported(algorithm: String): Boolean {
             return algorithm == SecureHash.SHA2_256 || algorithm == digestService.hashAlgorithm
         }
-    }
-}
-
-/**
- * The configured instance of DigestService which is passed by default to instances of classes like TransactionBuilder
- * and as a parameter to MerkleTree.getMerkleTree(...) method. Default: SHA2_256.
- */
-val ServicesForResolution.digestService get() = HashAgility.digestService
-
-fun ServicesForResolution.requireSupportedHashType(hash: NamedByHash) {
-    require(HashAgility.isAlgorithmSupported(hash.id.algorithm)) {
-        "Tried to record a transaction with non-standard hash algorithm ${hash.id.algorithm} (experimental mode off)"
     }
 }
 

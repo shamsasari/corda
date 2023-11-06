@@ -4,9 +4,9 @@ package net.corda.core.utilities
 import net.corda.core.serialization.CordaSerializable
 import java.io.ByteArrayInputStream
 import java.io.OutputStream
-import java.lang.Math.max
-import java.lang.Math.min
 import java.nio.ByteBuffer
+import kotlin.math.max
+import kotlin.math.min
 
 /**
  * An abstraction of a byte array, with offset and size that does no copying of bytes unless asked to.
@@ -122,7 +122,7 @@ sealed class ByteSequence(private val _bytes: ByteArray, val offset: Int, val si
         return true
     }
 
-    private var _hashCode: Int = 0;
+    private var _hashCode: Int = 0
 
     override fun hashCode(): Int {
         return if (_hashCode == 0) {

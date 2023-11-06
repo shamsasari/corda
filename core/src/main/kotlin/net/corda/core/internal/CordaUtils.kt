@@ -2,8 +2,10 @@
 package net.corda.core.internal
 
 import net.corda.core.contracts.ContractClassName
+import net.corda.core.contracts.NamedByHash
 import net.corda.core.contracts.TransactionResolutionException
 import net.corda.core.crypto.SecureHash
+import net.corda.core.crypto.algorithm
 import net.corda.core.flows.DataVendingFlow
 import net.corda.core.flows.FlowLogic
 import net.corda.core.node.NetworkParameters
@@ -12,9 +14,12 @@ import net.corda.core.node.ServicesForResolution
 import net.corda.core.node.ZoneVersionTooLowException
 import net.corda.core.serialization.CordaSerializable
 import net.corda.core.serialization.SerializationContext
+import net.corda.core.serialization.SerializationDefaults
+import net.corda.core.serialization.SerializedBytes
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.transactions.WireTransaction
+import net.corda.core.utilities.UntrustworthyData
 import org.slf4j.MDC
 import java.security.PublicKey
 
@@ -35,6 +40,18 @@ fun checkMinimumPlatformVersion(minimumPlatformVersion: Int, requiredMinPlatform
                         "$requiredMinPlatformVersion. The current zone is only enforcing a minimum platform version of " +
                         "$minimumPlatformVersion. Please contact your zone operator."
         )
+    }
+}
+
+/**
+ * The configured instance of DigestService which is passed by default to instances of classes like TransactionBuilder
+ * and as a parameter to MerkleTree.getMerkleTree(...) method. Default: SHA2_256.
+ */
+val ServicesForResolution.digestService get() = HashAgility.digestService
+
+fun ServicesForResolution.requireSupportedHashType(hash: NamedByHash) {
+    require(HashAgility.isAlgorithmSupported(hash.id.algorithm)) {
+        "Tried to record a transaction with non-standard hash algorithm ${hash.id.algorithm} (experimental mode off)"
     }
 }
 
@@ -64,6 +81,36 @@ fun TransactionBuilder.toWireTransaction(services: ServicesForResolution, serial
 /** Checks if this flow is an idempotent flow. */
 fun Class<out FlowLogic<*>>.isIdempotentFlow(): Boolean {
     return IdempotentFlow::class.java.isAssignableFrom(this)
+}
+
+/** Check that network parameters hash on this transaction is the current hash for the network. */
+fun FlowLogic<*>.checkParameterHash(networkParametersHash: SecureHash?) {
+    // Transactions created on Corda 3.x or below do not contain network parameters,
+    // so no checking is done until the minimum platform version is at least 4.
+    if (networkParametersHash == null) {
+        if (serviceHub.networkParameters.minimumPlatformVersion < PlatformVersionSwitches.NETWORK_PARAMETERS_COMPONENT_GROUP) return
+        else throw IllegalArgumentException("Transaction for notarisation doesn't contain network parameters hash.")
+    } else {
+        requireNotNull(serviceHub.networkParametersService.lookup(networkParametersHash)) {
+            "Transaction for notarisation contains unknown parameters hash: $networkParametersHash"
+        }
+    }
+
+    // TODO: [ENT-2666] Implement network parameters fuzzy checking. By design in Corda network we have propagation time delay.
+    //       We will never end up in perfect synchronization with all the nodes. However, network parameters update process
+    //       lets us predict what is the reasonable time window for changing parameters on most of the nodes.
+    //       For now we don't check whether the attached network parameters match the current ones.
+}
+
+fun <T : Any> SerializedBytes<Any>.checkPayloadIs(type: Class<T>): UntrustworthyData<T> {
+    val payloadData: T = try {
+        val serializer = SerializationDefaults.SERIALIZATION_FACTORY
+        serializer.deserialize(this, type, SerializationDefaults.P2P_CONTEXT)
+    } catch (ex: Exception) {
+        throw IllegalArgumentException("Payload invalid", ex)
+    }
+    return type.castIfPossible(payloadData)?.let { UntrustworthyData(it) }
+            ?: throw IllegalArgumentException("We were expecting a ${type.name} but we instead got a ${payloadData.javaClass.name} ($payloadData)")
 }
 
 /**

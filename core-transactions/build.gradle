@@ -1,0 +1,9 @@
+apply plugin: 'org.jetbrains.kotlin.jvm'
+
+dependencies {
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
+    implementation "com.google.guava:guava:$guava_version"
+    implementation "org.bouncycastle:bcprov-jdk18on:${bouncycastle_version}"
+    implementation "io.github.classgraph:classgraph:${class_graph_version}"
+    implementation "org.slf4j:slf4j-api:$slf4j_version"
+}

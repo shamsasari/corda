@@ -122,7 +122,6 @@ sealed class SecureHash(bytes: ByteArray) : OpaqueBytes(bytes) {
 
     fun reHash() : SecureHash = hashAs(algorithm, bytes)
 
-    // Like static methods in Java, except the 'companion' is a singleton that can have state.
     companion object : Internable<SecureHash> {
         const val SHA2_256 = "SHA-256"
         const val SHA2_384 = "SHA-384"
@@ -182,7 +181,7 @@ sealed class SecureHash(bytes: ByteArray) : OpaqueBytes(bytes) {
          */
         @JvmStatic
         fun parse(str: String?): SHA256 {
-            return str?.toUpperCase()?.parseAsHex()?.let {
+            return str?.uppercase()?.parseAsHex()?.let {
                 when (it.size) {
                     32 -> interner.intern(SHA256(it))
                     else -> throw IllegalArgumentException("Provided string is ${it.size} bytes not 32 bytes in hex: $str")

@@ -35,10 +35,9 @@ fun <T: Any> createInstancesOfClassesImplementing(classloader: ClassLoader, claz
  */
 fun <T: Any> getNamesOfClassesImplementing(classloader: ClassLoader, clazz: Class<T>,
                                            classVersionRange: IntRange? = null): Set<String> {
-    val isJava11 = JavaVersion.isVersionAtLeast(JavaVersion.Java_11)
 
     return ClassGraph().apply {
-            if (!isJava11 || classloader !== ClassLoader.getSystemClassLoader()) {
+            if (classloader !== ClassLoader.getSystemClassLoader()) {
                 overrideClassLoaders(classloader)
             }
         }
