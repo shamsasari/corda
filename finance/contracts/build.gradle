@@ -1,7 +1,7 @@
-apply plugin: 'org.jetbrains.kotlin.jvm'
+apply from: '../common-kotlin.gradle'
 // Java Persistence API support: create no-arg constructor
 // see: http://stackoverflow.com/questions/32038177/kotlin-with-jpa-default-constructor-hell
-apply plugin: 'org.jetbrains.kotlin.plugin.jpa'
+apply from: '../common-jpa.gradle'
 apply plugin: 'net.corda.plugins.quasar-utils'
 apply plugin: 'net.corda.plugins.cordapp'
 apply plugin: 'corda.common-publishing'

@@ -1,4 +1,4 @@
-apply plugin: 'org.jetbrains.kotlin.jvm'
+apply from: '../common-kotlin.gradle'
 apply plugin: 'application'
 // We need to set mainClassName before applying the shadow plugin.
 mainClassName = "net.corda.avalanche.MainKt"

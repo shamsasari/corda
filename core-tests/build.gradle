@@ -1,5 +1,5 @@
-apply plugin: 'org.jetbrains.kotlin.jvm'
-apply plugin: 'org.jetbrains.kotlin.plugin.jpa'
+apply from: '../common-kotlin.gradle'
+apply from: '../common-jpa.gradle'
 apply plugin: 'net.corda.plugins.quasar-utils'
 apply plugin: 'idea'
 

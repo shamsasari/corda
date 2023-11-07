@@ -1,6 +1,4 @@
-apply plugin: 'org.jetbrains.kotlin.jvm'
-//apply plugin: 'net.corda.plugins.cordapp'
-//apply plugin: 'net.corda.plugins.quasar-utils'
+apply from: '../common-kotlin.gradle'
 
 repositories {
     mavenLocal()

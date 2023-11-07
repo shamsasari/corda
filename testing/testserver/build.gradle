@@ -1,4 +1,4 @@
-apply plugin: 'org.jetbrains.kotlin.jvm'
+apply from: '../common-kotlin.gradle'
 apply plugin: 'java'
 apply plugin: 'corda.common-publishing'
 

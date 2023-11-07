@@ -1,5 +1,5 @@
 plugins {
-    id 'org.jetbrains.kotlin.jvm'
+    id 'corda.common-kotlin'
     id 'java-library'
     id 'corda.common-publishing'
 }

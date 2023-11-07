@@ -1,0 +1,13 @@
+import org.jetbrains.kotlin.noarg.gradle.KotlinJpaSubplugin
+
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-noarg:$kotlin_version"
+    }
+}
+
+apply plugin: KotlinJpaSubplugin

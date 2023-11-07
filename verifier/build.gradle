@@ -1,32 +1,81 @@
-plugins {
-    id "org.jetbrains.kotlin.jvm"
-    id "application"
-    id "com.github.johnrengelman.shadow"
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
+
+import static org.gradle.api.JavaVersion.VERSION_11
+
+buildscript {
+    repositories {
+        gradlePluginPortal()
+    }
+
+    dependencies {
+        classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:1.2.71"
+    }
 }
+
+apply plugin: org.jetbrains.kotlin.gradle.plugin.KotlinPluginWrapper
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'org.jetbrains.kotlin.plugin.jpa'  // This shouldn't be needed
+apply plugin: 'net.corda.plugins.quasar-utils'  // This shouldn't be needed
 
 application {
     mainClass.set("net.corda.verifier.Main")
 }
 
-dependencies {
-    implementation project(":core")
-    implementation project(":serialization")
-    implementation "org.slf4j:slf4j-api:$slf4j_version"
-    implementation "org.slf4j:jul-to-slf4j:$slf4j_version"
-
-    runtimeOnly "org.apache.logging.log4j:log4j-slf4j-impl:${log4j_version}"
+tasks.withType(KotlinCompile).configureEach {
+    kotlinOptions {
+        languageVersion = "1.2"
+        apiVersion = "1.2"
+        jvmTarget = VERSION_11
+        javaParameters = true   // Useful for reflection.
+        freeCompilerArgs = ['-Xjvm-default=compatibility']
+        allWarningsAsErrors = warnings_as_errors
+    }
 }
 
-configurations {
-    // Remove dependencies not needed for transaction verification
-    runtimeClasspath
-            .exclude(group: "org.hibernate", module: "hibernate-core")
-            .exclude(group: "co.paralleluniverse", module: "quasar-core")
-            .exclude(group: "io.opentelemetry", module: "opentelemetry-api")
-            .exclude(group: "io.netty", module: "netty-buffer")
-            .exclude(group: "io.netty", module: "netty-transport")
-            .exclude(group: "io.netty", module: "netty-handler")
-            .exclude(group: "commons-beanutils", module: "commons-beanutils")
+//sourceSets {
+//    main {
+//        java.srcDirs += project(":core").sourceSets.main.java.srcDirs
+//        kotlin.srcDirs += project(":core").sourceSets.main.kotlin.srcDirs
+//        java.srcDirs += project(":serialization").sourceSets.main.java.srcDirs
+//        kotlin.srcDirs += project(":serialization").sourceSets.main.kotlin.srcDirs
+//    }
+//}
+
+dependencies {
+    // Core dependencies
+    implementation "io.opentelemetry:opentelemetry-api:${open_telemetry_version}"
+    compileOnly project(':opentelemetry')
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.2.71"
+    implementation "org.slf4j:jcl-over-slf4j:$slf4j_version"
+    implementation "org.slf4j:slf4j-api:$slf4j_version"
+    implementation "com.google.guava:guava:$guava_version"
+    implementation "com.github.ben-manes.caffeine:caffeine:$caffeine_version"
+    implementation "io.reactivex:rxjava:$rxjava_version"
+    implementation "org.apache.commons:commons-lang3:$commons_lang3_version"
+    implementation "net.i2p.crypto:eddsa:$eddsa_version"
+    implementation "org.bouncycastle:bcprov-jdk18on:${bouncycastle_version}"
+    implementation "org.hibernate:hibernate-core:$hibernate_version"
+    implementation "io.netty:netty-common:$netty_version"
+    implementation "io.github.classgraph:classgraph:$class_graph_version"
+
+
+    // Serialization dependencies
+    implementation "io.reactivex:rxjava:$rxjava_version"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.2.71"
+    implementation "org.apache.activemq:artemis-commons:${artemis_version}"
+    implementation "org.ow2.asm:asm:$asm_version"
+    implementation "com.google.guava:guava:$guava_version"
+    implementation "org.apache.qpid:proton-j:$protonj_version"
+    implementation "io.github.classgraph:classgraph:$class_graph_version"
+    implementation "org.iq80.snappy:snappy:$snappy_version"
+    implementation "com.github.ben-manes.caffeine:caffeine:$caffeine_version"
+
+
+    // Verifier dependencies
+    implementation "org.slf4j:slf4j-api:$slf4j_version"
+    implementation "org.slf4j:jul-to-slf4j:$slf4j_version"
+    runtimeOnly "org.apache.logging.log4j:log4j-slf4j-impl:${log4j_version}"
 }
 
 jar {

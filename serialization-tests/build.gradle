@@ -1,4 +1,4 @@
-apply plugin: 'org.jetbrains.kotlin.jvm'
+apply from: '../common-kotlin.gradle'
 
 // Any serialization tests that require further Corda dependencies (other than `core`) should be added to this module.
 description 'Corda serialization tests'

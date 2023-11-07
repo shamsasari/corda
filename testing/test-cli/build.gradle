@@ -1,5 +1,5 @@
 apply plugin: 'java'
-apply plugin: 'org.jetbrains.kotlin.jvm'
+apply from: '../common-kotlin.gradle'
 
 dependencies {
     implementation "info.picocli:picocli:$picocli_version"

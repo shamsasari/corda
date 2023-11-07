@@ -13,7 +13,7 @@ javafx {
     ]
 }
 
-apply plugin: 'org.jetbrains.kotlin.jvm'
+apply from: '../common-kotlin.gradle'
 apply plugin: 'net.corda.plugins.quasar-utils'
 
 description 'Corda client JavaFX modules'

@@ -1,6 +1,6 @@
 import org.apache.tools.ant.filters.ReplaceTokens
 
-apply plugin: 'org.jetbrains.kotlin.jvm'
+apply from: '../../common-kotlin.gradle'
 apply plugin: 'corda.common-publishing'
 
 dependencies {
