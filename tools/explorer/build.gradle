@@ -1,9 +1,11 @@
 // JDK 11 JavaFX
 plugins {
-    id 'org.openjfx.javafxplugin' version '0.0.7' apply false
+    id 'org.openjfx.javafxplugin' version '0.0.7'
 }
 
-apply plugin: 'org.openjfx.javafxplugin'
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'application'
+
 javafx {
     version = "11.0.2"
     modules = [
@@ -13,11 +15,6 @@ javafx {
     ]
 }
 
-apply plugin: 'java'
-apply plugin: 'org.jetbrains.kotlin.jvm'
-apply plugin: 'application'
-
-sourceCompatibility = 1.8
 mainClassName = 'net.corda.explorer.Main'
 
 dependencies {

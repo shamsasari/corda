@@ -1,0 +1,37 @@
+pluginManagement {
+    ext.artifactory_contextUrl = 'https://software.r3.com/artifactory'
+    ext.publicArtifactURL = 'https://download.corda.net/maven'
+
+    repositories {
+        // Use system environment to activate caching with Artifactory,
+        // because it is actually easier to pass that during parallel build.
+        // NOTE: it has to be a name of a virtual repository with all
+        // required remote or local repositories!
+        if (System.getenv("CORDA_USE_CACHE")) {
+            maven {
+                name "R3 Maven remote repositories"
+                url "${artifactory_contextUrl}/${System.getenv("CORDA_USE_CACHE")}"
+                authentication {
+                    basic(BasicAuthentication)
+                }
+                credentials {
+                    username = System.getenv('CORDA_ARTIFACTORY_USERNAME')
+                    password = System.getenv('CORDA_ARTIFACTORY_PASSWORD')
+                }
+            }
+        } else {
+            mavenLocal()
+            gradlePluginPortal()
+            maven { url "${publicArtifactURL}/corda-dependencies" }
+            maven { url "${publicArtifactURL}/corda-dependencies-dev" }
+        }
+    }
+
+    plugins {
+        id 'org.jetbrains.kotlin.jvm' version kotlin_version
+    }
+}
+
+include 'core'
+include 'serialization'
+include 'verifier'

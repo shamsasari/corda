@@ -6,9 +6,26 @@ import com.typesafe.config.ConfigFactory
 import net.corda.common.configuration.parsing.internal.Configuration
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.identity.Party
-import net.corda.core.internal.*
+import net.corda.core.internal.JarSignatureCollector
+import net.corda.core.internal.NODE_INFO_DIRECTORY
+import net.corda.core.internal.PLATFORM_VERSION
+import net.corda.core.internal.VisibleForTesting
 import net.corda.core.internal.concurrent.fork
 import net.corda.core.internal.concurrent.transpose
+import net.corda.core.internal.copyTo
+import net.corda.core.internal.copyToDirectory
+import net.corda.core.internal.createDirectories
+import net.corda.core.internal.delete
+import net.corda.core.internal.div
+import net.corda.core.internal.exists
+import net.corda.core.internal.isSameAs
+import net.corda.core.internal.list
+import net.corda.core.internal.location
+import net.corda.core.internal.read
+import net.corda.core.internal.readAll
+import net.corda.core.internal.readObject
+import net.corda.core.internal.times
+import net.corda.core.internal.toPath
 import net.corda.core.node.NetworkParameters
 import net.corda.core.node.NodeInfo
 import net.corda.core.node.NotaryInfo
@@ -21,7 +38,11 @@ import net.corda.core.serialization.internal._contextSerializationEnv
 import net.corda.core.utilities.days
 import net.corda.core.utilities.getOrThrow
 import net.corda.core.utilities.seconds
-import net.corda.nodeapi.internal.*
+import net.corda.nodeapi.internal.ContractsJar
+import net.corda.nodeapi.internal.ContractsJarFile
+import net.corda.nodeapi.internal.DEV_ROOT_CA
+import net.corda.nodeapi.internal.DevIdentityGenerator
+import net.corda.nodeapi.internal.SignedNodeInfo
 import net.corda.nodeapi.internal.config.getBooleanCaseInsensitive
 import net.corda.nodeapi.internal.network.NodeInfoFilesCopier.Companion.NODE_INFO_FILE_NAME_PREFIX
 import net.corda.serialization.internal.AMQP_P2P_CONTEXT
@@ -38,10 +59,12 @@ import java.nio.file.StandardCopyOption.REPLACE_EXISTING
 import java.security.PublicKey
 import java.time.Duration
 import java.time.Instant
-import java.util.*
+import java.util.Timer
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 import java.util.jar.JarInputStream
+import java.util.stream.Collectors
+import java.util.stream.Collectors.toList
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -239,8 +262,8 @@ constructor(private val initSerEnv: Boolean,
         // Don't accidentally include the bootstrapper jar as a CorDapp!
         val bootstrapperJar = javaClass.location.toPath()
         val cordappJars = directory.list { paths ->
-            paths.filter { it.toString().endsWith(".jar") && !it.isSameAs(bootstrapperJar) && !jarsThatArentCordapps.contains(it.fileName.toString().toLowerCase()) }
-                    .toList()
+            paths.filter { it.toString().endsWith(".jar") && !it.isSameAs(bootstrapperJar) && it.fileName.toString().lowercase() !in jarsThatArentCordapps }
+                    .collect(toList())
         }
         bootstrap(directory, cordappJars, copyCordapps, fromCordform = false, networkParametersOverrides = networkParameterOverrides)
     }
@@ -301,7 +324,7 @@ constructor(private val initSerEnv: Boolean,
     }
 
     private fun Path.listEndingWith(suffix: String): List<Path> {
-        return list { file -> file.filter { it.toString().endsWith(suffix) }.toList() }
+        return list { file -> file.filter { it.toString().endsWith(suffix) }.collect(Collectors.toList()) }
     }
 
     private fun createNodeDirectoriesIfNeeded(directory: Path, fromCordform: Boolean): Boolean {
@@ -332,7 +355,7 @@ constructor(private val initSerEnv: Boolean,
             cordaJar.copyToDirectory(nodeDir, REPLACE_EXISTING)
         }
 
-        val nodeDirs = directory.list { subDir -> subDir.filter { (it / "node.conf").exists() && !(it / "corda.jar").exists() }.toList() }
+        val nodeDirs = directory.list { subDir -> subDir.filter { (it / "node.conf").exists() && !(it / "corda.jar").exists() }.collect(toList()) }
         for (nodeDir in nodeDirs) {
             println("Copying corda.jar into node directory ${nodeDir.fileName}")
             cordaJar.copyToDirectory(nodeDir)
@@ -350,7 +373,7 @@ constructor(private val initSerEnv: Boolean,
     }
 
     private fun gatherNodeDirectories(directory: Path): List<Path> {
-        val nodeDirs = directory.list { subDir -> subDir.filter { (it / "corda.jar").exists() }.toList() }
+        val nodeDirs = directory.list { subDir -> subDir.filter { (it / "corda.jar").exists() }.collect(toList()) }
         for (nodeDir in nodeDirs) {
             require((nodeDir / "node.conf").exists()) { "Missing node.conf in node directory ${nodeDir.fileName}" }
         }
@@ -504,8 +527,7 @@ fun NetworkParameters.overrideWith(override: NetworkParametersOverrides): Networ
             maxMessageSize = override.maxMessageSize ?: this.maxMessageSize,
             maxTransactionSize = override.maxTransactionSize ?: this.maxTransactionSize,
             eventHorizon = override.eventHorizon ?: this.eventHorizon,
-            packageOwnership = override.packageOwnership?.map { it.javaPackageName to it.publicKey }?.toMap()
-                    ?: this.packageOwnership
+            packageOwnership = override.packageOwnership?.associate { it.javaPackageName to it.publicKey } ?: this.packageOwnership
     )
 }
 

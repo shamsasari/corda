@@ -1,10 +1,13 @@
 // JDK 11 JavaFX
 plugins {
-    id 'org.openjfx.javafxplugin' version '0.0.7' apply false
-    id 'corda.common-publishing'
+    id 'org.openjfx.javafxplugin' version '0.0.7'
 }
 
-apply plugin: 'org.openjfx.javafxplugin'
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'idea'
+apply plugin: 'application'
+apply plugin: 'com.github.johnrengelman.shadow'
+apply plugin: 'corda.common-publishing'
 
 javafx {
     version = "11.0.2"
@@ -19,14 +22,8 @@ ext {
     tornadofx_version = '1.7.15'
 }
 
-apply plugin: 'org.jetbrains.kotlin.jvm'
-apply plugin: 'idea'
-apply plugin: 'java'
-apply plugin: 'application'
 // We need to set mainClassName before applying the shadow plugin.
 mainClassName = 'net.corda.networkbuilder.Main'
-
-apply plugin: 'com.github.johnrengelman.shadow'
 
 configurations {
     implementation {

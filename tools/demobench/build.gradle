@@ -1,9 +1,11 @@
 // JDK 11 JavaFX
 plugins {
-    id 'org.openjfx.javafxplugin' version '0.0.7' apply false
+    id 'org.openjfx.javafxplugin' version '0.0.7'
 }
 
-apply plugin: 'org.openjfx.javafxplugin'
+apply plugin: 'org.jetbrains.kotlin.jvm'
+apply plugin: 'application'
+
 javafx {
     version = "11.0.2"
     modules = [
@@ -26,10 +28,6 @@ ext {
     pkg_version = version.indexOf('-') >= 0 ? version.substring(0, version.indexOf('-')) : version
     pkg_macosxKeyUserName = 'R3CEV'
 }
-
-apply plugin: 'java'
-apply plugin: 'org.jetbrains.kotlin.jvm'
-apply plugin: 'application'
 
 evaluationDependsOn(':tools:explorer:capsule')
 evaluationDependsOn(':testing:testserver:testcapsule:')
