@@ -141,6 +141,27 @@ fun <T> List<T>.indexOfOrThrow(item: T): Int {
     return i
 }
 
+inline fun <T> Iterable<T>.sum(selector: (T) -> Int): Int {
+    var sum = 0
+    for (element in this) {
+        sum += selector(element)
+    }
+    return sum
+}
+
+inline fun <T, R : Comparable<R>> Iterable<T>.max(selector: (T) -> R): R {
+    val iterator = iterator()
+    if (!iterator.hasNext()) throw NoSuchElementException()
+    var maxValue = selector(iterator.next())
+    while (iterator.hasNext()) {
+        val v = selector(iterator.next())
+        if (maxValue < v) {
+            maxValue = v
+        }
+    }
+    return maxValue
+}
+
 /**
  * Similar to [Iterable.map] except it maps to a [Set] which preserves the iteration order.
  */

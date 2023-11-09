@@ -6,7 +6,7 @@ import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.net.Socket
 import java.nio.file.Path
-import kotlin.io.path.div
+import net.corda.core.internal.div
 import kotlin.system.exitProcess
 
 @Suppress("TooGenericExceptionCaught")

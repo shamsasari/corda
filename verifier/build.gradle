@@ -1,5 +1,4 @@
 plugins {
-    id "org.jetbrains.kotlin.jvm"
     id "application"
     id "com.github.johnrengelman.shadow"
 }
@@ -8,26 +7,111 @@ application {
     mainClass.set("net.corda.verifier.Main")
 }
 
-dependencies {
-    implementation project(":core")
-    implementation project(":serialization")
-    implementation "org.slf4j:slf4j-api:$slf4j_version"
-    implementation "org.slf4j:jul-to-slf4j:$slf4j_version"
-
-    runtimeOnly "org.apache.logging.log4j:log4j-slf4j-impl:${log4j_version}"
+sourceSets {
+    main {
+        java {
+            srcDir("src/main/kotlin")
+            // 'allJava' includes the kotlin source set
+            source(project(":core").sourceSets.main.allJava)
+            source(project(":serialization").sourceSets.main.allJava)
+            compiledBy("compileKotlin")
+        }
+    }
 }
 
 configurations {
-    // Remove dependencies not needed for transaction verification
-    runtimeClasspath
-            .exclude(group: "org.hibernate", module: "hibernate-core")
-            .exclude(group: "co.paralleluniverse", module: "quasar-core")
-            .exclude(group: "io.opentelemetry", module: "opentelemetry-api")
-            .exclude(group: "io.netty", module: "netty-buffer")
-            .exclude(group: "io.netty", module: "netty-transport")
-            .exclude(group: "io.netty", module: "netty-handler")
-            .exclude(group: "commons-beanutils", module: "commons-beanutils")
+    kotlinCompiler
 }
+
+dependencies {
+    // core
+    implementation "org.slf4j:jcl-over-slf4j:$slf4j_version"
+    implementation "org.slf4j:slf4j-api:$slf4j_version"
+    implementation "com.google.guava:guava:$guava_version"
+    implementation "com.github.ben-manes.caffeine:caffeine:$caffeine_version"
+    implementation "io.reactivex:rxjava:$rxjava_version"
+    implementation "org.apache.commons:commons-lang3:$commons_lang3_version"
+    implementation "net.i2p.crypto:eddsa:$eddsa_version"
+    implementation "org.bouncycastle:bcprov-jdk18on:${bouncycastle_version}"
+    implementation "org.hibernate:hibernate-core:$hibernate_version"
+    implementation "io.netty:netty-common:$netty_version"
+    implementation "io.github.classgraph:classgraph:$class_graph_version"
+    implementation "co.paralleluniverse:quasar-core:0.9.0_r3"  // TODO Get rid of this
+
+    // serialization
+    implementation "io.reactivex:rxjava:$rxjava_version"
+    implementation "org.apache.activemq:artemis-commons:${artemis_version}"
+    implementation "org.ow2.asm:asm:$asm_version"
+    implementation "com.google.guava:guava:$guava_version"
+    implementation "org.apache.qpid:proton-j:$protonj_version"
+    implementation "io.github.classgraph:classgraph:$class_graph_version"
+    implementation "org.iq80.snappy:snappy:$snappy_version"
+    implementation "com.github.ben-manes.caffeine:caffeine:$caffeine_version"
+
+    // verifier
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:1.2.71"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:1.2.71"
+    implementation "org.slf4j:slf4j-api:$slf4j_version"
+    implementation "org.slf4j:jul-to-slf4j:$slf4j_version"
+    runtimeOnly "org.apache.logging.log4j:log4j-slf4j-impl:$log4j_version"
+
+    kotlinCompiler "org.jetbrains.kotlin:kotlin-compiler:1.2.71"
+}
+
+def compileKotlin = tasks.register("compileKotlin", AbstractCompile) { task ->
+    task.source(sourceSets.main.allJava)
+    task.classpath = sourceSets.main.compileClasspath
+    task.destinationDirectory.set(project.layout.buildDirectory.dir("classes/kotlin/main"))
+    sourceSets.main.output.dir(destinationDirectory)
+
+    doLast {
+        def standardOutput = new ByteArrayOutputStream()
+        def errorOutput = new ByteArrayOutputStream()
+        def result = javaexec { execSpec ->
+            execSpec.classpath = configurations.kotlinCompiler
+            execSpec.mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
+            execSpec.standardOutput = standardOutput
+            execSpec.errorOutput = errorOutput
+            execSpec.setIgnoreExitValue(true)
+            def args = [
+                    "-jvm-target", "1.8",
+                    "-language-version", "1.2",
+                    "-api-version", "1.2",
+                    "-java-parameters",
+                    "-Xjvm-default=compatibility",
+                    "-no-stdlib",
+                    "-cp", task.classpath.asPath,
+                    "-d", task.destinationDirectory.get().asFile.absolutePath
+            ]
+            // Specify the Kotlin source directories to compile. This list includes dependent Java sources as well. kotlinc doesn't obviously
+            // compile those but is able to use them when Java code is referenced.
+            args.addAll(sourceSets.main.allJava.srcDirs.findAll { it.exists() }.collect { it.absolutePath })
+            execSpec.setArgs(args)
+        }
+        logger.info(standardOutput.toString())
+        logger.error(errorOutput.toString())
+        if (result.exitValue != 0) {
+            throw new GradleException("Compilation error. See log for more details")
+        }
+    }
+}
+
+// Compiling the Java code first needs the compiled Kotlin code
+tasks.withType(JavaCompile).named("compileJava") {
+    classpath += files(compileKotlin.map { it.destinationDirectory })
+}
+
+//configurations {
+//    // Remove dependencies not needed for transaction verification
+//    runtimeClasspath
+//            .exclude(group: "org.hibernate", module: "hibernate-core")
+//            .exclude(group: "co.paralleluniverse", module: "quasar-core")
+//            .exclude(group: "io.opentelemetry", module: "opentelemetry-api")
+//            .exclude(group: "io.netty", module: "netty-buffer")
+//            .exclude(group: "io.netty", module: "netty-transport")
+//            .exclude(group: "io.netty", module: "netty-handler")
+//            .exclude(group: "commons-beanutils", module: "commons-beanutils")
+//}
 
 jar {
     manifest {

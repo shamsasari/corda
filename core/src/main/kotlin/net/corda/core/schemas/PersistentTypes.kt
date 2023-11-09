@@ -77,7 +77,7 @@ open class MappedSchema(schemaFamily: Class<*>,
  */
 @MappedSuperclass
 @CordaSerializable
-class PersistentState(@EmbeddedId override var stateRef: PersistentStateRef? = null) : DirectStatePersistable
+open class PersistentState(@EmbeddedId override var stateRef: PersistentStateRef? = null) : DirectStatePersistable
 
 /**
  * Embedded [StateRef] representation used in state mapping.

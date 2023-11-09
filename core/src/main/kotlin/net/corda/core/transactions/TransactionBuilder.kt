@@ -489,7 +489,7 @@ open class TransactionBuilder(
         }
 
         if (explicitContractAttachment != null && hashAttachments.singleOrNull() != null) {
-            require(explicitContractAttachment == hashAttachments.single().attachment.id) {
+            require(explicitContractAttachment == (hashAttachments.single() as ContractAttachment).attachment.id) {
                 "An attachment has been explicitly set for contract $contractClassName in the transaction builder which conflicts with the HashConstraint of a state."
             }
         }

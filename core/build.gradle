@@ -19,9 +19,6 @@ configurations {
 }
 
 dependencies {
-    implementation "io.opentelemetry:opentelemetry-api:${open_telemetry_version}"
-    compileOnly project(':opentelemetry')
-
     testImplementation sourceSets.obfuscator.output
     testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}"
     testImplementation "junit:junit:$junit_version"
@@ -71,7 +68,7 @@ dependencies {
     // FastThreadLocal
     implementation "io.netty:netty-common:$netty_version"
 
-    implementation group: "io.github.classgraph", name: "classgraph", version: class_graph_version
+    implementation "io.github.classgraph:classgraph:$class_graph_version"
 
     testImplementation "org.ow2.asm:asm:$asm_version"
 

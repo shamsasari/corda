@@ -1,3 +1,4 @@
+apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'net.corda.plugins.cordapp'
 
 def javaHome = System.getProperty('java.home')

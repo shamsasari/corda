@@ -178,12 +178,7 @@ class AttachmentsClassLoader(attachments: List<Attachment>,
     }
 
     private fun containsClasses(attachment: Attachment): Boolean {
-        attachment.openAsJAR().use { jar ->
-            while (true) {
-                val entry = jar.nextJarEntry ?: return false
-                if (entry.name.endsWith(".class", ignoreCase = true)) return true
-            }
-        }
+        return attachment.openAsJAR().use { generateSequence { it.nextJarEntry }.any { it.name.endsWith(".class", ignoreCase = true) } }
     }
 
     // This function attempts to strike a balance between security and usability when it comes to the no-overlap rule.
@@ -358,7 +353,8 @@ object AttachmentsClassLoaderBuilder {
         val attachmentIds = attachments.mapToSet(Attachment::id)
 
         val cache = attachmentsClassLoaderCache ?: fallBackCache
-        val cachedSerializationContext = cache.computeIfAbsent(AttachmentsClassLoaderKey(attachmentIds, params)) { key ->
+        @Suppress("RedundantSamConstructor")  // Because the external verifier uses Kotlin 1.2
+        val cachedSerializationContext = cache.computeIfAbsent(AttachmentsClassLoaderKey(attachmentIds, params), Function { key ->
             // Create classloader and load serializers, whitelisted classes
             val transactionClassLoader = AttachmentsClassLoader(attachments, key.params, txId, isAttachmentTrusted, parent)
             val serializers = try {
@@ -380,7 +376,7 @@ object AttachmentsClassLoaderBuilder {
                     .withWhitelist(whitelistedClasses)
                     .withCustomSerializers(serializers)
                     .withoutCarpenter()
-        }
+        })
 
         val serializationContext = cachedSerializationContext.withProperties(mapOf<Any, Any>(
                 // Duplicate the SerializationContext from the cache and give

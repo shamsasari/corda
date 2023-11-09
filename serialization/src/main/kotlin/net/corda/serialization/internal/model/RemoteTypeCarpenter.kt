@@ -87,6 +87,7 @@ class SchemaBuildingRemoteTypeCarpenter(private val carpenter: ClassCarpenter): 
             }
 
     private fun RemoteTypeInformation.AnEnum.carpentEnum() {
-        carpenter.build(EnumSchema(name = typeIdentifier.name, fields = members.associateWith { EnumField() }))
+        @Suppress("ReplaceAssociateFunction")   // Because the external verifier uses Kotlin 1.2
+        carpenter.build(EnumSchema(name = typeIdentifier.name, fields = members.associate { it to EnumField() }))
     }
 }

@@ -26,6 +26,8 @@ import net.corda.core.internal.SerializedTransactionState
 import net.corda.core.internal.createComponentGroups
 import net.corda.core.internal.isUploaderTrusted
 import net.corda.core.internal.lazyMapped
+import net.corda.core.internal.max
+import net.corda.core.internal.sum
 import net.corda.core.internal.verification.VerificationSupport
 import net.corda.core.internal.verification.toVerifyingServiceHub
 import net.corda.core.node.NetworkParameters
@@ -231,15 +233,15 @@ class WireTransaction(componentGroups: List<ComponentGroup>, val privacySalt: Pr
 
         // This calculates a value that is slightly lower than the actual re-serialized version. But it is stable and does not depend on the classloader.
         fun componentGroupSize(componentGroup: ComponentGroupEnum): Int {
-            return this.componentGroups.firstOrNull { it.groupIndex == componentGroup.ordinal }?.let { cg -> cg.components.sumOf { it.size } + 4 } ?: 0
+            return this.componentGroups.firstOrNull { it.groupIndex == componentGroup.ordinal }?.let { cg -> cg.components.sum { it.size } + 4 } ?: 0
         }
 
         // Check attachments size first as they are most likely to go over the limit. With ContractAttachment instances
         // it's likely that the same underlying Attachment CorDapp will occur more than once so we dedup on the attachment id.
         ltx.attachments.distinctBy { it.id }.forEach { minus(it.size) }
 
-        minus(resolvedSerializedInputs.sumOf { it.serializedState.size })
-        minus(resolvedSerializedReferences.sumOf { it.serializedState.size })
+        minus(resolvedSerializedInputs.sum { it.serializedState.size })
+        minus(resolvedSerializedReferences.sum { it.serializedState.size })
 
         // For Commands and outputs we can use the component groups as they are already serialized.
         minus(componentGroupSize(COMMANDS_GROUP))
@@ -274,7 +276,7 @@ class WireTransaction(componentGroups: List<ComponentGroup>, val privacySalt: Pr
         // Even if empty and not used, we should at least send oneHashes for each known
         // or received but unknown (thus, bigger than known ordinal) component groups.
         val allOnesHash = digestService.allOnesHash
-        for (i in 0..componentGroups.maxOf { it.groupIndex }) {
+        for (i in 0..componentGroups.max { it.groupIndex }) {
             val root = groupsMerkleRoots[i] ?: allOnesHash
             listOfLeaves.add(root)
         }

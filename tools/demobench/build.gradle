@@ -27,7 +27,6 @@ ext {
     pkg_macosxKeyUserName = 'R3CEV'
 }
 
-apply plugin: 'java'
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'application'
 

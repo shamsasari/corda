@@ -1,6 +1,5 @@
 evaluationDependsOn(":node:capsule")
 
-
 import com.github.dockerjava.api.model.Identifier
 import net.corda.build.docker.DockerImage
 import net.corda.build.docker.DockerUtils
@@ -8,8 +7,6 @@ import net.corda.build.docker.ObjectInputStreamWithCustomClassLoader
 
 import java.nio.file.Files
 import java.nio.file.StandardCopyOption
-import java.time.LocalDateTime
-import java.time.format.DateTimeFormatter
 import java.util.stream.Collectors
 import java.util.stream.Stream
 
