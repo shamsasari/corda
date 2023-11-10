@@ -1,3 +1,11 @@
+import static org.joor.Reflect.onClass
+
+buildscript {
+    dependencies {
+        classpath "org.jooq:joor:0.9.15"
+    }
+}
+
 plugins {
     id "application"
     id "com.github.johnrengelman.shadow"
@@ -58,6 +66,8 @@ dependencies {
     kotlinCompiler "org.jetbrains.kotlin:kotlin-compiler:1.2.71"
 }
 
+// The external verifier needs to be use Kotlin 1.2. However, the 1.2 plugin only works with a very old version of Gradle (which itself will
+// only work on Java 8). So we forgo the plugin entirely and call the 1.2 compiler directly.
 def compileKotlin = tasks.register("compileKotlin", AbstractCompile) { task ->
     task.source(sourceSets.main.allJava)
     task.classpath = sourceSets.main.compileClasspath
@@ -65,38 +75,33 @@ def compileKotlin = tasks.register("compileKotlin", AbstractCompile) { task ->
     sourceSets.main.output.dir(destinationDirectory)
 
     doLast {
-        def standardOutput = new ByteArrayOutputStream()
-        def errorOutput = new ByteArrayOutputStream()
-        def result = javaexec { execSpec ->
-            execSpec.classpath = configurations.kotlinCompiler
-            execSpec.mainClass.set("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler")
-            execSpec.standardOutput = standardOutput
-            execSpec.errorOutput = errorOutput
-            execSpec.setIgnoreExitValue(true)
-            def args = [
-                    "-jvm-target", "1.8",
-                    "-language-version", "1.2",
-                    "-api-version", "1.2",
-                    "-java-parameters",
-                    "-Xjvm-default=compatibility",
-                    "-no-stdlib",
-                    "-cp", task.classpath.asPath,
-                    "-d", task.destinationDirectory.get().asFile.absolutePath
-            ]
-            // Specify the Kotlin source directories to compile. This list includes dependent Java sources as well. kotlinc doesn't obviously
-            // compile those but is able to use them when Java code is referenced.
-            args.addAll(sourceSets.main.allJava.srcDirs.findAll { it.exists() }.collect { it.absolutePath })
-            execSpec.setArgs(args)
-        }
-        logger.info(standardOutput.toString())
-        logger.error(errorOutput.toString())
-        if (result.exitValue != 0) {
+        def args = [
+                "-jvm-target", "1.8",
+                "-language-version", "1.2",
+                "-api-version", "1.2",
+                "-java-parameters",
+                "-Xjvm-default=compatibility",
+                "-no-stdlib",
+                "-cp", task.classpath.asPath,
+                "-d", task.destinationDirectory.get().asFile.absolutePath
+        ]
+        // Specify the Kotlin source directories to compile. This list includes dependent Java sources as well. kotlinc doesn't obviously
+        // compile those but is able to use them when Java code is referenced.
+        args.addAll(sourceSets.main.allJava.srcDirs.findAll { it.exists() }.collect { it.absolutePath })
+
+        // We need to load the 1.2 compiler in a separate classloader as the build classpath is contaminated with another version
+        def compilerClassLoader = new URLClassLoader(configurations.kotlinCompiler.collect { it.toURI().toURL() } as URL[])
+        def exitCode = onClass("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler", compilerClassLoader)
+                .create()
+                .call("exec", System.err, args as String[])
+                .get()
+        if (exitCode.toString() != "OK") {
             throw new GradleException("Compilation error. See log for more details")
         }
     }
 }
 
-// Compiling the Java code first needs the compiled Kotlin code
+// Compiling the Java code needs the compiled Kotlin code first
 tasks.withType(JavaCompile).named("compileJava") {
     classpath += files(compileKotlin.map { it.destinationDirectory })
 }
