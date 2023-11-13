@@ -7,6 +7,10 @@ apply plugin: 'corda.common-publishing'
 description 'Corda core'
 
 sourceSets {
+    main {
+        java.srcDir("src/verification/java")
+        kotlin.srcDir("src/verification/kotlin")
+    }
     obfuscator
 }
 
@@ -84,10 +88,10 @@ dependencies {
 }
 
 // TODO Consider moving it to quasar-utils in the future (introduced with PR-1388)
-task copyQuasarJar(type: Copy) {
+tasks.register('copyQuasarJar', Copy) {
     from configurations.quasar
     into "$project.rootProject.projectDir/lib"
-    rename { filename -> "quasar.jar"}
+    rename { filename -> "quasar.jar" }
 }
 
 jar {
@@ -117,7 +121,8 @@ test {
     maxParallelForks = (System.env.CORDA_CORE_TESTING_FORKS == null) ? 1 :  "$System.env.CORDA_CORE_TESTING_FORKS".toInteger()
 }
 
-task testJar(type: Jar, dependsOn: testClasses) {
+tasks.register('testJar', Jar) {
+    dependsOn testClasses
     classifier "tests"
     from sourceSets.test.output
 }

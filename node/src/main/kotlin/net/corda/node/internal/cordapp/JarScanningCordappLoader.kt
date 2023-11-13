@@ -20,6 +20,8 @@ import net.corda.core.internal.JarSignatureCollector
 import net.corda.core.internal.PlatformVersionSwitches
 import net.corda.core.internal.cordapp.CordappImpl
 import net.corda.core.internal.cordapp.CordappImpl.Companion.UNKNOWN_INFO
+import net.corda.core.internal.cordapp.MIN_PLATFORM_VERSION
+import net.corda.core.internal.cordapp.TARGET_PLATFORM_VERSION
 import net.corda.core.internal.cordapp.get
 import net.corda.core.internal.exists
 import net.corda.core.internal.hash
@@ -191,8 +193,8 @@ class JarScanningCordappLoader private constructor(private val cordappJarPaths: 
     private fun RestrictedScanResult.toCordapp(url: RestrictedURL): CordappImpl {
         val manifest: Manifest? = url.url.openStream().use { JarInputStream(it).manifest }
         val info = parseCordappInfo(manifest, CordappImpl.jarName(url.url))
-        val minPlatformVersion = manifest?.get(CordappImpl.MIN_PLATFORM_VERSION)?.toIntOrNull() ?: 1
-        val targetPlatformVersion = manifest?.get(CordappImpl.TARGET_PLATFORM_VERSION)?.toIntOrNull() ?: minPlatformVersion
+        val minPlatformVersion = manifest?.get(MIN_PLATFORM_VERSION)?.toIntOrNull() ?: 1
+        val targetPlatformVersion = manifest?.get(TARGET_PLATFORM_VERSION)?.toIntOrNull() ?: minPlatformVersion
         validateContractStateClassVersion(this)
         validateWhitelistClassVersion(this)
         return CordappImpl(

@@ -6,8 +6,8 @@ import net.corda.core.flows.FlowLogic
 import net.corda.core.internal.PLATFORM_VERSION
 import net.corda.core.internal.VisibleForTesting
 import net.corda.core.internal.notary.NotaryService
-import net.corda.core.internal.toPath
 import net.corda.core.internal.telemetry.TelemetryComponent
+import net.corda.core.internal.toPath
 import net.corda.core.schemas.MappedSchema
 import net.corda.core.serialization.CheckpointCustomSerializer
 import net.corda.core.serialization.SerializationCustomSerializer
@@ -61,9 +61,6 @@ data class CordappImpl(
         const val CORDAPP_WORKFLOW_VERSION = "Cordapp-Workflow-Version"
         const val CORDAPP_WORKFLOW_VENDOR = "Cordapp-Workflow-Vendor"
         const val CORDAPP_WORKFLOW_LICENCE = "Cordapp-Workflow-Licence"
-
-        const val TARGET_PLATFORM_VERSION = "Target-Platform-Version"
-        const val MIN_PLATFORM_VERSION = "Min-Platform-Version"
 
         const val UNKNOWN_VALUE = "Unknown"
         const val DEFAULT_CORDAPP_VERSION = 1

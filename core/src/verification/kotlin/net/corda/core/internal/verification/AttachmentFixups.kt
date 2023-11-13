@@ -2,13 +2,12 @@ package net.corda.core.internal.verification
 
 import net.corda.core.crypto.SecureHash
 import net.corda.core.internal.mapNotNull
-import net.corda.core.node.services.AttachmentFixup
 import net.corda.core.node.services.AttachmentId
-import net.corda.core.node.services.AttachmentStorage
-import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.loggerFor
 import java.net.JarURLConnection
 import java.net.URL
+
+typealias AttachmentFixup = Pair<Set<AttachmentId>, Set<AttachmentId>>
 
 class AttachmentFixups {
     private val fixupRules = ArrayList<AttachmentFixup>()
@@ -17,7 +16,7 @@ class AttachmentFixups {
      * Loads the "fixup" rules from all META-INF/Corda-Fixups files.
      * These files have the following format:
      *     <AttachmentId>,<AttachmentId>...=><AttachmentId>,<AttachmentId>,...
-     * where each <AttachmentId> is the SHA256 of a CorDapp JAR that [TransactionBuilder] will expect to find inside [AttachmentStorage].
+     * where each <AttachmentId> is the SHA256 of a CorDapp JAR the `TransactionBuilder` will expect to find inside the `AttachmentStorage`.
      *
      * These rules are for repairing broken CorDapps. A correctly written CorDapp should not require them.
      */

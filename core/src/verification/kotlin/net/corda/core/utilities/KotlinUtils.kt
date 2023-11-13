@@ -5,7 +5,6 @@ import net.corda.core.internal.uncheckedCast
 import net.corda.core.serialization.CordaSerializable
 import org.slf4j.Logger
 import org.slf4j.LoggerFactory
-import java.io.Serializable
 import java.time.Duration
 import java.util.concurrent.ExecutionException
 import java.util.concurrent.Future
@@ -135,5 +134,3 @@ fun <V> Future<V>.getOrThrow(timeout: Duration? = null): V = try {
     throw e.cause!!
 }
 
-/** Functional interfaces for Serializeable Lambdas */
-//fun interface SerializableLambda2<S, T, R> : (S, T) -> R, Serializable

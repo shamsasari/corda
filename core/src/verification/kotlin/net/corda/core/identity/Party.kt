@@ -5,7 +5,6 @@ import net.corda.core.crypto.CompositeKey
 import net.corda.core.crypto.Crypto
 import net.corda.core.crypto.toStringShort
 import net.corda.core.flows.Destination
-import net.corda.core.flows.FlowLogic
 import net.corda.core.utilities.OpaqueBytes
 import java.security.PublicKey
 import java.security.cert.X509Certificate
@@ -29,7 +28,7 @@ import java.security.cert.X509Certificate
  *
  * ### Flow sessions
  *
- * Communication with other parties is done using the flow framework with the [FlowLogic.initiateFlow] method. Message routing is done by
+ * Communication with other parties is done using the flow framework with the [net.corda.core.flows.FlowLogic.initiateFlow] method. Message routing is done by
  * using the network map to look up the connectivity details pertaining to the [Party].
  *
  * @see CompositeKey

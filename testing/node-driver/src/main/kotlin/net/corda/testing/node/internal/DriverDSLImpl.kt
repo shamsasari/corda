@@ -32,8 +32,8 @@ import net.corda.core.internal.cordapp.CordappImpl.Companion.CORDAPP_WORKFLOW_LI
 import net.corda.core.internal.cordapp.CordappImpl.Companion.CORDAPP_WORKFLOW_NAME
 import net.corda.core.internal.cordapp.CordappImpl.Companion.CORDAPP_WORKFLOW_VENDOR
 import net.corda.core.internal.cordapp.CordappImpl.Companion.CORDAPP_WORKFLOW_VERSION
-import net.corda.core.internal.cordapp.CordappImpl.Companion.MIN_PLATFORM_VERSION
-import net.corda.core.internal.cordapp.CordappImpl.Companion.TARGET_PLATFORM_VERSION
+import net.corda.core.internal.cordapp.MIN_PLATFORM_VERSION
+import net.corda.core.internal.cordapp.TARGET_PLATFORM_VERSION
 import net.corda.core.internal.cordapp.get
 import net.corda.core.internal.createDirectories
 import net.corda.core.internal.deleteIfExists

@@ -61,11 +61,6 @@ fun TransactionBuilder.toWireTransaction(services: ServicesForResolution, serial
     return toWireTransactionWithContext(services, serializationContext)
 }
 
-/** Checks if this flow is an idempotent flow. */
-fun Class<out FlowLogic<*>>.isIdempotentFlow(): Boolean {
-    return IdempotentFlow::class.java.isAssignableFrom(this)
-}
-
 /**
  * Ensures each log entry from the current thread will contain id of the transaction in the MDC.
  */

@@ -19,8 +19,9 @@ sourceSets {
     main {
         java {
             srcDir("src/main/kotlin")
+            srcDir("../core/src/verification/java")
+            srcDir("../core/src/verification/kotlin")
             // 'allJava' includes the kotlin source set
-            source(project(":core").sourceSets.main.allJava)
             source(project(":serialization").sourceSets.main.allJava)
             compiledBy("compileKotlin")
         }

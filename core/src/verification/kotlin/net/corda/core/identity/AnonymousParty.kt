@@ -3,7 +3,6 @@ package net.corda.core.identity
 import net.corda.core.contracts.PartyAndReference
 import net.corda.core.crypto.toStringShort
 import net.corda.core.flows.Destination
-import net.corda.core.flows.FlowLogic
 import net.corda.core.utilities.OpaqueBytes
 import java.security.PublicKey
 
@@ -13,7 +12,7 @@ import java.security.PublicKey
  *
  * ### Flow sessions
  *
- * Anonymous parties can be used to communicate using the [FlowLogic.initiateFlow] method. Message routing is simply routing to the well-known
+ * Anonymous parties can be used to communicate using the [net.corda.core.flows.FlowLogic.initiateFlow] method. Message routing is simply routing to the well-known
  * [Party] the anonymous party belongs to. This mechanism assumes the party initiating the communication knows who the anonymous party is.
  */
 class AnonymousParty(owningKey: PublicKey) : Destination, AbstractParty(owningKey) {

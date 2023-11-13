@@ -30,14 +30,13 @@ import net.corda.core.internal.FlowStateMachine
 import net.corda.core.internal.IdempotentFlow
 import net.corda.core.internal.VisibleForTesting
 import net.corda.core.internal.concurrent.OpenFuture
-import net.corda.core.internal.isIdempotentFlow
 import net.corda.core.internal.isRegularFile
 import net.corda.core.internal.location
-import net.corda.core.internal.toPath
-import net.corda.core.internal.uncheckedCast
 import net.corda.core.internal.telemetry.ComponentTelemetryIds
 import net.corda.core.internal.telemetry.SerializedTelemetry
 import net.corda.core.internal.telemetry.telemetryServiceInternal
+import net.corda.core.internal.toPath
+import net.corda.core.internal.uncheckedCast
 import net.corda.core.serialization.SerializationDefaults
 import net.corda.core.serialization.SerializedBytes
 import net.corda.core.serialization.internal.CheckpointSerializationContext
@@ -463,7 +462,7 @@ class FlowStateMachineImpl<R>(override val id: StateMachineRunId,
     @Suspendable
     private fun checkpointIfSubflowIdempotent(subFlow: Class<FlowLogic<*>>) {
         val currentFlow = snapshot().checkpoint.checkpointState.subFlowStack.last().flowClass
-        if (!currentFlow.isIdempotentFlow() && subFlow.isIdempotentFlow()) {
+        if (!currentFlow.isIdempotentFlow && subFlow.isIdempotentFlow) {
             suspend(FlowIORequest.ForceCheckpoint, false)
         }
     }
@@ -673,3 +672,7 @@ val Class<out FlowLogic<*>>.appName: String
             "<unknown>"
         }
     }
+
+/** Checks if this flow is an idempotent flow. */
+val Class<out FlowLogic<*>>.isIdempotentFlow: Boolean
+    get() = IdempotentFlow::class.java.isAssignableFrom(this)

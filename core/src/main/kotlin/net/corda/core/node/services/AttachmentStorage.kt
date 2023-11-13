@@ -3,16 +3,12 @@ package net.corda.core.node.services
 
 import net.corda.core.DoNotImplement
 import net.corda.core.contracts.Attachment
-import net.corda.core.crypto.SecureHash
 import net.corda.core.internal.cordapp.CordappImpl.Companion.DEFAULT_CORDAPP_VERSION
 import net.corda.core.node.services.vault.AttachmentQueryCriteria
 import net.corda.core.node.services.vault.AttachmentSort
 import java.io.IOException
 import java.io.InputStream
 import java.nio.file.FileAlreadyExistsException
-
-typealias AttachmentId = SecureHash
-typealias AttachmentFixup = Pair<Set<AttachmentId>, Set<AttachmentId>>
 
 /**
  * An attachment store records potentially large binary objects, identified by their hash.

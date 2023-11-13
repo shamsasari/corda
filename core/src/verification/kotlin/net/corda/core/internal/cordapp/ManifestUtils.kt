@@ -1,9 +1,10 @@
 package net.corda.core.internal.cordapp
 
-import net.corda.core.internal.cordapp.CordappImpl.Companion.MIN_PLATFORM_VERSION
-import net.corda.core.internal.cordapp.CordappImpl.Companion.TARGET_PLATFORM_VERSION
 import java.util.jar.Attributes
 import java.util.jar.Manifest
+
+const val TARGET_PLATFORM_VERSION = "Target-Platform-Version"
+const val MIN_PLATFORM_VERSION = "Min-Platform-Version"
 
 operator fun Manifest.set(key: String, value: String): String? = mainAttributes.putValue(key, value)
 
