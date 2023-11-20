@@ -18,8 +18,6 @@ apply plugin: 'idea'
 apply plugin: 'net.corda.plugins.quasar-utils'
 apply plugin: 'application'
 
-mainClassName = 'net.corda.irs.IRSDemo'
-
 sourceSets {
     slowIntegrationTest {
         kotlin {
@@ -76,12 +74,13 @@ bootJar {
     enabled = false
 }
 
-task slowIntegrationTest(type: Test, dependsOn: []) {
+tasks.register('slowIntegrationTest', Test) {
     testClassesDirs = sourceSets.slowIntegrationTest.output.classesDirs
     classpath = sourceSets.slowIntegrationTest.runtimeClasspath
 }
 
-task systemTest(type: Test, dependsOn: ["cordapp:prepareDockerNodes", "web:generateDockerCompose"]) {
+tasks.register('systemTest', Test) {
+    dependsOn("cordapp:prepareDockerNodes", "web:generateDockerCompose")
     testClassesDirs = sourceSets.systemTest.output.classesDirs
     classpath = sourceSets.systemTest.runtimeClasspath
 

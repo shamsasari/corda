@@ -1,4 +1,4 @@
-@file:JvmName("InternalUtils")
+@file:Suppress("MagicNumber")
 package net.corda.core.internal
 
 import net.corda.core.crypto.Crypto
@@ -26,18 +26,15 @@ import java.io.InputStream
 import java.lang.reflect.Field
 import java.lang.reflect.Member
 import java.lang.reflect.Modifier
-import java.math.BigDecimal
 import java.net.HttpURLConnection
 import java.net.HttpURLConnection.HTTP_MOVED_PERM
 import java.net.HttpURLConnection.HTTP_OK
 import java.net.Proxy
-import java.net.URI
 import java.net.URL
 import java.nio.ByteBuffer
 import java.nio.file.CopyOption
 import java.nio.file.Files
 import java.nio.file.Path
-import java.nio.file.Paths
 import java.security.KeyPair
 import java.security.MessageDigest
 import java.security.PrivateKey
@@ -64,6 +61,8 @@ import java.util.Spliterator.SUBSIZED
 import java.util.Spliterators
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.TimeUnit
+import java.util.jar.JarEntry
+import java.util.jar.JarInputStream
 import java.util.stream.Collectors
 import java.util.stream.Collectors.toCollection
 import java.util.stream.IntStream
@@ -72,6 +71,7 @@ import java.util.stream.StreamSupport
 import java.util.zip.Deflater
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
+import kotlin.io.path.toPath
 import kotlin.math.roundToLong
 import kotlin.reflect.KClass
 import kotlin.reflect.full.createInstance
@@ -94,8 +94,8 @@ infix fun Temporal.until(endExclusive: Temporal): Duration = Duration.between(th
 operator fun Duration.div(divider: Long): Duration = dividedBy(divider)
 operator fun Duration.times(multiplicand: Long): Duration = multipliedBy(multiplicand)
 operator fun Duration.times(multiplicand: Double): Duration = Duration.ofNanos((toNanos() * multiplicand).roundToLong())
-fun min(d1: Duration, d2: Duration): Duration = if (d1 <= d2) d1 else d2
 
+fun min(d1: Duration, d2: Duration): Duration = if (d1 <= d2) d1 else d2
 
 /**
  * Returns the single element matching the given [predicate], or `null` if the collection is empty, or throws exception
@@ -125,15 +125,6 @@ fun <T> List<T>.noneOrSingle(): T? {
     }
 }
 
-/** Returns a random element in the list, or `null` if empty */
-fun <T> List<T>.randomOrNull(): T? {
-    return when (size) {
-        0 -> null
-        1 -> this[0]
-        else -> this[(Math.random() * size).toInt()]
-    }
-}
-
 /** Returns the index of the given item or throws [IllegalArgumentException] if not found. */
 fun <T> List<T>.indexOfOrThrow(item: T): Int {
     val i = indexOf(item)
@@ -145,13 +136,15 @@ fun <T> List<T>.indexOfOrThrow(item: T): Int {
  * Similar to [Iterable.map] except it maps to a [Set] which preserves the iteration order.
  */
 inline fun <T, R> Iterable<T>.mapToSet(transform: (T) -> R): Set<R> {
-    if (this is Collection) {
+    return if (this is Collection) {
         when (size) {
-            0 -> return emptySet()
-            1 -> return setOf(transform(if (this is List) get(0) else iterator().next()))
+            0 -> emptySet()
+            1 -> setOf(transform(first()))
+            else -> mapTo(LinkedHashSet(mapCapacity(size)), transform)
         }
+    } else {
+        mapTo(LinkedHashSet(), transform)
     }
-    return mapTo(LinkedHashSet(), transform)
 }
 
 /**
@@ -162,6 +155,16 @@ inline fun <T, R> Iterable<T>.flatMapToSet(transform: (T) -> Iterable<R>): Set<R
         emptySet()
     } else {
         flatMapTo(LinkedHashSet(), transform)
+    }
+}
+
+private const val INT_MAX_POWER_OF_TWO: Int = Int.MAX_VALUE / 2 + 1
+
+fun mapCapacity(expectedSize: Int): Int {
+    return when {
+        expectedSize < 3 -> expectedSize + 1
+        expectedSize < INT_MAX_POWER_OF_TWO -> expectedSize + expectedSize / 3
+        else -> Int.MAX_VALUE  // any large value
     }
 }
 
@@ -188,10 +191,9 @@ fun InputStream.hash(): SecureHash {
 
 inline fun <reified T : Any> InputStream.readObject(): T = readFully().deserialize()
 
-fun String.abbreviate(maxWidth: Int): String = if (length <= maxWidth) this else take(maxWidth - 1) + "…"
+fun JarInputStream.entries(): Sequence<JarEntry> = generateSequence(nextJarEntry) { nextJarEntry }
 
-/** Return the sum of an Iterable of [BigDecimal]s. */
-fun Iterable<BigDecimal>.sum(): BigDecimal = fold(BigDecimal.ZERO) { a, b -> a + b }
+fun String.abbreviate(maxWidth: Int): String = if (length <= maxWidth) this else take(maxWidth - 1) + "…"
 
 /**
  * Returns an Observable that buffers events until subscribed.
@@ -385,17 +387,10 @@ class DeclaredField<T>(clazz: Class<*>, name: String, private val receiver: Any?
     val name: String = javaField.name
 
     private fun <RESULT> Field.accessible(action: Field.() -> RESULT): RESULT {
-        @Suppress("DEPRECATION")    // JDK11: isAccessible() should be replaced with canAccess() (since 9)
-        val accessible = isAccessible
         isAccessible = true
-        try {
-            return action(this)
-        } finally {
-            isAccessible = accessible
-        }
+        return action(this)
     }
 
-    @Throws(NoSuchFieldException::class)
     private fun findField(fieldName: String, clazz: Class<*>?): Field {
         if (clazz == null) {
             throw NoSuchFieldException(fieldName)
@@ -450,8 +445,6 @@ inline val Member.isPublic: Boolean get() = Modifier.isPublic(modifiers)
 inline val Member.isStatic: Boolean get() = Modifier.isStatic(modifiers)
 
 inline val Member.isFinal: Boolean get() = Modifier.isFinal(modifiers)
-
-fun URI.toPath(): Path = Paths.get(this)
 
 fun URL.toPath(): Path = toURI().toPath()
 

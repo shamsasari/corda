@@ -23,7 +23,6 @@ import net.corda.core.internal.errors.AddressBindingException
 import net.corda.core.internal.exists
 import net.corda.core.internal.isDirectory
 import net.corda.core.internal.location
-import net.corda.core.internal.randomOrNull
 import net.corda.core.internal.safeSymbolicRead
 import net.corda.core.utilities.Try
 import net.corda.core.utilities.contextLogger
@@ -51,7 +50,6 @@ import net.corda.node.services.config.shouldStartLocalShell
 import net.corda.node.utilities.registration.NodeRegistrationException
 import net.corda.nodeapi.internal.JVMAgentUtilities
 import net.corda.nodeapi.internal.addShutdownHook
-import net.corda.nodeapi.internal.persistence.CouldNotCreateDataSourceException
 import net.corda.nodeapi.internal.persistence.DatabaseIncompatibleException
 import org.fusesource.jansi.Ansi
 import org.slf4j.bridge.SLF4JBridgeHandler
@@ -217,7 +215,7 @@ open class NodeStartup : NodeStartupLogging {
         if (requireCertificates && !canReadCertificatesDirectory(configuration.certificatesDirectory, configuration.devMode)) return ExitCodes.FAILURE
 
         // Step 7. Configuring special serialisation requirements, i.e., bft-smart relies on Java serialization.
-        if (attempt { banJavaSerialisation(configuration) }.doOnFailure(Consumer { error -> error.logAsUnexpected("Exception while configuring serialisation") }) !is Try.Success) return ExitCodes.FAILURE
+        if (attempt { banJavaSerialisation(configuration) }.doOnFailure { error -> error.logAsUnexpected("Exception while configuring serialisation") } !is Try.Success) return ExitCodes.FAILURE
 
         // Step 8. Any actions required before starting up the Corda network layer.
         if (attempt { preNetworkRegistration(configuration) }.doOnFailure(Consumer(::handleRegistrationError)) !is Try.Success) return ExitCodes.FAILURE
@@ -278,7 +276,7 @@ open class NodeStartup : NodeStartupLogging {
         logger.info("Platform Version: ${versionInfo.platformVersion}")
         logger.info("Revision: ${versionInfo.revision}")
         val info = ManagementFactory.getRuntimeMXBean()
-        logger.info("PID: ${info.name.split("@").firstOrNull()}")  // TODO Java 9 has better support for this
+        logger.info("PID: ${ProcessHandle.current().pid()}")
         logger.info("Main class: ${NodeConfiguration::class.java.location.toURI().path}")
         logger.info("CommandLine Args: ${info.inputArguments.joinToString(" ")}")
         // JDK 11 (bootclasspath no longer supported from JDK 9)
@@ -515,7 +513,6 @@ interface NodeStartupLogging {
         when {
             error is ErrorCode<*> -> logger.report(error)
             error.isExpectedWhenStartingNode() -> error.logAsExpected()
-            error is CouldNotCreateDataSourceException -> error.logAsUnexpected()
             error is Errors.NativeIoException && error.message?.contains("Address already in use") == true -> error.logAsExpected("One of the ports required by the Corda node is already in use.")
             error is Errors.NativeIoException && error.message?.contains("Can't assign requested address") == true -> error.logAsExpected("Exception during node startup. Check that addresses in node config resolve correctly.")
             error is UnresolvedAddressException -> error.logAsExpected("Exception during node startup. Check that addresses in node config resolve correctly.")
@@ -541,14 +538,14 @@ fun CliWrapperBase.initLogging(baseDirectory: Path): Boolean {
     try {
         logPath.safeSymbolicRead().createDirectories()
     } catch (e: IOException) {
-        printError("Unable to create logging directory ${logPath.toString()}. Node will now shutdown.")
+        printError("Unable to create logging directory $logPath. Node will now shutdown.")
         return false
     } catch (e: SecurityException) {
-        printError("Current user is unable to access logging directory ${logPath.toString()}. Node will now shutdown.")
+        printError("Current user is unable to access logging directory $logPath. Node will now shutdown.")
         return false
     }
     if (!logPath.isDirectory()) {
-        printError("Unable to access logging directory ${logPath.toString()}. Node will now shutdown.")
+        printError("Unable to access logging directory $logPath. Node will now shutdown.")
         return false
     }
 

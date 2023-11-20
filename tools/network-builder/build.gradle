@@ -21,7 +21,6 @@ ext {
 
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'idea'
-apply plugin: 'java'
 apply plugin: 'application'
 // We need to set mainClassName before applying the shadow plugin.
 mainClassName = 'net.corda.networkbuilder.Main'
@@ -77,9 +76,9 @@ processResources {
 }
 
 shadowJar {
-    baseName = 'network-builder'
+    archiveBaseName = 'network-builder'
     archiveClassifier = jdkClassifier
-    version = null
+    archiveVersion = null
     zip64 true
 }
 

@@ -8,8 +8,8 @@ import net.corda.core.contracts.TransactionVerificationException
 import net.corda.core.contracts.TransactionVerificationException.OverlappingAttachmentsException
 import net.corda.core.contracts.TransactionVerificationException.PackageOwnershipException
 import net.corda.core.crypto.SecureHash
-import net.corda.core.internal.JDK1_2_CLASS_FILE_FORMAT_MAJOR_VERSION
 import net.corda.core.internal.JDK11_CLASS_FILE_FORMAT_MAJOR_VERSION
+import net.corda.core.internal.JDK1_2_CLASS_FILE_FORMAT_MAJOR_VERSION
 import net.corda.core.internal.JarSignatureCollector
 import net.corda.core.internal.NamedCacheFactory
 import net.corda.core.internal.PlatformVersionSwitches
@@ -17,6 +17,7 @@ import net.corda.core.internal.VisibleForTesting
 import net.corda.core.internal.cordapp.targetPlatformVersion
 import net.corda.core.internal.createInstancesOfClassesImplementing
 import net.corda.core.internal.createSimpleCache
+import net.corda.core.internal.entries
 import net.corda.core.internal.toSynchronised
 import net.corda.core.node.NetworkParameters
 import net.corda.core.serialization.AMQP_ENVELOPE_CACHE_INITIAL_CAPACITY
@@ -48,7 +49,6 @@ import java.util.ServiceLoader
 import java.util.WeakHashMap
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.atomic.AtomicLong
-import java.util.function.Function
 import kotlin.collections.component1
 import kotlin.collections.component2
 import kotlin.collections.set
@@ -118,16 +118,11 @@ class AttachmentsClassLoader(attachments: List<Attachment>,
                     // Reset the value to prevent Error due to a factory already defined
                     factoryField.set(null, null)
                     // Set our custom factory and wrap the current one into it
-                    URL.setURLStreamHandlerFactory(
-                            // Set the factory to a decorator
-                            object : URLStreamHandlerFactory {
-                                // route between our own and the pre-existing factory
-                                override fun createURLStreamHandler(protocol: String): URLStreamHandler? {
-                                    return AttachmentURLStreamHandlerFactory.createURLStreamHandler(protocol)
-                                            ?: existingFactory.createURLStreamHandler(protocol)
-                                }
-                            }
-                    )
+                    URL.setURLStreamHandlerFactory { protocol ->
+                        // Set the factory to a decorator
+                        AttachmentURLStreamHandlerFactory.createURLStreamHandler(protocol)
+                                ?: existingFactory.createURLStreamHandler(protocol)
+                    }
                 }
             }
         }
@@ -158,9 +153,7 @@ class AttachmentsClassLoader(attachments: List<Attachment>,
         checkAttachments(attachments)
     }
 
-    private class AttachmentHashContext(
-            val txId: SecureHash,
-            val buffer: ByteArray = ByteArray(DEFAULT_BUFFER_SIZE))
+    private class AttachmentHashContext(val buffer: ByteArray = ByteArray(DEFAULT_BUFFER_SIZE))
 
     private fun hash(inputStream : InputStream, ctx : AttachmentHashContext) : SecureHash.SHA256 {
         val md = MessageDigest.getInstance(SecureHash.SHA2_256)
@@ -177,13 +170,7 @@ class AttachmentsClassLoader(attachments: List<Attachment>,
     }
 
     private fun containsClasses(attachment: Attachment): Boolean {
-        attachment.openAsJAR().use { jar ->
-            while (true) {
-                val entry = jar.nextJarEntry ?: return false
-                if (entry.name.endsWith(".class", ignoreCase = true)) return true
-            }
-        }
-        return false
+        return attachment.openAsJAR().use { it.entries().any { entry -> entry.name.endsWith(".class", ignoreCase = true) } }
     }
 
     // This function attempts to strike a balance between security and usability when it comes to the no-overlap rule.
@@ -234,7 +221,7 @@ class AttachmentsClassLoader(attachments: List<Attachment>,
         // claim their parts of the Java package namespace via registration with the zone operator.
 
         val classLoaderEntries = mutableMapOf<String, SecureHash>()
-        val ctx = AttachmentHashContext(sampleTxId)
+        val ctx = AttachmentHashContext()
         for (attachment in attachments) {
             // We may have been given an attachment loaded from the database in which case, important info like
             // signers is already calculated.
@@ -358,7 +345,7 @@ object AttachmentsClassLoaderBuilder {
         val attachmentIds = attachments.mapTo(LinkedHashSet(), Attachment::id)
 
         val cache = attachmentsClassLoaderCache ?: fallBackCache
-        val cachedSerializationContext = cache.computeIfAbsent(AttachmentsClassLoaderKey(attachmentIds, params), Function { key ->
+        val cachedSerializationContext = cache.computeIfAbsent(AttachmentsClassLoaderKey(attachmentIds, params)) { key ->
             // Create classloader and load serializers, whitelisted classes
             val transactionClassLoader = AttachmentsClassLoader(attachments, key.params, txId, isAttachmentTrusted, parent)
             val serializers = try {
@@ -380,9 +367,9 @@ object AttachmentsClassLoaderBuilder {
                     .withWhitelist(whitelistedClasses)
                     .withCustomSerializers(serializers)
                     .withoutCarpenter()
-        })
+        }
 
-        val serializationContext = cachedSerializationContext.withProperties(mapOf<Any, Any>(
+        val serializationContext = cachedSerializationContext.withProperties(mapOf(
                 // Duplicate the SerializationContext from the cache and give
                 // it these extra properties, just for this transaction.
                 // However, keep a strong reference to the cached SerializationContext so we can
@@ -405,21 +392,21 @@ object AttachmentsClassLoaderBuilder {
  * This will not be exposed as an API.
  */
 object AttachmentURLStreamHandlerFactory : URLStreamHandlerFactory {
-    internal const val attachmentScheme = "attachment"
+    internal const val ATTACHMENT_SCHEME = "attachment"
 
     private val uniqueness = AtomicLong(0)
 
     private val loadedAttachments: AttachmentsHolder = AttachmentsHolderImpl()
 
     override fun createURLStreamHandler(protocol: String): URLStreamHandler? {
-        return if (attachmentScheme == protocol) {
+        return if (ATTACHMENT_SCHEME == protocol) {
             AttachmentURLStreamHandler
         } else null
     }
 
     @Synchronized
     fun toUrl(attachment: Attachment): URL {
-        val uniqueURL = URL(attachmentScheme, "", -1, attachment.id.toString()+ "?" + uniqueness.getAndIncrement(), AttachmentURLStreamHandler)
+        val uniqueURL = URL(ATTACHMENT_SCHEME, "", -1, "${attachment.id}?${uniqueness.getAndIncrement()}", AttachmentURLStreamHandler)
         loadedAttachments[uniqueURL] = attachment
         return uniqueURL
     }
@@ -429,19 +416,19 @@ object AttachmentURLStreamHandlerFactory : URLStreamHandlerFactory {
 
     private object AttachmentURLStreamHandler : URLStreamHandler() {
         override fun openConnection(url: URL): URLConnection {
-            if (url.protocol != attachmentScheme) throw IOException("Cannot handle protocol: ${url.protocol}")
+            if (url.protocol != ATTACHMENT_SCHEME) throw IOException("Cannot handle protocol: ${url.protocol}")
             val attachment = loadedAttachments[url] ?: throw IOException("Could not load url: $url .")
             return AttachmentURLConnection(url, attachment)
         }
 
         override fun equals(attachmentUrl: URL, otherURL: URL?): Boolean {
             if (attachmentUrl.protocol != otherURL?.protocol) return false
-            if (attachmentUrl.protocol != attachmentScheme) throw IllegalArgumentException("Cannot handle protocol: ${attachmentUrl.protocol}")
+            require(attachmentUrl.protocol == ATTACHMENT_SCHEME) { "Cannot handle protocol: ${attachmentUrl.protocol}" }
             return attachmentUrl.file == otherURL?.file
         }
 
         override fun hashCode(url: URL): Int {
-            if (url.protocol != attachmentScheme) throw IllegalArgumentException("Cannot handle protocol: ${url.protocol}")
+            require (url.protocol == ATTACHMENT_SCHEME) { "Cannot handle protocol: ${url.protocol}" }
             return url.file.hashCode()
         }
     }
@@ -473,7 +460,10 @@ private class AttachmentsHolderImpl : AttachmentsHolder {
 }
 
 interface AttachmentsClassLoaderCache {
-    fun computeIfAbsent(key: AttachmentsClassLoaderKey, mappingFunction: Function<in AttachmentsClassLoaderKey, out SerializationContext>): SerializationContext
+    fun computeIfAbsent(
+            key: AttachmentsClassLoaderKey,
+            mappingFunction: (AttachmentsClassLoaderKey) -> SerializationContext
+    ): SerializationContext
 }
 
 class AttachmentsClassLoaderCacheImpl(cacheFactory: NamedCacheFactory) : SingletonSerializeAsToken(), AttachmentsClassLoaderCache {
@@ -522,18 +512,23 @@ class AttachmentsClassLoaderCacheImpl(cacheFactory: NamedCacheFactory) : Singlet
             }, "AttachmentsClassLoader_cache"
     )
 
-    override fun computeIfAbsent(key: AttachmentsClassLoaderKey, mappingFunction: Function<in AttachmentsClassLoaderKey, out SerializationContext>): SerializationContext {
+    override fun computeIfAbsent(
+            key: AttachmentsClassLoaderKey,
+            mappingFunction: (AttachmentsClassLoaderKey) -> SerializationContext
+    ): SerializationContext {
         purgeExpiryQueue()
         return cache.get(key, mappingFunction)  ?: throw NullPointerException("null returned from cache mapping function")
     }
 }
 
 class AttachmentsClassLoaderSimpleCacheImpl(cacheSize: Int) : AttachmentsClassLoaderCache {
-
     private val cache: MutableMap<AttachmentsClassLoaderKey, SerializationContext>
             = createSimpleCache<AttachmentsClassLoaderKey, SerializationContext>(cacheSize).toSynchronised()
 
-    override fun computeIfAbsent(key: AttachmentsClassLoaderKey, mappingFunction: Function<in AttachmentsClassLoaderKey, out SerializationContext>): SerializationContext {
+    override fun computeIfAbsent(
+            key: AttachmentsClassLoaderKey,
+            mappingFunction: (AttachmentsClassLoaderKey) -> SerializationContext
+    ): SerializationContext {
         return cache.computeIfAbsent(key, mappingFunction)
     }
 }

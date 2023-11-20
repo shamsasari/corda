@@ -14,6 +14,7 @@ import net.corda.core.internal.AttachmentTrustCalculator
 import net.corda.core.internal.SerializedTransactionState
 import net.corda.core.internal.TRUSTED_UPLOADERS
 import net.corda.core.internal.cordapp.CordappProviderInternal
+import net.corda.core.internal.entries
 import net.corda.core.internal.getRequiredTransaction
 import net.corda.core.node.NetworkParameters
 import net.corda.core.node.ServiceHub
@@ -35,7 +36,6 @@ import net.corda.core.transactions.NotaryChangeWireTransaction
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.WireTransaction
 import java.security.PublicKey
-import java.util.jar.JarInputStream
 
 @Suppress("TooManyFunctions", "ThrowsCount")
 interface VerifyingServiceHub : ServiceHub, VerificationSupport {
@@ -52,7 +52,8 @@ interface VerifyingServiceHub : ServiceHub, VerificationSupport {
 
     private fun loadContractAttachment(stateRef: StateRef, forContractClassName: String?): Attachment {
         val stx = getRequiredTransaction(stateRef.txhash)
-        return when (val ctx = stx.coreTransaction) {
+        val ctx = stx.coreTransaction
+        return when (ctx) {
             is WireTransaction -> {
                 val contractClassName = forContractClassName ?: ctx.outRef<ContractState>(stateRef.index).state.contract
                 ctx.attachments
@@ -164,19 +165,12 @@ interface VerifyingServiceHub : ServiceHub, VerificationSupport {
         // TODO - add caching if performance is affected.
         for (attId in allTrusted) {
             val attch = attachments.openAttachment(attId)!!
-            if (attch.openAsJAR().use { hasFile(it, "$className.class") }) return attch
+            if (attch.hasFile("$className.class")) return attch
         }
         return null
     }
 
-    private fun hasFile(jarStream: JarInputStream, className: String): Boolean {
-        while (true) {
-            val e = jarStream.nextJarEntry ?: return false
-            if (e.name == className) {
-                return true
-            }
-        }
-    }
+    private fun Attachment.hasFile(className: String): Boolean = openAsJAR().use { it.entries().any { entry -> entry.name == className } }
 
     override fun isAttachmentTrusted(attachment: Attachment): Boolean = attachmentTrustCalculator.calculate(attachment)
 

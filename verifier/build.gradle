@@ -1,6 +1,14 @@
+import static org.joor.Reflect.onClass
+
+buildscript {
+    dependencies {
+        classpath "org.jooq:joor:0.9.15"
+    }
+}
+
 plugins {
-    id "org.jetbrains.kotlin.jvm"
     id "application"
+    id "net.corda.plugins.quasar-utils"
     id "com.github.johnrengelman.shadow"
 }
 
@@ -8,13 +16,97 @@ application {
     mainClass.set("net.corda.verifier.Main")
 }
 
+sourceSets {
+    main {
+        java {
+            srcDir("src/main/kotlin")
+            // The verifier needs to have 1.2 versions of core and serialisation, so we add their source directories to the verifier's and
+            // compile them together with the verifier code.
+            srcDir("../core/src/main/java")
+            srcDir("../core/src/main/kotlin")
+            srcDir("../serialization/src/main/java")
+            srcDir("../serialization/src/main/kotlin")
+            compiledBy("compileKotlin")
+        }
+    }
+}
+
+configurations {
+    resolveableImplementation {
+        extendsFrom(implementation)
+        canBeResolved = true
+    }
+    kotlinCompiler
+}
+
 dependencies {
-    implementation project(":core")
-    implementation project(":serialization")
+    def kotlinVersion = "1.2.71"
+
+    implementation(project(":core")) {
+        exclude(group: "org.jetbrains.kotlin")
+    }
+    implementation(project(":serialization")) {
+        exclude(group: "org.jetbrains.kotlin")
+    }
+    implementation "org.jetbrains.kotlin:kotlin-stdlib-jdk8:$kotlinVersion"
+    implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlinVersion"
     implementation "com.github.ben-manes.caffeine:caffeine:$caffeine_version"
+    implementation "io.reactivex:rxjava:$rxjava_version"
+    implementation "com.google.code.findbugs:jsr305:$jsr305_version"
     implementation "org.slf4j:jul-to-slf4j:$slf4j_version"
 
-    runtimeOnly "org.apache.logging.log4j:log4j-slf4j-impl:${log4j_version}"
+    runtimeOnly "org.apache.logging.log4j:log4j-slf4j-impl:$log4j_version"
+
+    kotlinCompiler "org.jetbrains.kotlin:kotlin-compiler:$kotlinVersion"
+}
+
+// The external verifier needs to use Kotlin 1.2. However, the 1.2 plugin only works with a very old version of Gradle (which itself will
+// only work on Java 8). So we forgo the plugin entirely and call the 1.2 compiler directly.
+def compileKotlin = tasks.register("compileKotlin", AbstractCompile) { task ->
+    task.source(sourceSets.main.allJava)
+    def excludeJars = files(tasks.findByPath(":core:jar"), tasks.findByPath(":serialization:jar"))
+    // Normally we would have used `sourceSets.main.compileClasspath` to get the necessary compile classpath. However, the `implementation`
+    // configuration does not add transitive dependencies to the compile classpath, only to the runtime classpath. We could try to use
+    // `implementation` directly, but it's not "resolveable", so we create a configuration which is.
+    // Next, we don't want to include the compiled artifacts of the core and serialization modules, as they are not compiled in the Kotlin
+    // version we need here, and the 1.2 compiler complains on the version mismatch.
+    task.classpath = configurations.resolveableImplementation - excludeJars
+    task.destinationDirectory.set(project.layout.buildDirectory.dir("classes/kotlin/main"))
+    sourceSets.main.output.dir(task.destinationDirectory)
+
+    doLast {
+        def args = [
+                "-jvm-target", "1.8",
+                "-language-version", "1.2",
+                "-api-version", "1.2",
+                "-java-parameters",
+                "-Xjvm-default=compatibility",
+                "-no-stdlib",
+                "-Xallow-kotlin-package",
+                "-cp", task.classpath.asPath,
+                "-d", task.destinationDirectory.get().asFile.absolutePath
+        ]
+        // Specify the Kotlin source directories to compile. This list includes dependent Java sources as well. kotlinc doesn't obviously
+        // compile those but is able to use them when Java code is referenced.
+        args.addAll(sourceSets.main.allJava.srcDirs.findAll { it.exists() }.collect { it.absolutePath })
+
+        logger.info("args: {}", args)
+
+        // We need to load the 1.2 compiler in a separate classloader as the build classpath is contaminated with another version
+        def compilerClassLoader = new URLClassLoader(configurations.kotlinCompiler.collect { it.toURI().toURL() } as URL[])
+        def exitCode = onClass("org.jetbrains.kotlin.cli.jvm.K2JVMCompiler", compilerClassLoader)
+                .create()
+                .call("exec", System.err, args as String[])
+                .get()
+        if (exitCode.toString() != "OK") {
+            throw new GradleException("Compilation error. See log for more details")
+        }
+    }
+}
+
+// Compiling the Java code needs the compiled Kotlin code first
+tasks.withType(JavaCompile).named("compileJava") {
+    classpath += files(compileKotlin.map { it.destinationDirectory })
 }
 
 jar {

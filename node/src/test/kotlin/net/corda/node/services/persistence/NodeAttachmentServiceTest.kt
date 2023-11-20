@@ -4,8 +4,6 @@ import co.paralleluniverse.fibers.Suspendable
 import com.codahale.metrics.MetricRegistry
 import com.google.common.jimfs.Configuration
 import com.google.common.jimfs.Jimfs
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import net.corda.core.contracts.ContractAttachment
 import net.corda.core.crypto.Crypto
 import net.corda.core.crypto.DigestService
@@ -13,8 +11,19 @@ import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.randomHash
 import net.corda.core.crypto.sha256
 import net.corda.core.flows.FlowLogic
-import net.corda.core.internal.*
+import net.corda.core.internal.DEPLOYED_CORDAPP_UPLOADER
+import net.corda.core.internal.P2P_UPLOADER
+import net.corda.core.internal.RPC_UPLOADER
+import net.corda.core.internal.TRUSTED_UPLOADERS
+import net.corda.core.internal.UNKNOWN_UPLOADER
 import net.corda.core.internal.cordapp.CordappImpl.Companion.DEFAULT_CORDAPP_VERSION
+import net.corda.core.internal.hash
+import net.corda.core.internal.inputStream
+import net.corda.core.internal.outputStream
+import net.corda.core.internal.read
+import net.corda.core.internal.readAll
+import net.corda.core.internal.readFully
+import net.corda.core.internal.writeLines
 import net.corda.core.node.ServicesForResolution
 import net.corda.core.node.services.AttachmentId
 import net.corda.core.node.services.vault.AttachmentQueryCriteria.AttachmentsQueryCriteria
@@ -22,6 +31,7 @@ import net.corda.core.node.services.vault.AttachmentSort
 import net.corda.core.node.services.vault.Builder
 import net.corda.core.node.services.vault.Sort
 import net.corda.core.utilities.getOrThrow
+import net.corda.coretesting.internal.rigorousMock
 import net.corda.node.services.transactions.PersistentUniquenessProvider
 import net.corda.nodeapi.exceptions.DuplicateAttachmentException
 import net.corda.nodeapi.internal.persistence.CordaPersistence
@@ -36,16 +46,20 @@ import net.corda.testing.core.internal.SelfCleaningDir
 import net.corda.testing.internal.LogHelper
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
-import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.startFlow
-import org.assertj.core.api.Assertions.*
+import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
+import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
+import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.After
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Test
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
@@ -54,12 +68,15 @@ import java.nio.charset.StandardCharsets
 import java.nio.file.FileAlreadyExistsException
 import java.nio.file.FileSystem
 import java.nio.file.Path
-import java.util.*
+import java.util.Random
 import java.util.jar.JarEntry
 import java.util.jar.JarInputStream
 import java.util.jar.JarOutputStream
 import java.util.jar.Manifest
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFailsWith
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNull
 
 class NodeAttachmentServiceTest {
 
@@ -750,16 +767,16 @@ class NodeAttachmentServiceTest {
 	fun `The strict JAR verification function fails signed JARs with removed or extra files that are valid according to the usual jarsigner`() {
 
         // Signed jar that has a modified file.
-        val changedFileJAR = this::class.java.getResource("/changed-file-signed-jar.jar")
+        val changedFileJAR = this::class.java.getResource("/changed-file-signed-jar.jar")!!
 
         // Signed jar with removed files.
-        val removedFilesJAR = this::class.java.getResource("/removed-files-signed-jar.jar")
+        val removedFilesJAR = this::class.java.getResource("/removed-files-signed-jar.jar")!!
 
         // Signed jar with extra files.
-        val extraFilesJAR = this::class.java.getResource("/extra-files-signed-jar.jar")
+        val extraFilesJAR = this::class.java.getResource("/extra-files-signed-jar.jar")!!
 
         // Valid signed jar with all files.
-        val legalJAR = this::class.java.getResource("/legal-signed-jar.jar")
+        val legalJAR = this::class.java.getResource("/legal-signed-jar.jar")!!
 
         fun URL.standardVerifyJar() = JarInputStream(this.openStream(), true).use { jar ->
             while (true) {

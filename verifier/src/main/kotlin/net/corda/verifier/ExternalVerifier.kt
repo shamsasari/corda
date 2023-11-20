@@ -49,8 +49,8 @@ import java.net.URLClassLoader
 import java.nio.file.Path
 import java.security.PublicKey
 import java.util.Optional
-import kotlin.io.path.div
-import kotlin.io.path.listDirectoryEntries
+import net.corda.core.internal.div
+import net.corda.core.internal.list
 
 @Suppress("TooGenericExceptionCaught", "MagicNumber")
 class ExternalVerifier(
@@ -123,7 +123,7 @@ class ExternalVerifier(
     }
 
     private fun createAppClassLoader(): ClassLoader {
-        val cordappJarUrls = (baseDirectory / "cordapps").listDirectoryEntries()
+        val cordappJarUrls = (baseDirectory / "cordapps").list()
                 .stream()
                 .filter { it.toString().endsWith(".jar") }
                 .map { it.toUri().toURL() }
@@ -212,7 +212,7 @@ class ExternalVerifier(
         override fun rpcServerSerializerFactory(context: SerializationContext) = throw UnsupportedOperationException()
 
         companion object {
-            inline fun <reified T> Set<String>?.load(classLoader: ClassLoader?): Set<T> {
+            inline fun <reified T : Any> Set<String>?.load(classLoader: ClassLoader?): Set<T> {
                 return this?.mapToSet { loadClassOfType<T>(it, classLoader = classLoader).kotlin.objectOrNewInstance() } ?: emptySet()
             }
         }
