@@ -6,7 +6,7 @@ import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.Phaser
 import kotlin.concurrent.thread
@@ -20,7 +20,7 @@ class InfrequentlyMutatedCacheTest {
             { null }, { null },
             NodeSchemaService(emptySet()))
 
-    @After
+    @AfterEach
     fun closeDatabase() {
         database.close()
     }

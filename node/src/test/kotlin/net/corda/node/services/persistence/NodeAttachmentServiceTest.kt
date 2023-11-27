@@ -41,7 +41,7 @@ import net.corda.testing.node.MockServices.Companion.makeTestDataSourcePropertie
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.*
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Ignore
@@ -98,7 +98,7 @@ class NodeAttachmentServiceTest {
         devModeStorage.servicesForResolution = services
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         database.close()
         fs.close()

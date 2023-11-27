@@ -5,7 +5,7 @@ import net.corda.common.logging.errorReporting.ErrorCode
 import net.corda.common.logging.errorReporting.ErrorCodes
 import net.corda.common.logging.errorReporting.ErrorContextProvider
 import net.corda.common.logging.errorReporting.ErrorReporterImpl
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.any
 import org.mockito.ArgumentMatchers.anyString
@@ -72,7 +72,7 @@ class ErrorReporterImplTest {
         return ErrorReporterImpl("errorReporting", locale, contextProvider)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         logs.clear()
     }

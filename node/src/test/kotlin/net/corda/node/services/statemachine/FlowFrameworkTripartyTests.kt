@@ -14,7 +14,7 @@ import net.corda.testing.node.InMemoryMessagingNetwork
 import net.corda.testing.node.internal.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.AssertionsForClassTypes
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
@@ -60,7 +60,7 @@ class FlowFrameworkTripartyTests {
         receivedSessionMessagesObservable().forEach { receivedSessionMessages += it }
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
         receivedSessionMessages.clear()

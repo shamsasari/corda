@@ -12,7 +12,7 @@ import net.corda.node.CordaClock
 import net.corda.node.SimpleClock
 import net.corda.node.services.events.NodeSchedulerService
 import net.corda.testing.node.TestClock
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.time.Clock
@@ -37,7 +37,7 @@ class ClockUtilsTest {
         executor = Executors.newSingleThreadExecutor()
     }
 
-    @After
+    @AfterEach
     fun teardown() {
         executor.shutdown()
     }

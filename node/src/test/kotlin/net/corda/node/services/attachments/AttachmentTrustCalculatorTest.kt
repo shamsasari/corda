@@ -20,7 +20,7 @@ import net.corda.testing.internal.configureDatabase
 import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -60,7 +60,7 @@ class AttachmentTrustCalculatorTest {
         attachmentTrustCalculator = NodeAttachmentTrustCalculator(storage, database, cacheFactory)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         database.close()
     }

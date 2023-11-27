@@ -5,7 +5,7 @@ import net.corda.core.serialization.internal.effectiveSerializationEnv
 import net.corda.node.services.messaging.Message
 import net.corda.coretesting.internal.rigorousMock
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
@@ -14,7 +14,7 @@ import kotlin.test.assertTrue
 class InternalMockNetworkTests {
     lateinit var mockNet: InternalMockNetwork
 
-    @After
+    @AfterEach
     fun tearDown() {
         if (this::mockNet.isInitialized) {
             mockNet.stopNodes()

@@ -9,7 +9,7 @@ import net.corda.testing.core.internal.JarSignatureTestUtils.addIndexList
 import net.corda.core.identity.Party
 import net.corda.core.internal.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -52,7 +52,7 @@ class JarSignatureCollectorTest {
 
     private val List<Party>.keys get() = map { it.owningKey }
 
-    @After
+    @AfterEach
     fun tearDown() {
         dir.list {
             it.filter { !it.fileName.toString().startsWith("_") }.forEach(Path::deleteRecursively)

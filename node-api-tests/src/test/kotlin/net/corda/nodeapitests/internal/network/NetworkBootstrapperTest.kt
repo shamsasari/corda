@@ -34,7 +34,7 @@ import net.corda.nodeapi.internal.network.TestContractsJar
 import net.corda.nodeapi.internal.network.verifiedNetworkParametersCert
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.AfterAll
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -102,14 +102,14 @@ class NetworkBootstrapperTest {
     private var providedCordaJar: ByteArray? = null
     private val configFiles = HashMap<Path, String>()
 
-    @After
+    @AfterEach
     fun `check config files are preserved`() {
         configFiles.forEach { file, text ->
             assertThat(file).hasContent(text)
         }
     }
 
-    @After
+    @AfterEach
     fun `check provided corda jar is preserved`() {
         if (providedCordaJar == null) {
             // Make sure we clean up if we used the embedded jar

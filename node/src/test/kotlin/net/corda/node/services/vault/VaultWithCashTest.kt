@@ -35,7 +35,7 @@ import net.corda.testing.node.MockServices.Companion.makeTestDatabaseAndMockServ
 import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -94,7 +94,7 @@ class VaultWithCashTest {
         notary = notaryServices.myInfo.legalIdentitiesAndCerts.single().party
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         LogHelper.reset(VaultWithCashTest::class)
         database.close()

@@ -32,7 +32,7 @@ import net.corda.testing.internal.configureDatabase
 import net.corda.testing.internal.createDevIntermediateCaCertPath
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -85,7 +85,7 @@ class PersistentIdentityServiceTests {
         networkMapCache = PersistentNetworkMapCache(cacheFactory, database, identityService)
     }
 
-    @After
+    @AfterEach
     fun shutdown() {
         database.close()
     }

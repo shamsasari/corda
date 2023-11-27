@@ -48,7 +48,7 @@ import org.apache.activemq.artemis.api.core.ActiveMQSecurityException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import rx.subjects.PublishSubject
@@ -89,7 +89,7 @@ class CordaRPCClientTest : NodeBasedTest(FINANCE_CORDAPPS, notaries = listOf(DUM
         identity = notaryNodes.first().info.identityFromX500Name(DUMMY_NOTARY_NAME)
     }
 
-    @After
+    @AfterEach
     fun done() {
         connection?.close()
     }

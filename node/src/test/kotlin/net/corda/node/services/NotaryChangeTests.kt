@@ -24,7 +24,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.*
 import net.corda.testing.node.internal.DUMMY_CONTRACTS_CORDAPP
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
@@ -59,7 +59,7 @@ class NotaryChangeTests {
         newNotaryParty = clientNodeA.services.networkMapCache.getNotary(newNotaryName)!!
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

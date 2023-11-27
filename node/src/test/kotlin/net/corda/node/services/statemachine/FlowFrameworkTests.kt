@@ -70,7 +70,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType
 import org.assertj.core.api.Condition
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
@@ -143,7 +143,7 @@ class FlowFrameworkTests {
         return mockNet.messagingNetwork.receivedMessages.toSessionTransfers()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
         receivedSessionMessages.clear()

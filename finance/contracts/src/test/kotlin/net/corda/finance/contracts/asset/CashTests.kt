@@ -31,7 +31,7 @@ import net.corda.testing.node.MockServices.Companion.makeTestDatabaseAndMockServ
 import net.corda.testing.node.ledger
 import net.corda.testing.node.makeTestIdentityService
 import net.corda.testing.node.transaction
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -119,7 +119,7 @@ class CashTests {
         )
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         database.close()
     }

@@ -57,7 +57,7 @@ import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.hamcrest.collection.IsIterableContainingInAnyOrder
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Rule
@@ -116,7 +116,7 @@ class NetworkMapUpdaterTest {
                 VersionInfo(1, "TEST", "TEST", "TEST")).apply { start(setOf(DEV_ROOT_CA.certificate)) }
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         updater?.close()
         fs.close()

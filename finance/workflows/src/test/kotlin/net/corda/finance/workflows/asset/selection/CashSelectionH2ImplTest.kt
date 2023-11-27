@@ -14,7 +14,7 @@ import net.corda.testing.node.MockNodeConfigOverrides
 import net.corda.testing.node.MockNodeParameters
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.util.Collections.nCopies
 import kotlin.test.assertNotNull
@@ -22,7 +22,7 @@ import kotlin.test.assertNotNull
 class CashSelectionH2ImplTest {
     private val mockNet = MockNetwork(MockNetworkParameters(threadPerNode = true, cordappsForAllNodes = FINANCE_CORDAPPS))
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

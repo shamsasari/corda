@@ -23,7 +23,7 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.anyOf
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.number.OrderingComparison.greaterThan
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert
 import org.junit.Before
 import org.junit.jupiter.api.Test
@@ -66,7 +66,7 @@ class IdentityServiceToStringShortMigrationTest {
         liquibaseDB.isAutoCommit = true
     }
 
-    @After
+    @AfterEach
     fun close() {
         contextTransactionOrNull?.close()
         cordaDB.close()

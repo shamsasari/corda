@@ -26,7 +26,7 @@ import net.corda.coretesting.internal.testThreadFactory
 import net.corda.testing.node.User
 import org.apache.commons.lang3.SystemUtils
 import org.apache.logging.log4j.Level
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
@@ -79,7 +79,7 @@ abstract class NodeBasedTest @JvmOverloads constructor(
      * Stops the network map node and all the nodes started by [startNode]. This is called automatically after each test
      * but can also be called manually within a test.
      */
-    @After
+    @AfterEach
     fun stopAllNodes() {
         val nodesToShut = nodes + notaryNodes
         val shutdownExecutor = Executors.newScheduledThreadPool(nodesToShut.size)

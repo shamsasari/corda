@@ -13,7 +13,7 @@ import net.corda.testing.core.SerializationEnvironmentRule
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.node.MockServices
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -50,7 +50,7 @@ class PublicKeyToOwningIdentityCacheImplTest {
         executor = Executors.newFixedThreadPool(2)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         database.close()
         executor.shutdown()

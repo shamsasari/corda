@@ -16,7 +16,7 @@ import net.corda.testing.core.*
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.ClassRule
 import org.junit.jupiter.api.Test
@@ -60,7 +60,7 @@ class PersistentIdentityMigrationNewTableTest {
         liquibaseDB.isAutoCommit = true
     }
 
-    @After
+    @AfterEach
     fun close() {
         cordaDB.close()
     }

@@ -42,7 +42,7 @@ import net.corda.smoketesting.NodeConfig
 import net.corda.smoketesting.NodeProcess
 import org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM
 import org.hamcrest.text.MatchesPattern
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -101,7 +101,7 @@ class StandaloneCordaRPClientTest {
         notaryNodeIdentity = rpcProxy.nodeInfo().legalIdentitiesAndCerts.first().party
     }
 
-    @After
+    @AfterEach
     fun done() {
         connection.use {
             notary.close()

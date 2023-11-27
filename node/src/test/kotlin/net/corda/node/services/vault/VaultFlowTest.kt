@@ -22,7 +22,7 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkNotarySpec
 import net.corda.testing.node.MockNodeParameters
 import net.corda.testing.node.StartedMockNode
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
@@ -52,7 +52,7 @@ class VaultFlowTest {
         mockNetwork.startNodes()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNetwork.stopNodes()
         StaffedFlowHospital.onFlowKeptForOvernightObservation.clear()

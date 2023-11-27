@@ -36,7 +36,7 @@ import net.corda.testing.driver.driver
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.findCordapp
 import org.assertj.core.api.Assertions
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 import java.sql.SQLException
@@ -60,7 +60,7 @@ class VaultObserverExceptionTest {
                 findCordapp("com.r3.dbfailure.schemas"))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         StaffedFlowHospital.DatabaseEndocrinologist.customConditions.clear()
         StaffedFlowHospital.onFlowKeptForOvernightObservation.clear()

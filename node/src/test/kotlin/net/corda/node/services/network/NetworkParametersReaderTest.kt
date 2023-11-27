@@ -22,7 +22,7 @@ import net.corda.nodeapi.internal.crypto.CertificateAndKeyPair
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.internal.network.NetworkMapServer
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -57,7 +57,7 @@ class NetworkParametersReaderTest {
         networkMapClient.start(setOf(DEV_ROOT_CA.certificate))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         server.close()
         fs.close()

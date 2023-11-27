@@ -31,7 +31,7 @@ import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.DUMMY_CONTRACTS_CORDAPP
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
@@ -77,7 +77,7 @@ class ResolveTransactionsFlowTest {
         newNotary = mockNet.notaryNodes[1].info.singleIdentity()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNet.stopNodes()
         System.setProperty("net.corda.node.dbtransactionsresolver.InMemoryResolutionLimit", "0")

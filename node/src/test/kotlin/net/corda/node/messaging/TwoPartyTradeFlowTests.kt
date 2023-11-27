@@ -77,7 +77,7 @@ import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
 import net.corda.testing.node.ledger
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
@@ -125,7 +125,7 @@ class TwoPartyTradeFlowTests(private val anonymous: Boolean) {
         LogHelper.setLevel("platform.trade", "core.contract.TransactionGroup", "recordingmap")
     }
 
-    @After
+    @AfterEach
     fun after() {
         if (::mockNet.isInitialized) {
             mockNet.stopNodes()

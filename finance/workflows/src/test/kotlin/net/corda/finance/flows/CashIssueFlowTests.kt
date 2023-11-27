@@ -12,7 +12,7 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -32,7 +32,7 @@ class CashIssueFlowTests {
         notary = mockNet.defaultNotaryIdentity
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

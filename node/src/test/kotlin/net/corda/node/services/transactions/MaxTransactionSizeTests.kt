@@ -23,7 +23,7 @@ import net.corda.testing.node.internal.DUMMY_CONTRACTS_CORDAPP
 import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.io.InputStream
@@ -53,7 +53,7 @@ class MaxTransactionSizeTests {
         bob = bobNode.info.singleIdentity()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

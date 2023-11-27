@@ -21,14 +21,14 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.MockNetworkNotarySpec
 import net.corda.testing.node.internal.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import rx.Observable
 
 class ReceiveFinalityFlowTest {
     private val mockNet = InternalMockNetwork(notarySpecs = listOf(MockNetworkNotarySpec(DUMMY_NOTARY_NAME, validating = false)))
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

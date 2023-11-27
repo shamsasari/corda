@@ -36,7 +36,7 @@ import net.corda.testing.core.SerializationEnvironmentRule
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.TestClock
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -95,7 +95,7 @@ class CheckpointDumperImplTest {
         file.deleteIfExists()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         database.close()
         baseDirectory.deleteRecursively()

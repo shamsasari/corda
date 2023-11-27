@@ -41,7 +41,7 @@ import net.corda.testing.node.MockServices.Companion.makeTestDataSourcePropertie
 import net.corda.testing.node.TestClock
 import net.corda.testing.node.internal.MockKeyManagementService
 import net.corda.testing.node.makeTestIdentityService
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -84,7 +84,7 @@ class UniquenessProviderTests(
         HashAgility.init(txHashAlgoName = digestService.hashAlgorithm)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         HashAgility.init()
         uniquenessProviderFactory.cleanUp()

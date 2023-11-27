@@ -23,7 +23,7 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.cordappWithPackages
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -40,7 +40,7 @@ class TransactionOrderingTests {
         )
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

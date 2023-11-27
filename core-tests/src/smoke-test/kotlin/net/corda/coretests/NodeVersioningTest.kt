@@ -11,7 +11,7 @@ import net.corda.nodeapi.internal.config.User
 import net.corda.smoketesting.NodeConfig
 import net.corda.smoketesting.NodeProcess
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
@@ -51,7 +51,7 @@ class NodeVersioningTest {
         notary = factory.create(notaryConfig)
     }
 
-    @After
+    @AfterEach
     fun done() {
         notary.close()
     }

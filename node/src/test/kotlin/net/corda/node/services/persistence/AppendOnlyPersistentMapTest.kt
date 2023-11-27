@@ -9,7 +9,7 @@ import net.corda.nodeapi.internal.persistence.RolledBackDatabaseSessionException
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.*
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
@@ -60,7 +60,7 @@ class AppendOnlyPersistentMapTest(var scenario: Scenario) {
             { null }, { null },
             NodeSchemaService(setOf(MappedSchema(AppendOnlyPersistentMapTest::class.java, 1, listOf(PersistentMapEntry::class.java)))))
 
-    @After
+    @AfterEach
     fun closeDatabase() {
         database.close()
     }

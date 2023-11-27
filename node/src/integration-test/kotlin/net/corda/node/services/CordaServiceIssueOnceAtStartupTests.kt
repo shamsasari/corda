@@ -24,7 +24,7 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
@@ -65,7 +65,7 @@ class CordaServiceIssueOnceAtStartupTests {
         }
     }
 
-    @After
+    @AfterEach
     fun testDown() {
         System.clearProperty(armedPropName)
         tmpFile.delete()

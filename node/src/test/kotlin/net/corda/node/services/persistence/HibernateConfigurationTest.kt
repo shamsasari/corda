@@ -159,7 +159,7 @@ class HibernateConfigurationTest {
 
     private fun sessionFactoryForSchemas(vararg schemas: MappedSchema) = hibernateConfig.sessionFactoryForSchemas(schemas.toSet())
     private fun consumeCash(amount: Amount<Currency>) = vaultFiller.consumeCash(amount, CHARLIE)
-    @After
+    @AfterEach
     fun cleanUp() {
         database.close()
     }

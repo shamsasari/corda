@@ -12,7 +12,7 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -29,7 +29,7 @@ class CustomSerializationSchemeMockNetworkTest {
         mockNetwork = InternalMockNetwork(cordappsForAllNodes = listOf(customSchemeCordapp))
     }
 
-    @After
+    @AfterEach
     fun shutdown() {
         mockNetwork.stopNodes()
     }

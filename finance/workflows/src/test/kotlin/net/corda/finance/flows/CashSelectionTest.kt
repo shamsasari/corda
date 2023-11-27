@@ -16,13 +16,13 @@ import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
 class CashSelectionTest {
     private val mockNet = InternalMockNetwork(cordappsForAllNodes = FINANCE_CORDAPPS, threadPerNode = true)
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

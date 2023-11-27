@@ -7,7 +7,7 @@ import com.typesafe.config.ConfigFactory
 import net.corda.core.internal.delete
 import net.corda.core.internal.div
 import net.corda.node.internal.Node
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Ignore
@@ -28,7 +28,7 @@ class ConfigHelperTests {
         baseDir = Files.createTempDirectory("corda_config")
     }
 
-    @After
+    @AfterEach
     fun cleanup() {
         baseDir?.delete()
     }

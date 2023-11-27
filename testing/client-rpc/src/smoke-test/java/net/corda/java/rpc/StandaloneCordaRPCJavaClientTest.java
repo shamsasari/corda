@@ -12,7 +12,7 @@ import net.corda.finance.flows.CashIssueFlow;
 import net.corda.nodeapi.internal.config.User;
 import net.corda.smoketesting.NodeConfig;
 import net.corda.smoketesting.NodeProcess;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
@@ -83,7 +83,7 @@ public class StandaloneCordaRPCJavaClientTest {
         notaryNodeIdentity = rpcProxy.nodeInfo().getLegalIdentities().get(0);
     }
 
-    @After
+    @AfterEach
     public void done() {
         try {
             connection.close();

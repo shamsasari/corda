@@ -24,7 +24,7 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.security.PublicKey
@@ -40,7 +40,7 @@ class CertificateRotationTest {
 
     private lateinit var mockNet: InternalMockNetwork
 
-    @After
+    @AfterEach
     fun tearDown() {
         if (::mockNet.isInitialized) {
             mockNet.stopNodes()

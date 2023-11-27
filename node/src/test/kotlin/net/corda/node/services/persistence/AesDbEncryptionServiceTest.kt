@@ -9,7 +9,7 @@ import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.nio.ByteBuffer
@@ -29,7 +29,7 @@ class AesDbEncryptionServiceTest {
         encryptionService.start(identity)
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         database.close()
     }

@@ -32,7 +32,7 @@ import net.corda.node.internal.NodeServicesForResolution
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.security.PublicKey
 import java.util.*
@@ -157,7 +157,7 @@ class VaultSoftLockManagerTest {
         verifyNoMoreInteractions(mockVault)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNet.stopNodes()
     }

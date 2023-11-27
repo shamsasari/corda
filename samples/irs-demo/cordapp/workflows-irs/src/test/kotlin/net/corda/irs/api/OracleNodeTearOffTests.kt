@@ -21,7 +21,7 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNodeParameters
 import net.corda.testing.node.StartedMockNode
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
@@ -59,7 +59,7 @@ class OracleNodeTearOffTests {
     }
     // DOCEND 1
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNet.stopNodes()
     }

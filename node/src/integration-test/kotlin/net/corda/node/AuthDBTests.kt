@@ -20,7 +20,7 @@ import net.corda.testing.node.internal.NodeBasedTest
 import net.corda.testing.node.internal.cordappForClasses
 import org.apache.activemq.artemis.api.core.ActiveMQSecurityException
 import org.apache.shiro.authc.credential.DefaultPasswordService
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assume
 import org.junit.Before
 import org.junit.jupiter.api.Test
@@ -222,7 +222,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         override fun call() = Unit
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         node?.node?.stop()
         db.close()

@@ -32,7 +32,7 @@ import org.apache.activemq.artemis.api.core.QueueConfiguration
 import org.apache.activemq.artemis.api.core.RoutingType
 import org.apache.activemq.artemis.api.core.SimpleString
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -62,7 +62,7 @@ abstract class MQSecurityTest : NodeBasedTest() {
 
     abstract fun startAttacker(attacker: SimpleMQClient)
 
-    @After
+    @AfterEach
     fun tearDown() {
         runOnStop.forEach { it() }
     }

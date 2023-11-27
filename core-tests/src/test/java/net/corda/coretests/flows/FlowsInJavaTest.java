@@ -8,7 +8,7 @@ import net.corda.testing.core.TestConstants;
 import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.MockNetworkParameters;
 import net.corda.testing.node.StartedMockNode;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
@@ -38,7 +38,7 @@ public class FlowsInJavaTest {
         bob = singleIdentity(bobNode.getInfo());
     }
 
-    @After
+    @AfterEach
     public void cleanUp() {
         mockNet.stopNodes();
     }

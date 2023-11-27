@@ -27,7 +27,7 @@ import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import org.hamcrest.Matchers.instanceOf
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
@@ -57,7 +57,7 @@ class RaftTransactionCommitLogTests {
         cluster = setUpCluster()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         LogHelper.reset("org.apache.activemq", "io.atomix")
         cluster.map { it.client.close().asCordaFuture() }.transpose().getOrThrow()

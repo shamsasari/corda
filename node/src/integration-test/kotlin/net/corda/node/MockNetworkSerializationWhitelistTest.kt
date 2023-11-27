@@ -8,7 +8,7 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
@@ -48,7 +48,7 @@ class MockNetworkSerializationWhitelistTest {
         )
     }
 
-    @After
+    @AfterEach
     fun shutdown() {
         mockNetwork.stopNodes()
     }

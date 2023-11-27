@@ -13,7 +13,7 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.TestStartedNode
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert
 import org.junit.Assert.assertTrue
 import org.junit.jupiter.api.Test
@@ -26,7 +26,7 @@ class NetworkMapCacheTest {
     private val TestStartedNode.party get() = info.legalIdentities.first()
     private val mockNet = InternalMockNetwork()
 
-    @After
+    @AfterEach
     fun teardown() {
         mockNet.stopNodes()
     }

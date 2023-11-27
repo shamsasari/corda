@@ -74,7 +74,7 @@ import net.corda.testing.node.internal.cordappWithPackages
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.findCordapp
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertNotNull
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
@@ -96,7 +96,7 @@ class FinalityFlowTests : WithFinality {
 
     private val notary = mockNet.defaultNotaryIdentity
 
-    @After
+    @AfterEach
     fun tearDown() = mockNet.stopNodes()
 
     @Test

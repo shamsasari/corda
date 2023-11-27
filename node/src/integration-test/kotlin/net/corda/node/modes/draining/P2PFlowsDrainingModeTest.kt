@@ -21,7 +21,7 @@ import net.corda.testing.internal.chooseIdentity
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.waitForShutdown
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
@@ -47,7 +47,7 @@ class P2PFlowsDrainingModeTest {
         executor = Executors.newSingleThreadScheduledExecutor()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         executor!!.shutdown()
     }

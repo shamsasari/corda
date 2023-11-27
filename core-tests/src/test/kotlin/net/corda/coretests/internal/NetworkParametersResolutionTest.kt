@@ -28,7 +28,7 @@ import net.corda.testing.node.internal.DUMMY_CONTRACTS_CORDAPP
 import net.corda.testing.node.internal.cordappForClasses
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
@@ -63,7 +63,7 @@ class NetworkParametersResolutionTest {
         params3 = testNetworkParameters(epoch = 3, minimumPlatformVersion = 4, notaries = listOf((NotaryInfo(notaryParty, true))))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNet.stopNodes()
     }

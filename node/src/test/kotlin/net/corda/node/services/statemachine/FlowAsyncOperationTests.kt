@@ -13,7 +13,7 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture
@@ -33,7 +33,7 @@ class FlowAsyncOperationTests {
         aliceNode = mockNet.createNode()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

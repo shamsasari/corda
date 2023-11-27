@@ -37,7 +37,7 @@ import net.corda.testing.node.MockServices.Companion.makeTestDataSourcePropertie
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Before
@@ -77,7 +77,7 @@ class DBCheckpointStorageTests {
         newCheckpointStorage()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         database.close()
         LogHelper.reset(PersistentUniquenessProvider::class)

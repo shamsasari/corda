@@ -26,7 +26,7 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -46,7 +46,7 @@ class NotaryCertificateRotationTest(private val validating: Boolean) {
         fun data() = listOf(false, true)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNet.stopNodes()
     }

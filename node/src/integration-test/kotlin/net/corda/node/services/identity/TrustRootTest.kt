@@ -33,7 +33,7 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import javax.security.auth.x500.X500Principal
 import kotlin.test.assertEquals
@@ -45,7 +45,7 @@ class TrustRootTest {
 
     private lateinit var mockNet: InternalMockNetwork
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNet.stopNodes()
     }

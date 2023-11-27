@@ -30,7 +30,7 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertEquals
 import org.junit.Before
 import org.junit.jupiter.api.Test
@@ -68,7 +68,7 @@ class FlowSoftLocksTests {
         notaryIdentity = mockNet.defaultNotaryIdentity
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

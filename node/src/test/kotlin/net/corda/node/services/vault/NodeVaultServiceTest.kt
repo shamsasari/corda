@@ -108,7 +108,7 @@ class NodeVaultServiceTest {
         services.identityService.verifyAndRegisterIdentity(BOC_IDENTITY)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         database.close()
         LogHelper.reset(NodeVaultService::class)

@@ -15,7 +15,7 @@ import net.corda.testing.core.DUMMY_BANK_A_NAME
 import net.corda.testing.core.DUMMY_BANK_B_NAME
 import net.corda.testing.core.singleIdentity
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.jupiter.api.Test
@@ -32,7 +32,7 @@ class MockNetworkTest {
         mockNetwork = MockNetwork(MockNetworkParameters())
     }
 
-    @After
+    @AfterEach
     fun done() {
         mockNetwork.stopNodes()
     }

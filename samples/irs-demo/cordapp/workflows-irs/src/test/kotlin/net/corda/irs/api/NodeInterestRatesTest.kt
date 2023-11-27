@@ -18,7 +18,7 @@ import net.corda.testing.node.MockServices
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import net.corda.testing.node.createMockCordaService
 import net.corda.testing.node.makeTestIdentityService
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.*
 import org.junit.Before
 import org.junit.Rule
@@ -75,7 +75,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         database.close()
     }

@@ -45,7 +45,7 @@ import net.corda.testing.node.MockServices.Companion.makeTestDataSourcePropertie
 import net.corda.testing.node.TestClock
 import net.corda.testing.node.internal.MockEncryptionService
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
@@ -84,7 +84,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         newTransactionRecovery()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         database.close()
     }

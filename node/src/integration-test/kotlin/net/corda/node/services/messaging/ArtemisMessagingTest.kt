@@ -29,7 +29,7 @@ import net.corda.testing.node.internal.MOCK_VERSION_INFO
 import org.apache.activemq.artemis.api.core.ActiveMQConnectionTimedOutException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -94,7 +94,7 @@ class ArtemisMessagingTest {
         networkMapCache = PersistentNetworkMapCache(TestingNamedCacheFactory(), database, rigorousMock()).apply { start(emptyList()) }
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         messagingClient?.stop()
         messagingServer?.stop()

@@ -32,7 +32,7 @@ import net.corda.testing.node.internal.startRpcClient
 import org.apache.activemq.artemis.api.config.ActiveMQDefaultConfiguration
 import org.apache.activemq.artemis.api.core.QueueConfiguration
 import org.apache.activemq.artemis.api.core.SimpleString
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertTrue
@@ -59,7 +59,7 @@ class RPCStabilityTests {
     private val pool = Executors.newFixedThreadPool(10, testThreadFactory())
     private val portAllocation = incrementalPortAllocation()
 
-    @After
+    @AfterEach
     fun shutdown() {
         pool.shutdown()
     }

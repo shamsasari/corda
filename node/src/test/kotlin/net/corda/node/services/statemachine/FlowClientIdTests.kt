@@ -25,7 +25,7 @@ import net.corda.testing.node.internal.newContext
 import net.corda.testing.node.internal.startFlow
 import net.corda.testing.node.internal.startFlowWithClientId
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert
 import org.junit.Before
 import org.junit.Ignore
@@ -62,7 +62,7 @@ class FlowClientIdTests {
         aliceNode = mockNet.createNode(InternalMockNodeParameters(legalName = ALICE_NAME))
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
         ResultFlow.hook = null

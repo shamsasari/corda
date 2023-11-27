@@ -4,7 +4,7 @@ import co.paralleluniverse.fibers.Suspendable
 import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import org.assertj.core.api.Assertions
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 
@@ -16,7 +16,7 @@ class MockNetworkCustomCheckpointSerializerTest {
         mockNetwork = MockNetwork(MockNetworkParameters(cordappsForAllNodes = listOf(TestCorDapp.getCorDapp())))
     }
 
-    @After
+    @AfterEach
     fun shutdown() {
         mockNetwork.stopNodes()
     }

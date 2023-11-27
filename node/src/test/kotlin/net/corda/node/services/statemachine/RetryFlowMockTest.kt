@@ -31,7 +31,7 @@ import net.corda.testing.node.internal.newContext
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.h2.util.Utils
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Ignore
@@ -70,7 +70,7 @@ class RetryFlowMockTest {
         return this.services.startFlow(logic, this.services.newContext()).flatMap { it.resultFuture }
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
         StaffedFlowHospital.DatabaseEndocrinologist.customConditions.clear()

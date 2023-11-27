@@ -9,7 +9,7 @@ import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -49,7 +49,7 @@ class AppendOnlyPersistentMapNonConcurrentTest {
 
     private fun createMap(cacheSize: Long) = TestMap(cacheSize)
 
-    @After
+    @AfterEach
     fun closeDatabase() {
         database.close()
     }

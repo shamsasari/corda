@@ -15,7 +15,7 @@ import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.makeTestIdentityService
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.io.Serializable
@@ -55,7 +55,7 @@ class ExposeJpaToFlowsTests {
         database = db
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

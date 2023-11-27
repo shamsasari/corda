@@ -18,7 +18,7 @@ import net.corda.testing.node.internal.FINANCE_CONTRACTS_CORDAPP
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import rx.schedulers.Schedulers
 import java.util.concurrent.CountDownLatch
@@ -27,7 +27,7 @@ class ServiceHubConcurrentUsageTest {
     private val mockNet = InternalMockNetwork(cordappsForAllNodes = listOf(FINANCE_CONTRACTS_CORDAPP,
             CustomCordapp(classes = setOf(TestFlow::class.java))))
 
-    @After
+    @AfterEach
     fun stopNodes() {
         mockNet.stopNodes()
     }

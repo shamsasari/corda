@@ -57,7 +57,7 @@ import org.apache.commons.io.IOUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertArrayEquals
 import org.junit.Before
 import org.junit.jupiter.api.Test
@@ -108,7 +108,7 @@ class CordaRPCOpsImplTest {
         alice = aliceNode.services.myInfo.identityFromX500Name(ALICE_NAME)
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         if (::mockNet.isInitialized) {
             mockNet.stopNodes()

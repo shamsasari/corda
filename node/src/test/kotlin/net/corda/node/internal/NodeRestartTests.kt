@@ -15,13 +15,13 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
 class NodeRestartTests {
     private val mockNet = InternalMockNetwork(threadPerNode = true, autoVisibleNodes = false, notarySpecs = emptyList())
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.close()
     }

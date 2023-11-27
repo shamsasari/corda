@@ -24,7 +24,7 @@ import net.corda.testing.core.CHARLIE_NAME
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -51,7 +51,7 @@ class IdenityServiceKeyRotationMigrationTest {
         liquibaseDB.isAutoCommit = true
     }
 
-    @After
+    @AfterEach
     fun close() {
         contextTransactionOrNull?.close()
         cordaDB.close()

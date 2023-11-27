@@ -21,7 +21,7 @@ import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -66,7 +66,7 @@ class DBNetworkParametersStorageTest {
         }
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         database.close()
     }

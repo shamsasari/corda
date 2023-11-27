@@ -26,7 +26,7 @@ import net.corda.testing.node.internal.MessagingServiceSpy
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture
@@ -87,7 +87,7 @@ class FlowOperatorTests {
         eugeneNode.dispose()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

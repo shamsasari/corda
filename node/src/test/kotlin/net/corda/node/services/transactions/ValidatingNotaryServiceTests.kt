@@ -29,7 +29,7 @@ import net.corda.testing.internal.createWireTransaction
 import net.corda.testing.node.TestClock
 import net.corda.testing.node.internal.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.time.Duration
@@ -58,7 +58,7 @@ class ValidatingNotaryServiceTests {
         alice = aliceNode.info.singleIdentity()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

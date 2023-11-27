@@ -22,7 +22,7 @@ import net.corda.testing.driver.NodeParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.User
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import rx.Observer
@@ -49,7 +49,7 @@ class MultiRpcClientTest {
         ensureSerialisationEnvNull()
     }
 
-    @After
+    @AfterEach
     fun after() {
         ensureSerialisationEnvNull()
         // Restore something that was changed during setup

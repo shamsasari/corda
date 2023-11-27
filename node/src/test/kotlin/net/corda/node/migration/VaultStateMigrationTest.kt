@@ -126,7 +126,7 @@ class VaultStateMigrationTest {
         addNetworkParameters()
     }
 
-    @After
+    @AfterEach
     fun close() {
         contextTransactionOrNull?.close()
         cordaDB.close()

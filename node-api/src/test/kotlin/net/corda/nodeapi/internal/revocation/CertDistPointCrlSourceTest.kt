@@ -6,7 +6,7 @@ import net.corda.nodeapi.internal.DEV_INTERMEDIATE_CA
 import net.corda.testing.node.internal.network.CrlServer
 import org.assertj.core.api.Assertions.assertThat
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 
@@ -21,7 +21,7 @@ class CertDistPointCrlSourceTest {
         crlServer.start()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         if (::crlServer.isInitialized) {
             crlServer.close()

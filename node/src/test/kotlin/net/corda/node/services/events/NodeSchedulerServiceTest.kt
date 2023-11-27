@@ -133,7 +133,7 @@ class MockScheduledFlowRepository : ScheduledFlowRepository {
 class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
     private val database = configureDatabase(MockServices.makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null })
 
-    @After
+    @AfterEach
     fun closeDatabase() {
         database.close()
     }

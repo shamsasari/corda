@@ -23,7 +23,7 @@ import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.MOCK_VERSION_INFO
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.*
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.time.Duration
@@ -39,7 +39,7 @@ class NetworkParametersTest {
             notarySpecs = listOf(MockNetworkNotarySpec(DUMMY_NOTARY_NAME))
     )
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNet.stopNodes()
     }

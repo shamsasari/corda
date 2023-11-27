@@ -9,7 +9,7 @@ import net.corda.core.utilities.UntrustworthyData;
 import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.MockNetworkParameters;
 import net.corda.testing.node.StartedMockNode;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
@@ -32,7 +32,7 @@ public class TestResponseFlowInIsolationInJava {
     private final StartedMockNode a = network.createNode();
     private final StartedMockNode b = network.createNode();
 
-    @After
+    @AfterEach
     public void tearDown() {
         network.stopNodes();
     }

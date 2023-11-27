@@ -14,7 +14,7 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.internal.DUMMY_CONTRACTS_CORDAPP
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.security.PublicKey
@@ -45,7 +45,7 @@ class CustomNotaryTest {
         alice = aliceNode.info.singleIdentity()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNet.stopNodes()
     }

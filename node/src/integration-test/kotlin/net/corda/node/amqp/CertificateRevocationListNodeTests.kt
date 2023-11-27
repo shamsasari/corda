@@ -41,7 +41,7 @@ import org.apache.activemq.artemis.api.core.QueueConfiguration
 import org.apache.activemq.artemis.api.core.RoutingType
 import org.assertj.core.api.Assertions.assertThat
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -94,7 +94,7 @@ abstract class AbstractServerRevocationTest {
         defaultCrlDistPoints = CrlDistPoints(crlServer.hostAndPort)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         amqpClients.parallelStream().forEach(AMQPClient::close)
         if (::crlServer.isInitialized) {
@@ -359,7 +359,7 @@ abstract class AbstractServerRevocationTest {
 class AMQPServerRevocationTest : AbstractServerRevocationTest() {
     private lateinit var amqpServer: AMQPServer
 
-    @After
+    @AfterEach
     fun shutDown() {
         if (::amqpServer.isInitialized) {
             amqpServer.close()
@@ -449,7 +449,7 @@ class ArtemisServerRevocationTest : AbstractServerRevocationTest() {
     private lateinit var artemisNode: ArtemisNode
     private var crlCheckArtemisServer = true
 
-    @After
+    @AfterEach
     fun shutDown() {
         if (::artemisNode.isInitialized) {
             artemisNode.close()

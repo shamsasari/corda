@@ -4,7 +4,7 @@ import net.corda.node.services.schema.NodeSchemaService
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.Phaser
 import java.util.concurrent.atomic.AtomicInteger
@@ -17,7 +17,7 @@ class CordaPersistenceTest {
             { null }, { null },
             NodeSchemaService(emptySet()))
 
-    @After
+    @AfterEach
     fun closeDatabase() {
         database.close()
     }

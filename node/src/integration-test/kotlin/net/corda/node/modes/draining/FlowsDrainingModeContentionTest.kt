@@ -27,7 +27,7 @@ import net.corda.testing.driver.driver
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.User
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
@@ -46,7 +46,7 @@ class FlowsDrainingModeContentionTest {
         executor = Executors.newSingleThreadScheduledExecutor()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         executor!!.shutdown()
     }

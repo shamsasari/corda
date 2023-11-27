@@ -25,7 +25,7 @@ import net.corda.smoketesting.NodeConfig
 import net.corda.smoketesting.NodeProcess
 import net.corda.smoketesting.NodeProcess.Companion.CORDAPPS_DIR_NAME
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.nio.file.Path
@@ -68,7 +68,7 @@ class CordappSmokeTest {
         notary = factory.create(notaryConfig)
     }
 
-    @After
+    @AfterEach
     fun done() {
         notary.close()
     }

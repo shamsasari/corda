@@ -11,7 +11,7 @@ import net.corda.nodeapi.internal.persistence.*
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import rx.Observable
 import rx.Subscriber
@@ -40,7 +40,7 @@ class ObservablesTests {
         return database
     }
 
-    @After
+    @AfterEach
     fun after() {
         toBeClosed.forEach { it.close() }
         toBeClosed.clear()

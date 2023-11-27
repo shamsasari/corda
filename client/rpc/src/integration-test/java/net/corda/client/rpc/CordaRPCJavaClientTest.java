@@ -14,7 +14,7 @@ import net.corda.testing.internal.InternalTestUtilsKt;
 import net.corda.testing.node.User;
 import net.corda.testing.node.internal.NodeBasedTest;
 import net.corda.testing.node.internal.TestCordappInternal;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.Before;
 import org.junit.jupiter.api.Test;
 
@@ -71,7 +71,7 @@ public class CordaRPCJavaClientTest extends NodeBasedTest {
         client = new CordaRPCClient(requireNonNull(node.getNode().getConfiguration().getRpcOptions().getAddress()));
     }
 
-    @After
+    @AfterEach
     public void done() throws IOException {
         connection.close();
     }

@@ -32,7 +32,7 @@ import net.corda.testing.node.internal.FINANCE_CONTRACTS_CORDAPP
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.util.concurrent.atomic.AtomicInteger
@@ -49,7 +49,7 @@ class CordaServiceTest {
         mockNet.startNodes()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }

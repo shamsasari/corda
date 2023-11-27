@@ -25,7 +25,7 @@ import net.corda.testing.node.internal.network.NetworkMapServer
 import org.assertj.core.api.Assertions.assertThat
 import org.bouncycastle.pkcs.PKCS10CertificationRequest
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -69,7 +69,7 @@ class NodeRegistrationTest {
         serverHostAndPort = server.start()
     }
 
-    @After
+    @AfterEach
     fun stopServer() {
         server.close()
     }

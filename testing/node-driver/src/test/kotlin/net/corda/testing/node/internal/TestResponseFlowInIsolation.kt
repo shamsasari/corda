@@ -10,7 +10,7 @@ import net.corda.testing.internal.chooseIdentity
 import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 
 /**
@@ -26,7 +26,7 @@ class TestResponseFlowInIsolation {
     private val a = network.createNode()
     private val b = network.createNode()
 
-    @After
+    @AfterEach
     fun tearDown() = network.stopNodes()
 
     // This is the real implementation of Initiator.

@@ -12,7 +12,7 @@ import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
@@ -53,7 +53,7 @@ class RestrictedEntityManagerFlowTest {
         }
     }
 
-    @After
+    @AfterEach
     fun done() {
         mockNetwork.stopNodes()
     }

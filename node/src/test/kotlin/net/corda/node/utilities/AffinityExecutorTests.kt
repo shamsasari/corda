@@ -1,6 +1,6 @@
 package net.corda.node.utilities
 
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.CountDownLatch
@@ -11,7 +11,7 @@ class AffinityExecutorTests {
     private var _executor: AffinityExecutor.ServiceAffinityExecutor? = null
     private val executor: AffinityExecutor.ServiceAffinityExecutor get() = _executor!!
 
-    @After
+    @AfterEach
     fun shutdown() {
         _executor?.shutdown()
         _executor = null

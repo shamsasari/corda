@@ -36,7 +36,7 @@ import org.bouncycastle.asn1.x509.GeneralSubtree
 import org.bouncycastle.asn1.x509.NameConstraints
 import org.bouncycastle.pkcs.PKCS10CertificationRequest
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.jupiter.api.Test
 import java.lang.IllegalStateException
@@ -84,7 +84,7 @@ class NetworkRegistrationHelperTest {
         }
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         fs.close()
     }

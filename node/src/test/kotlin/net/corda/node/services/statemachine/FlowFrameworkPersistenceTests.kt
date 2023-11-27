@@ -18,7 +18,7 @@ import net.corda.testing.node.internal.MockNodeFlowManager
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
@@ -52,7 +52,7 @@ class FlowFrameworkPersistenceTests {
         }
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         aliceNode.internals.manuallyCloseDB()
         bobNode.internals.manuallyCloseDB()

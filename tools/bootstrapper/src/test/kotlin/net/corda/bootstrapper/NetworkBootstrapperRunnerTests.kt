@@ -36,7 +36,7 @@ class NetworkBootstrapperRunnerTests {
         System.setErr(PrintStream(errContent))
     }
 
-    @After
+    @AfterEach
     fun restoreStreams() {
         System.setOut(originalOut)
         System.setErr(originalErr)

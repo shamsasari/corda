@@ -36,7 +36,7 @@ import net.corda.testing.internal.TestingNamedCacheFactory;
 import net.corda.testing.internal.vault.DummyLinearContract;
 import net.corda.testing.internal.vault.VaultFiller;
 import net.corda.testing.node.MockServices;
-import org.junit.After;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
@@ -102,7 +102,7 @@ public class VaultQueryJavaTests {
         doReturn(testNetworkParameters()).when(serviceForResolution).getNetworkParameters();
     }
 
-    @After
+    @AfterEach
     public void cleanUp() {
         database.close();
     }

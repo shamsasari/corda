@@ -19,7 +19,7 @@ import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
-import org.junit.After
+import org.junit.jupiter.api.AfterEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 
@@ -48,7 +48,7 @@ class PersistentNetworkMapCacheTest {
     private val database = configureDatabase(makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null })
     private val charlieNetMapCache = PersistentNetworkMapCache(TestingNamedCacheFactory(), database, InMemoryIdentityService(trustRoot = DEV_ROOT_CA.certificate))
 
-    @After
+    @AfterEach
     fun cleanUp() {
         database.close()
     }
