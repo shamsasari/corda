@@ -64,7 +64,7 @@ class NetworkBootstrapperRunnerTests {
             return (resourceDirectory / this).copyTo(dir / this)
         }
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun beforeClass() {
             dirAlice.generateKey(ALICE, ALICE_PASS, ALICE_NAME.toString())

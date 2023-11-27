@@ -33,7 +33,7 @@ import net.corda.testing.node.internal.*
 import org.hamcrest.Matchers.instanceOf
 import org.junit.jupiter.api.AfterAll
 import org.junit.Assert.assertThat
-import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
@@ -54,7 +54,7 @@ class BFTNotaryServiceTests {
         private lateinit var notary: Party
         private lateinit var node: TestStartedNode
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun before() {
             mockNet = InternalMockNetwork(cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP))

@@ -5,7 +5,7 @@ import net.corda.core.internal.div
 import net.corda.core.internal.exists
 import net.corda.nodeapi.internal.config.UnknownConfigKeysPolicy
 import org.assertj.core.api.Assertions
-import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
@@ -24,7 +24,7 @@ class NodeStartupCliTest {
         private lateinit var workingDirectory: Path
         private lateinit var rootDirectory: Path
         private var customNodeConf = "custom_node.conf"
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun initDirectories() {
             workingDirectory = Paths.get(".").normalize().toAbsolutePath()

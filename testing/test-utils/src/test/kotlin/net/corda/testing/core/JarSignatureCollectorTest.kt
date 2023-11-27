@@ -11,7 +11,7 @@ import net.corda.core.internal.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.jupiter.api.AfterAll
-import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Path
@@ -31,7 +31,7 @@ class JarSignatureCollectorTest {
         private const val CHARLIE = "Charlie"
         private const val CHARLIE_PASS = "charliepass"
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun beforeClass() {
             dir.generateKey(ALICE, "storepass", ALICE_NAME.toString(), keyPassword = ALICE_PASS)

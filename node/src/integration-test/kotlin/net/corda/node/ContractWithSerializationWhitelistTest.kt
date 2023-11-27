@@ -17,7 +17,7 @@ import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -52,7 +52,7 @@ class ContractWithSerializationWhitelistTest(private val runInProcess: Boolean) 
         @JvmStatic
         fun modes(): List<Array<Boolean>> = listOf(Array(1) { true }, Array(1) { false })
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun checkData() {
             assertNotCordaSerializable<WhitelistData>()

@@ -23,7 +23,7 @@ import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterAll
-import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -40,7 +40,7 @@ class FlowParallelMessagingTests {
         private lateinit var recipientParty1: Party
         private lateinit var recipientParty2: Party
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setup() {
             mockNet = InternalMockNetwork(

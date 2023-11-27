@@ -41,7 +41,7 @@ import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.internal.*
 import org.junit.jupiter.api.AfterAll
 import org.junit.Before
-import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.security.PublicKey
 import java.time.Duration
@@ -71,7 +71,7 @@ class TimedFlowTests {
             LogHelper.setLevel("+net.corda.flow", "+net.corda.testing.node", "+net.corda.node.services.messaging")
         }
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setup() {
             mockNet = InternalMockNetwork(

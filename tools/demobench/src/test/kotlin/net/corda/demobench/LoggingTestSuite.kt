@@ -3,7 +3,7 @@ package net.corda.demobench
 import net.corda.demobench.config.LoggingConfig
 import net.corda.demobench.model.JVMConfigTest
 import net.corda.demobench.model.NodeControllerTest
-import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
@@ -22,7 +22,7 @@ class LoggingTestSuite {
      * @see http://issues.gradle.org/browse/GRADLE-2524
      */
     companion object {
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun `setup logging`() {
             LoggingConfig()

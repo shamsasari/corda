@@ -64,7 +64,7 @@ class ConstraintsPropagationTests {
         private lateinit var keyStoreDir: SelfCleaningDir
         private lateinit var hashToSignatureConstraintsKey: PublicKey
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setUpBeforeClass() {
             keyStoreDir = SelfCleaningDir()

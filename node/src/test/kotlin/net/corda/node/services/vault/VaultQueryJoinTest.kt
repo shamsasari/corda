@@ -26,7 +26,7 @@ import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.cordappsForPackages
 import org.junit.jupiter.api.AfterAll
-import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledOnJre
 import org.junit.jupiter.api.condition.JRE
@@ -46,7 +46,7 @@ class VaultQueryJoinTest {
         private val createdStateRefs = mutableListOf<StateRef>()
         private const val numObjectsInLedger = DEFAULT_PAGE_SIZE + 1
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setup() {
             mockNetwork = MockNetwork(

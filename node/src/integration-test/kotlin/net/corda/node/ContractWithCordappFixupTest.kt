@@ -21,7 +21,7 @@ import net.corda.testing.node.User
 import net.corda.testing.node.internal.cordappWithFixups
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.BeforeClass
+import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
@@ -45,7 +45,7 @@ class ContractWithCordappFixupTest {
             )
         }
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun checkData() {
             assertNotCordaSerializable<DependentData>()
