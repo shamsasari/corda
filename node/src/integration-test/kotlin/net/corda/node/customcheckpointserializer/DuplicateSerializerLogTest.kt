@@ -9,13 +9,13 @@ import net.corda.core.utilities.getOrThrow
 import net.corda.testing.driver.driver
 import net.corda.testing.driver.logFile
 import org.assertj.core.api.Assertions
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.time.Duration
 
-@Ignore("TODO JDK17: Fixme")
+@Disabled("TODO JDK17: Fixme")
 class DuplicateSerializerLogTest{
-    @Test(timeout=300_000)
+    @Test
     fun `check duplicate serialisers are logged`() {
         driver {
             val node = startNode(startInSameProcess = false).getOrThrow()

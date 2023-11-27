@@ -23,10 +23,10 @@ import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.anyOf
 import org.hamcrest.Matchers.`is`
 import org.hamcrest.number.OrderingComparison.greaterThan
-import org.junit.After
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  */
@@ -48,7 +48,7 @@ class IdentityServiceToStringShortMigrationTest {
     lateinit var liquibaseDB: H2Database
     lateinit var cordaDB: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val schemaService = rigorousMock<SchemaService>()
         doReturn(setOf(IdentityTestSchemaV1)).whenever(schemaService).schemas
@@ -66,7 +66,7 @@ class IdentityServiceToStringShortMigrationTest {
         liquibaseDB.isAutoCommit = true
     }
 
-    @After
+    @AfterEach
     fun close() {
         contextTransactionOrNull?.close()
         cordaDB.close()
@@ -87,7 +87,7 @@ class IdentityServiceToStringShortMigrationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `it should be possible to migrate all existing identities to new hash function`() {
         val identities = listOf(BOB_IDENTITY, ALICE_IDENTITY, BOC_IDENTITY, dummyNotary.identity, BOB2_IDENTITY)
         val groupedByNameIdentities = identities.groupBy { it.name }

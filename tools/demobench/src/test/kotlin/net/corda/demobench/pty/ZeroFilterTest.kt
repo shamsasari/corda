@@ -4,9 +4,9 @@ import org.mockito.kotlin.doReturn
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import net.corda.coretesting.internal.rigorousMock
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets.UTF_8
@@ -15,7 +15,7 @@ class ZeroFilterTest {
     private lateinit var output: ByteArrayOutputStream
     private lateinit var filter: OutputStream
 
-    @Before
+    @BeforeEach
     fun setup() {
         output = ByteArrayOutputStream()
         val process = rigorousMock<Process>()
@@ -24,7 +24,7 @@ class ZeroFilterTest {
         verify(process).outputStream
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non-zero is OK`() {
         for (c in 'A'..'Z') {
             filter.write(c.toInt())
@@ -32,13 +32,13 @@ class ZeroFilterTest {
         assertEquals(26, output.size())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `zero is removed`() {
         filter.write(0)
         assertEquals(0, output.size())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `zero is removed from array`() {
         val input = "He\u0000l\u0000lo".toByteArray(UTF_8)
         filter.write(input)
@@ -47,7 +47,7 @@ class ZeroFilterTest {
         assertEquals("Hello", output.toString("UTF-8"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `zero is removed starting from offset`() {
         val input = "H\u0000el\u0000lo W\u0000or\u0000ld!\u0000".toByteArray(UTF_8)
         val offset = input.indexOf('W'.toByte())

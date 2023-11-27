@@ -5,7 +5,7 @@ import net.corda.core.concurrent.CordaFuture
 import net.corda.core.internal.join
 import net.corda.core.utilities.getOrThrow
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.slf4j.Logger
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean
@@ -14,7 +14,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class CordaFutureTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `fork works`() {
         val e = Executors.newSingleThreadExecutor()
         try {
@@ -27,7 +27,7 @@ class CordaFutureTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `if a listener fails its throwable is logged`() {
         val f = CordaFutureImpl<Int>()
         val x = Exception()
@@ -41,7 +41,7 @@ class CordaFutureTest {
         assertTrue(flag.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `map works`() {
         run {
             val f = CordaFutureImpl<Int>()
@@ -67,7 +67,7 @@ class CordaFutureTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flatMap works`() {
         run {
             val f = CordaFutureImpl<Int>()
@@ -100,7 +100,7 @@ class CordaFutureTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `andForget works`() {
         val log = mock<Logger>()
         doNothing().whenever(log).error(any(), any<Throwable>())
@@ -111,7 +111,7 @@ class CordaFutureTest {
         verify(log).error(any(), same(throwable))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `captureLater works`() {
         val failingFuture = CordaFutureImpl<Int>()
         val anotherFailingFuture = CordaFutureImpl<Int>()
@@ -129,12 +129,12 @@ class TransposeTest {
     private val b = openFuture<Int>()
     private val c = openFuture<Int>()
     private val f = listOf(a, b, c).transpose()
-    @Test(timeout=300_000)
+    @Test
 	fun `transpose empty collection`() {
         assertEquals(emptyList(), emptyList<CordaFuture<*>>().transpose().getOrThrow())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transpose values are in the same order as the collection of futures`() {
         b.set(2)
         c.set(3)
@@ -143,7 +143,7 @@ class TransposeTest {
         assertEquals(listOf(1, 2, 3), f.getOrThrow())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transpose throwables are reported in the order they were thrown`() {
         val ax = Exception()
         val bx = Exception()
@@ -158,7 +158,7 @@ class TransposeTest {
         assertEquals(emptyList(), cx.suppressed.asList())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transpose mixture of outcomes`() {
         val bx = Exception()
         val cx = Exception()

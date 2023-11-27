@@ -12,9 +12,9 @@ import net.corda.core.internal.TimedFlow
 import net.corda.core.utilities.seconds
 import net.corda.node.services.config.FlowTimeoutConfiguration
 import net.corda.testing.node.internal.*
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.assertEquals
@@ -30,7 +30,7 @@ class IdempotentFlowTests {
         val suspendedOnce = AtomicBoolean(false)
     }
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = InternalMockNetwork(threadPerNode = true, cordappsForAllNodes = listOf(enclosedCordapp()))
         nodeA = mockNet.createNode(InternalMockNodeParameters(
@@ -47,12 +47,12 @@ class IdempotentFlowTests {
         suspendedOnce.set(false)
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `restarting idempotent flow does not replay any part of its parent flow`() {
         nodeA.services.startFlow(SideEffectFlow()).resultFuture.get()
         assertEquals(1, executionCounter.get())

@@ -2,13 +2,13 @@ package net.corda.commmon.logging.errorReporting
 
 import net.corda.common.logging.CordaVersion
 import net.corda.common.logging.errorReporting.CordaErrorContextProvider
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 
 class CordaErrorContextProviderTest {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `check that correct URL is returned from context provider`() {
         val context = CordaErrorContextProvider()
         val version = CordaVersion.releaseVersion.substringBefore("-") // Remove SNAPSHOT if present

@@ -23,19 +23,19 @@ import net.corda.testing.core.singleIdentity
 import net.corda.coretesting.internal.matchers.flow.willReturn
 import net.corda.coretesting.internal.matchers.flow.willThrow
 import net.corda.testing.node.internal.*
-import org.junit.AfterClass
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.util.*
 
-@Ignore("TODO JDK17: class cast exception")
+@Disabled("TODO JDK17: class cast exception")
 class ContractUpgradeFlowTest : WithContracts, WithFinality {
 
     companion object {
         private val classMockNet = InternalMockNetwork(cordappsForAllNodes = listOf(FINANCE_CONTRACTS_CORDAPP, FINANCE_WORKFLOWS_CORDAPP, DUMMY_CONTRACTS_CORDAPP, enclosedCordapp()))
 
         @JvmStatic
-        @AfterClass
+        @AfterAll
         fun tearDown() = classMockNet.stopNodes()
     }
 
@@ -48,7 +48,7 @@ class ContractUpgradeFlowTest : WithContracts, WithFinality {
     private val bob = bobNode.info.singleIdentity()
     private val notary = mockNet.defaultNotaryIdentity
 
-    @Test(timeout=300_000)
+    @Test
 	fun `2 parties contract upgrade`() {
         // Create dummy contract.
         val signedByA = aliceNode.signDummyContract(alice.ref(1), 0, bob.ref(1))
@@ -118,7 +118,7 @@ class ContractUpgradeFlowTest : WithContracts, WithFinality {
                     { it.state.data },
                     expectation)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `upgrade Cash to v2`() {
         // Create some cash.
         val cashFlowResult = aliceNode.issueCash()

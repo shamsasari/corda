@@ -2,30 +2,37 @@ package net.corda.node.services.network
 
 import com.google.common.jimfs.Configuration
 import com.google.common.jimfs.Jimfs
-import net.corda.core.identity.CordaX500Name
 import net.corda.core.crypto.Crypto
-import net.corda.core.internal.*
+import net.corda.core.identity.CordaX500Name
+import net.corda.core.internal.createDirectories
+import net.corda.core.internal.div
+import net.corda.core.internal.exists
+import net.corda.core.internal.readObject
 import net.corda.core.serialization.deserialize
 import net.corda.core.utilities.days
 import net.corda.core.utilities.seconds
 import net.corda.coretesting.internal.DEV_INTERMEDIATE_CA
+import net.corda.coretesting.internal.DEV_ROOT_CA
 import net.corda.node.VersionInfo
 import net.corda.node.internal.NetworkParametersReader
-import net.corda.nodeapi.internal.network.*
-import net.corda.testing.common.internal.testNetworkParameters
-import net.corda.testing.core.SerializationEnvironmentRule
-import net.corda.coretesting.internal.DEV_ROOT_CA
 import net.corda.nodeapi.internal.createDevNetworkMapCa
 import net.corda.nodeapi.internal.createDevNetworkParametersCa
 import net.corda.nodeapi.internal.createDevNodeCa
 import net.corda.nodeapi.internal.crypto.CertificateAndKeyPair
+import net.corda.nodeapi.internal.network.NETWORK_PARAMS_FILE_NAME
+import net.corda.nodeapi.internal.network.NETWORK_PARAMS_UPDATE_FILE_NAME
+import net.corda.nodeapi.internal.network.NetworkParametersCopier
+import net.corda.nodeapi.internal.network.SignedNetworkParameters
+import net.corda.nodeapi.internal.network.verifiedNetworkParametersCert
+import net.corda.testing.common.internal.testNetworkParameters
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.internal.network.NetworkMapServer
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.net.URL
 import java.nio.file.FileSystem
 import kotlin.test.assertEquals
@@ -33,18 +40,15 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
 import kotlin.test.assertNotNull
 
+@ExtendWith(SerializationExtension::class)
 class NetworkParametersReaderTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
-
     private lateinit var fs: FileSystem
     private val cacheTimeout = 100000.seconds
 
     private lateinit var server: NetworkMapServer
     private lateinit var networkMapClient: NetworkMapClient
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Register providers before creating Jimfs filesystem. JimFs creates an SSHD instance which
         // register BouncyCastle and EdDSA provider separately, which wrecks havoc.
@@ -57,13 +61,13 @@ class NetworkParametersReaderTest {
         networkMapClient.start(setOf(DEV_ROOT_CA.certificate))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         server.close()
         fs.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `read correct set of parameters from file`() {
         val networkParamsPath = fs.getPath("/node").createDirectories()
         val oldParameters = testNetworkParameters(epoch = 1)
@@ -79,7 +83,7 @@ class NetworkParametersReaderTest {
         assertEquals(server.networkParameters, parametersFromFile)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `read correct set of parameters from specified network parameters path`() {
         val networkParamsPath = fs.getPath("/node/network").createDirectories()
         val oldParameters = testNetworkParameters(epoch = 1)
@@ -95,7 +99,7 @@ class NetworkParametersReaderTest {
         assertEquals(server.networkParameters, parametersFromFile)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `read network parameters from file when network map server is down`() {
         server.close()
         val networkParamsPath = fs.getPath("/node").createDirectories()
@@ -105,7 +109,7 @@ class NetworkParametersReaderTest {
         assertThat(parameters).isEqualTo(fileParameters)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `serialized parameters compatibility`() {
         // Network parameters file from before eventHorizon extension
         val inputStream = javaClass.classLoader.getResourceAsStream("network-compatibility/network-parameters")
@@ -115,7 +119,7 @@ class NetworkParametersReaderTest {
         assertThat(parameters.verified().eventHorizon).isEqualTo(Int.MAX_VALUE.days)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `verifying works with NETWORK_PARAMETERS role and NETWORK_MAP role, but fails for NODE_CA role`() {
         val netParameters = testNetworkParameters(epoch = 1)
         val certKeyPairNetworkParameters: CertificateAndKeyPair = createDevNetworkParametersCa()

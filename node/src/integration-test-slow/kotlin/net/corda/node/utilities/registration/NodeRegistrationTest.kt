@@ -7,6 +7,7 @@ import net.corda.core.utilities.NetworkHostAndPort
 import net.corda.core.utilities.getOrThrow
 import net.corda.core.utilities.loggerFor
 import net.corda.core.utilities.seconds
+import net.corda.coretesting.internal.DEV_ROOT_CA
 import net.corda.nodeapi.internal.crypto.CertificateAndKeyPair
 import net.corda.nodeapi.internal.crypto.CertificateType
 import net.corda.nodeapi.internal.crypto.X509Utilities
@@ -14,10 +15,9 @@ import net.corda.nodeapi.internal.crypto.X509Utilities.CORDA_CLIENT_CA
 import net.corda.nodeapi.internal.crypto.X509Utilities.CORDA_INTERMEDIATE_CA
 import net.corda.nodeapi.internal.crypto.X509Utilities.CORDA_ROOT_CA
 import net.corda.testing.common.internal.testNetworkParameters
-import net.corda.testing.core.SerializationEnvironmentRule
-import net.corda.testing.driver.internal.incrementalPortAllocation
-import net.corda.coretesting.internal.DEV_ROOT_CA
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.driver.NodeParameters
+import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.internal.SharedCompatibilityZoneParams
 import net.corda.testing.node.internal.internalDriver
@@ -25,10 +25,10 @@ import net.corda.testing.node.internal.network.NetworkMapServer
 import org.assertj.core.api.Assertions.assertThat
 import org.bouncycastle.pkcs.PKCS10CertificationRequest
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.net.URL
@@ -40,41 +40,43 @@ import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.ConcurrentSkipListSet
 import java.util.zip.ZipEntry
 import java.util.zip.ZipOutputStream
-import javax.ws.rs.*
+import javax.ws.rs.Consumes
+import javax.ws.rs.GET
+import javax.ws.rs.POST
+import javax.ws.rs.Path
+import javax.ws.rs.PathParam
+import javax.ws.rs.Produces
 import javax.ws.rs.core.MediaType
 import javax.ws.rs.core.Response
 
+@ExtendWith(SerializationExtension::class)
 class NodeRegistrationTest {
     companion object {
         private val notaryName = CordaX500Name("NotaryService", "Zurich", "CH")
         private val aliceName = CordaX500Name("Alice", "London", "GB")
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
-
     private val portAllocation = incrementalPortAllocation()
     private val registrationHandler = RegistrationHandler(DEV_ROOT_CA)
     private lateinit var server: NetworkMapServer
     private lateinit var serverHostAndPort: NetworkHostAndPort
 
-    @Before
+    @BeforeEach
     fun startServer() {
         server = NetworkMapServer(
                 pollInterval = 1.seconds,
                 hostAndPort = portAllocation.nextHostAndPort(),
                 myHostNameValue = "localhost",
-                additionalServices = *arrayOf(registrationHandler))
+                additionalServices = arrayOf(registrationHandler))
         serverHostAndPort = server.start()
     }
 
-    @After
+    @AfterEach
     fun stopServer() {
         server.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `node registration correct root cert`() {
         val compatibilityZone = SharedCompatibilityZoneParams(
                 URL("http://$serverHostAndPort"),

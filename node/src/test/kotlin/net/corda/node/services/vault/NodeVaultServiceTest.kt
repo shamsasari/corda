@@ -1,31 +1,57 @@
 package net.corda.node.services.vault
 
 import co.paralleluniverse.fibers.Suspendable
-import org.mockito.kotlin.argThat
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
-import net.corda.core.contracts.*
+import net.corda.core.contracts.AlwaysAcceptAttachmentConstraint
+import net.corda.core.contracts.Amount
+import net.corda.core.contracts.Command
+import net.corda.core.contracts.CommandAndState
+import net.corda.core.contracts.ContractState
+import net.corda.core.contracts.FungibleState
+import net.corda.core.contracts.Issued
+import net.corda.core.contracts.OwnableState
+import net.corda.core.contracts.StateAndRef
+import net.corda.core.contracts.StateRef
+import net.corda.core.contracts.TransactionState
 import net.corda.core.crypto.NullKeys
 import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.generateKeyPair
-import net.corda.core.identity.*
+import net.corda.core.identity.AbstractParty
+import net.corda.core.identity.AnonymousParty
+import net.corda.core.identity.CordaX500Name
+import net.corda.core.identity.Party
+import net.corda.core.identity.PartyAndCertificate
 import net.corda.core.internal.NotaryChangeTransactionBuilder
 import net.corda.core.internal.packageName
 import net.corda.core.node.NotaryInfo
 import net.corda.core.node.StatesToRecord
-import net.corda.core.node.services.*
+import net.corda.core.node.services.IdentityService
+import net.corda.core.node.services.StatesNotAvailableException
+import net.corda.core.node.services.Vault
+import net.corda.core.node.services.VaultService
+import net.corda.core.node.services.queryBy
+import net.corda.core.node.services.trackBy
 import net.corda.core.node.services.vault.PageSpecification
 import net.corda.core.node.services.vault.QueryCriteria
-import net.corda.core.node.services.vault.QueryCriteria.*
+import net.corda.core.node.services.vault.QueryCriteria.FungibleAssetQueryCriteria
+import net.corda.core.node.services.vault.QueryCriteria.SoftLockingCondition
+import net.corda.core.node.services.vault.QueryCriteria.SoftLockingType
+import net.corda.core.node.services.vault.QueryCriteria.VaultQueryCriteria
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.NonEmptySet
 import net.corda.core.utilities.OpaqueBytes
 import net.corda.core.utilities.getOrThrow
 import net.corda.core.utilities.toNonEmptySet
-import net.corda.finance.*
+import net.corda.finance.AMOUNT
+import net.corda.finance.CHF
+import net.corda.finance.DOLLARS
+import net.corda.finance.GBP
+import net.corda.finance.POUNDS
+import net.corda.finance.USD
 import net.corda.finance.contracts.asset.Cash
 import net.corda.finance.contracts.utils.sumCash
+import net.corda.finance.`issued by`
+import net.corda.finance.issuedBy
 import net.corda.finance.schemas.CashSchemaV1
 import net.corda.finance.workflows.asset.CashUtils
 import net.corda.finance.workflows.getCashBalance
@@ -34,19 +60,40 @@ import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.contracts.DummyContract
 import net.corda.testing.contracts.DummyState
-import net.corda.testing.core.*
+import net.corda.testing.core.BOC_NAME
+import net.corda.testing.core.DUMMY_NOTARY_NAME
+import net.corda.testing.core.DummyCommandData
+import net.corda.testing.core.SerializationExtension
+import net.corda.testing.core.TestIdentity
+import net.corda.testing.core.singleIdentity
+import net.corda.testing.core.singleIdentityAndCert
 import net.corda.testing.internal.LogHelper
-import net.corda.testing.internal.vault.*
+import net.corda.testing.internal.vault.DUMMY_DEAL_PROGRAM_ID
+import net.corda.testing.internal.vault.DummyDealContract
+import net.corda.testing.internal.vault.UNIQUE_DUMMY_FUNGIBLE_CONTRACT_PROGRAM_ID
+import net.corda.testing.internal.vault.UNIQUE_DUMMY_LINEAR_CONTRACT_PROGRAM_ID
+import net.corda.testing.internal.vault.UniqueDummyFungibleContract
+import net.corda.testing.internal.vault.UniqueDummyLinearContract
+import net.corda.testing.internal.vault.VaultFiller
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito.doReturn
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import rx.observers.TestSubscriber
 import java.math.BigDecimal
 import java.security.PublicKey
-import java.util.*
+import java.util.Currency
+import java.util.Random
+import java.util.UUID
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import javax.persistence.PersistenceException
@@ -54,6 +101,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@ExtendWith(SerializationExtension::class)
 class NodeVaultServiceTest {
     private companion object {
         val cordappPackages = listOf("net.corda.finance.contracts.asset", CashSchemaV1::class.packageName, "net.corda.testing.contracts",
@@ -77,9 +125,6 @@ class NodeVaultServiceTest {
         val MINI_CORP_IDENTITY get() = miniCorp.identity
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
     private lateinit var services: MockServices
     private lateinit var vaultFiller: VaultFiller
     private lateinit var identity: PartyAndCertificate
@@ -88,7 +133,7 @@ class NodeVaultServiceTest {
     private val vaultService get() = services.vaultService as NodeVaultService
     private lateinit var database: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         LogHelper.setLevel(NodeVaultService::class)
         val parameters = testNetworkParameters(notaries = listOf(NotaryInfo(DUMMY_NOTARY, true)))
@@ -108,7 +153,7 @@ class NodeVaultServiceTest {
         services.identityService.verifyAndRegisterIdentity(BOC_IDENTITY)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         database.close()
         LogHelper.reset(NodeVaultService::class)
@@ -122,9 +167,9 @@ class NodeVaultServiceTest {
                                                              withIssuerRefs: Set<OpaqueBytes>? = null): List<StateAndRef<Cash.State>> {
 
         val notaries = if (notary != null) listOf(notary) else null
-        var baseCriteria: QueryCriteria = QueryCriteria.VaultQueryCriteria(notary = notaries)
+        var baseCriteria: QueryCriteria = VaultQueryCriteria(notary = notaries)
         if (onlyFromIssuerParties != null || withIssuerRefs != null) {
-            baseCriteria = baseCriteria.and(QueryCriteria.FungibleAssetQueryCriteria(
+            baseCriteria = baseCriteria.and(FungibleAssetQueryCriteria(
                     issuer = onlyFromIssuerParties?.toList(),
                     issuerRef = withIssuerRefs?.toList()))
         }
@@ -134,7 +179,7 @@ class NodeVaultServiceTest {
 
     class FungibleFoo(override val amount: Amount<Currency>, override val participants: List<AbstractParty>) : FungibleState<Currency>
 
-    @Test(timeout=300_000)
+    @Test
 	fun `fungible state selection test`() {
         val issuerParty = services.myInfo.legalIdentities.first()
         val fungibleFoo = FungibleFoo(100.DOLLARS, listOf(issuerParty))
@@ -146,7 +191,7 @@ class NodeVaultServiceTest {
             recordTransactions(listOf(tx))
         }
 
-        val baseCriteria: QueryCriteria = QueryCriteria.VaultQueryCriteria(notary = listOf(DUMMY_NOTARY))
+        val baseCriteria: QueryCriteria = VaultQueryCriteria(notary = listOf(DUMMY_NOTARY))
 
         database.transaction {
             val states = services.vaultService.tryLockFungibleStatesForSpending(
@@ -159,7 +204,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `duplicate insert of transaction does not fail`() {
         database.transaction {
             val cash = Cash()
@@ -172,7 +217,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can query with page size max-integer`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 3, DUMMY_CASH_ISSUER)
@@ -183,7 +228,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `states not local to instance`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 3, DUMMY_CASH_ISSUER)
@@ -208,7 +253,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `states for refs`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 3, DUMMY_CASH_ISSUER)
@@ -222,7 +267,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `states soft locking reserve and release`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 3, DUMMY_CASH_ISSUER)
@@ -264,7 +309,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `soft locking attempt concurrent reserve`() {
         val backgroundExecutor = Executors.newFixedThreadPool(2)
         val countDown = CountDownLatch(2)
@@ -325,7 +370,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `soft locking partial reserve states fails`() {
         val softLockId1 = UUID.randomUUID()
         val softLockId2 = UUID.randomUUID()
@@ -347,13 +392,14 @@ class NodeVaultServiceTest {
 
         // attempt to lock all 3 states with LockId2
         database.transaction {
-            assertThatExceptionOfType(StatesNotAvailableException::class.java).isThrownBy(
-                    { vaultService.softLockReserve(softLockId2, stateRefsToSoftLock.toNonEmptySet()) }
-            ).withMessageContaining("only 2 rows available").withNoCause()
+            assertThatExceptionOfType(StatesNotAvailableException::class.java)
+                    .isThrownBy { vaultService.softLockReserve(softLockId2, stateRefsToSoftLock.toNonEmptySet()) }
+                    .withMessageContaining("only 2 rows available")
+                    .withNoCause()
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `attempt to lock states already soft locked by me`() {
         val softLockId1 = UUID.randomUUID()
         val criteriaByLockId1 = VaultQueryCriteria(softLockingCondition = SoftLockingCondition(SoftLockingType.SPECIFIED, listOf(softLockId1)))
@@ -379,7 +425,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `lock additional states to some already soft locked by me`() {
 
         val softLockId1 = UUID.randomUUID()
@@ -406,7 +452,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `softLockRelease - correctly releases n locked states`() {
         fun queryStates(softLockingType: SoftLockingType) =
             vaultService.queryBy<Cash.State>(VaultQueryCriteria(softLockingCondition = SoftLockingCondition(softLockingType))).states
@@ -447,7 +493,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unconsumedStatesForSpending exact amount`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 1, DUMMY_CASH_ISSUER)
@@ -466,7 +512,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unconsumedStatesForSpending from two issuer parties`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 1, DUMMY_CASH_ISSUER)
@@ -483,7 +529,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unconsumedStatesForSpending from specific issuer party and refs`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 1, DUMMY_CASH_ISSUER)
@@ -505,7 +551,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unconsumedStatesForSpending insufficient amount`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 1, DUMMY_CASH_ISSUER)
@@ -522,7 +568,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unconsumedStatesForSpending small amount`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 2, DUMMY_CASH_ISSUER)
@@ -540,7 +586,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `states soft locking query granularity`() {
         database.transaction {
             listOf(USD, GBP, CHF).forEach {
@@ -575,7 +621,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addNoteToTransaction() {
         val megaCorpServices = MockServices(cordappPackages, MEGA_CORP.name, mock(), MEGA_CORP_KEY)
         database.transaction {
@@ -607,7 +653,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `is ownable state relevant`() {
         val myAnonymousIdentity = services.keyManagementService.freshKeyAndCert(identity, false)
         val myKeys = services.keyManagementService.filterMyKeys(listOf(identity.owningKey, myAnonymousIdentity.owningKey)).toSet()
@@ -635,7 +681,7 @@ class NodeVaultServiceTest {
     }
 
     // TODO: Unit test linear state relevancy checks
-    @Test(timeout=300_000)
+    @Test
 	fun `correct updates are generated for general transactions`() {
         val notary = identity.party
         val vaultSubscriber = TestSubscriber<Vault.Update<*>>().apply {
@@ -680,7 +726,7 @@ class NodeVaultServiceTest {
         assertEquals(observedUpdates, listOf(expectedIssueUpdate, expectedMoveUpdate))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `correct updates are generated when changing notaries`() {
         val service = vaultService
         val notary = identity.party
@@ -745,11 +791,11 @@ class NodeVaultServiceTest {
         assertEquals(observedUpdates, listOf(expectedIssueUpdate, expectedNotaryChangeUpdate, expectedMoveUpdate))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun observerMode() {
         fun countCash(): Long {
             return database.transaction {
-                vaultService.queryBy(Cash.State::class.java, QueryCriteria.VaultQueryCriteria(relevancyStatus = Vault.RelevancyStatus.ALL), PageSpecification(1)).totalStatesAvailable
+                vaultService.queryBy(Cash.State::class.java, VaultQueryCriteria(relevancyStatus = Vault.RelevancyStatus.ALL), PageSpecification(1)).totalStatesAvailable
             }
         }
         val currentCashStates = countCash()
@@ -777,7 +823,7 @@ class NodeVaultServiceTest {
         assertEquals(currentCashStates + 1, countCash())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `insert equal cash states issued by single transaction`() {
         val nodeIdentity = MEGA_CORP
         val coins = listOf(1.DOLLARS, 1.DOLLARS).map { it.issuedBy(nodeIdentity.ref(1)) }
@@ -800,7 +846,7 @@ class NodeVaultServiceTest {
         assertThat(recordedStates).isEqualTo(coins.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `insert different cash states issued by single transaction`() {
         val nodeIdentity = MEGA_CORP
         val coins = listOf(2.DOLLARS, 1.DOLLARS).map { it.issuedBy(nodeIdentity.ref(1)) }
@@ -823,7 +869,7 @@ class NodeVaultServiceTest {
         assertThat(recordedStates).isEqualTo(coins.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test state relevance criteria`() {
         fun createTx(number: Int, vararg participants: Party): SignedTransaction {
             return services.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).apply {
@@ -862,7 +908,7 @@ class NodeVaultServiceTest {
         // We should never see 2 or 7.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Unique column constraint failing causes linear state to not persist to vault`() {
         fun createTx(): SignedTransaction {
             return services.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).apply {
@@ -880,7 +926,7 @@ class NodeVaultServiceTest {
         })
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Unique column constraint failing causes fungible state to not persist to vault`() {
         fun createTx(): SignedTransaction {
             return services.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).apply {
@@ -901,7 +947,7 @@ class NodeVaultServiceTest {
         })
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Unique column constraint failing causes all states in transaction to fail`() {
         fun createTx(): SignedTransaction {
             return services.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).apply {
@@ -923,7 +969,7 @@ class NodeVaultServiceTest {
         })
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Vault queries return all states by default`() {
         fun createTx(number: Int, vararg participants: Party): SignedTransaction {
             return services.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).apply {
@@ -950,8 +996,8 @@ class NodeVaultServiceTest {
         // We should never see 2 or 7.
     }
 
-    @Test(timeout=300_000)
-@Ignore
+    @Test
+    @Disabled
     fun `trackByCriteria filters updates and snapshots`() {
         /*
          * This test is ignored as the functionality it tests is not yet implemented - see CORDA-2389
@@ -975,8 +1021,8 @@ class NodeVaultServiceTest {
             assertEquals(Cash.PROGRAM_ID, state.state.contract)
         }
 
-        val allCash = data.updates.all {
-            it.produced.all {
+        val allCash = data.updates.all { update ->
+            update.produced.all {
                 it.state.contract == Cash.PROGRAM_ID
             }
         }
@@ -989,7 +1035,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test concurrent update of contract state type mappings`() {
         // no registered contract state types at start-up.
         assertEquals(0, vaultService.contractStateTypeMappings.size)

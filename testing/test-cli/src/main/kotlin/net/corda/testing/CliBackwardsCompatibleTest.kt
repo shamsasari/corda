@@ -1,24 +1,20 @@
 package net.corda.testing
 
-import junit.framework.AssertionFailedError
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
-open class CliBackwardsCompatibleTest(val clazz: Class<*>) {
-
-    @Test(timeout=300_000)
+class CliBackwardsCompatibleTest(private val clazz: Class<*>) {
+    @Test
 	fun `should always be backwards compatible`() {
         checkBackwardsCompatibility(clazz)
     }
 
-    fun checkBackwardsCompatibility(clazz: Class<*>) {
+    private fun checkBackwardsCompatibility(clazz: Class<*>) {
         val checker = CommandLineCompatibilityChecker()
         val checkResults = checker.checkCommandLineIsBackwardsCompatible(clazz)
 
         if (checkResults.isNotEmpty()) {
-            val exceptionMessage = checkResults.map { it.message }.joinToString(separator = "\n")
-            throw AssertionFailedError("Command line is not backwards compatible:\n$exceptionMessage")
+            val exceptionMessage = checkResults.joinToString(separator = "\n") { it.message }
+            throw AssertionError("Command line is not backwards compatible:\n$exceptionMessage")
         }
     }
-
-
 }

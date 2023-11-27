@@ -4,18 +4,17 @@ import net.corda.core.internal.cordapp.CordappImpl
 import net.corda.core.internal.cordapp.get
 import net.corda.core.internal.inputStream
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import java.util.jar.JarInputStream
+import kotlin.io.path.createTempFile
 
 class CustomCordappTest {
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var tempFolder: Path
 
-    @Test(timeout=300_000)
+    @Test
 	fun `packageAsJar writes out the CorDapp info into the manifest`() {
         val cordapp = cordappWithPackages("net.corda.testing.node.internal").copy(targetPlatformVersion = 123, name = "CustomCordappTest")
         val jarFile = packageAsJar(cordapp)
@@ -26,7 +25,7 @@ class CustomCordappTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `packageAsJar on leaf package`() {
         val entries = packageAsJarThenReadBack(cordappWithPackages("net.corda.testing.node.internal"))
 
@@ -41,7 +40,7 @@ class CustomCordappTest {
         assertThat(javaClass.classLoader.getResource("net/corda/testing/node/MockNetworkTest.class")).isNotNull()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `packageAsJar on package with sub-packages`() {
         val entries = packageAsJarThenReadBack(cordappWithPackages("net.corda.testing.node"))
 
@@ -52,7 +51,7 @@ class CustomCordappTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `packageAsJar on single class`() {
         val entries = packageAsJarThenReadBack(cordappForClasses(InternalMockNetwork::class.java))
 
@@ -60,7 +59,7 @@ class CustomCordappTest {
     }
 
     private fun packageAsJar(cordapp: CustomCordapp): Path {
-        val jarFile = tempFolder.newFile().toPath()
+        val jarFile = createTempFile(tempFolder)
         cordapp.packageAsJar(jarFile)
         return jarFile
     }

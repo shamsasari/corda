@@ -32,9 +32,9 @@ import net.corda.testing.node.internal.FINANCE_CONTRACTS_CORDAPP
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.*
 
@@ -42,19 +42,19 @@ class CordaServiceTest {
     private lateinit var mockNet: MockNetwork
     private lateinit var nodeA: StartedMockNode
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = MockNetwork(MockNetworkParameters(threadPerNode = true, cordappsForAllNodes = listOf(FINANCE_CONTRACTS_CORDAPP, enclosedCordapp())))
         nodeA = mockNet.createNode()
         mockNet.startNodes()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Can find distinct services on node`() {
         val service = nodeA.services.cordaService(TestCordaService::class.java)
         val service2 = nodeA.services.cordaService(TestCordaService2::class.java)
@@ -65,26 +65,26 @@ class CordaServiceTest {
         assertEquals(LegacyCordaService::class.java, legacyService.javaClass)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Can start StartableByService flows`() {
         val service = nodeA.services.cordaService(TestCordaService::class.java)
         service.startServiceFlow()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Can't start StartableByRPC flows`() {
         val service = nodeA.services.cordaService(TestCordaService2::class.java)
         assertFailsWith<IllegalArgumentException> { service.startInvalidRPCFlow() }
     }
 
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Test flow with progress tracking`() {
         val service = nodeA.services.cordaService(TestCordaService::class.java)
         service.startServiceFlowAndTrack()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Corda service can access a non-null thread context classloader`() {
         val service = nodeA.services.cordaService(CordaServiceThatRequiresThreadContextClassLoader::class.java)
         service.thatWeCanAccessClassLoader()
@@ -95,22 +95,22 @@ class CordaServiceTest {
      * Querying the vault from a services constructor failed because the criteriaBuilder
      * had not been initialized.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `Can query vault service in constructor`() {
         nodeA.services.cordaService(VaultQueryService::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Can query using jdbc session in constructor`() {
         nodeA.services.cordaService(JdbcSessionQueryService::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Can use entity manager in constructor`() {
         nodeA.services.cordaService(EntityManagerService::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `MockServices when initialized with package name not on classpath throws ClassNotFoundException`() {
         val cordappPackages = listOf(
                 "com.r3.corda.sdk.tokens.money",

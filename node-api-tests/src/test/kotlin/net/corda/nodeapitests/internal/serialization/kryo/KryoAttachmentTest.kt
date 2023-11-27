@@ -1,7 +1,5 @@
 package net.corda.nodeapitests.internal.serialization.kryo
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import net.corda.core.crypto.SecureHash
 import net.corda.core.serialization.EncodingWhitelist
 import net.corda.core.serialization.internal.CheckpointSerializationContext
@@ -12,16 +10,19 @@ import net.corda.node.services.persistence.NodeAttachmentService
 import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.CheckpointSerializationContextImpl
 import net.corda.serialization.internal.CordaSerializationEncoding
-import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.internal.CheckpointSerializationExtension
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 import java.io.InputStream
 
 @RunWith(Parameterized::class)
+@ExtendWith(CheckpointSerializationExtension::class)
 class KryoAttachmentTest(private val compression: CordaSerializationEncoding?) {
     companion object {
         @Parameterized.Parameters(name = "{0}")
@@ -29,12 +30,9 @@ class KryoAttachmentTest(private val compression: CordaSerializationEncoding?) {
         fun compression() = arrayOf<CordaSerializationEncoding?>(null) + CordaSerializationEncoding.values()
     }
 
-
-    @get:Rule
-    val serializationRule = CheckpointSerializationEnvironmentRule()
     private lateinit var context: CheckpointSerializationContext
 
-    @Before
+    @BeforeEach
     fun setup() {
         context = CheckpointSerializationContextImpl(
                 javaClass.classLoader,
@@ -47,7 +45,7 @@ class KryoAttachmentTest(private val compression: CordaSerializationEncoding?) {
                 })
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `HashCheckingStream (de)serialize`() {
         val rubbish = ByteArray(12345) { (it * it * 0.12345).toInt().toByte() }
         val readRubbishStream: InputStream = NodeAttachmentService.HashCheckingStream(
@@ -56,8 +54,8 @@ class KryoAttachmentTest(private val compression: CordaSerializationEncoding?) {
                 rubbish.inputStream()
         ).checkpointSerialize(context).checkpointDeserialize(context)
         for (i in 0..12344) {
-            Assert.assertEquals(rubbish[i], readRubbishStream.read().toByte())
+            assertEquals(rubbish[i], readRubbishStream.read().toByte())
         }
-        Assert.assertEquals(-1, readRubbishStream.read())
+        assertEquals(-1, readRubbishStream.read())
     }
 }

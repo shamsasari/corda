@@ -14,7 +14,7 @@ import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.cordappWithPackages
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ContractCannotMutateTransactionTest {
     companion object {
@@ -33,7 +33,7 @@ class ContractCannotMutateTransactionTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun testContractCannotModifyTransaction() {
         driver(driverParameters()) {
             val alice = startNode(providedName = ALICE_NAME, rpcUsers = listOf(user)).getOrThrow()

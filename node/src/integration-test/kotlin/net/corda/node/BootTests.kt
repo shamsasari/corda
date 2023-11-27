@@ -23,7 +23,7 @@ import net.corda.testing.node.User
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startNode
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.ObjectInputStream
 import java.io.ObjectOutputStream
@@ -32,7 +32,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class BootTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `java deserialization is disabled`() {
         val user = User("u", "p", setOf(startFlow<ObjectInputStreamFlow>()))
         val devParams = NodeParameters(providedName = BOB_NAME, rpcUsers = listOf(user))
@@ -53,7 +53,7 @@ class BootTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `double node start doesn't write into log file`() {
         driver(DriverParameters(notarySpecs = emptyList(), cordappsForAllNodes = emptyList())) {
             val alice = startNode(providedName = ALICE_NAME).get()
@@ -69,7 +69,7 @@ class BootTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `node fails to start if legal identity is lost`() {
         driver(DriverParameters(
                 notarySpecs = emptyList(),

@@ -8,8 +8,8 @@ import net.corda.node.services.config.FlowOverride
 import net.corda.node.services.config.FlowOverrideConfig
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.instanceOf
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import java.lang.IllegalStateException
 
@@ -65,7 +65,7 @@ class NodeFlowManagerTest {
         nodeFlowManager.validateRegistrations()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `should allow registration of flows with different weights`() {
         val nodeFlowManager = NodeFlowManager()
         nodeFlowManager.registerInitiatedFlow(Init::class.java, Resp::class.java)
@@ -76,7 +76,7 @@ class NodeFlowManagerTest {
         Assert.assertThat(flow, `is`(instanceOf(RespSub::class.java)))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `should allow updating of registered responder at runtime`() {
         val nodeFlowManager = NodeFlowManager()
         nodeFlowManager.registerInitiatedFlow(Init::class.java, Resp::class.java)
@@ -94,7 +94,7 @@ class NodeFlowManagerTest {
         Assert.assertThat(flow, `is`(instanceOf(RespSubSub::class.java)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should allow an override to be specified`() {
         val nodeFlowManager = NodeFlowManager(FlowOverrideConfig(listOf(FlowOverride(Init::class.qualifiedName!!, Resp::class.qualifiedName!!))))
         nodeFlowManager.registerInitiatedFlow(Init::class.java, Resp::class.java)

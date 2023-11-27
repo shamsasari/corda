@@ -3,8 +3,8 @@ package net.corda.core.internal;
 import net.corda.core.crypto.Crypto;
 import net.i2p.crypto.eddsa.EdDSAEngine;
 import net.i2p.crypto.eddsa.EdDSAPublicKey;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.math.BigInteger;
@@ -13,7 +13,7 @@ import java.security.KeyPair;
 import java.security.SignatureException;
 import java.util.Random;
 
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 /**
  * JDK11 upgrade: rewritten in Java to gain access to private internal JDK classes via module directives (not available to Kotlin compiler):
@@ -59,7 +59,7 @@ public class X509EdDSAEngineTest {
      * Put the X509EdDSA engine through basic tests to verify that the functions are hooked up correctly.
      */
     @Test
-    @Ignore("TODO JDK17:Fixme")
+    @Disabled("TODO JDK17:Fixme")
     public void SignAndVerify() throws InvalidKeyException, SignatureException {
         X509EdDSAEngine engine = new X509EdDSAEngine();
         KeyPair keyPair = Crypto.deriveKeyPairFromEntropy(Crypto.EDDSA_ED25519_SHA512, BigInteger.valueOf(SEED));
@@ -82,7 +82,7 @@ public class X509EdDSAEngineTest {
      * Verify that signing with an X509Key wrapped EdDSA key works.
      */
     @Test
-    @Ignore
+    @Disabled
     public void SignAndVerifyWithX509Key() throws InvalidKeyException, SignatureException, IOException {
         X509EdDSAEngine engine = new X509EdDSAEngine();
         KeyPair keyPair = Crypto.deriveKeyPairFromEntropy(Crypto.EDDSA_ED25519_SHA512, BigInteger.valueOf(SEED + 1));
@@ -105,7 +105,7 @@ public class X509EdDSAEngineTest {
      * Verify that signing with an X509Key wrapped EdDSA key succeeds when using the underlying EdDSAEngine.
      */
     @Test
-    @Ignore
+    @Disabled
     public void SignAndVerifyWithX509KeyAndOldEngineFails() throws InvalidKeyException, SignatureException, IOException {
         X509EdDSAEngine engine = new X509EdDSAEngine();
         KeyPair keyPair = Crypto.deriveKeyPairFromEntropy(Crypto.EDDSA_ED25519_SHA512, BigInteger.valueOf(SEED + 1));
@@ -125,7 +125,7 @@ public class X509EdDSAEngineTest {
 
     /** Verify will fail if the input public key cannot be converted to EdDSA public key. */
     @Test(expected = InvalidKeyException.class)
-    @Ignore
+    @Disabled
     public void verifyWithNonSupportedKeyTypeFails() throws InvalidKeyException {
         EdDSAEngine engine = new EdDSAEngine();
         KeyPair keyPair = Crypto.deriveKeyPairFromEntropy(Crypto.ECDSA_SECP256K1_SHA256, BigInteger.valueOf(SEED));

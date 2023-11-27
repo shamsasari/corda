@@ -8,7 +8,7 @@ import net.corda.node.VersionInfo
 import net.corda.node.services.config.NetworkServicesConfig
 import net.corda.coretesting.internal.rigorousMock
 import org.bouncycastle.pkcs.PKCS10CertificationRequest
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.HttpURLConnection
@@ -18,7 +18,7 @@ import kotlin.test.assertEquals
 
 class HTTPNetworkRegistrationServiceTest {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `post request properties`() {
         val versionInfo = VersionInfo.UNKNOWN
         val pnm = UUID.randomUUID();
@@ -34,7 +34,7 @@ class HTTPNetworkRegistrationServiceTest {
         assertEquals(listOf("application/octet-stream"), header["Content-Type"])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `post request properties with CSR token`() {
         val versionInfo = VersionInfo.UNKNOWN
         val config = rigorousMock<NetworkServicesConfig>().also {

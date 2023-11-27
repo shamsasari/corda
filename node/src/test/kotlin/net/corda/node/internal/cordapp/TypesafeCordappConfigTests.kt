@@ -2,11 +2,11 @@ package net.corda.node.internal.cordapp
 
 import com.typesafe.config.ConfigFactory
 import net.corda.core.cordapp.CordappConfigException
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
 
 class TypesafeCordappConfigTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `test that all value types can be retrieved`() {
         val config = ConfigFactory.parseString("string=string\nint=1\nfloat=1.0\ndouble=1.0\nnumber=2\ndouble=1.01\nbool=false")
         val cordappConf = TypesafeCordappConfig(config)
@@ -20,7 +20,7 @@ class TypesafeCordappConfigTests {
         assertThat(cordappConf.getBoolean("bool")).isEqualTo(false)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test a nested path`() {
         val config = ConfigFactory.parseString("outer: { inner: string }")
         val cordappConf = TypesafeCordappConfig(config)
@@ -28,7 +28,7 @@ class TypesafeCordappConfigTests {
         assertThat(cordappConf.getString("outer.inner")).isEqualTo("string")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test exists determines existence and lack of existence correctly`() {
         val config = ConfigFactory.parseString("exists=exists")
         val cordappConf = TypesafeCordappConfig(config)

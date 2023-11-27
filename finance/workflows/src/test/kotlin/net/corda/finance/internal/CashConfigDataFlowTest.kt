@@ -8,16 +8,16 @@ import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.MockNodeParameters
 import net.corda.testing.node.internal.FINANCE_WORKFLOWS_CORDAPP
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 
 class CashConfigDataFlowTest {
     private val mockNet = MockNetwork(MockNetworkParameters(threadPerNode = true))
 
-    @After
+    @AfterEach
     fun cleanUp() = mockNet.stopNodes()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issuable currencies read in from cordapp config`() {
         val node = mockNet.createNode(MockNodeParameters(
                 additionalCordapps = listOf(FINANCE_WORKFLOWS_CORDAPP.withConfig(mapOf("issuableCurrencies" to listOf("EUR", "USD"))))

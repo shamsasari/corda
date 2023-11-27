@@ -3,21 +3,24 @@ package net.corda.testing.node.internal;
 import co.paralleluniverse.fibers.Suspendable;
 import net.corda.core.Utils;
 import net.corda.core.concurrent.CordaFuture;
-import net.corda.core.flows.*;
+import net.corda.core.flows.FlowException;
+import net.corda.core.flows.FlowLogic;
+import net.corda.core.flows.FlowSession;
+import net.corda.core.flows.InitiatedBy;
+import net.corda.core.flows.InitiatingFlow;
+import net.corda.core.flows.StartableByRPC;
 import net.corda.core.identity.Party;
 import net.corda.core.utilities.UntrustworthyData;
 import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.MockNetworkParameters;
 import net.corda.testing.node.StartedMockNode;
-import org.junit.After;
-import org.junit.Rule;
-import org.junit.Test;
-import org.junit.rules.ExpectedException;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.Future;
 
 import static net.corda.testing.node.internal.InternalTestUtilsKt.cordappsForPackages;
-import static org.hamcrest.Matchers.instanceOf;
+import static org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType;
 
 /**
  * Java version of test based on the example given as an answer to this SO question:
@@ -32,13 +35,10 @@ public class TestResponseFlowInIsolationInJava {
     private final StartedMockNode a = network.createNode();
     private final StartedMockNode b = network.createNode();
 
-    @After
+    @AfterEach
     public void tearDown() {
         network.stopNodes();
     }
-
-    @Rule
-    public final ExpectedException exception = ExpectedException.none();
 
     @Test
     public void test() throws Exception {
@@ -56,17 +56,17 @@ public class TestResponseFlowInIsolationInJava {
 
         // We check that the invocation of the Responder flow object has caused an ExecutionException.
         Responder initiatedResponderFlow = initiatedResponderFlowFuture.get();
-        CordaFuture initiatedResponderFlowResultFuture = initiatedResponderFlow.getStateMachine().getResultFuture();
-        exception.expectCause(instanceOf(FlowException.class));
-        exception.expectMessage("String did not contain the expected message.");
-        initiatedResponderFlowResultFuture.get();
+        CordaFuture<?> initiatedResponderFlowResultFuture = initiatedResponderFlow.getStateMachine().getResultFuture();
+        assertThatExceptionOfType(FlowException.class)
+                .isThrownBy(initiatedResponderFlowResultFuture::get)
+                .withMessage("String did not contain the expected message.");
     }
 
     // This is the real implementation of Initiator.
     @InitiatingFlow
     @StartableByRPC
     public static class Initiator extends FlowLogic<Void> {
-        private Party counterparty;
+        private final Party counterparty;
 
         public Initiator(Party counterparty) {
             this.counterparty = counterparty;

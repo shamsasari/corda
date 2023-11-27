@@ -2,8 +2,8 @@ package net.corda.client.jfx.utils
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class MappedListTest {
@@ -12,14 +12,14 @@ class MappedListTest {
     lateinit var mappedList: ObservableList<Int>
     lateinit var replayedList: ObservableList<Int>
 
-    @Before
+    @BeforeEach
     fun setup() {
         sourceList = FXCollections.observableArrayList("Alice")
         mappedList = MappedList(sourceList) { it.length }
         replayedList = ReplayedList(mappedList)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addWorks() {
         assertEquals(replayedList.size, 1)
         assertEquals(replayedList[0], 5)
@@ -36,7 +36,7 @@ class MappedListTest {
         assertEquals(replayedList[2], 3)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun removeWorks() {
         sourceList.add("Bob")
         sourceList.add(0, "Charlie")
@@ -48,7 +48,7 @@ class MappedListTest {
         assertEquals(replayedList[1], 3)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun permuteWorks() {
         sourceList.add("Bob")
         sourceList.add(0, "Charlie")

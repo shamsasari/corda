@@ -21,10 +21,10 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -32,7 +32,7 @@ import kotlin.test.assertNull
 class IdentitySyncFlowTests {
     private lateinit var mockNet: InternalMockNetwork
 
-    @Before
+    @BeforeEach
     fun before() {
         // We run this in parallel threads to help catch any race conditions that may exist.
         mockNet = InternalMockNetwork(
@@ -42,13 +42,13 @@ class IdentitySyncFlowTests {
         )
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
-    @Ignore("TODO JDK17: class cast exception")
+    @Test
+    @Disabled("TODO JDK17: class cast exception")
 	fun `sync confidential identities`() {
         // Set up values we'll need
         val aliceNode = mockNet.createPartyNode(ALICE_NAME)
@@ -76,8 +76,8 @@ class IdentitySyncFlowTests {
         assertEquals(expected, actual)
     }
 
-    @Test(timeout=300_000)
-    @Ignore("TODO JDK17: class cast exception")
+    @Test
+    @Disabled("TODO JDK17: class cast exception")
 	fun `don't offer other's identities confidential identities`() {
         // Set up values we'll need
         val aliceNode = mockNet.createPartyNode(ALICE_NAME)

@@ -1,15 +1,14 @@
 package net.corda.nodeapi.internal.network
 
+import net.corda.core.internal.NODE_INFO_DIRECTORY
 import net.corda.core.internal.div
 import net.corda.core.internal.list
 import net.corda.core.internal.write
-import net.corda.core.internal.NODE_INFO_DIRECTORY
 import net.corda.testing.common.internal.eventually
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import rx.schedulers.TestScheduler
 import java.nio.file.Path
 import java.time.Duration
@@ -27,14 +26,12 @@ class NodeInfoFilesCopierTest {
         private const val BAD_NODE_INFO_NAME = "something"
     }
 
-    @Rule
-    @JvmField
-    val folder = TemporaryFolder()
+    @TempDir
+    private lateinit var folder: Path
 
-    private val rootPath get() = folder.root.toPath()
     private val scheduler = TestScheduler()
 
-    private fun nodeDir(nodeBaseDir: String) = rootPath.resolve(nodeBaseDir).resolve(ORGANIZATION.toLowerCase())
+    private fun nodeDir(nodeBaseDir: String) = folder.resolve(nodeBaseDir).resolve(ORGANIZATION.lowercase())
 
     private val node1RootPath by lazy { nodeDir(NODE_1_PATH) }
     private val node2RootPath by lazy { nodeDir(NODE_2_PATH) }
@@ -43,12 +40,12 @@ class NodeInfoFilesCopierTest {
 
     private lateinit var nodeInfoFilesCopier: NodeInfoFilesCopier
 
-    @Before
+    @BeforeEach
     fun setUp() {
         nodeInfoFilesCopier = NodeInfoFilesCopier(scheduler)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `files created before a node is started are copied to that node`() {
         // Configure the first node.
         nodeInfoFilesCopier.addConfig(node1RootPath)
@@ -69,7 +66,7 @@ class NodeInfoFilesCopierTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `polling of running nodes`() {
         // Configure 2 nodes.
         nodeInfoFilesCopier.addConfig(node1RootPath)
@@ -87,7 +84,7 @@ class NodeInfoFilesCopierTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `remove nodes`() {
         // Configure 2 nodes.
         nodeInfoFilesCopier.addConfig(node1RootPath)
@@ -111,7 +108,7 @@ class NodeInfoFilesCopierTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun clear() {
         // Configure 2 nodes.
         nodeInfoFilesCopier.addConfig(node1RootPath)

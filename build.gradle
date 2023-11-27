@@ -1,5 +1,7 @@
 import com.r3.testing.DistributeTestsBy
 import com.r3.testing.PodLogLevel
+import net.corda.plugins.apiscanner.GenerateApi
+import org.jetbrains.kotlin.gradle.tasks.KotlinCompile
 
 import static org.gradle.api.JavaVersion.VERSION_11
 import static org.jetbrains.kotlin.gradle.dsl.KotlinVersion.KOTLIN_1_8
@@ -41,7 +43,7 @@ buildscript {
             'org.gradle.**',
             'org.apache.**',
             'org.jacoco.**',
-            'org.junit**',
+            '',
             'org.slf4j**',
             'worker.org.gradle.**',
             'org.mockito.kotlin**',
@@ -77,10 +79,7 @@ buildscript {
     ext.fileupload_version = constants.getProperty("fileuploadVersion")
     ext.kryo_version = constants.getProperty("kryoVersion")
     ext.kryo_serializer_version = constants.getProperty("kryoSerializerVersion")
-    ext.junit_version = constants.getProperty("junitVersion")
-    ext.junit_vintage_version = constants.getProperty("junitVintageVersion")
     ext.junit_jupiter_version = constants.getProperty("junitJupiterVersion")
-    ext.junit_platform_version = constants.getProperty("junitPlatformVersion")
     ext.mockito_version = constants.getProperty("mockitoVersion")
     ext.mockito_kotlin_version = constants.getProperty("mockitoKotlinVersion")
     ext.hamkrest_version = constants.getProperty("hamkrestVersion")
@@ -308,7 +307,7 @@ allprojects {
         options.encoding = 'UTF-8'
     }
 
-    tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).configureEach {
+    tasks.withType(KotlinCompile).configureEach {
         compilerOptions {
             languageVersion = KOTLIN_1_8
             apiVersion = KOTLIN_1_8
@@ -361,6 +360,8 @@ allprojects {
     }
 
     tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+        systemProperty "junit.jupiter.execution.timeout.default", "5 m"
         if (name.contains("integrationTest")) {
             maxParallelForks = (System.env.CORDA_INT_TESTING_FORKS == null) ? 1 : "$System.env.CORDA_INT_TESTING_FORKS".toInteger()
         }
@@ -369,7 +370,7 @@ allprojects {
     if (jdkClassifier) {
         jar {
             // JDK11 built and published artifacts to include classifier
-            archiveClassifier = jdkClassifier
+            archiveClassifier = jdkClassifier.toString()
         }
     }
 
@@ -448,7 +449,7 @@ allprojects {
     }
 
     configurations {
-        all {
+        configureEach {
             resolutionStrategy {
                 // Force dependencies to use the same version of Kotlin as Corda.
                 force "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
@@ -561,16 +562,16 @@ jar {
     enabled = false
 }
 
-task jacocoRootReport(type: org.gradle.testing.jacoco.tasks.JacocoReport) {
+tasks.register('jacocoRootReport', JacocoReport) {
     dependsOn = subprojects.test
 //    additionalSourceDirs = files(subprojects.sourceSets.main.allSource.srcDirs)
 //    sourceDirectories = files(subprojects.sourceSets.main.allSource.srcDirs)
 //    classDirectories = files(subprojects.sourceSets.main.output)
 //    executionData = files(subprojects.jacocoTestReport.executionData)
     reports {
-        html.enabled = true
-        xml.enabled = true
-        csv.enabled = false
+        html.required.set(true)
+        xml.required.set(true)
+        csv.required.set(false)
     }
     onlyIf = {
         true
@@ -590,13 +591,13 @@ tasks.register('detekt', JavaExec) {
     def plugins = detektPluginsJar.outputs.files.singleFile
     def params = ['-i', input, '-c', config, '-b', baseline, '--plugins', plugins]
     inputs.files(detektPluginsJar, config, baseline)
-    main = "io.gitlab.arturbosch.detekt.cli.Main"
+    mainClass = "io.gitlab.arturbosch.detekt.cli.Main"
     classpath = configurations.detekt
     args(params)
 }
 
 tasks.register('detektBaseline', JavaExec) {
-    main = "io.gitlab.arturbosch.detekt.cli.Main"
+    mainClass = "io.gitlab.arturbosch.detekt.cli.Main"
     classpath = configurations.detekt
     def input = "$projectDir"
     def config = "$projectDir/detekt-config.yml, $projectDir/detekt-baseline-config.yml"
@@ -606,18 +607,18 @@ tasks.register('detektBaseline', JavaExec) {
 }
 
 tasks.withType(Test).configureEach {
-    reports.html.destination = file("${reporting.baseDir}/${name}")
+    reports.html.outputLocation.set(reporting.baseDirectory.dir(name))
 }
 
-task testReport(type: TestReport) {
-    destinationDir = file("$buildDir/reports/allTests")
+tasks.register('testReport', TestReport) {
+    destinationDirectory.set(layout.buildDirectory.dir("reports/allTests"))
     // Include the results from the `test` task in all subprojects
     reportOn subprojects*.test
 }
 
 // Note: corda.jar is used at runtime so no runtime ZIP is necessary.
 // Resulting ZIP can be found in "build/distributions"
-task buildCordappDependenciesZip(type: Zip) {
+tasks.register('buildCordappDependenciesZip', Zip) {
     baseName 'corda-deps'
     from configurations.runtimeOnly
     from configurations.implementation
@@ -627,7 +628,7 @@ task buildCordappDependenciesZip(type: Zip) {
     duplicatesStrategy = DuplicatesStrategy.EXCLUDE
 }
 
-tasks.register('generateApi', net.corda.plugins.apiscanner.GenerateApi) {
+tasks.register('generateApi', GenerateApi) {
     baseName = "api-corda"
 }
 

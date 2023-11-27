@@ -21,14 +21,14 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.cordappsForPackages
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.SQLTransientConnectionException
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `external operation`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -41,7 +41,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `external operation that checks deduplicationId is not rerun when flow is retried`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -58,7 +58,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `external operation propagates exception to calling flow`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -76,7 +76,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `external operation exception can be caught in flow`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -89,7 +89,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `external operation with exception that hospital keeps for observation does not fail`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -107,7 +107,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `external operation with exception that hospital discharges is retried and runs the external operation again`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -125,7 +125,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `external async operation that passes serviceHub into process can be retried`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -142,7 +142,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `external async operation that accesses serviceHub from flow directly will fail when retried`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -159,7 +159,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `vault can be queried`() {
         driver(
             DriverParameters(
@@ -174,7 +174,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `data can be persisted to node database via entity manager`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -184,7 +184,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `data can be persisted to node database via jdbc session`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -194,7 +194,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `data can be persisted to node database via servicehub database transaction`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -204,7 +204,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `data can be persisted to node database in external operation and read from another process once finished`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -214,7 +214,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `external operation can be retried when an error occurs inside of database transaction`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)

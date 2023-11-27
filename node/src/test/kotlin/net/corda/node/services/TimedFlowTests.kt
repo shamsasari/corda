@@ -39,10 +39,10 @@ import net.corda.testing.internal.LogHelper
 import net.corda.testing.node.InMemoryMessagingNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.internal.*
-import org.junit.AfterClass
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import java.security.PublicKey
 import java.time.Duration
 import java.util.concurrent.Future
@@ -71,7 +71,7 @@ class TimedFlowTests {
             LogHelper.setLevel("+net.corda.flow", "+net.corda.testing.node", "+net.corda.node.services.messaging")
         }
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setup() {
             mockNet = InternalMockNetwork(
@@ -87,7 +87,7 @@ class TimedFlowTests {
             patientNode = started.third
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun stopNodes() {
             mockNet.stopNodes()
@@ -144,12 +144,12 @@ class TimedFlowTests {
         }
     }
 
-    @Before
+    @BeforeEach
     fun resetCounter() {
         requestsReceived = AtomicInteger(0)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `timed flows are restarted`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {
@@ -167,7 +167,7 @@ class TimedFlowTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `timed sub-flows are restarted`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {
@@ -185,7 +185,7 @@ class TimedFlowTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `timed flow can update its ETA`() {
         try {
             waitETA = 10.minutes
@@ -217,7 +217,7 @@ class TimedFlowTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `timed flow cannot update its ETA to less than default`() {
         try {
             waitETA = 1.seconds

@@ -17,7 +17,7 @@ import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 
 @Suppress("FunctionName")
@@ -44,7 +44,7 @@ class ContractWithGenericTypeTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
 	fun `flow with value of generic type`() {
         driver(parameters()) {
             val alice = startNode(providedName = ALICE_NAME, rpcUsers = listOf(user)).getOrThrow()
@@ -59,7 +59,7 @@ class ContractWithGenericTypeTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow without value of generic type`() {
         driver(parameters()) {
             val alice = startNode(providedName = ALICE_NAME, rpcUsers = listOf(user)).getOrThrow()

@@ -25,8 +25,8 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatCode
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.json.simple.JSONObject
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
@@ -52,7 +52,7 @@ class DriverTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `simple node startup and shutdown`() {
         val handle = driver(DriverParameters(notarySpecs = emptyList())) {
             val node = startNode(providedName = DUMMY_REGULATOR_NAME)
@@ -61,7 +61,7 @@ class DriverTests {
         nodeMustBeDown(handle)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `starting with default notary`() {
         driver {
             // Make sure the default is a single-node notary
@@ -77,8 +77,8 @@ class DriverTests {
         }
     }
 
-    @Test(timeout=300_000)
-    @Ignore("TODO JDK17: Fixme - intermittent on jenkins")
+    @Test
+    @Disabled("TODO JDK17: Fixme - intermittent on jenkins")
 	fun `default notary is visible when the startNode future completes`() {
         // Based on local testing, running this 3 times gives us a high confidence that we'll spot if the feature is not working
         repeat(3) {
@@ -89,8 +89,8 @@ class DriverTests {
         }
     }
 
-    @Test(timeout=300_000)
-    @Ignore("TODO JDK17: Fixme - Stage 2")
+    @Test
+    @Disabled("TODO JDK17: Fixme - Stage 2")
 	fun `debug mode enables debug logging level`() {
         // Make sure we're using the log4j2 config which writes to the log file
         val logConfigFile = projectRootDir / "config" / "dev" / "log4j2.xml"
@@ -107,7 +107,7 @@ class DriverTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `monitoring mode enables jolokia exporting of JMX metrics via HTTP JSON`() {
         driver(DriverParameters(jmxPolicy = JmxPolicy.defaultEnabled(), startNodesInProcess = false, notarySpecs = emptyList())) {
             val node = startNode(providedName = DUMMY_REGULATOR_NAME).getOrThrow()
@@ -118,7 +118,7 @@ class DriverTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `started node, which is not waited for in the driver, is shutdown when the driver exits`() {
         // First check that the process-id file is created by the node on startup, so that we can be sure our check that
         // it's deleted on shutdown isn't a false-positive.
@@ -132,7 +132,7 @@ class DriverTests {
         assertThat(NodeStartup().isNodeRunningAt(baseDirectory)).isTrue()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `driver rejects multiple nodes with the same name parallel`() {
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList())) {
             val nodes = listOf(newNode(DUMMY_BANK_A_NAME), newNode(DUMMY_BANK_B_NAME), newNode(DUMMY_BANK_A_NAME))
@@ -142,7 +142,7 @@ class DriverTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `driver rejects multiple nodes with the same organisation name`() {
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList())) {
             newNode(CordaX500Name(commonName = "Notary", organisation = "R3CEV", locality = "New York", country = "US"))().getOrThrow()
@@ -152,7 +152,7 @@ class DriverTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `driver allows reusing names of nodes that have been stopped`() {
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList())) {
             val nodeA = newNode(DUMMY_BANK_A_NAME)().getOrThrow()
@@ -162,7 +162,7 @@ class DriverTests {
     }
 
 
-    @Test(timeout=300_000)
+    @Test
 	fun `driver waits for in-process nodes to finish`() {
         fun NodeHandle.stopQuietly() = try {
             stop()

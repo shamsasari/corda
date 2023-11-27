@@ -3,7 +3,7 @@ package net.corda.serialization.internal.carpenter
 import net.corda.core.internal.uncheckedCast
 import net.corda.serialization.internal.AllWhitelist
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.beans.Introspector
 import java.lang.reflect.Field
 import java.lang.reflect.Method
@@ -25,7 +25,7 @@ class ClassCarpenterTest {
     private val Class<*>.nonSyntheticFields: List<Field> get() = declaredFields.filterNot { it.isSynthetic }
     private val Class<*>.nonSyntheticMethods: List<Method> get() = declaredMethods.filterNot { it.isSynthetic }
 
-    @Test(timeout=300_000)
+    @Test
 	fun empty() {
         val clazz = cc.build(ClassSchema("gen.EmptyClass", emptyMap()))
         assertEquals(0, clazz.nonSyntheticFields.size)
@@ -34,7 +34,7 @@ class ClassCarpenterTest {
         clazz.getDeclaredConstructor().newInstance()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun prims() {
         val clazz = cc.build(ClassSchema(
                 "gen.Prims",
@@ -82,14 +82,14 @@ class ClassCarpenterTest {
         return Pair(clazz, i)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun objs() {
         val (clazz, i) = genPerson()
         assertEquals("Mike", clazz.getMethod("getName").invoke(i))
         assertEquals("Mike", (i as SimpleFieldAccess)["name"])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `generated toString`() {
         val (_, i) = genPerson()
         assertEquals("Person{age=32, name=Mike}", i.toString())
@@ -101,7 +101,7 @@ class ClassCarpenterTest {
         cc.build(ClassSchema("gen.EmptyClass", emptyMap()))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can refer to each other`() {
         val (clazz1, i) = genPerson()
         val clazz2 = cc.build(ClassSchema("gen.Referee", mapOf(
@@ -111,7 +111,7 @@ class ClassCarpenterTest {
         assertEquals(i, (i2 as SimpleFieldAccess)["ref"])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun superclasses() {
         val schema1 = ClassSchema(
                 "gen.A",
@@ -132,7 +132,7 @@ class ClassCarpenterTest {
     /**
      * Tests the fix for [Corda-1945](https://r3-cev.atlassian.net/secure/RapidBoard.jspa?rapidView=83&modal=detail&selectedIssue=CORDA-1945)
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `superclasses with double-size primitive constructor parameters`() {
         val schema1 = ClassSchema(
                 "gen.A",
@@ -150,7 +150,7 @@ class ClassCarpenterTest {
         assertEquals("B{a=1, b=xb}", i.toString())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun interfaces() {
         val schema1 = ClassSchema(
                 "gen.A",
@@ -167,7 +167,7 @@ class ClassCarpenterTest {
         assertEquals(1, i.b)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unimplemented interface method with lenient = false`() {
         val schemaA = ClassSchema(
                 "gen.A",
@@ -182,7 +182,7 @@ class ClassCarpenterTest {
         assertThatExceptionOfType(InterfaceMismatchException::class.java).isThrownBy { cc.build(schemaB) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unimplemented interface method with lenient = true`() {
         val cc = ClassCarpenterImpl(whitelist = AllWhitelist, lenient = true)
 
@@ -203,7 +203,7 @@ class ClassCarpenterTest {
         assertThatExceptionOfType(AbstractMethodError::class.java).isThrownBy { b.b }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `generate interface`() {
         val schema1 = InterfaceSchema(
                 "gen.Interface",
@@ -228,7 +228,7 @@ class ClassCarpenterTest {
         assertEquals(testA, i["a"])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `generate multiple interfaces`() {
         val iFace1 = InterfaceSchema(
                 "gen.Interface1",
@@ -264,7 +264,7 @@ class ClassCarpenterTest {
         assertEquals(testD, i["d"])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `interface implementing interface`() {
         val iFace1 = InterfaceSchema(
                 "gen.Interface1",
@@ -323,7 +323,7 @@ class ClassCarpenterTest {
         cc.build(schema)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `nullable parameter integer`() {
         val className = "iEnjoyWibble"
         val schema = ClassSchema(
@@ -338,7 +338,7 @@ class ClassCarpenterTest {
         clazz.constructors[0].newInstance(a2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non nullable parameter integer with non null`() {
         val className = "iEnjoyWibble"
         val schema = ClassSchema(
@@ -364,7 +364,7 @@ class ClassCarpenterTest {
         clazz.constructors[0].newInstance(a)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `int array`() {
         val className = "iEnjoyPotato"
         val schema = ClassSchema(
@@ -396,7 +396,7 @@ class ClassCarpenterTest {
         clazz.constructors[0].newInstance(a)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `integer array`() {
         val className = "iEnjoyFlan"
         val schema = ClassSchema(
@@ -414,7 +414,7 @@ class ClassCarpenterTest {
         assertEquals("$className{a=[1, 2, 3]}", i.toString())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `int array with ints`() {
         val className = "iEnjoyCrumble"
         val schema = ClassSchema(
@@ -433,7 +433,7 @@ class ClassCarpenterTest {
         assertEquals("$className{a=2, b=[4, 8], c=16}", i.toString())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `multiple int arrays`() {
         val className = "iEnjoyJam"
         val schema = ClassSchema(
@@ -454,7 +454,7 @@ class ClassCarpenterTest {
         assertEquals("$className{a=[1, 2], b=3, c=[4, 5, 6]}", i.toString())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `string array`() {
         val className = "iEnjoyToast"
         val schema = ClassSchema(
@@ -471,7 +471,7 @@ class ClassCarpenterTest {
         assertEquals("jam", arr[2])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `string arrays`() {
         val className = "iEnjoyToast"
         val schema = ClassSchema(
@@ -499,7 +499,7 @@ class ClassCarpenterTest {
         assertEquals("some fries", arr2[1])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `nullable sets annotations`() {
         val className = "iEnjoyJam"
         val schema = ClassSchema(
@@ -520,7 +520,7 @@ class ClassCarpenterTest {
         assertEquals(Nonnull::class.java, clazz.getMethod("getB").annotations[0].annotationClass.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun beanTest() {
         val schema = ClassSchema(
                 "pantsPantsPants",

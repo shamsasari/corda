@@ -4,8 +4,8 @@ import net.corda.core.node.NodeInfo
 import net.corda.core.utilities.NetworkHostAndPort
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.core.getTestPartyAndCertificate
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
@@ -16,7 +16,7 @@ class NodeInfoTests {
 
     private lateinit var testNode: NodeInfo
 
-    @Before
+    @BeforeEach
     fun setup() {
         testNode = NodeInfo(
                 addresses = listOf(
@@ -31,13 +31,13 @@ class NodeInfoTests {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should return true when the X500Name is present on the node`() {
         assertTrue(testNode.isLegalIdentity(party1.name), "Party 1 must exist on the node")
         assertTrue(testNode.isLegalIdentity(party2.name), "Party 2 must exist on the node")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should return false when the X500Name is not present on the node`() {
         assertFalse(testNode.isLegalIdentity(TestIdentity.fresh("party3").name),
                 "Party 3 must not exist on the node")

@@ -1,13 +1,13 @@
 package net.corda.core.identity
 
 import net.corda.core.internal.isEquivalentTo
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.security.auth.x500.X500Principal
 import kotlin.test.assertTrue
 
 class X500UtilsTest {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `X500Principal equalX500NameParts matches regardless the order`() {
         // given
         val orderingA = "O=Bank A, OU=Organisation Unit, L=New York, C=US"

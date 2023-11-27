@@ -2,8 +2,18 @@ package net.corda.node.migration
 
 import liquibase.database.Database
 import liquibase.database.jvm.JdbcConnection
-import net.corda.core.contracts.*
-import net.corda.core.crypto.*
+import net.corda.core.contracts.Amount
+import net.corda.core.contracts.ContractState
+import net.corda.core.contracts.Issued
+import net.corda.core.contracts.StateAndRef
+import net.corda.core.contracts.StateRef
+import net.corda.core.contracts.TransactionState
+import net.corda.core.contracts.UniqueIdentifier
+import net.corda.core.crypto.Crypto
+import net.corda.core.crypto.SecureHash
+import net.corda.core.crypto.SignableData
+import net.corda.core.crypto.SignatureMetadata
+import net.corda.core.crypto.toStringShort
 import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.identity.PartyAndCertificate
@@ -36,7 +46,14 @@ import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.nodeapi.internal.persistence.contextTransactionOrNull
 import net.corda.nodeapi.internal.persistence.currentDBSession
-import net.corda.testing.core.*
+import net.corda.testing.core.ALICE_NAME
+import net.corda.testing.core.BOB_NAME
+import net.corda.testing.core.BOC_NAME
+import net.corda.testing.core.CHARLIE_NAME
+import net.corda.testing.core.DUMMY_NOTARY_NAME
+import net.corda.testing.core.SerializationExtension
+import net.corda.testing.core.TestIdentity
+import net.corda.testing.core.dummyCommand
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.internal.vault.CommodityState
 import net.corda.testing.internal.vault.DUMMY_LINEAR_CONTRACT_PROGRAM_ID
@@ -46,13 +63,30 @@ import net.corda.testing.node.MockServices
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import net.corda.testing.node.TestClock
 import net.corda.testing.node.makeTestIdentityService
-import org.junit.*
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito
 import java.security.KeyPair
 import java.time.Clock
 import java.time.Duration
 import java.time.Instant
-import java.util.*
+import java.util.Currency
+import java.util.Properties
+import kotlin.collections.List
+import kotlin.collections.component1
+import kotlin.collections.component2
+import kotlin.collections.first
+import kotlin.collections.forEach
+import kotlin.collections.forEachIndexed
+import kotlin.collections.groupBy
+import kotlin.collections.listOf
+import kotlin.collections.map
+import kotlin.collections.mapOf
+import kotlin.collections.plus
+import kotlin.test.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse
@@ -67,6 +101,7 @@ import kotlin.test.assertFalse
  * populate a database as a V3 node would, then running the migration class. However, it is impossible to do this for attachments as there
  * is no contract state jar to serialise.
  */
+@ExtendWith(SerializationExtension::class)
 class VaultStateMigrationTest {
     companion object {
         val alice = TestIdentity(ALICE_NAME, 70)
@@ -89,10 +124,6 @@ class VaultStateMigrationTest {
 
         val clock: TestClock = TestClock(Clock.systemUTC())
 
-        @ClassRule
-        @JvmField
-        val testSerialization = SerializationEnvironmentRule()
-
         val logger = contextLogger()
     }
 
@@ -105,7 +136,7 @@ class VaultStateMigrationTest {
     lateinit var cordaDB: CordaPersistence
     lateinit var notaryServices: MockServices
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val identityService = makeTestIdentityService(dummyNotary.identity, BOB_IDENTITY, ALICE_IDENTITY)
         notaryServices = MockServices(cordappPackages, dummyNotary, identityService, dummyCashIssuer.keyPair, BOC_KEY)
@@ -126,7 +157,7 @@ class VaultStateMigrationTest {
         addNetworkParameters()
     }
 
-    @After
+    @AfterEach
     fun close() {
         contextTransactionOrNull?.close()
         cordaDB.close()
@@ -357,7 +388,7 @@ class VaultStateMigrationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check a simple migration works`() {
         addCashStates(10, BOB)
         addCashStates(10, ALICE)
@@ -370,7 +401,7 @@ class VaultStateMigrationTest {
         assertEquals(10, getVaultStateCount(Vault.RelevancyStatus.RELEVANT))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check state paging works`() {
         addCashStates(1010, BOB)
 
@@ -382,7 +413,7 @@ class VaultStateMigrationTest {
         assertEquals(0, getVaultStateCount(Vault.RelevancyStatus.NOT_RELEVANT))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check state fields are correct`() {
         val tx = createCashTransaction(Cash(), 100.DOLLARS, ALICE)
         storeTransaction(tx)
@@ -412,7 +443,7 @@ class VaultStateMigrationTest {
         assertEquals(expectedPersistentParty.compositeKey, persistentStateParty.compositeKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check the connection is open post migration`() {
         // Liquibase automatically closes the database connection when doing an actual migration. This test ensures the custom migration
         // leaves it open.
@@ -423,7 +454,7 @@ class VaultStateMigrationTest {
         assertFalse(cordaDB.dataSource.connection.isClosed)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `All parties added to state party table`() {
         val stx = createLinearStateTransaction("test", parties = listOf(ALICE, BOB, CHARLIE))
         storeTransaction(stx)
@@ -436,7 +467,7 @@ class VaultStateMigrationTest {
         assertEquals(0, getVaultStateCount(Vault.RelevancyStatus.NOT_RELEVANT))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `State with corresponding transaction missing fails migration`() {
         val cash = Cash()
         val unknownTx = createCashTransaction(cash, 100.DOLLARS, BOB)
@@ -453,7 +484,7 @@ class VaultStateMigrationTest {
         assertEquals(11, getStatePartyCount())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `State with unknown ID is handled correctly`() {
         addCashStates(1, CHARLIE)
         addCashStates(10, BOB)
@@ -464,14 +495,16 @@ class VaultStateMigrationTest {
         assertEquals(10, getVaultStateCount(Vault.RelevancyStatus.RELEVANT))
     }
 
-    @Test(expected = VaultStateMigrationException::class)
+    @Test
     fun `Null database causes migration to fail`() {
         val migration = VaultStateMigration()
         // Just check this does not throw an exception
-        migration.execute(null)
+        assertThatExceptionOfType(VaultStateMigrationException::class.java).isThrownBy {
+            migration.execute(null)
+        }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `State with non-owning key for our name marked as relevant`() {
         val tx = createCashTransaction(Cash(), 100.DOLLARS, BOB2)
         storeTransaction(tx)
@@ -493,7 +526,7 @@ class VaultStateMigrationTest {
         checkStatesEqual(expectedPersistentState, persistentState)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `State already in state party table is excluded`() {
         val tx = createCashTransaction(Cash(), 100.DOLLARS, BOB)
         storeTransaction(tx)
@@ -506,7 +539,7 @@ class VaultStateMigrationTest {
         assertEquals(6, getStatePartyCount())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Consumed states are not migrated`() {
         addCashStates(1010, BOB, Vault.StateStatus.CONSUMED)
         assertEquals(0, getStatePartyCount())
@@ -515,7 +548,7 @@ class VaultStateMigrationTest {
         assertEquals(0, getStatePartyCount())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `State created with notary change transaction can be migrated`() {
         // This test is a little bit of a hack - it checks that these states are migrated correctly by looking at params in the database,
         // but these will not be there for V3 nodes. Handling for this must be tested manually.
@@ -534,8 +567,8 @@ class VaultStateMigrationTest {
     }
 
     // Used to test migration performance
-    @Test(timeout=300_000)
-@Ignore
+    @Test
+    @Disabled
     fun `Migrate large database`() {
         val statesAtOnce = 500L
         val stateMultiplier = 300L
@@ -559,8 +592,8 @@ class VaultStateMigrationTest {
     }
 
     // Used to generate a persistent database for further testing.
-    @Test(timeout=300_000)
-@Ignore
+    @Test
+    @Disabled
     fun `Create persistent DB`() {
         val cashStatesToAdd = 1000
         val linearStatesToAdd = 0
@@ -586,8 +619,8 @@ class VaultStateMigrationTest {
         cordaDB.close()
     }
 
-    @Test(timeout=300_000)
-@Ignore
+    @Test
+@Disabled
     fun `Run on persistent DB`() {
         cordaDB = configureDatabase(makePersistentDataSourceProperties(), DatabaseConfig(), notaryServices.identityService::wellKnownPartyFromX500Name, notaryServices.identityService::wellKnownPartyFromAnonymous)
         val connection = (liquibaseDB.connection as JdbcConnection)

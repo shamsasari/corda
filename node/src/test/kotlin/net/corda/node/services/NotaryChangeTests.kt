@@ -24,10 +24,10 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.*
 import net.corda.testing.node.internal.DUMMY_CONTRACTS_CORDAPP
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.After
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals
@@ -45,7 +45,7 @@ class NotaryChangeTests {
     private lateinit var oldNotaryParty: Party
     private lateinit var clientA: Party
 
-    @Before
+    @BeforeEach
     fun setUp() {
         mockNet = MockNetwork(MockNetworkParameters(
                 notarySpecs = listOf(MockNetworkNotarySpec(oldNotaryName), MockNetworkNotarySpec(newNotaryName)),
@@ -59,12 +59,12 @@ class NotaryChangeTests {
         newNotaryParty = clientNodeA.services.networkMapCache.getNotary(newNotaryName)!!
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should change notary for a state with single participant`() {
         val state = issueState(clientNodeA.services, clientA, oldNotaryParty)
         assertEquals(state.state.notary, oldNotaryParty)
@@ -72,7 +72,7 @@ class NotaryChangeTests {
         assertEquals(newState.state.notary, newNotaryParty)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should change notary for a state with multiple participants`() {
         val state = issueMultiPartyState(clientNodeA, clientNodeB, oldNotaryNode, oldNotaryParty)
         val newNotary = newNotaryParty
@@ -89,8 +89,8 @@ class NotaryChangeTests {
     }
 
     // TODO: Re-enable the test when parameter currentness checks are in place, ENT-2666.
-    @Test(timeout=300_000)
-@Ignore
+    @Test
+@Disabled
     fun `should throw when a participant refuses to change Notary`() {
         val state = issueMultiPartyState(clientNodeA, clientNodeB, oldNotaryNode, oldNotaryParty)
 
@@ -104,7 +104,7 @@ class NotaryChangeTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should not break encumbrance links`() {
         val issueTx = issueEncumberedState(clientNodeA.services, clientA, oldNotaryParty)
 
@@ -133,7 +133,7 @@ class NotaryChangeTests {
         assertTrue { originalLinkedStates.size == notaryChangeLinkedStates.size && originalLinkedStates.containsAll(notaryChangeLinkedStates) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `notary change and regular transactions are properly handled during resolution in longer chains`() {
         val issued = issueState(clientNodeA.services, clientA, oldNotaryParty)
         val moved = moveState(issued, clientNodeA, clientNodeB)

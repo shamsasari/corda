@@ -2,11 +2,11 @@ package net.corda.nodeapi.internal.persistence
 
 import org.mockito.kotlin.mock
 import net.corda.core.internal.NamedCacheFactory
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class HibernateConfigurationFactoryLoadingTest {
-    @Test(timeout=300_000)
+    @Test
     fun checkErrorMessageForMissingFactory() {
         val jdbcUrl = "jdbc:madeUpNonense:foobar.com:1234"
         val presentFactories = listOf("H2", "PostgreSQL")

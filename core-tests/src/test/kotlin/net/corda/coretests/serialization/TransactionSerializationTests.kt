@@ -1,7 +1,19 @@
 package net.corda.coretests.serialization
 
-import org.mockito.kotlin.mock
-import net.corda.core.contracts.*
+import net.corda.core.contracts.AlwaysAcceptAttachmentConstraint
+import net.corda.core.contracts.Amount
+import net.corda.core.contracts.Attachment
+import net.corda.core.contracts.Command
+import net.corda.core.contracts.CommandAndState
+import net.corda.core.contracts.CommandData
+import net.corda.core.contracts.Contract
+import net.corda.core.contracts.ContractState
+import net.corda.core.contracts.OwnableState
+import net.corda.core.contracts.PartyAndReference
+import net.corda.core.contracts.StateAndRef
+import net.corda.core.contracts.StateRef
+import net.corda.core.contracts.TransactionState
+import net.corda.core.contracts.TypeOnlyCommandData
 import net.corda.core.crypto.Crypto
 import net.corda.core.crypto.SignatureMetadata
 import net.corda.core.crypto.TransactionSignature
@@ -14,23 +26,25 @@ import net.corda.core.serialization.serialize
 import net.corda.core.transactions.LedgerTransaction
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.seconds
+import net.corda.coretesting.internal.TEST_TX_TIME
+import net.corda.coretesting.internal.rigorousMock
 import net.corda.finance.POUNDS
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.core.DUMMY_NOTARY_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
-import net.corda.coretesting.internal.TEST_TX_TIME
-import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.node.MockServices
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.mock
 import java.security.SignatureException
-import java.util.*
+import java.util.Currency
 import kotlin.reflect.jvm.javaField
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
+@ExtendWith(SerializationExtension::class)
 class TransactionSerializationTests {
     private companion object {
         val dummyNotary = TestIdentity(DUMMY_NOTARY_NAME, 20)
@@ -42,9 +56,6 @@ class TransactionSerializationTests {
         val MEGA_CORP_KEY get() = megaCorp.keyPair
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
     private val TEST_CASH_PROGRAM_ID = "net.corda.coretests.serialization.TransactionSerializationTests\$TestCash"
 
     class TestCash : Contract {
@@ -83,7 +94,7 @@ class TransactionSerializationTests {
     val notaryServices = MockServices(listOf("net.corda.coretests.serialization"), DUMMY_NOTARY.name, key = DUMMY_NOTARY_KEY)
     lateinit var tx: TransactionBuilder
 
-    @Before
+    @BeforeEach
     fun setup() {
         //record fake transaction which created inputState
         val fakeTx = megaCorpServices.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).withItems(outputState, Command(TestCash.Commands.Issue(), arrayListOf(MEGA_CORP.owningKey))))
@@ -93,7 +104,7 @@ class TransactionSerializationTests {
         tx = TransactionBuilder(DUMMY_NOTARY).withItems(inputState, outputState, changeState, Command(TestCash.Commands.Move(), arrayListOf(MEGA_CORP.owningKey)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun signWireTX() {
         val ptx = megaCorpServices.signInitialTransaction(tx)
         val stx = notaryServices.addSignature(ptx)
@@ -111,7 +122,7 @@ class TransactionSerializationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun wrongKeys() {
         val ptx = megaCorpServices.signInitialTransaction(tx)
         val stx = notaryServices.addSignature(ptx)
@@ -134,7 +145,7 @@ class TransactionSerializationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun timeWindow() {
         tx.setTimeWindow(TEST_TX_TIME, 30.seconds)
         val ptx = megaCorpServices.signInitialTransaction(tx)
@@ -142,7 +153,7 @@ class TransactionSerializationTests {
         assertEquals(TEST_TX_TIME, stx.tx.timeWindow?.midpoint)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun storeAndLoadWhenSigning() {
         val ptx = megaCorpServices.signInitialTransaction(tx)
         ptx.verifySignaturesExcept(DUMMY_NOTARY_KEY.public)

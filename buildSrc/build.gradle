@@ -53,3 +53,7 @@ dependencies {
         implementation "com.r3.internal.gradle.plugins:publish:$internalPublishVersion"
     }
 }
+
+jar {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
+}

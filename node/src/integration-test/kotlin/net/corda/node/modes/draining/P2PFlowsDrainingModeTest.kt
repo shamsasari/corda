@@ -21,10 +21,10 @@ import net.corda.testing.internal.chooseIdentity
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.waitForShutdown
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
@@ -42,17 +42,17 @@ class P2PFlowsDrainingModeTest {
 
     private var executor: ScheduledExecutorService? = null
 
-    @Before
+    @BeforeEach
     fun setup() {
         executor = Executors.newSingleThreadScheduledExecutor()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         executor!!.shutdown()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flows draining mode suspends consumption of initial session messages`() {
         driver(DriverParameters(startNodesInProcess = false, portAllocation = portAllocation, notarySpecs = emptyList())) {
             val (initiatedNode, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -85,8 +85,8 @@ class P2PFlowsDrainingModeTest {
         }
     }
 
-    @Test(timeout=300_000)
-    @Ignore("TODO JDK17:Fixme - timed out")
+    @Test
+    @Disabled("TODO JDK17:Fixme - timed out")
 	fun `terminate node waiting for pending flows`() {
 
         driver(DriverParameters(portAllocation = portAllocation, notarySpecs = emptyList())) {
@@ -112,7 +112,7 @@ class P2PFlowsDrainingModeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `terminate resets persistent draining mode property when waiting for pending flows`() {
 
         driver(DriverParameters(portAllocation = portAllocation, notarySpecs = emptyList())) {
@@ -136,7 +136,7 @@ class P2PFlowsDrainingModeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `disabling draining mode cancels draining shutdown`() {
 
         driver(DriverParameters(portAllocation = portAllocation, notarySpecs = emptyList())) {

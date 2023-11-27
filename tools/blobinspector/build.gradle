@@ -28,7 +28,7 @@ dependencies {
 
     testImplementation "commons-io:commons-io:$commons_io_version"
     testImplementation "org.assertj:assertj-core:${assertj_version}"
-    testImplementation "junit:junit:$junit_version"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
 }
 
 configurations.implementation.canBeResolved = true

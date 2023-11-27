@@ -8,18 +8,15 @@ import net.corda.core.flows.NotaryException
 import net.corda.core.flows.StateConsumptionDetails
 import net.corda.core.serialization.deserialize
 import net.corda.core.serialization.serialize
-import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.SerializationExtension
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@ExtendWith(SerializationExtension::class)
 class NotaryExceptionSerializationTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Test(timeout=300_000)
+    @Test
 	fun testSerializationRoundTrip() {
         val txhash = SecureHash.randomSHA256()
         val stateHistory: Map<StateRef, StateConsumptionDetails> = mapOf(

@@ -2,13 +2,13 @@ package net.corda.serialization.internal.amqp;
 
 import net.corda.serialization.internal.amqp.testutils.TestDescriptorBasedSerializerRegistry;
 import net.corda.serialization.internal.amqp.testutils.TestSerializationContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.NotSerializableException;
 
 import static net.corda.serialization.internal.amqp.testutils.AMQPTestUtilsKt.testDefaultFactory;
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 public class JavaPrivatePropertyTests {
     static class C {

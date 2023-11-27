@@ -5,7 +5,7 @@ import net.corda.core.serialization.SerializedBytes;
 import net.corda.serialization.internal.amqp.testutils.TestSerializationContext;
 import org.apache.qpid.proton.codec.DecoderImpl;
 import org.apache.qpid.proton.codec.EncoderImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import javax.annotation.Nonnull;
 import java.io.NotSerializableException;
@@ -13,7 +13,7 @@ import java.nio.ByteBuffer;
 import java.util.Objects;
 
 import static net.corda.serialization.internal.amqp.testutils.AMQPTestUtilsKt.testDefaultFactory;
-import static org.junit.Assert.assertTrue;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class JavaSerializationOutputTests {
 

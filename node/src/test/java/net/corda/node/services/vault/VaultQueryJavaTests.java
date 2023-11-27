@@ -4,7 +4,14 @@ import com.codahale.metrics.MetricRegistry;
 import com.google.common.collect.ImmutableSet;
 import kotlin.Pair;
 import kotlin.Triple;
-import net.corda.core.contracts.*;
+import net.corda.core.contracts.Amount;
+import net.corda.core.contracts.ContractState;
+import net.corda.core.contracts.FungibleAsset;
+import net.corda.core.contracts.LinearState;
+import net.corda.core.contracts.PartyAndReference;
+import net.corda.core.contracts.StateAndRef;
+import net.corda.core.contracts.StateRef;
+import net.corda.core.contracts.UniqueIdentifier;
 import net.corda.core.crypto.CryptoUtils;
 import net.corda.core.crypto.SecureHash;
 import net.corda.core.identity.AbstractParty;
@@ -17,10 +24,17 @@ import net.corda.core.node.services.IdentityService;
 import net.corda.core.node.services.Vault;
 import net.corda.core.node.services.VaultService;
 import net.corda.core.node.services.vault.AttachmentQueryCriteria.AttachmentsQueryCriteria;
-import net.corda.core.node.services.vault.*;
+import net.corda.core.node.services.vault.Builder;
+import net.corda.core.node.services.vault.ColumnPredicate;
+import net.corda.core.node.services.vault.CriteriaExpression;
+import net.corda.core.node.services.vault.FieldInfo;
+import net.corda.core.node.services.vault.PageSpecification;
+import net.corda.core.node.services.vault.QueryCriteria;
 import net.corda.core.node.services.vault.QueryCriteria.LinearStateQueryCriteria;
 import net.corda.core.node.services.vault.QueryCriteria.VaultCustomQueryCriteria;
 import net.corda.core.node.services.vault.QueryCriteria.VaultQueryCriteria;
+import net.corda.core.node.services.vault.Sort;
+import net.corda.core.node.services.vault.SortAttribute;
 import net.corda.finance.contracts.DealState;
 import net.corda.finance.contracts.asset.Cash;
 import net.corda.finance.schemas.CashSchemaV1;
@@ -28,7 +42,7 @@ import net.corda.finance.test.SampleCashSchemaV2;
 import net.corda.node.services.persistence.NodeAttachmentService;
 import net.corda.nodeapi.internal.persistence.CordaPersistence;
 import net.corda.nodeapi.internal.persistence.DatabaseTransaction;
-import net.corda.testing.core.SerializationEnvironmentRule;
+import net.corda.testing.core.SerializationExtension;
 import net.corda.testing.core.TestIdentity;
 import net.corda.testing.core.internal.ContractJarTestUtils;
 import net.corda.testing.core.internal.SelfCleaningDir;
@@ -36,17 +50,23 @@ import net.corda.testing.internal.TestingNamedCacheFactory;
 import net.corda.testing.internal.vault.DummyLinearContract;
 import net.corda.testing.internal.vault.VaultFiller;
 import net.corda.testing.node.MockServices;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.security.PublicKey;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.Currency;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Random;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import java.util.stream.StreamSupport;
@@ -56,10 +76,14 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static net.corda.core.node.services.vault.Builder.equal;
 import static net.corda.core.node.services.vault.Builder.sum;
-import static net.corda.core.node.services.vault.QueryCriteriaUtils.*;
+import static net.corda.core.node.services.vault.QueryCriteriaUtils.DEFAULT_PAGE_NUM;
+import static net.corda.core.node.services.vault.QueryCriteriaUtils.MAX_PAGE_SIZE;
+import static net.corda.core.node.services.vault.QueryCriteriaUtils.getField;
 import static net.corda.core.utilities.ByteArrays.toHexString;
 import static net.corda.testing.common.internal.ParametersUtilitiesKt.testNetworkParameters;
-import static net.corda.testing.core.TestConstants.*;
+import static net.corda.testing.core.TestConstants.BOC_NAME;
+import static net.corda.testing.core.TestConstants.CHARLIE_NAME;
+import static net.corda.testing.core.TestConstants.DUMMY_NOTARY_NAME;
 import static net.corda.testing.core.internal.ContractJarTestUtils.INSTANCE;
 import static net.corda.testing.node.MockServices.makeTestDatabaseAndMockServices;
 import static net.corda.testing.node.MockServicesKt.makeTestIdentityService;
@@ -67,6 +91,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.mock;
 
+@ExtendWith(SerializationExtension.class)
 public class VaultQueryJavaTests {
     private static final TestIdentity BOC = new TestIdentity(BOC_NAME);
     private static final Party CHARLIE = new TestIdentity(CHARLIE_NAME, 90L).getParty();
@@ -74,15 +99,14 @@ public class VaultQueryJavaTests {
     private static final PartyAndReference DUMMY_CASH_ISSUER = DUMMY_CASH_ISSUER_INFO.ref((byte) 1);
     private static final TestIdentity DUMMY_NOTARY = new TestIdentity(DUMMY_NOTARY_NAME, 20L);
     private static final TestIdentity MEGA_CORP = new TestIdentity(new CordaX500Name("MegaCorp", "London", "GB"));
-    @Rule
-    public final SerializationEnvironmentRule testSerialization = new SerializationEnvironmentRule();
+
     private VaultFiller vaultFiller;
     private MockServices issuerServices;
     private VaultService vaultService;
     private AttachmentStorage storage;
     private CordaPersistence database;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         List<String> cordappPackages = asList("net.corda.testing.internal.vault", "net.corda.finance.contracts.asset", CashSchemaV1.class.getPackage().getName(), SampleCashSchemaV2.class.getPackage().getName());
         IdentityService identitySvc = makeTestIdentityService(MEGA_CORP.getIdentity(), DUMMY_CASH_ISSUER_INFO.getIdentity(), DUMMY_NOTARY.getIdentity());
@@ -102,7 +126,7 @@ public class VaultQueryJavaTests {
         doReturn(testNetworkParameters()).when(serviceForResolution).getNetworkParameters();
     }
 
-    @After
+    @AfterEach
     public void cleanUp() {
         database.close();
     }

@@ -11,7 +11,7 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class BlacklistKotlinClosureTest {
     companion object {
@@ -27,7 +27,7 @@ class BlacklistKotlinClosureTest {
     @CordaSerializable
     data class Packet(val x: () -> Long)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `closure sent via RPC`() {
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList(), cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val rpc = startNode(providedName = ALICE_NAME).getOrThrow().rpc

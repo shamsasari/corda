@@ -7,11 +7,11 @@ import com.typesafe.config.ConfigFactory
 import net.corda.core.internal.delete
 import net.corda.core.internal.div
 import net.corda.node.internal.Node
-import org.junit.After
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.contains
 import org.slf4j.Logger
 import java.lang.reflect.Field
@@ -23,17 +23,17 @@ import kotlin.test.assertFalse
 class ConfigHelperTests {
     private var baseDir: Path? = null
 
-    @Before
+    @BeforeEach
     fun setup() {
         baseDir = Files.createTempDirectory("corda_config")
     }
 
-    @After
+    @AfterEach
     fun cleanup() {
         baseDir?.delete()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `config is overridden by underscore variable`() {
         val sshPort: Long = 9000
 
@@ -45,14 +45,14 @@ class ConfigHelperTests {
         Assert.assertEquals(sshPort, config?.getLong("sshd.port"))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `config is overridden by case insensitive underscore variable`() {
         val sshPort: Long = 10000
         val config = loadConfig("CORDA_sshd_port" to sshPort)
         Assert.assertEquals(sshPort, config?.getLong("sshd.port"))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `config is overridden by case insensitive dot variable`() {
         val sshPort: Long = 11000
         val config = loadConfig("CORDA.sshd.port" to sshPort,
@@ -60,15 +60,15 @@ class ConfigHelperTests {
         Assert.assertEquals(sshPort, config?.getLong("sshd.port"))
     }
 
-    @Test(timeout = 300_000, expected = ShadowingException::class)
+    @Test(expected = ShadowingException::class)
     fun `shadowing is forbidden`() {
         val sshPort: Long = 12000
         loadConfig("CORDA_sshd_port" to sshPort.toString(),
                 "corda.sshd.port" to sshPort.toString())
     }
 
-    @Test(timeout = 300_000)
-    @Ignore("TODO JDK17: Modifiers no longer supported")
+    @Test
+    @Disabled("TODO JDK17: Modifiers no longer supported")
     fun `bad keys are ignored and warned for`() {
         val loggerField = Node::class.java.getDeclaredField("staticLog")
         loggerField.isAccessible = true

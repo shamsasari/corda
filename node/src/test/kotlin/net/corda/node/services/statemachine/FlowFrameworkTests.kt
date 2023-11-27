@@ -70,14 +70,14 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType
 import org.assertj.core.api.Condition
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import rx.Notification
 import rx.Observable
 import java.sql.SQLTransientConnectionException
@@ -93,7 +93,7 @@ import kotlin.reflect.KClass
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
-@Ignore("TODO JDK17: Fixme")
+@Disabled("TODO JDK17: Fixme")
 class FlowFrameworkTests {
     companion object {
         init {
@@ -121,7 +121,7 @@ class FlowFrameworkTests {
         Clock.systemUTC()
     )
 
-    @Before
+    @BeforeEach
     fun setUpMockNet() {
         mockNet = InternalMockNetwork(
             cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, FINANCE_CONTRACTS_CORDAPP, CustomCordapp(setOf("net.corda.node.services.statemachine"))),
@@ -143,7 +143,7 @@ class FlowFrameworkTests {
         return mockNet.messagingNetwork.receivedMessages.toSessionTransfers()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
         receivedSessionMessages.clear()
@@ -154,7 +154,7 @@ class FlowFrameworkTests {
         StaffedFlowHospital.onFlowKeptForOvernightObservation.clear()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flow can lazily use the serviceHub in its constructor`() {
         val flow = LazyServiceHubAccessFlow()
         aliceNode.services.startFlow(flow)
@@ -174,7 +174,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `exception while fiber suspended is retried and completes successfully`() {
         bobNode.registerCordappFlowFactory(ReceiveFlow::class) { InitiatedSendFlow("Hello", it) }
         val flow = ReceiveFlow(bob)
@@ -193,7 +193,7 @@ class FlowFrameworkTests {
         assertThat(fiber.state).isEqualTo(Strand.State.WAITING)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `both sides do a send as their first IO request`() {
         bobNode.registerCordappFlowFactory(PingPongFlow::class) { PingPongFlow(it, 20L) }
         aliceNode.services.startFlow(PingPongFlow(bob, 10L))
@@ -210,7 +210,7 @@ class FlowFrameworkTests {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `other side ends before doing expected send`() {
         bobNode.registerCordappFlowFactory(ReceiveFlow::class) { NoOpFlow() }
         val resultFuture = aliceNode.services.startFlow(ReceiveFlow(bob)).resultFuture
@@ -220,7 +220,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FlowMonitor flow suspends on a FlowIORequest`() { // alice flow only, suspends on a FlowIORequest
         monitorFlows { aliceFlowMonitor, bobFlowMonitor ->
             val terminationSignal = Semaphore(0)
@@ -238,7 +238,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FlowMonitor flows suspend on a FlowIORequest`() { // alice and bob's flows, both suspend on a FlowIORequest
         monitorFlows { aliceFlowMonitor, bobFlowMonitor ->
             bobNode.registerCordappFlowFactory(ReceiveFlow::class) { InitiatedReceiveFlow(it) }
@@ -250,7 +250,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FlowMonitor flow is running`() { // flow is running a "take a long time" task
         monitorFlows { aliceFlowMonitor, _ ->
             val terminationSignal = Semaphore(0)
@@ -272,7 +272,7 @@ class FlowFrameworkTests {
         )
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow status is updated in database when flow suspends on ioRequest`() {
         val terminationSignal = Semaphore(0)
         bobNode.registerCordappFlowFactory(ReceiveFlow::class) { NoOpFlow( terminateUponSignal = terminationSignal) }
@@ -285,7 +285,7 @@ class FlowFrameworkTests {
         terminationSignal.release()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `receiving unexpected session end before entering sendAndReceive`() {
         bobNode.registerCordappFlowFactory(WaitForOtherSideEndBeforeSendAndReceive::class) { NoOpFlow() }
         val sessionEndReceived = Semaphore(0)
@@ -301,7 +301,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FlowException thrown on other side`() {
         val erroringFlow = bobNode.registerCordappFlowFactory(ReceiveFlow::class) {
             ExceptionFlow { MyFlowException("Nothing useful") }
@@ -339,7 +339,7 @@ class FlowFrameworkTests {
         assertThat((lastMessage.payload as ErrorSessionMessage).flowException!!.stackTrace).isEmpty()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `sub-class of FlowException can have a peer field without causing serialisation problems`() {
         val exception = MyPeerFlowException("Nothing useful", alice)
         bobNode.registerCordappFlowFactory(ReceiveFlow::class) {
@@ -363,7 +363,7 @@ class FlowFrameworkTests {
     }
 
     //We should update this test when we do the work to persists the flow result.
-    @Test(timeout = 300_000)
+    @Test
     fun `Checkpoint and all its related records are deleted when the flow finishes`() {
         val terminationSignal = Semaphore(0)
         val flow = aliceNode.services.startFlow(NoOpFlow( terminateUponSignal = terminationSignal))
@@ -385,7 +385,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Flow metadata finish time is set in database when the flow finishes`() {
         val terminationSignal = Semaphore(0)
         val clientId = UUID.randomUUID().toString()
@@ -404,7 +404,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Flow persists progress tracker in the database when the flow suspends`() {
         bobNode.registerCordappFlowFactory(ReceiveFlow::class) { InitiatedReceiveFlow(it) }
         val aliceFlowId = aliceNode.services.startFlow(ReceiveFlow(bob)).id
@@ -430,7 +430,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `retry subFlow due to receiving FlowException`() {
         @InitiatingFlow
         class AskForExceptionFlow(val otherParty: Party, val throwException: Boolean) : FlowLogic<String>() {
@@ -455,7 +455,7 @@ class FlowFrameworkTests {
         assertThat(resultFuture.getOrThrow()).isEqualTo("Hello")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `serialisation issue in counterparty`() {
         bobNode.registerCordappFlowFactory(ReceiveFlow::class) { InitiatedSendFlow(NonSerialisableData(1), it) }
         val result = aliceNode.services.startFlow(ReceiveFlow(bob)).resultFuture
@@ -465,7 +465,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FlowException has non-serialisable object`() {
         bobNode.registerCordappFlowFactory(ReceiveFlow::class) {
             ExceptionFlow { NonSerialisableFlowException(NonSerialisableData(1)) }
@@ -477,7 +477,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun waitForLedgerCommit() {
         val ptx = TransactionBuilder(notary = notaryIdentity)
             .addOutputState(DummyState(), DummyContract.PROGRAM_ID)
@@ -494,7 +494,7 @@ class FlowFrameworkTests {
         assertThat(committerStx.getOrThrow()).isEqualTo(waiterStx.getOrThrow()).isEqualTo(commitReceiverStx.getOrThrow())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `waitForLedgerCommit throws exception if any active session ends in error`() {
         val ptx = TransactionBuilder(notary = notaryIdentity)
             .addOutputState(DummyState(), DummyContract.PROGRAM_ID)
@@ -509,7 +509,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verify vault query service is tokenizable by force checkpointing within a flow`() {
         aliceNode.registerCordappFlowFactory(VaultQueryFlow::class) { InitiatedSendFlow("Hello", it) }
         val result = bobNode.services.startFlow(VaultQueryFlow(alice)).resultFuture
@@ -517,7 +517,7 @@ class FlowFrameworkTests {
         result.getOrThrow()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `customised client flow`() {
         val receiveFlowFuture = bobNode.registerCordappFlowFactory(SendFlow::class) { InitiatedReceiveFlow(it) }
         aliceNode.services.startFlow(CustomSendFlow("Hello", bob)).resultFuture
@@ -525,14 +525,14 @@ class FlowFrameworkTests {
         assertThat(receiveFlowFuture.getOrThrow().receivedPayloads).containsOnly("Hello")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `customised client flow which has annotated @InitiatingFlow again`() {
         assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
             aliceNode.services.startFlow(IncorrectCustomSendFlow("Hello", bob)).resultFuture
         }.withMessageContaining(InitiatingFlow::class.java.simpleName)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `upgraded initiating flow`() {
         bobNode.registerCordappFlowFactory(UpgradedFlow::class, initiatedFlowVersion = 1) { InitiatedSendFlow("Old initiated", it) }
         val result = aliceNode.services.startFlow(UpgradedFlow(bob)).resultFuture
@@ -546,7 +546,7 @@ class FlowFrameworkTests {
         assertThat(node2FlowVersion).isEqualTo(1)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `upgraded initiated flow`() {
         bobNode.registerCordappFlowFactory(SendFlow::class, initiatedFlowVersion = 2) { UpgradedFlow(it) }
         val initiatingFlow = SendFlow("Old initiating", bob)
@@ -559,7 +559,7 @@ class FlowFrameworkTests {
         assertThat(flowInfo.get().flowVersion).isEqualTo(2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unregistered flow`() {
         val future = aliceNode.services.startFlow(NeverRegisteredFlow("Hello", bob)).resultFuture
         mockNet.runNetwork()
@@ -568,7 +568,7 @@ class FlowFrameworkTests {
             .withMessageEndingWith("${NeverRegisteredFlow::class.java.name} is not registered")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `session init with unknown class is sent to the flow hospital, from where we then drop it`() {
         aliceNode.sendSessionMessage(InitialSessionMessage(SessionId(random63BitValue()), 0, "not.a.real.Class", 1, "", null, null), bob)
         mockNet.runNetwork()
@@ -584,7 +584,7 @@ class FlowFrameworkTests {
         assertThat((lastMessage.payload as RejectSessionMessage).message).isEqualTo("Don't know not.a.real.Class")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non-flow class in session init`() {
         aliceNode.sendSessionMessage(InitialSessionMessage(SessionId(random63BitValue()), 0, String::class.java.name, 1, "", null, null), bob)
         mockNet.runNetwork()
@@ -593,7 +593,7 @@ class FlowFrameworkTests {
         assertThat((lastMessage.payload as RejectSessionMessage).message).isEqualTo("${String::class.java.name} is not a flow")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `single inlined sub-flow`() {
         bobNode.registerCordappFlowFactory(SendAndReceiveFlow::class) { SingleInlinedSubFlow(it) }
         val result = aliceNode.services.startFlow(SendAndReceiveFlow(bob, "Hello")).resultFuture
@@ -601,7 +601,7 @@ class FlowFrameworkTests {
         assertThat(result.getOrThrow()).isEqualTo("HelloHello")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `double inlined sub-flow`() {
         bobNode.registerCordappFlowFactory(SendAndReceiveFlow::class) { DoubleInlinedSubFlow(it) }
         val result = aliceNode.services.startFlow(SendAndReceiveFlow(bob, "Hello")).resultFuture
@@ -609,7 +609,7 @@ class FlowFrameworkTests {
         assertThat(result.getOrThrow()).isEqualTo("HelloHello")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non-FlowException thrown on other side`() {
         val erroringFlowFuture = bobNode.registerCordappFlowFactory(ReceiveFlow::class) {
             ExceptionFlow { Exception("evil bug!") }
@@ -648,7 +648,7 @@ class FlowFrameworkTests {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `initiating flow using unknown AnonymousParty`() {
         val anonymousBob = bobNode.services.keyManagementService.freshKeyAndCert(bobNode.info.legalIdentitiesAndCerts.single(), false)
             .party.anonymise()
@@ -660,7 +660,7 @@ class FlowFrameworkTests {
             .withMessage("Could not resolve destination: $anonymousBob")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `initiating flow using known AnonymousParty`() {
         val anonymousBob = bobNode.services.keyManagementService.freshKeyAndCert(bobNode.info.legalIdentitiesAndCerts.single(), false)
         aliceNode.services.identityService.verifyAndRegisterIdentity(anonymousBob)
@@ -671,7 +671,7 @@ class FlowFrameworkTests {
         assertThat(result.getOrThrow()).isEqualTo("HelloHello")
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `initiating flow with anonymous party at the same node`() {
         val anonymousBob = bobNode.services.keyManagementService.freshKeyAndCert(bobNode.info.legalIdentitiesAndCerts.single(), false)
         val bobResponderFlow = bobNode.registerCordappFlowFactory(SendAndReceiveFlow::class) { SingleInlinedSubFlow(it) }
@@ -681,7 +681,7 @@ class FlowFrameworkTests {
         assertThat(result.getOrThrow()).isEqualTo("HelloHello")
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Checkpoint status changes to RUNNABLE when flow is loaded from checkpoint - FlowState Unstarted`() {
         var firstExecution = true
         var flowState: FlowState? = null
@@ -730,7 +730,7 @@ class FlowFrameworkTests {
         assertEquals(Checkpoint.FlowStatus.RUNNABLE, dbCheckpointStatusAfterSuspension)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Checkpoint status changes to RUNNABLE when flow is loaded from checkpoint - FlowState Started`() {
         var firstExecution = true
         var flowState: FlowState? = null
@@ -770,7 +770,7 @@ class FlowFrameworkTests {
         assertEquals(Checkpoint.FlowStatus.RUNNABLE, inMemoryCheckpointStatus)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Checkpoint is updated in DB with HOSPITALIZED status and the error when flow is kept for overnight observation` () {
         var flowId: StateMachineRunId? = null
 
@@ -795,7 +795,7 @@ class FlowFrameworkTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Checkpoint status and error in memory and in DB are not dirtied upon flow retry`() {
         var firstExecution = true
         var dbCheckpointStatus: Checkpoint.FlowStatus? = null
@@ -822,7 +822,7 @@ class FlowFrameworkTests {
     }
 
     // When ported to ENT use the existing API there to properly retry the flow
-    @Test(timeout=300_000)
+    @Test
     fun `Hospitalized flow, resets to 'RUNNABLE' and clears exception when retried`() {
         var firstRun = true
         var counter = 0
@@ -852,7 +852,7 @@ class FlowFrameworkTests {
         assertEquals(0, counterRes)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Hospitalized flow, resets to 'RUNNABLE' and clears database exception on node start`() {
         var checkpointStatusAfterRestart: Checkpoint.FlowStatus? = null
         var dbExceptionAfterRestart: List<DBCheckpointStorage.DBFlowException>? = null

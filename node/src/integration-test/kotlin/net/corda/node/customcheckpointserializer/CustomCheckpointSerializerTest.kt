@@ -1,7 +1,5 @@
 package net.corda.node.customcheckpointserializer
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import net.corda.core.crypto.generateKeyPair
 import net.corda.core.serialization.EncodingWhitelist
 import net.corda.core.serialization.internal.CheckpointSerializationContext
@@ -11,13 +9,17 @@ import net.corda.coretesting.internal.rigorousMock
 import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.CheckpointSerializationContextImpl
 import net.corda.serialization.internal.CordaSerializationEncoding
-import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule
-import org.junit.Assert
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.internal.CheckpointSerializationExtension
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 
+@ExtendWith(CheckpointSerializationExtension::class)
 @RunWith(Parameterized::class)
 class CustomCheckpointSerializerTest(private val compression: CordaSerializationEncoding?) {
     companion object {
@@ -26,8 +28,6 @@ class CustomCheckpointSerializerTest(private val compression: CordaSerialization
         fun compression() = arrayOf<CordaSerializationEncoding?>(null) + CordaSerializationEncoding.values()
     }
 
-    @get:Rule
-    val serializationRule = CheckpointSerializationEnvironmentRule(inheritable = true)
     private val context: CheckpointSerializationContext = CheckpointSerializationContextImpl(
             deserializationClassLoader = javaClass.classLoader,
             whitelist = AllWhitelist,
@@ -46,27 +46,27 @@ class CustomCheckpointSerializerTest(private val compression: CordaSerialization
             )
     )
 
-    @Test(timeout=300_000)
+    @Test
     fun `test custom checkpoint serialization`() {
         testBrokenMapSerialization(DifficultToSerialize.BrokenMapClass())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test custom checkpoint serialization using interface`() {
         testBrokenMapSerialization(DifficultToSerialize.BrokenMapInterfaceImpl())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test custom checkpoint serialization using abstract class`() {
         testBrokenMapSerialization(DifficultToSerialize.BrokenMapAbstractImpl())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test custom checkpoint serialization using final class`() {
         testBrokenMapSerialization(DifficultToSerialize.BrokenMapFinal())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test PublicKey serializer has not been overridden`() {
 
         val publicKey = generateKeyPair().public
@@ -76,7 +76,7 @@ class CustomCheckpointSerializerTest(private val compression: CordaSerialization
         val deserializedCheckpoint = checkpoint.checkpointDeserialize(context)
 
         // Check the elements are as expected
-        Assert.assertArrayEquals(publicKey.encoded, deserializedCheckpoint.encoded)
+        assertArrayEquals(publicKey.encoded, deserializedCheckpoint.encoded)
     }
 
 
@@ -89,8 +89,8 @@ class CustomCheckpointSerializerTest(private val compression: CordaSerialization
         val deserializedCheckpoint = checkpoint.checkpointDeserialize(context)
 
         // Check the elements are as expected
-        Assert.assertEquals(1, deserializedCheckpoint.size)
-        Assert.assertEquals("value", deserializedCheckpoint.get("key"))
+        assertEquals(1, deserializedCheckpoint.size)
+        assertEquals("value", deserializedCheckpoint.get("key"))
 
         // Return map for extra checks
         return deserializedCheckpoint

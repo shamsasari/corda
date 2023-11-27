@@ -6,11 +6,11 @@ import net.corda.core.identity.CordaX500Name;
 import net.corda.core.identity.Party;
 import net.corda.core.node.services.IdentityService;
 import net.corda.testing.core.DummyCommandData;
-import net.corda.testing.core.SerializationEnvironmentRule;
+import net.corda.testing.core.SerializationExtension;
 import net.corda.testing.core.TestIdentity;
 import net.corda.testing.node.MockServices;
-import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static java.util.Collections.emptyList;
 import static net.corda.finance.Currencies.DOLLARS;
@@ -23,6 +23,7 @@ import static org.mockito.Mockito.mock;
 /**
  * This is an incomplete Java replica of CashTests.kt to show how to use the Java test DSL
  */
+@ExtendWith(SerializationExtension.class)
 public class CashTestsJava {
     private static final Party DUMMY_NOTARY = new TestIdentity(DUMMY_NOTARY_NAME, 20L).getParty();
     private static final TestIdentity MEGA_CORP = new TestIdentity(new CordaX500Name("MegaCorp", "London", "GB"));
@@ -30,8 +31,6 @@ public class CashTestsJava {
     private final PartyAndReference defaultIssuer = MEGA_CORP.ref((byte) 1);
     private final Cash.State inState = new Cash.State(issuedBy(DOLLARS(1000), defaultIssuer), new AnonymousParty(MEGA_CORP.getPublicKey()));
     private final Cash.State outState = new Cash.State(inState.getAmount(), new AnonymousParty(MINI_CORP.getPublicKey()));
-    @Rule
-    public final SerializationEnvironmentRule testSerialization = new SerializationEnvironmentRule();
 
     @Test
     public void trivial() {

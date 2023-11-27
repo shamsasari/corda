@@ -22,19 +22,19 @@ import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.assertUncompletedCheckpoints
 import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import kotlin.test.assertFailsWith
 
 // TraderDemoTest already has a test which checks the node can resume a flow from a checkpoint
-@Ignore("TODO JDK17: Fixme")
+@Disabled("TODO JDK17: Fixme")
 class FlowCheckpointVersionNodeStartupCheckTest {
     companion object {
         val defaultCordapp = enclosedCordapp()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `restart node with mismatch between suspended flow and installed CorDapps`() {
         driver(DriverParameters(
                 startNodesInProcess = false,
@@ -49,7 +49,7 @@ class FlowCheckpointVersionNodeStartupCheckTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `restart node with mismatch between suspended paused flow and installed CorDapps`() {
         driver(DriverParameters(
                 startNodesInProcess = false,

@@ -6,13 +6,12 @@ description 'Corda node API'
 
 dependencies {
     api project(":core")
+
     implementation project(":serialization")  // TODO Remove this once the NetworkBootstrapper class is moved into the tools:bootstrapper module
     implementation project(':common-configuration-parsing') // TODO Remove this dependency once NetworkBootsrapper is moved into tools:bootstrapper
     implementation project(':common-logging')
     implementation project(":common-validation")
-
     implementation "org.jetbrains.kotlin:kotlin-reflect:$kotlin_version"
-
     // TODO: remove the forced update of commons-collections and beanutils when artemis updates them
     implementation "org.apache.commons:commons-collections4:${commons_collections_version}"
     implementation "commons-beanutils:commons-beanutils:${beanutils_version}"
@@ -22,75 +21,56 @@ dependencies {
     implementation "org.apache.activemq:artemis-commons:${artemis_version}"
     implementation "javax.json:javax.json-api:$json_api_version"
     implementation "com.google.code.findbugs:jsr305:$jsr305_version"
-
     implementation "io.netty:netty-handler-proxy:$netty_version"
-
     // TypeSafe Config: for simple and human friendly config files.
     implementation "com.typesafe:config:$typesafe_config_version"
-
     implementation "org.apache.qpid:proton-j:$protonj_version"
-
     // SQL connection pooling library
     implementation "com.zaxxer:HikariCP:$hikari_version"
-    
     // ClassGraph: classpath scanning
     implementation "io.github.classgraph:classgraph:$class_graph_version"
-
     // Kryo: object graph serialization.
     implementation "com.esotericsoftware:kryo:$kryo_version"
     implementation "de.javakaffee:kryo-serializers:$kryo_serializer_version"
-
     // For caches rather than guava
     implementation "com.github.ben-manes.caffeine:caffeine:$caffeine_version"
-
     // For db migration
     implementation "org.liquibase:liquibase-core:$liquibase_version"
     implementation "com.fasterxml.jackson.core:jackson-databind:$jackson_version"
-
     // Bouncy castle support needed for X509 certificate manipulation
-    implementation "org.bouncycastle:bcprov-jdk18on:${bouncycastle_version}"
-    implementation "org.bouncycastle:bcpkix-jdk18on:${bouncycastle_version}"
-
+    implementation "org.bouncycastle:bcprov-jdk18on:$bouncycastle_version"
+    implementation "org.bouncycastle:bcpkix-jdk18on:$bouncycastle_version"
     implementation "io.reactivex:rxjava:$rxjava_version"
     implementation "javax.persistence:javax.persistence-api:2.2"
     implementation "org.hibernate:hibernate-core:$hibernate_version"
     implementation "net.i2p.crypto:eddsa:$eddsa_version"
     implementation "co.paralleluniverse:quasar-osgi-annotations:$quasar_version"
-
-    runtimeOnly 'com.mattbertolini:liquibase-slf4j:2.0.0'
-
-    // JDK11: required by Quasar at run-time
-    runtimeOnly "com.esotericsoftware:kryo:$kryo_version"
-
-    testImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
-    testImplementation "co.paralleluniverse:quasar-core:$quasar_version"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}"
-    testImplementation "junit:junit:$junit_version"
-
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junit_vintage_version}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_jupiter_version}"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junit_platform_version}"
-
-    testImplementation project(':node-driver')
-
-    // Unit testing helpers.
-    testImplementation "org.assertj:assertj-core:$assertj_version"
-    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
-    testImplementation project(':core-test-utils')
-    testImplementation project(':test-utils')
-
-    implementation ("org.apache.activemq:artemis-amqp-protocol:${artemis_version}") {
+    implementation ("org.apache.activemq:artemis-amqp-protocol:$artemis_version") {
         // Gains our proton-j version from core module.
         exclude group: 'org.apache.qpid', module: 'proton-j'
         exclude group: 'org.jgroups', module: 'jgroups'
     }
+
+    runtimeOnly 'com.mattbertolini:liquibase-slf4j:2.0.0'
+    // JDK11: required by Quasar at run-time
+    runtimeOnly "com.esotericsoftware:kryo:$kryo_version"
+
+    testImplementation project(':node-driver')
+    testImplementation project(':core-test-utils')
+    testImplementation project(':test-utils')
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
+    testImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
+    testImplementation "co.paralleluniverse:quasar-core:$quasar_version"
+    // Unit testing helpers.
+    testImplementation "org.assertj:assertj-core:$assertj_version"
+    testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
 }
 
 configurations {
     testArtifacts.extendsFrom testRuntimeOnlyClasspath
 }
 
-task testJar(type: Jar) {
+tasks.register('testJar', Jar) {
     classifier "tests"
     from sourceSets.test.output
 }

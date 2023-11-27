@@ -6,7 +6,7 @@ import net.corda.core.serialization.SerializedBytes
 import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.amqp.testutils.*
 import net.corda.serialization.internal.carpenter.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.NotSerializableException
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -50,7 +50,7 @@ class DeserializeNeedingCarpentryTests : AmqpCarpenterBase(AllWhitelist) {
         return deserialize(bytes, T::class.java, context ?: testSerializationContext)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun verySimpleType() {
         val testVal = 10
         val clazz = ClassCarpenterImpl(whitelist = AllWhitelist).build(ClassSchema(testName(),
@@ -83,7 +83,7 @@ class DeserializeNeedingCarpentryTests : AmqpCarpenterBase(AllWhitelist) {
         assertEquals(testVal, deserializedObj4::class.java.getMethod("getA").invoke(deserializedObj4))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun repeatedTypesAreRecognised() {
         val testValA = 10
         val testValB = 20
@@ -121,7 +121,7 @@ class DeserializeNeedingCarpentryTests : AmqpCarpenterBase(AllWhitelist) {
         assertNotEquals(deserialisedB::class.java, deserialisedC::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun simpleTypeKnownInterface() {
         val clazz = ClassCarpenterImpl(whitelist = AllWhitelist).build(ClassSchema(
                 testName(), mapOf("name" to NonNullableField(String::class.java)),
@@ -136,7 +136,7 @@ class DeserializeNeedingCarpentryTests : AmqpCarpenterBase(AllWhitelist) {
         assertEquals(testVal, (deserializedObj as I).getName())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun arrayOfTypes() {
         val clazz = ClassCarpenterImpl(whitelist = AllWhitelist).build(ClassSchema(testName(),
                 mapOf("a" to NonNullableField(Int::class.java))))
@@ -171,7 +171,7 @@ class DeserializeNeedingCarpentryTests : AmqpCarpenterBase(AllWhitelist) {
                 deserializedObj.a[2]::class.java.getMethod("getA").invoke(deserializedObj.a[2]))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun reusedClasses() {
         val cc = ClassCarpenterImpl(whitelist = AllWhitelist)
 
@@ -190,7 +190,7 @@ class DeserializeNeedingCarpentryTests : AmqpCarpenterBase(AllWhitelist) {
                 (deserialisedO::class.java.getMethod("getA").invoke(deserialisedO))::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedTypes() {
         val cc = ClassCarpenterImpl(whitelist = AllWhitelist)
         val nestedClass = cc.build(ClassSchema("nestedType",
@@ -207,7 +207,7 @@ class DeserializeNeedingCarpentryTests : AmqpCarpenterBase(AllWhitelist) {
         assertEquals("name", inner::class.java.getMethod("getName").invoke(inner))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun repeatedNestedTypes() {
         val cc = ClassCarpenterImpl(whitelist = AllWhitelist)
         val nestedClass = cc.build(ClassSchema("nestedType",
@@ -227,7 +227,7 @@ class DeserializeNeedingCarpentryTests : AmqpCarpenterBase(AllWhitelist) {
         assertEquals("bar", deserializedObj.b::class.java.getMethod("getName").invoke(deserializedObj.b))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun listOfType() {
         val unknownClass = ClassCarpenterImpl(whitelist = AllWhitelist).build(ClassSchema(testName(), mapOf(
                 "v1" to NonNullableField(Int::class.java),
@@ -252,7 +252,7 @@ class DeserializeNeedingCarpentryTests : AmqpCarpenterBase(AllWhitelist) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun unknownInterface() {
         val cc = ClassCarpenterImpl(whitelist = AllWhitelist)
 

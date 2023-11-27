@@ -1,17 +1,14 @@
 package net.corda.coretests.crypto
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import net.corda.core.contracts.Command
 import net.corda.core.contracts.PrivacySalt
 import net.corda.core.contracts.StateRef
 import net.corda.core.contracts.TimeWindow
 import net.corda.core.contracts.TransactionState
+import net.corda.core.crypto.DigestService
 import net.corda.core.crypto.MerkleTree
 import net.corda.core.crypto.MerkleTreeException
 import net.corda.core.crypto.PartialMerkleTree
-import net.corda.core.crypto.DigestService
 import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.SecureHash.Companion.SHA2_384
 import net.corda.core.crypto.SecureHash.Companion.hashAs
@@ -26,35 +23,40 @@ import net.corda.core.serialization.serialize
 import net.corda.core.transactions.ReferenceStateRef
 import net.corda.core.transactions.WireTransaction
 import net.corda.core.utilities.OpaqueBytes
+import net.corda.coretesting.internal.TEST_TX_TIME
 import net.corda.finance.DOLLARS
-import net.corda.finance.`issued by`
 import net.corda.finance.contracts.asset.Cash
+import net.corda.finance.`issued by`
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.core.DUMMY_NOTARY_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.dsl.LedgerDSL
 import net.corda.testing.dsl.TestLedgerDSLInterpreter
 import net.corda.testing.dsl.TestTransactionDSLInterpreter
-import net.corda.coretesting.internal.TEST_TX_TIME
 import net.corda.testing.internal.createWireTransaction
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.ledger
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertNotEquals
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
 import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.security.PublicKey
 import java.util.function.Predicate
 import java.util.stream.IntStream
 import kotlin.streams.toList
 import kotlin.test.assertFailsWith
 
+@ExtendWith(SerializationExtension::class)
 @Suppress("FunctionNaming")
 class PartialMerkleTreeWithNamedHashTest {
     private companion object {
@@ -73,10 +75,6 @@ class PartialMerkleTreeWithNamedHashTest {
         fun OpaqueBytes.sha2_384(): SecureHash = hashAs(SHA2_384)
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private val nodes = "abcdef"
     private lateinit var hashed: List<SecureHash>
     private lateinit var expectedRoot: SecureHash
@@ -85,7 +83,7 @@ class PartialMerkleTreeWithNamedHashTest {
     private lateinit var txs: List<WireTransaction>
     private lateinit var testTx: WireTransaction
 
-    @Before
+    @BeforeEach
     fun init() {
         hashed = nodes.map { it.serialize().sha2_384() }
         val zeroHash = SecureHash.zeroHashFor(SHA2_384)
@@ -126,24 +124,24 @@ class PartialMerkleTreeWithNamedHashTest {
     }
 
     // Building full Merkle Tree tests.
-    @Test(timeout=300_000)
+    @Test
     fun `building Merkle tree with 6 nodes - no rightmost nodes`() {
         assertEquals(expectedRoot, merkleTree.hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `building Merkle tree - no hashes`() {
         assertFailsWith<MerkleTreeException> { MerkleTree.getMerkleTree(emptyList(), DigestService.sha2_384) }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `building Merkle tree one node`() {
         val node = 'a'.serialize().sha2_384()
         val mt = MerkleTree.getMerkleTree(listOf(node), DigestService.sha2_384)
         assertNotEquals(node, mt.hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `building Merkle tree odd number of nodes`() {
         val odd = hashed.subList(0, 3)
         val h1 = hashed[0].concatenate(hashed[1])
@@ -153,7 +151,7 @@ class PartialMerkleTreeWithNamedHashTest {
         assertEquals(mt.hash, expected)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `check full tree`() {
         val h = SecureHash.random(SHA2_384)
         val left = MerkleTree.Node(h, MerkleTree.Node(h, MerkleTree.Leaf(h), MerkleTree.Leaf(h)),
@@ -165,7 +163,7 @@ class PartialMerkleTreeWithNamedHashTest {
         PartialMerkleTree.build(MerkleTree.Leaf(h), listOf(h)) // Just a leaf.
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `building Merkle tree for a tx and nonce test`() {
         fun filtering(elem: Any): Boolean {
             return when (elem) {
@@ -197,7 +195,7 @@ class PartialMerkleTreeWithNamedHashTest {
         ftx.verify()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `same transactions with different notaries have different ids`() {
         // We even use the same privacySalt, and thus the only difference between the two transactions is the notary party.
         val privacySalt = PrivacySalt()
@@ -207,9 +205,9 @@ class PartialMerkleTreeWithNamedHashTest {
         assertNotEquals(wtx1.id, wtx2.id)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `nothing filtered`() {
-        val ftxNothing = testTx.buildFilteredTransaction(Predicate { false })
+        val ftxNothing = testTx.buildFilteredTransaction { false }
         assertTrue(ftxNothing.componentGroups.isEmpty())
         assertTrue(ftxNothing.attachments.isEmpty())
         assertTrue(ftxNothing.commands.isEmpty())
@@ -223,32 +221,32 @@ class PartialMerkleTreeWithNamedHashTest {
     }
 
     // Partial Merkle Tree building tests.
-    @Test(timeout=300_000)
+    @Test
     fun `build Partial Merkle Tree, only left nodes branch`() {
         val inclHashes = listOf(hashed[3], hashed[5])
         val pmt = PartialMerkleTree.build(merkleTree, inclHashes)
         assertTrue(pmt.verify(merkleTree.hash, inclHashes))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `build Partial Merkle Tree, include zero leaves`() {
         val pmt = PartialMerkleTree.build(merkleTree, emptyList())
         assertTrue(pmt.verify(merkleTree.hash, emptyList()))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `build Partial Merkle Tree, include all leaves`() {
         val pmt = PartialMerkleTree.build(merkleTree, hashed)
         assertTrue(pmt.verify(merkleTree.hash, hashed))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `build Partial Merkle Tree - duplicate leaves failure`() {
         val inclHashes = arrayListOf(hashed[3], hashed[5], hashed[3], hashed[5])
         assertFailsWith<MerkleTreeException> { PartialMerkleTree.build(merkleTree, inclHashes) }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `build Partial Merkle Tree - only duplicate leaves, less included failure`() {
         val leaves = "aaa"
         val hashes = leaves.map { it.serialize().hash }
@@ -256,7 +254,7 @@ class PartialMerkleTreeWithNamedHashTest {
         assertFailsWith<MerkleTreeException> { PartialMerkleTree.build(mt, hashes.subList(0, 1)) }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `verify Partial Merkle Tree - too many leaves failure`() {
         val inclHashes = arrayListOf(hashed[3], hashed[5])
         val pmt = PartialMerkleTree.build(merkleTree, inclHashes)
@@ -264,7 +262,7 @@ class PartialMerkleTreeWithNamedHashTest {
         assertFalse(pmt.verify(merkleTree.hash, inclHashes))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `verify Partial Merkle Tree - too little leaves failure`() {
         val inclHashes = arrayListOf(hashed[3], hashed[5], hashed[0])
         val pmt = PartialMerkleTree.build(merkleTree, inclHashes)
@@ -272,7 +270,7 @@ class PartialMerkleTreeWithNamedHashTest {
         assertFalse(pmt.verify(merkleTree.hash, inclHashes))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `verify Partial Merkle Tree - duplicate leaves failure`() {
         val mt = MerkleTree.getMerkleTree(hashed.subList(0, 5), DigestService.sha2_384) // Odd number of leaves. Last one is duplicated.
         val inclHashes = arrayListOf(hashed[3], hashed[4])
@@ -281,14 +279,14 @@ class PartialMerkleTreeWithNamedHashTest {
         assertFalse(pmt.verify(mt.hash, inclHashes))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `verify Partial Merkle Tree - different leaves failure`() {
         val inclHashes = arrayListOf(hashed[3], hashed[5])
         val pmt = PartialMerkleTree.build(merkleTree, inclHashes)
         assertFalse(pmt.verify(merkleTree.hash, listOf(hashed[2], hashed[4])))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `verify Partial Merkle Tree - wrong root`() {
         val inclHashes = listOf(hashed[3], hashed[5])
         val pmt = PartialMerkleTree.build(merkleTree, inclHashes)
@@ -296,10 +294,10 @@ class PartialMerkleTreeWithNamedHashTest {
         assertFalse(pmt.verify(wrongRoot, inclHashes))
     }
 
-    @Test(expected = Exception::class, timeout=300_000)
+    @Test
     fun `hash map serialization not allowed`() {
         val hm1 = hashMapOf("a" to 1, "b" to 2, "c" to 3, "e" to 4)
-        hm1.serialize()
+        assertThrows<Exception> { hm1.serialize() }
     }
 
     private fun makeSimpleCashWtx(
@@ -319,7 +317,7 @@ class PartialMerkleTreeWithNamedHashTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Find leaf index`() {
         // A Merkle tree with 20 leaves.
         val sampleLeaves = IntStream.rangeClosed(0, 19).toList().map { sha2_384(it.toString()) }
@@ -365,7 +363,7 @@ class PartialMerkleTreeWithNamedHashTest {
         assertFailsWith<MerkleTreeException> { pmtAllIncluded.leafIndex(sha2_384("30")) }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `building Merkle for reference states only`() {
         fun filtering(elem: Any): Boolean {
             return when (elem) {

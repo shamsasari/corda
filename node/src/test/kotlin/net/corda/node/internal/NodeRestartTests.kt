@@ -15,18 +15,18 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 
 class NodeRestartTests {
     private val mockNet = InternalMockNetwork(threadPerNode = true, autoVisibleNodes = false, notarySpecs = emptyList())
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `restart with no network map cache update`() {
         val alice = mockNet.createNode(InternalMockNodeParameters(legalName = ALICE_NAME))
         val bob = mockNet.createNode(InternalMockNodeParameters(legalName = BOB_NAME))

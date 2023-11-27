@@ -14,7 +14,7 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -63,7 +63,7 @@ class CordaServiceLifecycleFatalTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `JVM terminates on critical failure`() {
         // Scenario terminates JVM - node should be running out of process
         driver(DriverParameters(startNodesInProcess = false, cordappsForAllNodes = listOf(enclosedCordapp()),

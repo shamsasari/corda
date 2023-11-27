@@ -3,20 +3,20 @@ package net.corda.node.services.persistence
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 
 class TransactionCallbackTest {
     private val database = configureDatabase(makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null })
 
-    @After
+    @AfterEach
     fun closeDatabase() {
         database.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `onCommit called and onRollback not called on commit`() {
         var onCommitCount = 0
         var onRollbackCount = 0
@@ -28,7 +28,7 @@ class TransactionCallbackTest {
         assertEquals(0, onRollbackCount)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `onCommit not called and onRollback called on rollback`() {
         class TestException : Exception()
 

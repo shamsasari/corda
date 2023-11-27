@@ -56,32 +56,26 @@ dependencies {
     }
 
     testImplementation project(':node-driver')
-    
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}"
-    testImplementation "junit:junit:$junit_version"
-
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junit_vintage_version}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_jupiter_version}"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junit_platform_version}"
-
-    testImplementation "org.assertj:assertj-core:${assertj_version}"
-
-    slowIntegrationTestCompile project(path: ":samples:irs-demo:web", configuration: "demoArtifacts")
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
+    testImplementation "org.assertj:assertj-core:$assertj_version"
     testImplementation "com.palantir.docker.compose:docker-compose-rule-junit4:$docker_compose_rule_version"
     testImplementation "org.seleniumhq.selenium:selenium-java:$selenium_version"
     testImplementation "com.github.detro:ghostdriver:$ghostdriver_version"
+
+    slowIntegrationTestCompile project(path: ":samples:irs-demo:web", configuration: "demoArtifacts")
 }
 
 bootJar {
     enabled = false
 }
 
-task slowIntegrationTest(type: Test, dependsOn: []) {
+tasks.register('slowIntegrationTest', Test) {
     testClassesDirs = sourceSets.slowIntegrationTest.output.classesDirs
     classpath = sourceSets.slowIntegrationTest.runtimeClasspath
 }
 
-task systemTest(type: Test, dependsOn: ["cordapp:prepareDockerNodes", "web:generateDockerCompose"]) {
+tasks.register('systemTest', Test) {
+    dependsOn("cordapp:prepareDockerNodes", "web:generateDockerCompose")
     testClassesDirs = sourceSets.systemTest.output.classesDirs
     classpath = sourceSets.systemTest.runtimeClasspath
 

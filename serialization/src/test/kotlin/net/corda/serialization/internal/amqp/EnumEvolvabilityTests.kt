@@ -6,7 +6,7 @@ import net.corda.serialization.internal.amqp.testutils.*
 import net.corda.serialization.internal.amqp.testutils.ProjectStructure.projectRootDir
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.NotSerializableException
 import java.net.URI
 import kotlin.test.assertEquals
@@ -47,7 +47,7 @@ class EnumEvolvabilityTests {
         A, B, C, E
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun noAnnotation() {
         data class C(val n: NotAnnotated)
 
@@ -63,7 +63,7 @@ class EnumEvolvabilityTests {
         A, B, C, D
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun missingDefaults() {
         data class C(val m: MissingDefaults)
 
@@ -74,7 +74,7 @@ class EnumEvolvabilityTests {
         assertEquals(0, bAndS.transformsSchema.types.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun missingRenames() {
         data class C(val m: MissingRenames)
 
@@ -86,7 +86,7 @@ class EnumEvolvabilityTests {
 
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun defaultAnnotationIsAddedToEnvelope() {
         data class C(val annotatedEnum: AnnotatedEnumOnce)
 
@@ -108,7 +108,7 @@ class EnumEvolvabilityTests {
         assertEquals("A", (schema[TransformTypes.EnumDefault]!![0] as EnumDefaultSchemaTransform).old)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun doubleDefaultAnnotationIsAddedToEnvelope() {
         data class C(val annotatedEnum: AnnotatedEnumTwice)
 
@@ -132,7 +132,7 @@ class EnumEvolvabilityTests {
         assertEquals("A", (schema[TransformTypes.EnumDefault]!![1] as EnumDefaultSchemaTransform).old)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun defaultAnnotationIsAddedToEnvelopeAndDeserialised() {
         data class C(val annotatedEnum: AnnotatedEnumOnce)
 
@@ -161,7 +161,7 @@ class EnumEvolvabilityTests {
         assertEquals("A", (schema[TransformTypes.EnumDefault]!![0] as EnumDefaultSchemaTransform).old)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun doubleDefaultAnnotationIsAddedToEnvelopeAndDeserialised() {
         data class C(val annotatedEnum: AnnotatedEnumTwice)
 
@@ -188,7 +188,7 @@ class EnumEvolvabilityTests {
         assertEquals("A", (enumDefaults[1] as EnumDefaultSchemaTransform).old)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun renameAnnotationIsAdded() {
         data class C(val annotatedEnum: RenameEnumOnce)
 
@@ -232,7 +232,7 @@ class EnumEvolvabilityTests {
         A, B, E, F
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun doubleRenameAnnotationIsAdded() {
         data class C(val annotatedEnum: RenameEnumTwice)
 
@@ -279,7 +279,7 @@ class EnumEvolvabilityTests {
         X, B, C, D, E
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun bothAnnotationTypes() {
         data class C(val annotatedEnum: RenameAndExtendEnum)
 
@@ -316,7 +316,7 @@ class EnumEvolvabilityTests {
         A, B, C, D, E
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun repeatedAnnotation() {
         data class C(val a: RepeatedAnnotation)
 
@@ -344,7 +344,7 @@ class EnumEvolvabilityTests {
         A, B, C, D
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun multiEnums() {
         data class A(val a: E1, val b: E2)
         data class B(val a: E3, val b: A, val c: E1)
@@ -384,7 +384,7 @@ class EnumEvolvabilityTests {
         assertEquals(1, e3S[TransformTypes.EnumDefault]!!.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testCache() {
         data class C2(val annotatedEnum: AnnotatedEnumOnce)
         data class C1(val annotatedEnum: AnnotatedEnumOnce)
@@ -409,7 +409,7 @@ class EnumEvolvabilityTests {
     // To regenerate the types for this test uncomment UnknownTransformAnnotation from SupportedTransforms.kt and it's
     // entry in the supportedTransforms list and the UnknownTest enum value in TransformTypes.kt
     // ALSO: remember to re-annotate the enum WithUnkownTest above
-    @Test(timeout=300_000)
+    @Test
 	fun testUnknownTransform() {
         val resource = "EnumEvolvabilityTests.testUnknownTransform"
         val sf = testDefaultFactory()
@@ -434,7 +434,7 @@ class EnumEvolvabilityTests {
     )
     enum class AcceptMultipleRename { C }
 
-    @Test(timeout=300_000)
+    @Test
 	fun acceptMultipleRename() {
         data class C(val e: AcceptMultipleRename)
 
@@ -452,7 +452,7 @@ class EnumEvolvabilityTests {
     )
     enum class RejectMultipleRenameTo { A, B, C }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rejectMultipleRenameTo() {
         data class C(val e: RejectMultipleRenameTo)
 
@@ -475,7 +475,7 @@ class EnumEvolvabilityTests {
     )
     enum class RejectMultipleRenameFrom { A, B, C }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rejectMultipleRenameFrom() {
         data class C(val e: RejectMultipleRenameFrom)
 
@@ -504,7 +504,7 @@ class EnumEvolvabilityTests {
     )
     enum class RejectCyclicRename { A, B, C }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rejectCyclicRename() {
         data class C(val e: RejectCyclicRename)
 
@@ -523,7 +523,7 @@ class EnumEvolvabilityTests {
     )
     enum class RejectCyclicRenameRedux { A, B, C }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rejectCyclicRenameRedux() {
         data class C(val e: RejectCyclicRenameRedux)
 
@@ -536,7 +536,7 @@ class EnumEvolvabilityTests {
     @CordaSerializationTransformEnumDefault(new = "D", old = "X")
     enum class RejectBadDefault { A, B, C, D }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rejectBadDefault() {
         data class C(val e: RejectBadDefault)
 
@@ -549,7 +549,7 @@ class EnumEvolvabilityTests {
     @CordaSerializationTransformEnumDefault(new = "D", old = "D")
     enum class RejectBadDefaultToSelf { A, B, C, D }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rejectBadDefaultToSelf() {
         data class C(val e: RejectBadDefaultToSelf)
 

@@ -3,18 +3,15 @@ package net.corda.finance.contracts.universal
 import net.corda.finance.contracts.FixOf
 import net.corda.finance.contracts.Frequency
 import net.corda.finance.contracts.Tenor
-import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.SerializationExtension
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
 import java.time.LocalDate
 
+@ExtendWith(SerializationExtension::class)
 class IRS {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private val testTxTime1: Instant = Instant.parse("2017-09-02T12:00:00.00Z")
     private val notional = 50.M
     private val currency = EUR
@@ -131,7 +128,7 @@ class IRS {
 
     private val statePaymentFirst = UniversalContract.State(listOf(DUMMY_NOTARY), paymentFirst)
 
-    @Test(timeout=300_000)
+    @Test
 	fun issue() {
         transaction {
             output(UNIVERSAL_PROGRAM_ID, stateInitial)
@@ -146,7 +143,7 @@ class IRS {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `first fixing`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateInitial)
@@ -185,7 +182,7 @@ class IRS {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `first execute`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateAfterFixingFirst)
@@ -202,7 +199,7 @@ class IRS {
         }
     }
 
-    @Test(timeout=300_000) @Ignore
+    @Test @Disabled
     fun `pretty print`() {
         println ( prettyPrint(contractInitial) )
 

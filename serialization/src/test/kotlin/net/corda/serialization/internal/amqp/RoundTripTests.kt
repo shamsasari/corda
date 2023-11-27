@@ -18,7 +18,7 @@ import net.corda.serialization.internal.amqp.testutils.serialize
 import net.corda.serialization.internal.amqp.testutils.testDefaultFactoryNoEvolution
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import kotlin.test.assertEquals
 import kotlin.test.assertNotSame
@@ -26,7 +26,7 @@ import kotlin.test.assertSame
 
 class RoundTripTests {
 
-    @Test(timeout=300_000)
+    @Test
 	fun mutableBecomesImmutable() {
         data class C(val l: MutableList<String>)
 
@@ -39,7 +39,7 @@ class RoundTripTests {
         }.isInstanceOf(UnsupportedOperationException::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun mutableStillMutable() {
         class C(l: MutableList<String>) {
             val l: MutableList<String> = l.toMutableList()
@@ -53,7 +53,7 @@ class RoundTripTests {
         assertThat(newC.l).containsExactly("a", "b", "c", "d")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun mutableStillMutable2() {
         data class C(val l: MutableList<String>) {
             @ConstructorForDeserialization
@@ -69,7 +69,7 @@ class RoundTripTests {
         assertThat(newC.l).containsExactly("a", "b", "c", "d")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun mutableBecomesImmutable4() {
         data class C(val l: List<String>)
 
@@ -79,7 +79,7 @@ class RoundTripTests {
         newC.copy(l = (newC.l + "d"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun calculatedValues() {
         data class C(val i: Int) {
             @get:SerializableCalculatedProperty
@@ -92,7 +92,7 @@ class RoundTripTests {
         assertThat(deserialized.squared).isEqualTo(4)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun calculatedFunction() {
         class C {
             var i: Int = 0
@@ -112,7 +112,7 @@ class RoundTripTests {
         val squared: Int
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun inheritedCalculatedFunction() {
         class C: I {
             var i: Int = 0
@@ -126,7 +126,7 @@ class RoundTripTests {
         assertThat(deserialized.squared).isEqualTo(4)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun inheritedCalculatedFunctionIsNotCalculated() {
         class C(override val squared: Int): I
 
@@ -144,7 +144,7 @@ class RoundTripTests {
 
     data class OnMembershipChanged(val changedMembership : StateAndRef<MembershipState<Any>>)
 
-    @Test(timeout=300_000)
+    @Test
 	fun canSerializeClassesWithUntypedProperties() {
         val data = MembershipState<Any>(mapOf("foo" to "bar"))
         val party = Party(
@@ -170,7 +170,7 @@ class RoundTripTests {
         assertSame(instance.changedMembership.state.notary.owningKey, deserialized.changedMembership.state.notary.owningKey)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun sigConstraintsInterned() {
         val instance = SignatureAttachmentConstraint.create(entropyToKeyPair(BigInteger.valueOf(83)).public)
 
@@ -180,7 +180,7 @@ class RoundTripTests {
         assertSame(instance, deserialized)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun canSerializeClassesWithUntypedPropertiesWithInternedParty() {
         val data = MembershipState<Any>(mapOf("foo" to "bar"))
         val party = Party.create(
@@ -210,7 +210,7 @@ class RoundTripTests {
 
     data class C<A, B : A>(override val t: B) : I2<B>
 
-    @Test(timeout = 300_000)
+    @Test
     fun recursiveTypeVariableResolution() {
         val factory = testDefaultFactoryNoEvolution()
         val instance = C<Collection<String>, List<String>>(emptyList())

@@ -1,16 +1,16 @@
 package net.corda.core.internal
 
+import net.corda.core.internal.concurrent.fork
+import net.corda.core.utilities.getOrThrow
+import org.assertj.core.api.Assertions.assertThatThrownBy
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtensionContext
+import org.junit.jupiter.api.extension.RegisterExtension
+import org.junit.jupiter.api.extension.TestWatcher
 import org.mockito.kotlin.argThat
 import org.mockito.kotlin.mock
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.verifyNoMoreInteractions
-import net.corda.core.internal.concurrent.fork
-import net.corda.core.utilities.getOrThrow
-import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TestRule
-import org.junit.runners.model.Statement
 import org.slf4j.Logger
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
@@ -35,14 +35,12 @@ class ToggleFieldTest {
     }
 
     private val log = mock<Logger>()
-    @Rule
+
+    @RegisterExtension
     @JvmField
-    val verifyNoMoreInteractions = TestRule { base, _ ->
-        object : Statement() {
-            override fun evaluate() {
-                base.evaluate()
-                verifyNoMoreInteractions(log) // Only on success.
-            }
+    val verifyNoMoreInteractions = object : TestWatcher {
+        override fun testSuccessful(context: ExtensionContext) {
+            verifyNoMoreInteractions(log)
         }
     }
 
@@ -52,9 +50,9 @@ class ToggleFieldTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `toggle is enforced`() {
-        listOf(SimpleToggleField<String>("simple"), ThreadLocalToggleField<String>("local"), inheritableThreadLocalToggleField()).forEach { field ->
+        listOf(SimpleToggleField<String>("simple"), ThreadLocalToggleField("local"), inheritableThreadLocalToggleField()).forEach { field ->
             assertNull(field.get())
             assertThatThrownBy { field.set(null) }.isInstanceOf(IllegalStateException::class.java)
             field.set("hello")
@@ -67,7 +65,7 @@ class ToggleFieldTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `write-at-most-once field works`() {
         val field = SimpleToggleField<String>("field", true)
         assertNull(field.get())
@@ -80,7 +78,7 @@ class ToggleFieldTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `thread local works`() {
         val field = ThreadLocalToggleField<String>("field")
         assertNull(field.get())
@@ -93,7 +91,7 @@ class ToggleFieldTest {
         assertNull(field.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `inheritable thread local works`() {
         val field = inheritableThreadLocalToggleField<String>()
         assertNull(field.get())
@@ -106,7 +104,7 @@ class ToggleFieldTest {
         assertNull(field.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `existing threads do not inherit`() {
         val field = inheritableThreadLocalToggleField<String>()
         withSingleThreadExecutor {
@@ -116,7 +114,7 @@ class ToggleFieldTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `inherited values are poisoned on clear`() {
         val field = inheritableThreadLocalToggleField<String>()
         field.set("hello")
@@ -139,7 +137,7 @@ class ToggleFieldTest {
     }
 
     /** We log a warning rather than failing-fast as the new thread may be an undetected global. */
-    @Test(timeout=300_000)
+    @Test
 	fun `leaked thread propagates holder to non-global thread, with warning`() {
         val field = inheritableThreadLocalToggleField<String>()
         field.set("hello")
@@ -169,7 +167,7 @@ class ToggleFieldTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `leaked thread does not propagate holder to global thread, with warning`() {
         val field = inheritableThreadLocalToggleField<String>()
         field.set("hello")
@@ -190,7 +188,7 @@ class ToggleFieldTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non-leaked thread does not propagate holder to global thread, without warning`() {
         val field = inheritableThreadLocalToggleField<String>()
         field.set("hello")

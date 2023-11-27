@@ -5,14 +5,14 @@ import net.corda.nodeapi.internal.crypto.AesEncryption.IV_SIZE_BYTES
 import net.corda.nodeapi.internal.crypto.AesEncryption.KEY_SIZE_BYTES
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.security.GeneralSecurityException
 
 class AesEncryptionTest {
     private val aesKey = secureRandomBytes(KEY_SIZE_BYTES)
     private val plaintext = secureRandomBytes(257)  // Intentionally not a power of 2
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ciphertext can be decrypted using the same key`() {
         val ciphertext = AesEncryption.encrypt(aesKey, plaintext)
         assertThat(String(ciphertext)).doesNotContain(String(plaintext))
@@ -20,7 +20,7 @@ class AesEncryptionTest {
         assertThat(decrypted).isEqualTo(plaintext)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ciphertext with authenticated data can be decrypted using the same key`() {
         val ciphertext = AesEncryption.encrypt(aesKey, plaintext, "Extra public data".toByteArray())
         assertThat(String(ciphertext)).doesNotContain(String(plaintext))
@@ -28,7 +28,7 @@ class AesEncryptionTest {
         assertThat(decrypted).isEqualTo(plaintext)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ciphertext cannot be decrypted with different authenticated data`() {
         val ciphertext = AesEncryption.encrypt(aesKey, plaintext, "Extra public data".toByteArray())
         assertThat(String(ciphertext)).doesNotContain(String(plaintext))
@@ -37,7 +37,7 @@ class AesEncryptionTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ciphertext cannot be decrypted with different key`() {
         val ciphertext = AesEncryption.encrypt(aesKey, plaintext)
         for (index in aesKey.indices) {
@@ -49,7 +49,7 @@ class AesEncryptionTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `corrupted ciphertext cannot be decrypted`() {
         val ciphertext = AesEncryption.encrypt(aesKey, plaintext)
         for (index in ciphertext.indices) {
@@ -61,7 +61,7 @@ class AesEncryptionTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `encrypting same plainttext twice with same key does not produce same ciphertext`() {
         val first = AesEncryption.encrypt(aesKey, plaintext)
         val second = AesEncryption.encrypt(aesKey, plaintext)

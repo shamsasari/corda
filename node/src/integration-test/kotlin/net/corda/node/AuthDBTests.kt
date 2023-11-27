@@ -20,10 +20,10 @@ import net.corda.testing.node.internal.NodeBasedTest
 import net.corda.testing.node.internal.cordappForClasses
 import org.apache.activemq.artemis.api.core.ActiveMQSecurityException
 import org.apache.shiro.authc.credential.DefaultPasswordService
-import org.junit.After
-import org.junit.Assume
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.sql.Connection
@@ -56,7 +56,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
     @Parameterized.Parameter
     lateinit var passwordEncryption: PasswordEncryption
 
-    @Before
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         db = UsersDB(
@@ -105,12 +105,12 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `login with correct credentials`() {
         client.start("user", "foo").close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `login with wrong credentials`() {
         client.start("user", "foo").close()
         assertFailsWith(
@@ -125,7 +125,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check flow permissions are respected`() {
         client.start("user", "foo").use {
             val proxy = it.proxy
@@ -145,7 +145,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check permissions on RPC calls are respected`() {
         client.start("user", "foo").use {
             val proxy = it.proxy
@@ -158,7 +158,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Add new users dynamically`() {
         assertFailsWith(
                 ActiveMQSecurityException::class,
@@ -174,9 +174,9 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         client.start("user2", "bar").close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Modify user permissions during RPC session`() {
-        Assume.assumeFalse(IS_S390X)
+        assumeFalse(IS_S390X)
         db.insert(UserAndRoles(
                 username = "user3",
                 password = encodePassword("bar"),
@@ -195,7 +195,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Revoke user permissions during RPC session`() {
         db.insert(UserAndRoles(
                 username = "user4",
@@ -222,7 +222,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         override fun call() = Unit
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         node?.node?.stop()
         db.close()

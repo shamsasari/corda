@@ -4,11 +4,14 @@ import net.corda.core.crypto.Crypto
 import net.corda.core.crypto.SignatureScheme
 import net.corda.core.crypto.newSecureRandom
 import net.corda.core.identity.CordaX500Name
-import net.corda.core.internal.*
-import net.corda.nodeapi.internal.crypto.*
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import net.corda.core.internal.div
+import net.corda.nodeapi.internal.crypto.CertificateType
+import net.corda.nodeapi.internal.crypto.X509Utilities
+import net.corda.nodeapi.internal.crypto.addOrReplaceCertificate
+import net.corda.nodeapi.internal.crypto.addOrReplaceKey
+import net.corda.nodeapi.internal.crypto.loadOrCreateKeyStore
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.DataInputStream
 import java.io.DataOutputStream
 import java.io.IOException
@@ -17,10 +20,19 @@ import java.net.InetSocketAddress
 import java.net.ServerSocket
 import java.nio.file.Path
 import java.security.KeyStore
-import javax.net.ssl.*
+import javax.net.ssl.KeyManagerFactory
+import javax.net.ssl.SSLContext
+import javax.net.ssl.SSLParameters
+import javax.net.ssl.SSLServerSocket
+import javax.net.ssl.SSLServerSocketFactory
+import javax.net.ssl.SSLSocket
+import javax.net.ssl.SSLSocketFactory
+import javax.net.ssl.TrustManagerFactory
 import javax.security.auth.x500.X500Principal
 import kotlin.concurrent.thread
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFalse
+import kotlin.test.assertTrue
 
 /**
  * Various tests for mixed-scheme mutual TLS authentication, such as:
@@ -46,10 +58,8 @@ import kotlin.test.*
  * SHA256 indicates the message authentication algorithm which is used to authenticate a message.
  */
 class TLSAuthenticationTests {
-
-    @Rule
-    @JvmField
-    val tempFolder: TemporaryFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var tempFolder: Path
 
     // Root CA.
     private val ROOT_X500 = X500Principal("CN=Root_CA_1,O=R3CEV,L=London,C=GB")
@@ -67,7 +77,7 @@ class TLSAuthenticationTests {
             "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
     )
 
-    @Test(timeout=300_000)
+    @Test
 	fun `All EC R1`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.ECDSA_SECP256R1_SHA256,
@@ -83,7 +93,7 @@ class TLSAuthenticationTests {
         testConnect(serverSocket, clientSocket, "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `All RSA`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.RSA_SHA256,
@@ -100,7 +110,7 @@ class TLSAuthenticationTests {
     }
 
     // Server's public key type is the one selected if users use different key types (e.g RSA and EC R1).
-    @Test(timeout=300_000)
+    @Test
 	fun `Server RSA - Client EC R1 - CAs all EC R1`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.ECDSA_SECP256R1_SHA256,
@@ -115,7 +125,7 @@ class TLSAuthenticationTests {
         testConnect(serverSocket, clientSocket, "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256") // Server's key type is selected.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Server EC R1 - Client RSA - CAs all EC R1`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.ECDSA_SECP256R1_SHA256,
@@ -130,7 +140,7 @@ class TLSAuthenticationTests {
         testConnect(serverSocket, clientSocket, "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256") // Server's key type is selected.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Server EC R1 - Client EC R1 - CAs all RSA`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.RSA_SHA256,
@@ -145,7 +155,7 @@ class TLSAuthenticationTests {
         testConnect(serverSocket, clientSocket, "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Server EC R1 - Client RSA - Mixed CAs`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.ECDSA_SECP256R1_SHA256,
@@ -165,7 +175,7 @@ class TLSAuthenticationTests {
     //
     // However, the server is still free to ignore this order and pick what it thinks is best,
     // see https://security.stackexchange.com/questions/121608 for more information.
-    @Test(timeout=300_000)
+    @Test
 	fun `TLS cipher suite order matters - client wins`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.ECDSA_SECP256R1_SHA256,
@@ -186,7 +196,7 @@ class TLSAuthenticationTests {
         testConnect(serverSocket, clientSocket, "TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256") // Client order wins.
     }
 
-    private fun tempFile(name: String): Path = tempFolder.root.toPath() / name
+    private fun tempFile(name: String): Path = tempFolder / name
 
     private fun buildTLSFactories(
             rootCAScheme: SignatureScheme,

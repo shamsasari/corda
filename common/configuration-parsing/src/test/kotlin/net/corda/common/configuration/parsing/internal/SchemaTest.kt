@@ -3,11 +3,11 @@ package net.corda.common.configuration.parsing.internal
 import com.typesafe.config.ConfigObject
 import com.typesafe.config.ConfigValueFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class SchemaTest {
 
-    @Test(timeout=300_000)
+    @Test
 	fun validation_with_nested_properties() {
 
         val prop1 = "prop1"
@@ -35,7 +35,7 @@ class SchemaTest {
         assertThat(result.isValid).isTrue()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun validation_with_unknown_properties() {
 
         val prop1 = "prop1"
@@ -74,7 +74,7 @@ class SchemaTest {
         assertThat(errorsWithDefaultOptions).isEmpty()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun validation_with_unknown_properties_non_strict() {
 
         val prop1 = "prop1"
@@ -103,7 +103,7 @@ class SchemaTest {
         assertThat(result.isValid).isTrue()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun validation_with_wrong_nested_properties() {
 
         val prop1 = "prop1"
@@ -133,7 +133,7 @@ class SchemaTest {
         assertThat(errors).hasSize(2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun describe_with_nested_properties_does_not_show_sensitive_values() {
 
         val prop1 = "prop1"
@@ -164,7 +164,7 @@ class SchemaTest {
         assertThat(description).doesNotContain(prop5Value)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun describe_with_nested_properties_list_does_not_show_sensitive_values() {
 
         val prop1 = "prop1"

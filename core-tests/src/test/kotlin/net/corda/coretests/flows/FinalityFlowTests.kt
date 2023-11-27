@@ -74,17 +74,17 @@ import net.corda.testing.node.internal.cordappWithPackages
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.findCordapp
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Assert.assertNotNull
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.sql.SQLException
 import java.util.Random
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.fail
 
-@Ignore("TODO JDK17: class cast exception")
+@Disabled("TODO JDK17: class cast exception")
 class FinalityFlowTests : WithFinality {
     companion object {
         private val CHARLIE = TestIdentity(CHARLIE_NAME, 90).party
@@ -96,10 +96,10 @@ class FinalityFlowTests : WithFinality {
 
     private val notary = mockNet.defaultNotaryIdentity
 
-    @After
+    @AfterEach
     fun tearDown() = mockNet.stopNodes()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `finalise a simple transaction`() {
         val bob = createBob()
         val stx = aliceNode.issuesCashTo(bob)
@@ -111,7 +111,7 @@ class FinalityFlowTests : WithFinality {
                                 and visibleTo(bob)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `reject a transaction with unknown parties`() {
         // Charlie isn't part of this network, so node A won't recognise them
         val stx = aliceNode.issuesCashTo(CHARLIE)
@@ -121,7 +121,7 @@ class FinalityFlowTests : WithFinality {
                 willThrow<IllegalArgumentException>())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `allow use of the old API if the CorDapp target version is 3`() {
         val oldBob = createBob(cordapps = listOf(tokenOldCordapp()))
         val stx = aliceNode.issuesCashTo(oldBob)
@@ -129,7 +129,7 @@ class FinalityFlowTests : WithFinality {
         assertThat(oldBob.services.validatedTransactions.getTransaction(stx.id)).isNotNull
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `broadcasting to both new and old participants`() {
         val newCharlie = mockNet.createNode(InternalMockNodeParameters(legalName = CHARLIE_NAME))
         val oldBob = createBob(cordapps = listOf(tokenOldCordapp()))
@@ -144,7 +144,7 @@ class FinalityFlowTests : WithFinality {
         assertThat(oldBob.services.validatedTransactions.getTransaction(stx.id)).isNotNull
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `two phase finality flow transaction`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY)
 
@@ -155,7 +155,7 @@ class FinalityFlowTests : WithFinality {
         assertThat(bobNode.services.validatedTransactions.getTransaction(stx.id)).isNotNull
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `two phase finality flow initiator to pre-2PF peer`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY - 1)
 
@@ -166,7 +166,7 @@ class FinalityFlowTests : WithFinality {
         assertThat(bobNode.services.validatedTransactions.getTransaction(stx.id)).isNotNull
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `pre-2PF initiator to two phase finality flow peer`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY - 1)
 
@@ -177,7 +177,7 @@ class FinalityFlowTests : WithFinality {
         assertThat(bobNode.services.validatedTransactions.getTransaction(stx.id)).isNotNull
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `two phase finality flow double spend transaction`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY)
 
@@ -202,7 +202,7 @@ class FinalityFlowTests : WithFinality {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `two phase finality flow double spend transaction with double spend handling`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY)
 
@@ -247,7 +247,7 @@ class FinalityFlowTests : WithFinality {
         assertEquals(0, fromDb.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `two phase finality flow double spend transaction from pre-2PF initiator`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY - 1)
 
@@ -271,7 +271,7 @@ class FinalityFlowTests : WithFinality {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `two phase finality flow double spend transaction to pre-2PF peer`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY - 1)
 
@@ -295,7 +295,7 @@ class FinalityFlowTests : WithFinality {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `two phase finality flow speedy spender`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY)
 
@@ -327,7 +327,7 @@ class FinalityFlowTests : WithFinality {
         assertEquals(TransactionStatus.VERIFIED, txnStatusBobYetAgain)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `two phase finality flow keeps un-notarised transaction where initiator fails to send notary signature`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY)
 
@@ -342,7 +342,7 @@ class FinalityFlowTests : WithFinality {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `two phase finality flow issuance transaction with observers`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY)
 
@@ -369,7 +369,7 @@ class FinalityFlowTests : WithFinality {
         validateSenderAndReceiverTimestamps(sdrs, rdr!!)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `two phase finality flow payment transaction with observers`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY)
         val charlieNode = createNode(CHARLIE_NAME, platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY)
@@ -438,7 +438,7 @@ class FinalityFlowTests : WithFinality {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `two phase finality flow payment transaction using confidential identities`() {
         val bobNode = createBob(platformVersion = PlatformVersionSwitches.TWO_PHASE_FINALITY)
 

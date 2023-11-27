@@ -1,7 +1,11 @@
 package net.corda.node.flows
 
 import co.paralleluniverse.fibers.Suspendable
-import net.corda.core.flows.*
+import net.corda.core.flows.FlowLogic
+import net.corda.core.flows.FlowSession
+import net.corda.core.flows.InitiatedBy
+import net.corda.core.flows.InitiatingFlow
+import net.corda.core.flows.StartableByRPC
 import net.corda.core.identity.Party
 import net.corda.core.internal.concurrent.transpose
 import net.corda.core.messaging.startFlow
@@ -14,9 +18,8 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.NodeParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.cordappForClasses
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.Assert.assertThat
-import org.junit.Test
+import org.assertj.core.api.Assertions.assertThat
+import org.junit.jupiter.api.Test
 
 class FlowOverrideTests {
 
@@ -66,7 +69,7 @@ class FlowOverrideTests {
     private val nodeAClasses = setOf(Ping::class.java, Pong::class.java, Pongiest::class.java)
     private val nodeBClasses = setOf(Ping::class.java, Pong::class.java)
 
-    @Test(timeout = 300_000)
+    @Test
     fun `should use the most specific implementation of a responding flow`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
             val (nodeA, nodeB) = listOf(ALICE_NAME, BOB_NAME)
@@ -77,11 +80,11 @@ class FlowOverrideTests {
                     .map { startNode(it) }
                     .transpose()
                     .getOrThrow()
-            assertThat(nodeB.rpc.startFlow(::Ping, nodeA.nodeInfo.singleIdentity()).returnValue.getOrThrow(), `is`(Pongiest.GORGONZOLA))
+            assertThat(nodeB.rpc.startFlow(::Ping, nodeA.nodeInfo.singleIdentity()).returnValue.getOrThrow()).isEqualTo(Pongiest.GORGONZOLA))
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `should use the overriden implementation of a responding flow`() {
         val flowOverrides = mapOf(Ping::class.java to Pong::class.java)
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
@@ -94,7 +97,7 @@ class FlowOverrideTests {
                     .map { startNode(it) }
                     .transpose()
                     .getOrThrow()
-            assertThat(nodeB.rpc.startFlow(::Ping, nodeA.nodeInfo.singleIdentity()).returnValue.getOrThrow(), `is`(Pong.PONG))
+            assertThat(nodeB.rpc.startFlow(::Ping, nodeA.nodeInfo.singleIdentity()).returnValue.getOrThrow()).isEqualTo(Pong.PONG)
         }
     }
 }

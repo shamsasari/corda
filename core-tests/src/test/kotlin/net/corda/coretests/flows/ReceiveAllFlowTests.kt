@@ -14,19 +14,19 @@ import net.corda.testing.flows.registerCordappFlowFactory
 import net.corda.coretesting.internal.matchers.flow.willReturn
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.TestStartedNode
-import org.junit.AfterClass
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import kotlin.reflect.KClass
 import kotlin.test.assertEquals
 
-@Ignore("TODO JDK17: class cast exception")
+@Disabled("TODO JDK17: class cast exception")
 class ReceiveMultipleFlowTests : WithMockNet {
     companion object {
         private val classMockNet = InternalMockNetwork()
 
         @JvmStatic
-        @AfterClass
+        @AfterAll
         fun stopNodes() = classMockNet.stopNodes()
     }
 
@@ -34,7 +34,7 @@ class ReceiveMultipleFlowTests : WithMockNet {
 
     private val nodes = (0..2).map { mockNet.createPartyNode() }
 
-    @Test(timeout=300_000)
+    @Test
 	fun showcase_flows_as_closures() {
         val answer = 10.0
         val message = "Hello Ivan"
@@ -68,7 +68,7 @@ class ReceiveMultipleFlowTests : WithMockNet {
                 willReturn(answer as Any))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `receive all messages in parallel using map style`() {
         val doubleValue = 5.0
         nodes[1].registerAnswer(AlgorithmDefinition::class, doubleValue)
@@ -80,7 +80,7 @@ class ReceiveMultipleFlowTests : WithMockNet {
                 willReturn(doubleValue * stringValue.length))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `receive all messages in parallel using list style`() {
         val value1 = 5.0
         nodes[1].registerAnswer(ParallelAlgorithmList::class, value1)

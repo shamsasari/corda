@@ -23,15 +23,15 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.cordappWithPackages
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class TransactionOrderingTests {
     private lateinit var mockNet: InternalMockNetwork
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(cordappWithPackages("net.corda.node.testing"), enclosedCordapp()),
@@ -40,12 +40,12 @@ class TransactionOrderingTests {
         )
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Out of order transactions are recorded in vault correctly`() {
         val alice = mockNet.createPartyNode(ALICE_NAME)
         val aliceID = alice.info.identityFromX500Name(ALICE_NAME)

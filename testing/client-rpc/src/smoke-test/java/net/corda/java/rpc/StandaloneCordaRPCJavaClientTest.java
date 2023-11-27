@@ -12,9 +12,9 @@ import net.corda.finance.flows.CashIssueFlow;
 import net.corda.nodeapi.internal.config.User;
 import net.corda.smoketesting.NodeConfig;
 import net.corda.smoketesting.NodeProcess;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -73,7 +73,7 @@ public class StandaloneCordaRPCJavaClientTest {
             true
     );
 
-    @Before
+    @BeforeEach
     public void setUp() {
         NodeProcess.Factory factory = new NodeProcess.Factory();
         copyCordapps(factory, notaryConfig);
@@ -83,7 +83,7 @@ public class StandaloneCordaRPCJavaClientTest {
         notaryNodeIdentity = rpcProxy.nodeInfo().getLegalIdentities().get(0);
     }
 
-    @After
+    @AfterEach
     public void done() {
         try {
             connection.close();

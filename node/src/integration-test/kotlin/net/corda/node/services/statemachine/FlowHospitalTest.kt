@@ -56,8 +56,8 @@ import net.corda.testing.node.internal.findCordapp
 import net.corda.testing.node.testContext
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.sql.SQLException
 import java.util.Random
 import java.util.concurrent.CountDownLatch
@@ -76,13 +76,13 @@ class FlowHospitalTest {
                 CustomCordapp(targetPlatformVersion = 3, classes = setOf(FinalityFlow::class.java))))
     }
 
-    @Before
+    @BeforeEach
     fun before() {
         SpendStateAndCatchDoubleSpendResponderFlow.exceptionSeenInUserFlow = false
         CreateTransactionButDontFinalizeResponderFlow.exceptionSeenInUserFlow = false
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `when double spend occurs, the flow is successfully deleted on the counterparty`() {
         driver(DriverParameters(cordappsForAllNodes = listOf(enclosedCordapp(), findCordapp("net.corda.testing.contracts")))) {
             val (charlieClient, aliceClient) = listOf(CHARLIE_NAME, ALICE_NAME)
@@ -137,7 +137,7 @@ class FlowHospitalTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `HospitalizeFlowException thrown`() {
         var observationCounter: Int = 0
         StaffedFlowHospital.onFlowKeptForOvernightObservation.add { _, _ ->
@@ -159,7 +159,7 @@ class FlowHospitalTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Custom exception wrapping HospitalizeFlowException thrown`() {
         var observationCounter: Int = 0
         StaffedFlowHospital.onFlowKeptForOvernightObservation.add { _, _ ->
@@ -181,7 +181,7 @@ class FlowHospitalTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Custom exception extending HospitalizeFlowException thrown`() {
         var observationCounter: Int = 0
         StaffedFlowHospital.onFlowKeptForOvernightObservation.add { _, _ ->
@@ -204,7 +204,7 @@ class FlowHospitalTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `HospitalizeFlowException cloaking an important exception thrown`() {
         var dischargedCounter = 0
         var observationCounter = 0
@@ -232,7 +232,7 @@ class FlowHospitalTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `catching a notary error will cause a peer to fail with unexpected session end during ReceiveFinalityFlow that passes through user code`() {
         var dischargedCounter = 0
         StaffedFlowHospital.onFlowErrorPropagated.add { _, _ ->
@@ -257,7 +257,7 @@ class FlowHospitalTest {
         assertTrue(SpendStateAndCatchDoubleSpendResponderFlow.exceptionSeenInUserFlow)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `catching a notary error - two phase finality flow initiator to pre-2PF peer`() {
         var dischargedCounter = 0
         StaffedFlowHospital.onFlowErrorPropagated.add { _, _ ->
@@ -279,7 +279,7 @@ class FlowHospitalTest {
         assertTrue(SpendStateAndCatchDoubleSpendResponderFlow.exceptionSeenInUserFlow)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `catching a notary error - pre-2PF initiator to two phase finality flow peer`() {
         var dischargedCounter = 0
         StaffedFlowHospital.onFlowErrorPropagated.add { _, _ ->
@@ -306,7 +306,7 @@ class FlowHospitalTest {
                 version = MOCK_VERSION_INFO.copy(platformVersion = platformVersion)))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `old finality flow catching a notary error will cause a peer to fail with unexpected session end during ReceiveFinalityFlow that passes through user code`() {
         var dischargedCounter = 0
         StaffedFlowHospital.onFlowErrorPropagated.add { _, _ ->
@@ -331,7 +331,7 @@ class FlowHospitalTest {
         assertTrue(SpendStateAndCatchDoubleSpendResponderOldFinalityFlow.exceptionSeenInUserFlow)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `unexpected session end errors outside of ReceiveFinalityFlow are not handled`() {
         var dischargedCounter = 0
         var observationCounter = 0
@@ -361,7 +361,7 @@ class FlowHospitalTest {
         assertTrue(CreateTransactionButDontFinalizeResponderFlow.exceptionSeenInUserFlow)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `unexpected session end errors within ReceiveFinalityFlow can be caught and the flow can end gracefully`() {
         var dischargedCounter = 0
         var observationCounter = 0

@@ -26,9 +26,9 @@ import org.bouncycastle.jce.spec.ECNamedCurveParameterSpec
 import org.bouncycastle.operator.ContentSigner
 import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PrivateKey
 import org.bouncycastle.pqc.jcajce.provider.sphincs.BCSphincs256PublicKey
-import org.junit.Assert.assertNotEquals
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertNotEquals
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.security.KeyPairGenerator
 import java.security.SecureRandom
@@ -47,7 +47,7 @@ class CryptoUtilsTest {
     }
 
     // key generation test
-    @Test(timeout=300_000)
+    @Test
 	fun `Generate key pairs`() {
         // testing supported algorithms
         val rsaKeyPair = Crypto.generateKeyPair(RSA_SHA256)
@@ -81,7 +81,7 @@ class CryptoUtilsTest {
 
     // full process tests
 
-    @Test(timeout=300_000)
+    @Test
 	fun `RSA full process keygen-sign-verify`() {
         val keyPair = Crypto.generateKeyPair(RSA_SHA256)
         val (privKey, pubKey) = keyPair
@@ -136,7 +136,7 @@ class CryptoUtilsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ECDSA secp256k1 full process keygen-sign-verify`() {
         val keyPair = Crypto.generateKeyPair(ECDSA_SECP256K1_SHA256)
         val (privKey, pubKey) = keyPair
@@ -191,7 +191,7 @@ class CryptoUtilsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ECDSA secp256r1 full process keygen-sign-verify`() {
         val keyPair = Crypto.generateKeyPair(ECDSA_SECP256R1_SHA256)
         val (privKey, pubKey) = keyPair
@@ -246,7 +246,7 @@ class CryptoUtilsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `EDDSA ed25519 full process keygen-sign-verify`() {
         val keyPair = Crypto.generateKeyPair(EDDSA_ED25519_SHA512)
         val (privKey, pubKey) = keyPair
@@ -301,7 +301,7 @@ class CryptoUtilsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `SPHINCS-256 full process keygen-sign-verify`() {
         val keyPair = Crypto.generateKeyPair(SPHINCS256_SHA256)
         val (privKey, pubKey) = keyPair
@@ -357,7 +357,7 @@ class CryptoUtilsTest {
     }
 
     // test list of supported algorithms
-    @Test(timeout=300_000)
+    @Test
 	fun `Check supported algorithms`() {
         val algList: List<String> = Crypto.supportedSignatureSchemes().map { it.schemeCodeName }
         val expectedAlgSet = setOf("RSA_SHA256", "ECDSA_SECP256K1_SHA256", "ECDSA_SECP256R1_SHA256", "EDDSA_ED25519_SHA512", "SPHINCS-256_SHA512", "COMPOSITE")
@@ -365,7 +365,7 @@ class CryptoUtilsTest {
     }
 
     // Unfortunately, there isn't a standard way to encode/decode keys, so we need to test per case
-    @Test(timeout=300_000)
+    @Test
 	fun `RSA encode decode keys - required for serialization`() {
         // Generate key pair.
         val keyPair = Crypto.generateKeyPair(RSA_SHA256)
@@ -380,7 +380,7 @@ class CryptoUtilsTest {
         assertEquals(pubKey2, pubKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ECDSA secp256k1 encode decode keys - required for serialization`() {
         // Generate key pair.
         val keyPair = Crypto.generateKeyPair(ECDSA_SECP256K1_SHA256)
@@ -395,7 +395,7 @@ class CryptoUtilsTest {
         assertEquals(pubKey2, pubKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ECDSA secp256r1 encode decode keys - required for serialization`() {
         // Generate key pair.
         val keyPair = Crypto.generateKeyPair(ECDSA_SECP256R1_SHA256)
@@ -410,7 +410,7 @@ class CryptoUtilsTest {
         assertEquals(pubKey2, pubKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `EdDSA encode decode keys - required for serialization`() {
         // Generate key pair.
         val keyPair = Crypto.generateKeyPair(EDDSA_ED25519_SHA512)
@@ -425,7 +425,7 @@ class CryptoUtilsTest {
         assertEquals(pubKey2, pubKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `SPHINCS-256 encode decode keys - required for serialization`() {
         // Generate key pair.
         val keyPair = Crypto.generateKeyPair(SPHINCS256_SHA256)
@@ -455,7 +455,7 @@ class CryptoUtilsTest {
         assertEquals(decodedPubKey, pubKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `RSA scheme finder by key type`() {
         val keyPairRSA = Crypto.generateKeyPair(RSA_SHA256)
         val (privRSA, pubRSA) = keyPairRSA
@@ -463,7 +463,7 @@ class CryptoUtilsTest {
         assertEquals(pubRSA.algorithm, "RSA")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ECDSA secp256k1 scheme finder by key type`() {
         val keyPair = Crypto.generateKeyPair(ECDSA_SECP256K1_SHA256)
         val (privKey, pubKey) = keyPair
@@ -478,7 +478,7 @@ class CryptoUtilsTest {
         assertEquals((pubKeyDecoded as ECKey).parameters, ECNamedCurveTable.getParameterSpec("secp256k1"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ECDSA secp256r1 scheme finder by key type`() {
         val keyPairR1 = Crypto.generateKeyPair(ECDSA_SECP256R1_SHA256)
         val (privR1, pubR1) = keyPairR1
@@ -488,7 +488,7 @@ class CryptoUtilsTest {
         assertEquals((pubR1 as ECKey).parameters, ECNamedCurveTable.getParameterSpec("secp256r1"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `EdDSA scheme finder by key type`() {
         val keyPairEd = Crypto.generateKeyPair(EDDSA_ED25519_SHA512)
         val (privEd, pubEd) = keyPairEd
@@ -499,7 +499,7 @@ class CryptoUtilsTest {
         assertEquals((pubEd as EdDSAKey).params, EdDSANamedCurveTable.getByName("ED25519"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `SPHINCS-256 scheme finder by key type`() {
         val keyPairSP = Crypto.generateKeyPair(SPHINCS256_SHA256)
         val (privSP, pubSP) = keyPairSP
@@ -507,7 +507,7 @@ class CryptoUtilsTest {
         assertEquals(pubSP.algorithm, "SPHINCS-256")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Automatic EdDSA key-type detection and decoding`() {
         val keyPairEd = Crypto.generateKeyPair(EDDSA_ED25519_SHA512)
         val (privEd, pubEd) = keyPairEd
@@ -523,7 +523,7 @@ class CryptoUtilsTest {
         assertEquals(decodedPubEd, pubEd)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Automatic ECDSA secp256k1 key-type detection and decoding`() {
         val keyPairK1 = Crypto.generateKeyPair(ECDSA_SECP256K1_SHA256)
         val (privK1, pubK1) = keyPairK1
@@ -539,7 +539,7 @@ class CryptoUtilsTest {
         assertEquals(decodedPubK1, pubK1)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Automatic ECDSA secp256r1 key-type detection and decoding`() {
         val keyPairR1 = Crypto.generateKeyPair(ECDSA_SECP256R1_SHA256)
         val (privR1, pubR1) = keyPairR1
@@ -555,7 +555,7 @@ class CryptoUtilsTest {
         assertEquals(decodedPubR1, pubR1)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Automatic RSA key-type detection and decoding`() {
         val keyPairRSA = Crypto.generateKeyPair(RSA_SHA256)
         val (privRSA, pubRSA) = keyPairRSA
@@ -571,7 +571,7 @@ class CryptoUtilsTest {
         assertEquals(decodedPubRSA, pubRSA)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Automatic SPHINCS-256 key-type detection and decoding`() {
         val keyPairSP = Crypto.generateKeyPair(SPHINCS256_SHA256)
         val (privSP, pubSP) = keyPairSP
@@ -587,7 +587,7 @@ class CryptoUtilsTest {
         assertEquals(decodedPubSP, pubSP)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Failure test between K1 and R1 keys`() {
         val keyPairK1 = Crypto.generateKeyPair(ECDSA_SECP256K1_SHA256)
         val privK1 = keyPairK1.private
@@ -602,7 +602,7 @@ class CryptoUtilsTest {
         assertNotEquals(decodedPrivK1, decodedPrivR1)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Decoding Failure on randomdata as key`() {
         val keyPairK1 = Crypto.generateKeyPair(ECDSA_SECP256K1_SHA256)
         val privK1 = keyPairK1.private
@@ -622,7 +622,7 @@ class CryptoUtilsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Decoding Failure on malformed keys`() {
         val keyPairK1 = Crypto.generateKeyPair(ECDSA_SECP256K1_SHA256)
         val privK1 = keyPairK1.private
@@ -642,7 +642,7 @@ class CryptoUtilsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check ECDSA public key on curve`() {
         val keyPairK1 = Crypto.generateKeyPair(ECDSA_SECP256K1_SHA256)
         val pubK1 = keyPairK1.public as BCECPublicKey
@@ -653,7 +653,7 @@ class CryptoUtilsTest {
         assertFalse(Crypto.publicKeyOnCurve(EDDSA_ED25519_SHA512, pubK1))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check EdDSA public key on curve`() {
         val keyPairEdDSA = Crypto.generateKeyPair(EDDSA_ED25519_SHA512)
         val pubEdDSA = keyPairEdDSA.public
@@ -665,8 +665,8 @@ class CryptoUtilsTest {
         assertFalse(Crypto.publicKeyOnCurve(EDDSA_ED25519_SHA512, EdDSAPublicKey(pubKeySpec)))
     }
 
-    @Test(expected = IllegalArgumentException::class, timeout = 300_000)
-    @Ignore("TODO JDK17: Fixme")
+    @Test
+    @Disabled("TODO JDK17: Fixme")
     fun `Unsupported EC public key type on curve`() {
         val keyGen = KeyPairGenerator.getInstance("EC") // sun.security.ec.ECPublicKeyImpl
         keyGen.initialize(256, newSecureRandom())
@@ -676,7 +676,7 @@ class CryptoUtilsTest {
         Crypto.publicKeyOnCurve(ECDSA_SECP256R1_SHA256, pubSun)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ECDSA secp256R1 deterministic key generation`() {
         val (priv, pub) = Crypto.generateKeyPair(ECDSA_SECP256R1_SHA256)
         val (dpriv, dpub) = Crypto.deriveKeyPair(priv, "seed-1".toByteArray())
@@ -717,7 +717,7 @@ class CryptoUtilsTest {
         assertEquals(dpub2, dpub_2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ECDSA secp256K1 deterministic key generation`() {
         val (priv, pub) = Crypto.generateKeyPair(ECDSA_SECP256K1_SHA256)
         val (dpriv, dpub) = Crypto.deriveKeyPair(priv, "seed-1".toByteArray())
@@ -758,7 +758,7 @@ class CryptoUtilsTest {
         assertEquals(dpub2, dpub_2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `EdDSA ed25519 deterministic key generation`() {
         val (priv, pub) = Crypto.generateKeyPair(EDDSA_ED25519_SHA512)
         val (dpriv, dpub) = Crypto.deriveKeyPair(priv, "seed-1".toByteArray())
@@ -799,7 +799,7 @@ class CryptoUtilsTest {
         assertEquals(dpub2, dpub_2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `EdDSA ed25519 keyPair from entropy`() {
         val keyPairPositive = Crypto.deriveKeyPairFromEntropy(EDDSA_ED25519_SHA512, BigInteger("10"))
         assertEquals("DLBL3iHCp9uRReWhhCGfCsrxZZpfAm9h9GLbfN8ijqXTq", keyPairPositive.public.toStringShort())
@@ -826,7 +826,7 @@ class CryptoUtilsTest {
         assertEquals("DL5tEFVMXMGrzwjfCAW34JjkhsRkPfFyJ38iEnmpB6L2Z9", keyPairBiggerThan258bits.public.toStringShort())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ECDSA R1 keyPair from entropy`() {
         val keyPairPositive = Crypto.deriveKeyPairFromEntropy(ECDSA_SECP256R1_SHA256, BigInteger("10"))
         assertEquals("DLHDcxuSt9J3cbjd2Dsx4rAgYYA7BAP7A8VLrFiq1tH9yy", keyPairPositive.public.toStringShort())
@@ -867,7 +867,7 @@ class CryptoUtilsTest {
         assertEquals("DLBwjWwPJSF9E7b1NWaSbEJ4oK8CF7RDGWd648TiBhZoL1", keyPairBiggerThan258bits.public.toStringShort())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ECDSA K1 keyPair from entropy`() {
         val keyPairPositive = Crypto.deriveKeyPairFromEntropy(ECDSA_SECP256K1_SHA256, BigInteger("10"))
         assertEquals("DL6pYKUgH17az8MLdonvvUtUPN8TqwpCGcdgLr7vg3skCU", keyPairPositive.public.toStringShort())
@@ -908,7 +908,7 @@ class CryptoUtilsTest {
         assertEquals("DL7NbssqvuuJ4cqFkkaVYu9j1MsVswESGgCfbqBS9ULwuM", keyPairBiggerThan258bits.public.toStringShort())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Ensure deterministic signatures of EdDSA, SPHINCS-256 and RSA PKCS1`() {
         listOf(EDDSA_ED25519_SHA512, SPHINCS256_SHA256, RSA_SHA256)
                 .forEach { testDeterministicSignatures(it) }
@@ -934,7 +934,7 @@ class CryptoUtilsTest {
         this.outputStream.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test default SecureRandom uses platformSecureRandom`() {
         // Note than in Corda, [CordaSecurityProvider] is registered as the first provider.
 

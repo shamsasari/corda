@@ -8,27 +8,26 @@ import net.corda.core.serialization.internal.CheckpointSerializationContext
 import net.corda.core.serialization.internal.checkpointDeserialize
 import net.corda.core.serialization.internal.checkpointSerialize
 import net.corda.core.utilities.OpaqueBytes
+import net.corda.coretesting.internal.rigorousMock
 import net.corda.nodeapi.internal.serialization.kryo.CordaClassResolver
 import net.corda.nodeapi.internal.serialization.kryo.CordaKryo
 import net.corda.nodeapi.internal.serialization.kryo.DefaultKryoCustomizer
 import net.corda.nodeapi.internal.serialization.kryo.kryoMagic
-import net.corda.coretesting.internal.rigorousMock
-import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule
+import net.corda.testing.core.internal.CheckpointSerializationExtension
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
 import java.io.ByteArrayOutputStream
 
 class SerializationTokenTest {
-
-    @Rule
+    @RegisterExtension
     @JvmField
-    val testCheckpointSerialization = CheckpointSerializationEnvironmentRule()
+    val testCheckpointSerialization = CheckpointSerializationExtension()
 
     private lateinit var context: CheckpointSerializationContext
 
-    @Before
+    @BeforeEach
     fun setup() {
         context = testCheckpointSerialization.checkpointSerializationContext.withWhitelisted(SingletonSerializationToken::class.java)
     }
@@ -46,7 +45,7 @@ class SerializationTokenTest {
     }
 
     private fun serializeAsTokenContext(toBeTokenized: Any) = CheckpointSerializeAsTokenContextImpl(toBeTokenized, testCheckpointSerialization.checkpointSerializer, context, rigorousMock())
-    @Test(timeout=300_000)
+    @Test
 	fun `write token and read tokenizable`() {
         val tokenizableBefore = LargeTokenizable()
         val context = serializeAsTokenContext(tokenizableBefore)
@@ -60,7 +59,7 @@ class SerializationTokenTest {
 
     private class UnitSerializeAsToken : SingletonSerializeAsToken()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `write and read singleton`() {
         val tokenizableBefore = UnitSerializeAsToken()
         val context = serializeAsTokenContext(tokenizableBefore)

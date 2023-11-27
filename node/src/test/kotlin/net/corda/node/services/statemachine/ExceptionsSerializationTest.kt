@@ -7,9 +7,9 @@ import net.corda.core.serialization.deserialize
 import net.corda.core.serialization.serialize
 import net.corda.node.internal.AbstractNode
 import net.corda.node.utilities.registration.CertificateRequestException
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.assertEquals
@@ -30,9 +30,9 @@ class ExceptionsSerializationTest(private val initialException: CordaException, 
 
     @Rule
     @JvmField
-    val testSerialization = SerializationEnvironmentRule()
+    val testSerialization = SerializationExtension()
 
-    @Test(timeout=300_000)
+    @Test
 	fun testMarshal() {
         val fromSerialized = performRoundTripSerialization(initialException)
         assertEquals(initialException.message, fromSerialized.message)

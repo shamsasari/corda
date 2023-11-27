@@ -1,35 +1,39 @@
 package net.corda.serialization.internal
 
-import com.esotericsoftware.kryo.*
+import com.esotericsoftware.kryo.DefaultSerializer
+import com.esotericsoftware.kryo.Kryo
+import com.esotericsoftware.kryo.KryoException
+import com.esotericsoftware.kryo.KryoSerializable
+import com.esotericsoftware.kryo.Serializer
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
 import com.esotericsoftware.kryo.util.DefaultClassResolver
 import com.esotericsoftware.kryo.util.MapReferenceResolver
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
-import net.corda.core.contracts.TransactionVerificationException
+import net.corda.core.contracts.TransactionVerificationException.UntrustedAttachmentsException
 import net.corda.core.crypto.SecureHash
 import net.corda.core.internal.DEPLOYED_CORDAPP_UPLOADER
 import net.corda.core.node.services.AttachmentStorage
 import net.corda.core.serialization.CordaSerializable
 import net.corda.core.serialization.internal.AttachmentsClassLoader
 import net.corda.core.serialization.internal.CheckpointSerializationContext
+import net.corda.coretesting.internal.rigorousMock
+import net.corda.node.services.attachments.NodeAttachmentTrustCalculator
 import net.corda.nodeapi.internal.serialization.kryo.CordaClassResolver
 import net.corda.nodeapi.internal.serialization.kryo.CordaKryo
-import net.corda.node.services.attachments.NodeAttachmentTrustCalculator
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.internal.TestingNamedCacheFactory
-import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.internal.services.InternalMockAttachmentStorage
 import net.corda.testing.services.MockAttachmentStorage
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.ExpectedException
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
+import org.assertj.core.api.Assertions.assertThatIllegalStateException
+import org.junit.jupiter.api.Test
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import java.net.URL
 import java.sql.Connection
-import java.util.*
+import java.util.Collections
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertNull
@@ -114,152 +118,166 @@ class CordaClassResolverTests {
         val emptyListClass = listOf<Any>().javaClass
         val emptySetClass = setOf<Any>().javaClass
         val emptyMapClass = mapOf<Any, Any>().javaClass
-        val ISOLATED_CONTRACTS_JAR_PATH: URL = CordaClassResolverTests::class.java.getResource("/isolated.jar")
+        val ISOLATED_CONTRACTS_JAR_PATH: URL = CordaClassResolverTests::class.java.getResource("/isolated.jar")!!
     }
 
     private val emptyWhitelistContext: CheckpointSerializationContext = CheckpointSerializationContextImpl(this.javaClass.classLoader, EmptyWhitelist, emptyMap(), true, null)
     private val allButBlacklistedContext: CheckpointSerializationContext = CheckpointSerializationContextImpl(this.javaClass.classLoader, AllButBlacklisted, emptyMap(), true, null)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Annotation on enum works for specialised entries`() {
         CordaClassResolver(emptyWhitelistContext).getRegistration(Foo.Bar::class.java)
     }
 
-    @Test(expected = KryoException::class, timeout=300_000)
+    @Test
     fun `Unannotated specialised enum does not work`() {
-        CordaClassResolver(emptyWhitelistContext).getRegistration(BadFood.Mud::class.java)
+        assertThatExceptionOfType(KryoException::class.java).isThrownBy {
+            CordaClassResolver(emptyWhitelistContext).getRegistration(BadFood.Mud::class.java)
+        }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Annotation on simple enum works`() {
         CordaClassResolver(emptyWhitelistContext).getRegistration(Simple.Easy::class.java)
     }
 
-    @Test(expected = KryoException::class, timeout=300_000)
+    @Test
     fun `Unannotated simple enum does not work`() {
-        CordaClassResolver(emptyWhitelistContext).getRegistration(BadSimple.Nasty::class.java)
+        assertThatExceptionOfType(KryoException::class.java).isThrownBy {
+            CordaClassResolver(emptyWhitelistContext).getRegistration(BadSimple.Nasty::class.java)
+        }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Annotation on array element works`() {
         val values = arrayOf(Element())
         CordaClassResolver(emptyWhitelistContext).getRegistration(values.javaClass)
     }
 
-    @Test(expected = KryoException::class, timeout=300_000)
+    @Test
     fun `Unannotated array elements do not work`() {
         val values = arrayOf(NotSerializable())
-        CordaClassResolver(emptyWhitelistContext).getRegistration(values.javaClass)
+        assertThatExceptionOfType(KryoException::class.java).isThrownBy {
+            CordaClassResolver(emptyWhitelistContext).getRegistration(values.javaClass)
+        }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Annotation not needed on abstract class`() {
         CordaClassResolver(emptyWhitelistContext).getRegistration(AbstractClass::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Annotation not needed on interface`() {
         CordaClassResolver(emptyWhitelistContext).getRegistration(Interface::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Calling register method on modified Kryo does not consult the whitelist`() {
         val kryo = CordaKryo(CordaClassResolver(emptyWhitelistContext))
         kryo.register(NotSerializable::class.java)
     }
 
-    @Test(expected = KryoException::class, timeout=300_000)
+    @Test
     fun `Calling register method on unmodified Kryo does consult the whitelist`() {
         val kryo = Kryo(CordaClassResolver(emptyWhitelistContext), MapReferenceResolver())
-        kryo.register(NotSerializable::class.java)
+        assertThatExceptionOfType(KryoException::class.java).isThrownBy {
+            kryo.register(NotSerializable::class.java)
+        }
     }
 
-    @Test(expected = KryoException::class, timeout=300_000)
+    @Test
     fun `Annotation is needed without whitelisting`() {
-        CordaClassResolver(emptyWhitelistContext).getRegistration(NotSerializable::class.java)
+        assertThatExceptionOfType(KryoException::class.java).isThrownBy {
+            CordaClassResolver(emptyWhitelistContext).getRegistration(NotSerializable::class.java)
+        }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Annotation is not needed with whitelisting`() {
         val resolver = CordaClassResolver(emptyWhitelistContext.withWhitelisted(NotSerializable::class.java))
         resolver.getRegistration(NotSerializable::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Annotation not needed on Object`() {
         CordaClassResolver(emptyWhitelistContext).getRegistration(Object::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Annotation not needed on primitive`() {
         CordaClassResolver(emptyWhitelistContext).getRegistration(Integer.TYPE)
     }
 
-    @Test(expected = KryoException::class, timeout=300_000)
+    @Test
     fun `Annotation does not work for custom serializable`() {
-        CordaClassResolver(emptyWhitelistContext).getRegistration(CustomSerializable::class.java)
+        assertThatExceptionOfType(KryoException::class.java).isThrownBy {
+            CordaClassResolver(emptyWhitelistContext).getRegistration(CustomSerializable::class.java)
+        }
     }
 
-    @Test(expected = KryoException::class, timeout=300_000)
+    @Test
     fun `Annotation does not work in conjunction with Kryo annotation`() {
-        CordaClassResolver(emptyWhitelistContext).getRegistration(DefaultSerializable::class.java)
+        assertThatExceptionOfType(KryoException::class.java).isThrownBy {
+            CordaClassResolver(emptyWhitelistContext).getRegistration(DefaultSerializable::class.java)
+        }
     }
 
     private fun importJar(storage: AttachmentStorage, uploader: String = DEPLOYED_CORDAPP_UPLOADER) = ISOLATED_CONTRACTS_JAR_PATH.openStream().use { storage.importAttachment(it, uploader, "") }
 
-    @Test(expected = KryoException::class, timeout=300_000)
+    @Test
     fun `Annotation does not work in conjunction with AttachmentClassLoader annotation`() {
         val storage = InternalMockAttachmentStorage(MockAttachmentStorage())
         val attachmentTrustCalculator = NodeAttachmentTrustCalculator(storage, TestingNamedCacheFactory())
         val attachmentHash = importJar(storage)
         val classLoader = AttachmentsClassLoader(arrayOf(attachmentHash).map { storage.openAttachment(it)!! }, testNetworkParameters(), SecureHash.zeroHash, { attachmentTrustCalculator.calculate(it) })
         val attachedClass = Class.forName("net.corda.isolated.contracts.AnotherDummyContract", true, classLoader)
-        CordaClassResolver(emptyWhitelistContext).getRegistration(attachedClass)
+        assertThatExceptionOfType(KryoException::class.java).isThrownBy {
+            CordaClassResolver(emptyWhitelistContext).getRegistration(attachedClass)
+        }
     }
 
-    @Test(expected = TransactionVerificationException.UntrustedAttachmentsException::class, timeout=300_000)
+    @Test
     fun `Attempt to load contract attachment with untrusted uploader should fail with UntrustedAttachmentsException`() {
         val storage = InternalMockAttachmentStorage(MockAttachmentStorage())
         val attachmentTrustCalculator = NodeAttachmentTrustCalculator(storage, TestingNamedCacheFactory())
         val attachmentHash = importJar(storage, "some_uploader")
         val classLoader = AttachmentsClassLoader(arrayOf(attachmentHash).map { storage.openAttachment(it)!! }, testNetworkParameters(), SecureHash.zeroHash, { attachmentTrustCalculator.calculate(it) })
         val attachedClass = Class.forName("net.corda.isolated.contracts.AnotherDummyContract", true, classLoader)
-        CordaClassResolver(emptyWhitelistContext).getRegistration(attachedClass)
+        assertThatExceptionOfType(UntrustedAttachmentsException::class.java).isThrownBy {
+            CordaClassResolver(emptyWhitelistContext).getRegistration(attachedClass)
+        }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Annotation is inherited from interfaces`() {
         CordaClassResolver(emptyWhitelistContext).getRegistration(SerializableViaInterface::class.java)
         CordaClassResolver(emptyWhitelistContext).getRegistration(SerializableViaSubInterface::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Annotation is inherited from superclass`() {
         CordaClassResolver(emptyWhitelistContext).getRegistration(SubElement::class.java)
         CordaClassResolver(emptyWhitelistContext).getRegistration(SubSubElement::class.java)
         CordaClassResolver(emptyWhitelistContext).getRegistration(SerializableViaSuperSubInterface::class.java)
     }
 
-    // Blacklist tests. Note: leave the variable public or else expected messages do not work correctly
-    @get:Rule
-    val expectedEx = ExpectedException.none()!!
-
-    @Test(timeout=300_000)
+    @Test
 	fun `Check blacklisted class`() {
-        expectedEx.expect(IllegalStateException::class.java)
-        expectedEx.expectMessage("Class java.util.HashSet is blacklisted, so it cannot be used in serialization.")
         val resolver = CordaClassResolver(allButBlacklistedContext)
         // HashSet is blacklisted.
-        resolver.getRegistration(HashSet::class.java)
+        assertThatIllegalStateException().isThrownBy {
+            resolver.getRegistration(HashSet::class.java)
+        }.withMessage("Class java.util.HashSet is blacklisted, so it cannot be used in serialization.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Kotlin EmptyList not registered`() {
         val resolver = CordaClassResolver(allButBlacklistedContext)
         assertNull(resolver.getRegistration(emptyListClass))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Kotlin EmptyList registers as Java emptyList`() {
         val javaEmptyListClass = Collections.emptyList<Any>().javaClass
         val kryo = rigorousMock<Kryo>()
@@ -275,13 +293,13 @@ class CordaClassResolverTests {
         assertEquals(registration, resolver.getRegistration(emptyListClass))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Kotlin EmptySet not registered`() {
         val resolver = CordaClassResolver(allButBlacklistedContext)
         assertNull(resolver.getRegistration(emptySetClass))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Kotlin EmptySet registers as Java emptySet`() {
         val javaEmptySetClass = Collections.emptySet<Any>().javaClass
         val kryo = rigorousMock<Kryo>()
@@ -297,13 +315,13 @@ class CordaClassResolverTests {
         assertEquals(registration, resolver.getRegistration(emptySetClass))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Kotlin EmptyMap not registered`() {
         val resolver = CordaClassResolver(allButBlacklistedContext)
         assertNull(resolver.getRegistration(emptyMapClass))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Kotlin EmptyMap registers as Java emptyMap`() {
         val javaEmptyMapClass = Collections.emptyMap<Any, Any>().javaClass
         val kryo = rigorousMock<Kryo>()
@@ -321,50 +339,50 @@ class CordaClassResolverTests {
 
     open class SubHashSet<E> : HashSet<E>()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check blacklisted subclass`() {
-        expectedEx.expect(IllegalStateException::class.java)
-        expectedEx.expectMessage("The superclass java.util.HashSet of net.corda.serialization.internal.CordaClassResolverTests\$SubHashSet is blacklisted, so it cannot be used in serialization.")
         val resolver = CordaClassResolver(allButBlacklistedContext)
         // SubHashSet extends the blacklisted HashSet.
-        resolver.getRegistration(SubHashSet::class.java)
+        assertThatIllegalStateException().isThrownBy {
+            resolver.getRegistration(SubHashSet::class.java)
+        }.withMessage("The superclass java.util.HashSet of net.corda.serialization.internal.CordaClassResolverTests\$SubHashSet is blacklisted, so it cannot be used in serialization.")
     }
 
     class SubSubHashSet<E> : SubHashSet<E>()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check blacklisted subsubclass`() {
-        expectedEx.expect(IllegalStateException::class.java)
-        expectedEx.expectMessage("The superclass java.util.HashSet of net.corda.serialization.internal.CordaClassResolverTests\$SubSubHashSet is blacklisted, so it cannot be used in serialization.")
         val resolver = CordaClassResolver(allButBlacklistedContext)
         // SubSubHashSet extends SubHashSet, which extends the blacklisted HashSet.
-        resolver.getRegistration(SubSubHashSet::class.java)
+        assertThatIllegalStateException().isThrownBy {
+            resolver.getRegistration(SubSubHashSet::class.java)
+        }.withMessage("The superclass java.util.HashSet of net.corda.serialization.internal.CordaClassResolverTests\$SubSubHashSet is blacklisted, so it cannot be used in serialization.")
     }
 
     class ConnectionImpl(private val connection: Connection) : Connection by connection
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check blacklisted interface impl`() {
-        expectedEx.expect(IllegalStateException::class.java)
-        expectedEx.expectMessage("The superinterface java.sql.Connection of net.corda.serialization.internal.CordaClassResolverTests\$ConnectionImpl is blacklisted, so it cannot be used in serialization.")
         val resolver = CordaClassResolver(allButBlacklistedContext)
         // ConnectionImpl implements blacklisted Connection.
-        resolver.getRegistration(ConnectionImpl::class.java)
+        assertThatIllegalStateException().isThrownBy {
+            resolver.getRegistration(ConnectionImpl::class.java)
+        }.withMessage("The superinterface java.sql.Connection of net.corda.serialization.internal.CordaClassResolverTests\$ConnectionImpl is blacklisted, so it cannot be used in serialization.")
     }
 
     interface SubConnection : Connection
     class SubConnectionImpl(private val subConnection: SubConnection) : SubConnection by subConnection
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check blacklisted super-interface impl`() {
-        expectedEx.expect(IllegalStateException::class.java)
-        expectedEx.expectMessage("The superinterface java.sql.Connection of net.corda.serialization.internal.CordaClassResolverTests\$SubConnectionImpl is blacklisted, so it cannot be used in serialization.")
         val resolver = CordaClassResolver(allButBlacklistedContext)
         // SubConnectionImpl implements SubConnection, which extends the blacklisted Connection.
-        resolver.getRegistration(SubConnectionImpl::class.java)
+        assertThatIllegalStateException().isThrownBy {
+            resolver.getRegistration(SubConnectionImpl::class.java)
+        }.withMessage("The superinterface java.sql.Connection of net.corda.serialization.internal.CordaClassResolverTests\$SubConnectionImpl is blacklisted, so it cannot be used in serialization.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check forcibly allowed`() {
         val resolver = CordaClassResolver(allButBlacklistedContext)
         // LinkedHashSet is allowed for serialization.
@@ -374,12 +392,12 @@ class CordaClassResolverTests {
     @CordaSerializable
     class CordaSerializableHashSet<E> : HashSet<E>()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check blacklist precedes CordaSerializable`() {
-        expectedEx.expect(IllegalStateException::class.java)
-        expectedEx.expectMessage("The superclass java.util.HashSet of net.corda.serialization.internal.CordaClassResolverTests\$CordaSerializableHashSet is blacklisted, so it cannot be used in serialization.")
         val resolver = CordaClassResolver(allButBlacklistedContext)
         // CordaSerializableHashSet is @CordaSerializable, but extends the blacklisted HashSet.
-        resolver.getRegistration(CordaSerializableHashSet::class.java)
+        assertThatIllegalStateException().isThrownBy {
+            resolver.getRegistration(CordaSerializableHashSet::class.java)
+        }.withMessage("The superclass java.util.HashSet of net.corda.serialization.internal.CordaClassResolverTests\$CordaSerializableHashSet is blacklisted, so it cannot be used in serialization.")
     }
 }

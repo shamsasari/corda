@@ -13,10 +13,10 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class CordaServiceFlowTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `corda service can start a flow and wait for it`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val node = startNode().getOrThrow()

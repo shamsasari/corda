@@ -20,9 +20,9 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.MockNetworkNotarySpec
 import net.corda.testing.node.internal.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotNull
 
@@ -33,7 +33,7 @@ class NotaryServiceTests {
     private lateinit var notary: Party
     private lateinit var alice: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP),
@@ -46,22 +46,22 @@ class NotaryServiceTests {
         alice = aliceNode.services.myInfo.singleIdentity()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject a transaction with too many inputs`() {
         notariseWithTooManyInputs(aliceNode, alice, notary, mockNet)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `notary node should have access to its notary service`() {
         assertNotNull(mockNet.defaultNotaryNode.notaryService)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject when network parameters component is not visible`() {
         val stx = generateTransaction(aliceNode, alice, notary, null, 13)
         val future = aliceNode.services.startFlow(DummyClientFlow(stx, notary)).resultFuture
@@ -71,7 +71,7 @@ class NotaryServiceTests {
         assertThat(notaryError.cause).hasMessageContaining("Transaction for notarisation doesn't contain network parameters hash.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject when parameters not current`() {
         val hash = SecureHash.randomSHA256()
         val stx = generateTransaction(aliceNode, alice, notary, hash, 13)

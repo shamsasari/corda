@@ -24,8 +24,8 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.security.PublicKey
 import kotlin.test.assertEquals
@@ -40,14 +40,14 @@ class CertificateRotationTest {
 
     private lateinit var mockNet: InternalMockNetwork
 
-    @After
+    @AfterEach
     fun tearDown() {
         if (::mockNet.isInitialized) {
             mockNet.stopNodes()
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `restart with the same identities`() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = FINANCE_CORDAPPS)
         val alice = mockNet.createPartyNode(ALICE_NAME)
@@ -82,7 +82,7 @@ class CertificateRotationTest {
         assertEquals(1300.POUNDS, bob2.services.getCashBalance(GBP))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `restart with rotated key for one node`() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = FINANCE_CORDAPPS,
@@ -120,7 +120,7 @@ class CertificateRotationTest {
         assertEquals(1300.POUNDS, bob2.services.getCashBalance(GBP))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `fail to restart with rotated key and wrong minimum platform version`() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = FINANCE_CORDAPPS,
@@ -132,7 +132,7 @@ class CertificateRotationTest {
         }.hasMessageContaining("Failed to change node legal identity key")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `backchain resolution with rotated issuer key`() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = FINANCE_CORDAPPS,
@@ -163,7 +163,7 @@ class CertificateRotationTest {
         assertEquals(1000.DOLLARS, charlie.services.getCashBalance(USD))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `backchain resolution with issuer removed from network map`() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = FINANCE_CORDAPPS, autoVisibleNodes = false)
         val alice = mockNet.createPartyNode(ALICE_NAME)

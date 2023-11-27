@@ -1,7 +1,5 @@
 package net.corda.node.migration
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import liquibase.database.core.H2Database
 import liquibase.database.jvm.JdbcConnection
 import net.corda.core.crypto.Crypto
@@ -12,15 +10,23 @@ import net.corda.node.services.api.SchemaService
 import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.nodeapi.internal.persistence.SchemaMigration
-import net.corda.testing.core.*
+import net.corda.testing.core.ALICE_NAME
+import net.corda.testing.core.BOB_NAME
+import net.corda.testing.core.BOC_NAME
+import net.corda.testing.core.DUMMY_NOTARY_NAME
+import net.corda.testing.core.SerializationExtension
+import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.ClassRule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 
+@ExtendWith(SerializationExtension::class)
 class PersistentIdentityMigrationNewTableTest {
     companion object {
         val alice = TestIdentity(ALICE_NAME, 70)
@@ -32,16 +38,12 @@ class PersistentIdentityMigrationNewTableTest {
         val BOC_IDENTITY get() = bankOfCorda.identity
         val bob2 = TestIdentity(BOB_NAME, 40)
         val BOB2_IDENTITY = bob2.identity
-
-        @ClassRule
-        @JvmField
-        val testSerialization = SerializationEnvironmentRule()
     }
 
     lateinit var liquibaseDB: H2Database
     lateinit var cordaDB: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val schemaService = rigorousMock<SchemaService>()
         doReturn(setOf(IdentityTestSchemaV1)).whenever(schemaService).schemas
@@ -60,12 +62,12 @@ class PersistentIdentityMigrationNewTableTest {
         liquibaseDB.isAutoCommit = true
     }
 
-    @After
+    @AfterEach
     fun close() {
         cordaDB.close()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `migrate identities to new table`() {
         val identities = listOf(BOB_IDENTITY, ALICE_IDENTITY, BOC_IDENTITY, dummyNotary.identity, BOB2_IDENTITY)
         saveAllIdentities(identities)

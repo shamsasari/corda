@@ -12,13 +12,13 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import org.hibernate.exception.ConstraintViolationException
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.persistence.PersistenceException
 import kotlin.test.assertEquals
 
 class FlowEntityManagerStatementTest : AbstractFlowEntityManagerTest() {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `data can be saved by a sql statement using entity manager`() {
         var counter = 0
         StaffedFlowHospital.onFlowDischarged.add { _, _ -> ++counter }
@@ -32,7 +32,7 @@ class FlowEntityManagerStatementTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation caused by a sql statement should save no data`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -51,7 +51,7 @@ class FlowEntityManagerStatementTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation caused by a sql statement that is caught inside an entity manager block saves none of the data inside of it`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -72,7 +72,7 @@ class FlowEntityManagerStatementTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation caused by a sql statement that is caught outside an entity manager block saves none of the data inside of it`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -93,7 +93,7 @@ class FlowEntityManagerStatementTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation caused by a sql statement that is caught inside an entity manager and more data is saved afterwards inside the same entity manager should not save the extra data`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
 
@@ -113,7 +113,7 @@ class FlowEntityManagerStatementTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation caused by a sql statement that is caught inside an entity manager and more data is saved afterwards inside a new entity manager should save the extra data`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
 

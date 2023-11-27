@@ -1,6 +1,5 @@
 package net.corda.node.services.events
 
-import org.mockito.kotlin.*
 import net.corda.core.contracts.*
 import net.corda.core.crypto.DigestService
 import net.corda.core.crypto.SecureHash
@@ -12,22 +11,27 @@ import net.corda.core.internal.FlowStateMachine
 import net.corda.core.internal.concurrent.openFuture
 import net.corda.core.node.ServicesForResolution
 import net.corda.core.utilities.days
+import net.corda.coretesting.internal.doLookup
+import net.corda.coretesting.internal.rigorousMock
+import net.corda.coretesting.internal.spectator
 import net.corda.node.services.api.FlowStarter
 import net.corda.node.services.api.NodePropertiesStore
 import net.corda.node.services.messaging.DeduplicationHandler
 import net.corda.node.services.statemachine.ExternalEvent
 import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
-import net.corda.testing.internal.configureDatabase
-import net.corda.coretesting.internal.doLookup
-import net.corda.coretesting.internal.rigorousMock
-import net.corda.coretesting.internal.spectator
 import net.corda.testing.internal.IS_S390X
+import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.TestClock
-import org.junit.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import org.junit.rules.TestWatcher
 import org.junit.runner.Description
+import org.mockito.kotlin.*
 import org.slf4j.Logger
 import java.time.Clock
 import java.time.Duration
@@ -75,7 +79,7 @@ open class NodeSchedulerServiceTestBase {
 
     private val traces = Collections.synchronizedList(mutableListOf<ScheduledStateRef>())
 
-    @Before
+    @BeforeEach
     fun resetTraces() {
         traces.clear()
     }
@@ -133,7 +137,7 @@ class MockScheduledFlowRepository : ScheduledFlowRepository {
 class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
     private val database = configureDatabase(MockServices.makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null })
 
-    @After
+    @AfterEach
     fun closeDatabase() {
         database.close()
     }
@@ -172,17 +176,17 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due now`() {
         assertStarted(schedule(mark))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the past`() {
         assertStarted(schedule(mark - 1.days))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future`() {
         val event = schedule(mark + 1.days)
         assertWaitingFor(event)
@@ -190,7 +194,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(event)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future and schedule another earlier`() {
         val event2 = schedule(mark + 2.days)
         val event1 = schedule(mark + 1.days)
@@ -202,7 +206,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(event2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future and schedule another later`() {
         val event1 = schedule(mark + 1.days)
         val event2 = schedule(mark + 2.days)
@@ -214,7 +218,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(event2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future and schedule another for same time`() {
         val eventA = schedule(mark + 1.days)
         val eventB = schedule(mark + 1.days)
@@ -223,7 +227,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(eventB)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future and schedule another for same time then unschedule second`() {
         val eventA = schedule(mark + 1.days)
         val eventB = schedule(mark + 1.days)
@@ -235,7 +239,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(eventA)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future and schedule another for same time then unschedule original`() {
         val eventA = schedule(mark + 1.days)
         val eventB = schedule(mark + 1.days)
@@ -247,7 +251,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(eventB)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future then unschedule`() {
         database.transaction {
             scheduler.unscheduleStateActivity(schedule(mark + 1.days).stateRef)
@@ -256,7 +260,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
     }
 }
 
-@Ignore("TODO JDK17: Flaky test")
+@Disabled("TODO JDK17: Flaky test")
 class NodeSchedulerPersistenceTest : NodeSchedulerServiceTestBase() {
     private val databaseConfig: DatabaseConfig = DatabaseConfig()
 
@@ -280,7 +284,7 @@ class NodeSchedulerPersistenceTest : NodeSchedulerServiceTestBase() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that correct item is returned`() {
         val dataSourceProps = MockServices.makeTestDataSourceProperties()
         val database = configureDatabase(dataSourceProps, databaseConfig, { null }, { null })
@@ -296,9 +300,9 @@ class NodeSchedulerPersistenceTest : NodeSchedulerServiceTestBase() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that schedule is persisted`() {
-        Assume.assumeFalse(IS_S390X)
+        assumeFalse(IS_S390X)
         val dataSourceProps = MockServices.makeTestDataSourceProperties()
         val timeInTheFuture = mark + 1.days
         val stateRef = StateRef(SecureHash.zeroHash, 0)
@@ -335,8 +339,8 @@ class NodeSchedulerPersistenceTest : NodeSchedulerServiceTestBase() {
         }
     }
 
-    @Ignore("Temporarily")
-    @Test(timeout=300_000)
+    @Disabled("Temporarily")
+    @Test
 	fun `test that if schedule is updated then the flow is invoked on the correct schedule`() {
         val dataSourceProps = MockServices.makeTestDataSourceProperties()
         val timeInTheFuture = mark + 1.days

@@ -1,10 +1,7 @@
 package net.corda.coretests.transactions
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import net.corda.core.contracts.*
 import net.corda.core.crypto.*
-import net.corda.core.crypto.CompositeKey
 import net.corda.core.identity.Party
 import net.corda.core.internal.AbstractAttachment
 import net.corda.core.internal.HashAgility
@@ -14,19 +11,21 @@ import net.corda.core.node.NotaryInfo
 import net.corda.core.serialization.internal.AttachmentsClassLoaderCacheImpl
 import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.WireTransaction
+import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.contracts.DummyContract
 import net.corda.testing.core.*
+import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.createWireTransaction
 import net.corda.testing.internal.fakeAttachment
-import net.corda.coretesting.internal.rigorousMock
-import net.corda.testing.internal.TestingNamedCacheFactory
 import org.assertj.core.api.Assertions.fail
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 import java.math.BigInteger
 import java.security.KeyPair
 import java.security.PublicKey
@@ -34,6 +33,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNotEquals
 
+@ExtendWith(SerializationExtension::class)
 @RunWith(Parameterized::class)
 class TransactionTests(private val digestService : DigestService) {
     private companion object {
@@ -56,16 +56,12 @@ class TransactionTests(private val digestService : DigestService) {
         )
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Before
+    @BeforeEach
     fun before() {
         HashAgility.init(txHashAlgoName = digestService.hashAlgorithm)
     }
 
-    @Before
+    @BeforeEach
     fun after() {
         HashAgility.init()
     }
@@ -80,7 +76,7 @@ class TransactionTests(private val digestService : DigestService) {
         return SignedTransaction(wtx, sigs)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `signed transaction missing signatures - CompositeKey`() {
         val ak = generateKeyPair()
         val bk = generateKeyPair()
@@ -114,7 +110,7 @@ class TransactionTests(private val digestService : DigestService) {
         makeSigned(wtx, DUMMY_KEY_1, ak).verifySignaturesExcept(compKey, DUMMY_KEY_2.public) // Mixed allowed to be missing.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `signed transaction missing signatures`() {
         val wtx = createWireTransaction(
                 inputs = listOf(StateRef(SecureHash.randomSHA256(), 0)),
@@ -145,7 +141,7 @@ class TransactionTests(private val digestService : DigestService) {
         makeSigned(wtx, DUMMY_KEY_1, DUMMY_KEY_2).verifyRequiredSignatures()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions with no inputs can have any notary`() {
         val baseOutState = TransactionState(DummyContract.SingleOwnerState(0, ALICE), DummyContract.PROGRAM_ID, DUMMY_NOTARY, constraint = AlwaysAcceptAttachmentConstraint)
         val inputs = emptyList<StateAndRef<*>>()
@@ -178,7 +174,7 @@ class TransactionTests(private val digestService : DigestService) {
         transaction.verify()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transaction cannot have duplicate inputs`() {
         val stateRef = StateRef(SecureHash.randomSHA256(), 0)
         fun buildTransaction() = createWireTransaction(
@@ -193,7 +189,7 @@ class TransactionTests(private val digestService : DigestService) {
         assertFailsWith<IllegalStateException> { buildTransaction() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `general transactions cannot change notary`() {
         val notary: Party = DUMMY_NOTARY
         val inState = TransactionState(DummyContract.SingleOwnerState(0, ALICE), DummyContract.PROGRAM_ID, notary)
@@ -205,7 +201,7 @@ class TransactionTests(private val digestService : DigestService) {
         val attachments = listOf(ContractAttachment(object : AbstractAttachment({
             (AttachmentsClassLoaderTests::class.java.getResource(ISOLATED_JAR) ?: fail("Missing $ISOLATED_JAR")).openStream().readBytes()
         }, TESTDSL_UPLOADER) {
-            @Suppress("OverridingDeprecatedMember")
+            @Deprecated("Use signerKeys. There is no requirement that attachment signers are Corda parties.")
             override val signers: List<Party> = emptyList()
             override val signerKeys: List<PublicKey> = emptyList()
             override val size: Int = 1234
@@ -235,7 +231,7 @@ class TransactionTests(private val digestService : DigestService) {
         assertFailsWith<TransactionVerificationException.NotaryChangeInWrongTransactionType> { buildTransaction().verify() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions with identical contents must have different ids`() {
         val outputState = TransactionState(DummyContract.SingleOwnerState(0, ALICE), DummyContract.PROGRAM_ID, DUMMY_NOTARY)
         fun buildTransaction() = createWireTransaction(

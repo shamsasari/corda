@@ -1,11 +1,11 @@
 package net.corda.node.utilities.logging
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 
 class AsyncLoggingTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `async logging is configured`() {
         assertTrue(AsyncLoggerContextSelectorNoThreadLocal.isSelected())
     }

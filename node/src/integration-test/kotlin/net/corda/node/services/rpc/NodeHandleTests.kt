@@ -4,10 +4,10 @@ import net.corda.core.utilities.getOrThrow
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import org.assertj.core.api.Assertions.assertThatCode
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class NodeHandleTests {
-    @Test(timeout=300_000)
+    @Test
 	fun object_defined_functions_are_static_for_node_rpc_ops() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptyList())) {
             val rpcClient = startNode().getOrThrow().rpc

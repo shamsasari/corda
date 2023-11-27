@@ -31,11 +31,11 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.TestClock
 import net.corda.testing.node.internal.*
 import org.hamcrest.Matchers.instanceOf
-import org.junit.AfterClass
-import org.junit.Assert.assertThat
-import org.junit.BeforeClass
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Assertions.assertThat
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 import java.time.Duration
 import java.time.Instant
@@ -47,14 +47,14 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 // This test is excluded from CI due to the experimental nature of the BFT notary
-@Ignore
+@Disabled
 class BFTNotaryServiceTests {
     companion object {
         private lateinit var mockNet: InternalMockNetwork
         private lateinit var notary: Party
         private lateinit var node: TestStartedNode
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun before() {
             mockNet = InternalMockNetwork(cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP))
@@ -64,7 +64,7 @@ class BFTNotaryServiceTests {
             node = started.second
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun stopNodes() {
             mockNet.stopNodes()
@@ -105,7 +105,7 @@ class BFTNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `detect double spend`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {
@@ -147,7 +147,7 @@ class BFTNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions outside their time window are rejected`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {
@@ -168,7 +168,7 @@ class BFTNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `notarise issue tx with time-window`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {
@@ -183,7 +183,7 @@ class BFTNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions can be re-notarised outside their time window`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {

@@ -1,7 +1,5 @@
 package net.corda.node.internal
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import net.corda.core.crypto.CompositeKey
 import net.corda.core.crypto.Crypto
 import net.corda.core.identity.CordaX500Name
@@ -29,21 +27,22 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.BOB_NAME
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
+import java.nio.file.Path
 import java.security.KeyPair
 import java.security.PublicKey
 
-@Ignore("TODO JDK17: Fixme")
+@Disabled("TODO JDK17: Fixme")
 class KeyStoreHandlerTest {
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var tempFolder: Path
 
-    private val certificateDir get() = tempFolder.root.toPath() / "certificates"
+    private val certificateDir get() = tempFolder / "certificates"
 
     private val config = rigorousMock<NodeConfiguration>()
 
@@ -53,7 +52,7 @@ class KeyStoreHandlerTest {
 
     private lateinit var keyStoreHandler: KeyStoreHandler
 
-    @Before
+    @BeforeEach
     fun before() {
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificateDir)
         val p2pSslOptions = CertificateStoreStubs.P2P.withCertificatesDirectory(certificateDir)
@@ -70,7 +69,7 @@ class KeyStoreHandlerTest {
         keyStoreHandler = KeyStoreHandler(config, cryptoService)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `missing node keystore`() {
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificateDir,
                 certificateStoreFileName = "invalid.jks")
@@ -81,7 +80,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("One or more keyStores (identity or TLS) or trustStore not found.")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `missing truststore`() {
         val p2pSslOptions = CertificateStoreStubs.P2P.withCertificatesDirectory(certificateDir, trustStoreFileName = "invalid.jks")
         doReturn(p2pSslOptions).whenever(config).p2pSslOptions
@@ -91,7 +90,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("One or more keyStores (identity or TLS) or trustStore not found.")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `missing TLS keystore`() {
         val p2pSslOptions = CertificateStoreStubs.P2P.withCertificatesDirectory(certificateDir, keyStoreFileName = "invalid.jks")
         doReturn(p2pSslOptions).whenever(config).p2pSslOptions
@@ -101,7 +100,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("One or more keyStores (identity or TLS) or trustStore not found.")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `invalid node keystore password`() {
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificateDir, password = "invalid")
         doReturn(signingCertificateStore).whenever(config).signingCertificateStore
@@ -111,7 +110,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("At least one of the keystores or truststore passwords does not match configuration")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `invalid truststore password`() {
         val p2pSslOptions = CertificateStoreStubs.P2P.withCertificatesDirectory(certificateDir, trustStorePassword = "invalid")
         doReturn(p2pSslOptions).whenever(config).p2pSslOptions
@@ -121,7 +120,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("At least one of the keystores or truststore passwords does not match configuration")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `invalid TLS keystore password`() {
         val p2pSslOptions = CertificateStoreStubs.P2P.withCertificatesDirectory(certificateDir, keyStorePassword = "invalid")
         doReturn(p2pSslOptions).whenever(config).p2pSslOptions
@@ -131,7 +130,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("At least one of the keystores or truststore passwords does not match configuration")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `missing trusted root in a truststore`() {
         config.p2pSslOptions.trustStore.get().update {
             internal.deleteEntry(CORDA_ROOT_CA)
@@ -142,7 +141,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("Alias for trustRoot key not found. Please ensure you have an updated trustStore file")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `missing TLS alias`() {
         config.p2pSslOptions.keyStore.get().update {
             internal.deleteEntry(CORDA_CLIENT_TLS)
@@ -153,7 +152,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("Alias for TLS key not found. Please ensure you have an updated TLS keyStore file")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load TLS certificate with untrusted root`() {
         val keyPair = Crypto.generateKeyPair()
         val tlsKeyPair = Crypto.generateKeyPair()
@@ -170,7 +169,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("TLS certificate must chain to the trusted root")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `valid trust root is returned`() {
         val expectedRoot = config.p2pSslOptions.trustStore.get()[CORDA_ROOT_CA]
         val actualRoot = keyStoreHandler.init().first()
@@ -178,7 +177,7 @@ class KeyStoreHandlerTest {
         assertThat(actualRoot).isEqualTo(expectedRoot)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `valid multiple trust roots are returned`() {
         val trustStore = config.p2pSslOptions.trustStore.get()
         trustStore["$CORDA_ROOT_CA-2"] = X509Utilities.createSelfSignedCACertificate(ALICE_NAME.x500Principal, Crypto.generateKeyPair())
@@ -187,9 +186,9 @@ class KeyStoreHandlerTest {
         assertThat(keyStoreHandler.init()).containsExactlyInAnyOrder(trustStore[CORDA_ROOT_CA], trustStore["$CORDA_ROOT_CA-2"])
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `keystore creation in dev mode`() {
-        val devCertificateDir = tempFolder.root.toPath() / "certificates-dev"
+        val devCertificateDir = tempFolder / "certificates-dev"
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(devCertificateDir)
         val p2pSslOptions = CertificateStoreStubs.P2P.withCertificatesDirectory(devCertificateDir)
         val devCryptoService = BCCryptoService(config.myLegalName.x500Principal, signingCertificateStore)
@@ -209,7 +208,7 @@ class KeyStoreHandlerTest {
         assertThat(devCryptoService.containsKey(NODE_IDENTITY_KEY_ALIAS)).isTrue()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load node identity`() {
         keyStoreHandler.init()
 
@@ -219,7 +218,7 @@ class KeyStoreHandlerTest {
         assertThat(keyStoreHandler.signingKeys).containsExactly(KeyAndAlias(certificate.publicKey, NODE_IDENTITY_KEY_ALIAS))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load node identity without node CA`() {
         assertThat(keyStore[CORDA_CLIENT_CA]).isNotNull
         keyStore.update { internal.deleteEntry(CORDA_CLIENT_CA) }
@@ -232,7 +231,7 @@ class KeyStoreHandlerTest {
         assertThat(keyStoreHandler.signingKeys).containsExactly(KeyAndAlias(certificate.publicKey, NODE_IDENTITY_KEY_ALIAS))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load node identity with missing alias`() {
         keyStore.update { internal.deleteEntry(NODE_IDENTITY_KEY_ALIAS) }
 
@@ -241,7 +240,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("node identity key is not in the keyStore file")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load node identity with missing key in CryptoService`() {
         val cryptoServiceMock = rigorousMock<CryptoService>()
         doReturn(false).whenever(cryptoServiceMock).containsKey(NODE_IDENTITY_KEY_ALIAS)
@@ -252,7 +251,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("Key for node identity alias '$NODE_IDENTITY_KEY_ALIAS' not found in CryptoService")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load node identity with untrusted root`() {
         val untrustedRoot = X509Utilities.createSelfSignedCACertificate(ALICE_NAME.x500Principal, Crypto.generateKeyPair())
 
@@ -267,7 +266,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("Certificate for node identity must chain to the trusted root")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load node identity with wrong legal name`() {
         doReturn(BOB_NAME).whenever(config).myLegalName
 
@@ -276,7 +275,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("The configured legalName").hasMessageContaining("doesn't match what's in the key store")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load node identity with wrong certificate path`() {
         keyStore.update {
             val privateKey = getPrivateKey(NODE_IDENTITY_KEY_ALIAS, DEV_CA_KEY_STORE_PASS)
@@ -289,7 +288,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("Cert path failed to validate")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load old style notary identity`() {
         val notaryConfig = rigorousMock<NotaryConfig>()
         doReturn(null).whenever(notaryConfig).serviceLegalName
@@ -330,7 +329,7 @@ class KeyStoreHandlerTest {
         return keyPair.public
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load notary identity`() {
         val notaryConfig = rigorousMock<NotaryConfig>()
         doReturn(BOB_NAME).whenever(notaryConfig).serviceLegalName
@@ -351,7 +350,7 @@ class KeyStoreHandlerTest {
         )
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load notary identity with wrong legal name`() {
         val notaryConfig = rigorousMock<NotaryConfig>()
         doReturn(BOB_NAME).whenever(notaryConfig).serviceLegalName
@@ -364,7 +363,7 @@ class KeyStoreHandlerTest {
         }.hasMessageContaining("The configured legalName").hasMessageContaining("doesn't match what's in the key store")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load notary composite identity`() {
         val notaryConfig = rigorousMock<NotaryConfig>()
         doReturn(BOB_NAME).whenever(notaryConfig).serviceLegalName
@@ -386,7 +385,7 @@ class KeyStoreHandlerTest {
         )
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `load notary composite identity with wrong legal name`() {
         val notaryConfig = rigorousMock<NotaryConfig>()
         doReturn(BOB_NAME).whenever(notaryConfig).serviceLegalName

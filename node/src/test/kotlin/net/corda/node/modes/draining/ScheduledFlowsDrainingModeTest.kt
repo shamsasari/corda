@@ -13,9 +13,9 @@ import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.dummyCommand
 import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.internal.*
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
@@ -38,7 +38,7 @@ class ScheduledFlowsDrainingModeTest {
 
     private var executor: ScheduledExecutorService? = null
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, enclosedCordapp()),
@@ -52,13 +52,13 @@ class ScheduledFlowsDrainingModeTest {
         executor = Executors.newSingleThreadScheduledExecutor()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
         executor!!.shutdown()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flows draining mode ignores scheduled flows until unset`() {
         val latch = CountDownLatch(1)
         var shouldFail = true

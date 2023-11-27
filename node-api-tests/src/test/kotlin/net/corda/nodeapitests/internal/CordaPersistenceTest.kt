@@ -4,8 +4,8 @@ import net.corda.node.services.schema.NodeSchemaService
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import java.util.concurrent.Phaser
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.concurrent.thread
@@ -17,19 +17,19 @@ class CordaPersistenceTest {
             { null }, { null },
             NodeSchemaService(emptySet()))
 
-    @After
+    @AfterEach
     fun closeDatabase() {
         database.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `onAllOpenTransactionsClosed with zero transactions calls back immediately`() {
         val counter = AtomicInteger(0)
         database.onAllOpenTransactionsClosed { counter.incrementAndGet() }
         assertEquals(1, counter.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `onAllOpenTransactionsClosed with one transaction calls back after closing`() {
         val counter = AtomicInteger(0)
         database.transaction {
@@ -39,7 +39,7 @@ class CordaPersistenceTest {
         assertEquals(1, counter.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `onAllOpenTransactionsClosed after one transaction has closed calls back immediately`() {
         val counter = AtomicInteger(0)
         database.transaction {
@@ -51,7 +51,7 @@ class CordaPersistenceTest {
         assertEquals(2, counter.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `onAllOpenTransactionsClosed with two transactions calls back after closing both`() {
         val counter = AtomicInteger(0)
         val phaser = openTransactionInOtherThreadAndCloseWhenISay()
@@ -67,7 +67,7 @@ class CordaPersistenceTest {
         assertEquals(1, counter.get())
     }
 
-    @Test(timeout = 10_000)
+    @Test)
     fun `onAllOpenTransactionsClosed with two transactions calls back after closing both - instigator closes last`() {
         val counter = AtomicInteger(0)
         val phaser = openTransactionInOtherThreadAndCloseWhenISay()

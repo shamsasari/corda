@@ -9,7 +9,7 @@ import net.corda.serialization.internal.amqp.*
 import net.corda.serialization.internal.amqp.testutils.deserializeAndReturnEnvelope
 import net.corda.serialization.internal.amqp.testutils.serialize
 import net.corda.serialization.internal.model.*
-import org.junit.Assert.assertTrue
+import org.junit.jupiter.api.Assertions.assertTrue
 
 /**
  * Custom implementation of a [SerializerFactory] where we need to give it a class carpenter

@@ -25,10 +25,10 @@ import net.corda.testing.core.dummyCommand
 import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.MockNetworkNotarySpec
 import net.corda.testing.node.internal.*
-import org.junit.After
-import org.junit.Assume
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assumptions.assumeTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.security.KeyPair
@@ -57,7 +57,7 @@ class NotaryWhitelistTests(
     private lateinit var newNotary: Party
     private lateinit var alice: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP),
@@ -71,7 +71,7 @@ class NotaryWhitelistTests(
         alice = aliceNode.services.myInfo.singleIdentity()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
@@ -81,7 +81,7 @@ class NotaryWhitelistTests(
      * the network operator, the old notary service can temporarily operate on the new zone to facilitate notary change requests (even though
      * it's not whitelisted for regular use).
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `can perform notary change on a de-listed notary`() {
         // Issue a state using the old notary. It is currently whitelisted.
         val stateFakeNotary = issueStateOnOldNotary(oldNotary)
@@ -115,7 +115,7 @@ class NotaryWhitelistTests(
     /**
      * Following on from the previous one, this test verifies that a non-whitelisted notary cannot be used for regular transactions.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `can't perform a regular transaction on a de-listed notary`() {
         // Issue a state using the old notary. It is currently whitelisted.
         val state = issueStateOnOldNotary(oldNotary)
@@ -173,9 +173,9 @@ class NotaryWhitelistTests(
         return future
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject transaction when a dependency does not contain notary in whitelist`() {
-        Assume.assumeTrue(isValidating) // Skip the test for non-validating notaries
+        assumeTrue(isValidating) // Skip the test for non-validating notaries
 
         val fakeNotaryKeyPair = generateKeyPair()
         val fakeNotaryParty = Party(DUMMY_NOTARY_NAME.copy(organisation = "Fake notary"), fakeNotaryKeyPair.public)

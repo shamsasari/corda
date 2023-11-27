@@ -1,9 +1,19 @@
 package net.corda.coretests.crypto
 
-import net.corda.core.crypto.*
-import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Rule
-import org.junit.Test
+import net.corda.core.crypto.Crypto
+import net.corda.core.crypto.MerkleTree
+import net.corda.core.crypto.MerkleTreeException
+import net.corda.core.crypto.PartialMerkleTree
+import net.corda.core.crypto.SecureHash
+import net.corda.core.crypto.SignableData
+import net.corda.core.crypto.SignatureMetadata
+import net.corda.core.crypto.TransactionSignature
+import net.corda.core.crypto.sha256
+import net.corda.core.crypto.sign
+import net.corda.testing.core.SerializationExtension
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
 import java.math.BigInteger
 import java.security.KeyPair
 import java.security.SignatureException
@@ -14,14 +24,12 @@ import kotlin.test.assertTrue
 /**
  * Transaction signature tests.
  */
+@ExtendWith(SerializationExtension::class)
 class TransactionSignatureTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
     private val testBytes = "12345678901234567890123456789012".toByteArray()
 
     /** Valid sign and verify. */
-    @Test(timeout=300_000)
+    @Test
 	fun `Signature metadata full sign and verify`() {
         val keyPair = Crypto.generateKeyPair("ECDSA_SECP256K1_SHA256")
 
@@ -39,15 +47,15 @@ class TransactionSignatureTest {
     }
 
     /** Verification should fail; corrupted metadata - clearData (Merkle root) has changed. */
-    @Test(expected = SignatureException::class,timeout=300_000)
+    @Test
     fun `Signature metadata full failure clearData has changed`() {
         val keyPair = Crypto.generateKeyPair("ECDSA_SECP256K1_SHA256")
         val signableData = SignableData(testBytes.sha256(), SignatureMetadata(1, Crypto.findSignatureScheme(keyPair.public).schemeNumberID))
         val transactionSignature = keyPair.sign(signableData)
-        Crypto.doVerify((testBytes + testBytes).sha256(), transactionSignature)
+        assertThrows<SignatureException> { Crypto.doVerify((testBytes + testBytes).sha256(), transactionSignature) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Verify multi-tx signature`() {
         val keyPair = Crypto.deriveKeyPairFromEntropy(Crypto.EDDSA_ED25519_SHA512, BigInteger.valueOf(1234567890L))
 
@@ -95,7 +103,7 @@ class TransactionSignatureTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Verify one-tx signature`() {
         val keyPair = Crypto.deriveKeyPairFromEntropy(Crypto.EDDSA_ED25519_SHA512, BigInteger.valueOf(1234567890L))
         val txId = "aTransaction".toByteArray().sha256()

@@ -2,9 +2,7 @@ package net.corda.nodeapi.internal.crypto
 
 import net.corda.core.internal.validate
 import net.corda.nodeapi.internal.loadDevCaTrustStore
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
 import java.security.cert.TrustAnchor
 import java.security.cert.X509Certificate
 
@@ -14,18 +12,14 @@ class DevCertificatesTest {
         const val OLD_NODE_DEV_KEYSTORE_FILE_NAME = "nodekeystore.jks"
     }
 
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
-
-    @Test(timeout=300_000)
+    @Test
 	fun `create server certificate in keystore for SSL`() {
         // given
         val newTrustStore = loadDevCaTrustStore()
         val newTrustRoot = newTrustStore[X509Utilities.CORDA_ROOT_CA]
         val newTrustAnchor = TrustAnchor(newTrustRoot, null)
 
-        val oldNodeCaKeyStore = loadKeyStore(javaClass.classLoader.getResourceAsStream("regression-test/$OLD_NODE_DEV_KEYSTORE_FILE_NAME"), OLD_DEV_KEYSTORE_PASS)
+        val oldNodeCaKeyStore = loadKeyStore(javaClass.classLoader.getResourceAsStream("regression-test/$OLD_NODE_DEV_KEYSTORE_FILE_NAME")!!, OLD_DEV_KEYSTORE_PASS)
         val oldX509Certificates = oldNodeCaKeyStore.getCertificateChain(X509Utilities.CORDA_CLIENT_CA).map {
             it as X509Certificate
         }.toTypedArray()

@@ -1,7 +1,5 @@
 package net.corda.nodeapi.internal.serialization.kryo
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import net.corda.core.serialization.EncodingWhitelist
 import net.corda.core.serialization.internal.CheckpointSerializationContext
 import net.corda.core.serialization.internal.checkpointDeserialize
@@ -10,21 +8,19 @@ import net.corda.coretesting.internal.rigorousMock
 import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.CheckpointSerializationContextImpl
 import net.corda.serialization.internal.CordaSerializationEncoding
-import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule
+import net.corda.testing.core.internal.CheckpointSerializationExtension
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 import java.util.*
-import kotlin.collections.ArrayList
-import kotlin.collections.HashMap
-import kotlin.collections.HashSet
-import kotlin.collections.LinkedHashMap
-import kotlin.collections.LinkedHashSet
 
+@ExtendWith(CheckpointSerializationExtension::class)
 @RunWith(Parameterized::class)
 class ArrayListItrConcurrentModificationException(private val compression: CordaSerializationEncoding?) {
     companion object {
@@ -33,11 +29,9 @@ class ArrayListItrConcurrentModificationException(private val compression: Corda
         fun compression() = arrayOf<CordaSerializationEncoding?>(null) + CordaSerializationEncoding.values()
     }
 
-    @get:Rule
-    val serializationRule = CheckpointSerializationEnvironmentRule(inheritable = true)
     private lateinit var context: CheckpointSerializationContext
 
-    @Before
+    @BeforeEach
     fun setup() {
         context = CheckpointSerializationContextImpl(
                 deserializationClassLoader = javaClass.classLoader,
@@ -50,32 +44,32 @@ class ArrayListItrConcurrentModificationException(private val compression: Corda
                 })
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `ArrayList iterator can checkpoint without error`() {
         runTestWithCollection(ArrayList())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `HashSet iterator can checkpoint without error`() {
         runTestWithCollection(HashSet())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `LinkedHashSet iterator can checkpoint without error`() {
         runTestWithCollection(LinkedHashSet())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `HashMap iterator can checkpoint without error`() {
         runTestWithCollection(HashMap())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `LinkedHashMap iterator can checkpoint without error`() {
         runTestWithCollection(LinkedHashMap())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `LinkedList iterator can checkpoint without error`() {
         runTestWithCollection(LinkedList())
     }

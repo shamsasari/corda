@@ -7,7 +7,7 @@ import net.corda.serialization.internal.amqp.testutils.TestSerializationOutput
 import net.corda.serialization.internal.amqp.testutils.deserialize
 import net.corda.serialization.internal.amqp.testutils.testDefaultFactory
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.NotSerializableException
 import java.lang.reflect.Type
 import kotlin.reflect.jvm.jvmName
@@ -40,7 +40,7 @@ class CarpenterExceptionTests {
         val VERBOSE: Boolean get() = false
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun checkClassComparison() {
         class CLA : ClassLoader() {
             override fun loadClass(name: String, resolve: Boolean): Class<*> {
@@ -71,7 +71,7 @@ class CarpenterExceptionTests {
         assertEquals(a2, a3)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun carpenterExceptionRethrownAsNotSerializableException() {
         data class C2(val i: Int) : TestInterface {
             override fun runThing() = 1

@@ -27,12 +27,12 @@ import net.corda.testing.node.internal.internalDriver
 import net.corda.testing.node.internal.performance.startPublishingFixedRateInjector
 import net.corda.testing.node.internal.performance.startReporter
 import net.corda.testing.node.internal.performance.startTightLoopInjector
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-@Ignore("Run these locally")
+@Disabled("Run these locally")
 class NodePerformanceTests {
     @StartableByRPC
     class EmptyFlow : FlowLogic<Unit>() {
@@ -46,7 +46,7 @@ class NodePerformanceTests {
             val averageMs: Double
     )
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty flow per second`() {
         driver(DriverParameters(startNodesInProcess = true)) {
             val a = startNode(rpcUsers = listOf(User("A", "A", setOf(startFlow<EmptyFlow>())))).get()
@@ -76,7 +76,7 @@ class NodePerformanceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty flow rate`() {
         internalDriver(startNodesInProcess = true) {
             val a = startNode(rpcUsers = listOf(User("A", "A", setOf(startFlow<EmptyFlow>())))).get()
@@ -90,7 +90,7 @@ class NodePerformanceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `self pay rate`() {
         val user = User("A", "A", setOf(startFlow<CashIssueFlow>(), startFlow<CashPaymentFlow>()))
         internalDriver(

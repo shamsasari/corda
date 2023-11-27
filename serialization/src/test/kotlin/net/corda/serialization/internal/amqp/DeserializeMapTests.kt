@@ -4,7 +4,7 @@ import net.corda.serialization.internal.amqp.testutils.TestSerializationOutput
 import net.corda.serialization.internal.amqp.testutils.deserialize
 import net.corda.serialization.internal.amqp.testutils.testDefaultFactoryNoEvolution
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 
 class DeserializeMapTests {
@@ -17,7 +17,7 @@ class DeserializeMapTests {
 
     private val sf = testDefaultFactoryNoEvolution()
 
-    @Test(timeout=300_000)
+    @Test
 	fun mapTest() {
         data class C(val c: Map<String, Int>)
 
@@ -47,7 +47,7 @@ class DeserializeMapTests {
         DeserializationInput(sf).deserialize(serialisedBytes)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun sortedMapTest() {
         data class C(val c: SortedMap<String, Int>)
 
@@ -56,7 +56,7 @@ class DeserializeMapTests {
         DeserializationInput(sf).deserialize(serialisedBytes)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun navigableMapTest() {
         data class C(val c: NavigableMap<String, Int>)
 
@@ -66,7 +66,7 @@ class DeserializeMapTests {
         DeserializationInput(sf).deserialize(serialisedBytes)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun dictionaryTest() {
         data class C(val c: Dictionary<String, Int>)
 
@@ -80,7 +80,7 @@ class DeserializeMapTests {
                 .isInstanceOf(IllegalArgumentException::class.java).hasMessageContaining("Unable to serialise deprecated type class java.util.Dictionary.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun hashtableTest() {
         data class C(val c: Hashtable<String, Int>)
 
@@ -94,7 +94,7 @@ class DeserializeMapTests {
                 .isInstanceOf(IllegalArgumentException::class.java).hasMessageContaining("Unable to serialise deprecated type class java.util.Hashtable. Suggested fix: prefer java.util.map implementations")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun hashMapTest() {
         data class C(val c: HashMap<String, Int>)
 
@@ -105,7 +105,7 @@ class DeserializeMapTests {
                 .isInstanceOf(IllegalArgumentException::class.java).hasMessageContaining("Map type class java.util.HashMap is unstable under iteration. Suggested fix: use java.util.LinkedHashMap instead.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun weakHashMapTest() {
         data class C(val c: WeakHashMap<String, Int>)
 
@@ -115,7 +115,7 @@ class DeserializeMapTests {
                 .isInstanceOf(IllegalArgumentException::class.java).hasMessageContaining("Weak references with map types not supported. Suggested fix: use java.util.LinkedHashMap instead.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun concreteTreeMapTest() {
         data class C(val c: TreeMap<String, Int>)
 
@@ -125,7 +125,7 @@ class DeserializeMapTests {
         DeserializationInput(sf).deserialize(serialisedBytes)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun concreteLinkedHashMapTest() {
         data class C(val c: LinkedHashMap<String, Int>)
 

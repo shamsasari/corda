@@ -26,9 +26,9 @@ import net.corda.testing.node.internal.MessagingServiceSpy
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -53,7 +53,7 @@ class FlowOperatorTests {
     private lateinit var eugeneNode: TestStartedNode
     private lateinit var eugeneParty: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 threadPerNode = true,
@@ -87,12 +87,12 @@ class FlowOperatorTests {
         eugeneNode.dispose()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return all flows which are waiting for counter party to process`() {
         charlieNode.registerCordappFlowFactory(ReceiveFlow::class) { AcceptingFlow("Hello", it) }
 
@@ -123,7 +123,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return only requested party flows which are waiting for counter party to process`() {
         aliceNode.services.startFlow(ReceiveFlow("Hello", listOf(bobParty)))
         val daveStart = aliceNode.services.startFlow(ReceiveFlow("Hello", listOf(daveParty)))
@@ -144,7 +144,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return all parties in a single flow which are waiting for counter party to process`() {
         val start = aliceNode.services.startFlow(ReceiveFlow("Hello", listOf(bobParty, daveParty)))
 
@@ -165,7 +165,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return only flows which are waiting for counter party to process and not in the hospital`() {
         charlieNode.registerCordappFlowFactory(ReceiveFlow::class) { AcceptingFlow("Fail", it) }
 
@@ -188,7 +188,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return only flows which are waiting more than 4 seconds for counter party to process`() {
         val bobStart = aliceNode.services.startFlow(ReceiveFlow("Hello", listOf(bobParty)))
         Thread.sleep(4500)
@@ -212,7 +212,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `mixed query should return all flows which are waiting for counter party to process`() {
         charlieNode.registerCordappFlowFactory(ReceiveFlow::class) { AcceptingFlow("Hello", it) }
 
@@ -247,7 +247,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return all flows which are waiting for counter party (the flow must have counter party) to process grouped by party`() {
         val future = CompletableFuture<String>()
         aliceNode.services.startFlow(ExternalAsyncOperationFlow(future))
@@ -277,7 +277,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `get should return all flow state machines which are waiting for other party to process`() {
         aliceNode.services.startFlow(ReceiveFlow("Hello", listOf(bobParty)))
         aliceNode.services.startFlow(ReceiveFlow("Hello", listOf(daveParty)))
@@ -291,7 +291,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return only requested by id flows which are waiting for counter party to process`() {
         charlieNode.registerCordappFlowFactory(ReceiveFlow::class) { AcceptingFlow("Fail", it) }
 
@@ -315,7 +315,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return all flows which are waiting for getting info about counter party`() {
         val start = aliceNode.services.startFlow(GetFlowInfoFlow(listOf(eugeneParty)))
 
@@ -335,7 +335,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return all flows which are waiting for sending and receiving from counter party when stuck in remote party`() {
         val start = aliceNode.services.startFlow(SendAndReceiveFlow("Hello", listOf(eugeneParty)))
 
@@ -355,7 +355,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return all flows which are waiting for sending and receiving from counter party when stuck in sending`() {
         val future = CompletableFuture<Unit>()
         aliceNode.setMessagingServiceSpy(BlockingMessageSpy("PauseSend", future))
@@ -378,7 +378,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return all flows which are waiting for async external operations`() {
         val future = CompletableFuture<String>()
         val start = aliceNode.services.startFlow(ExternalAsyncOperationFlow(future))
@@ -398,7 +398,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return all flows which are waiting for external operations`() {
         val future = CompletableFuture<String>()
         val start = aliceNode.services.startFlow(ExternalOperationFlow(future))
@@ -416,7 +416,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return all flows which are sleeping`() {
         val start = aliceNode.services.startFlow(SleepFlow())
 
@@ -433,7 +433,7 @@ class FlowOperatorTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query should return all flows which are waiting for sending from counter party`() {
         val future = CompletableFuture<Unit>()
         aliceNode.setMessagingServiceSpy(BlockingMessageSpy("PauseSend", future))

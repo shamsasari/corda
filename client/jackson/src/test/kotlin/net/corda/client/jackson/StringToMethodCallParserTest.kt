@@ -1,9 +1,9 @@
 package net.corda.client.jackson
 
 import net.corda.core.crypto.SecureHash
-import org.junit.Assert.assertArrayEquals
-import org.junit.Test
-import java.util.*
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Test
+import java.util.Deque
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -21,18 +21,18 @@ class StringToMethodCallParserTest {
         fun overload(a: String, b: String) = a + b
     }
 
-    val randomHash = "361170110f61086f77ff2c5b7ab36513705da1a3ebabf14dbe5cc9c982c45401"
-    val tests = mapOf(
+    private val randomHash = "361170110f61086f77ff2c5b7ab36513705da1a3ebabf14dbe5cc9c982c45401"
+    private val tests = mapOf(
             "simple" to "simple",
             "string noteTextWord: A test of barewords" to "A test of barewords",
             "twoStrings a: Some words, b: ' and some words, like, Kirk, would, speak'" to "Some words and some words, like, Kirk, would, speak",
-            "simpleObject hash: $randomHash" to randomHash.toUpperCase(),
+            "simpleObject hash: $randomHash" to randomHash.uppercase(),
             "complexObject pair: { first: 12, second: Word up brother }" to Pair(12, "Word up brother"),
             "overload a: A" to "A",
             "overload a: A, b: B" to "AB"
     )
 
-    @Test(timeout=300_000)
+    @Test
 	fun calls() {
         val parser = StringToMethodCallParser(Target::class)
         val target = Target()
@@ -45,13 +45,12 @@ class StringToMethodCallParserTest {
      * It would be unreasonable to expect "[ A, B, C ]" to deserialise as "Deque<Char>" by default.
      * Deque is chosen as we still expect it to preserve the order of its elements.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun complexNestedGenericMethod() {
         val parser = StringToMethodCallParser(Target::class)
         val result = parser.parse(Target(), "complexNestedObject pairs: { first: 101, second: [ A, B, C ] }").invoke()
 
         assertTrue(result is Pair<*,*>)
-        result as Pair<*,*>
 
         assertEquals(101, result.first)
 
@@ -63,10 +62,10 @@ class StringToMethodCallParserTest {
     @Suppress("UNUSED")
     class ConstructorTarget(val someWord: String, val aDifferentThing: Int) {
         constructor(alternativeWord: String) : this(alternativeWord, 0)
-        constructor(numbers: List<Long>) : this(numbers.map(Long::toString).joinToString("+"), numbers.size)
+        constructor(numbers: List<Long>) : this(numbers.joinToString("+", transform = Long::toString), numbers.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun ctor1() {
         val clazz = ConstructorTarget::class.java
         val parser = StringToMethodCallParser(clazz)
@@ -77,7 +76,7 @@ class StringToMethodCallParserTest {
         assertArrayEquals(arrayOf("Blah blah blah", 12), args)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun ctor2() {
         val clazz = ConstructorTarget::class.java
         val parser = StringToMethodCallParser(clazz)
@@ -88,7 +87,7 @@ class StringToMethodCallParserTest {
         assertArrayEquals(arrayOf("Foo bar!"), args)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun constructorWithGenericArgs() {
         val clazz = ConstructorTarget::class.java
         val ctor = clazz.getDeclaredConstructor(List::class.java)

@@ -15,8 +15,8 @@ import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -40,7 +40,7 @@ class MigrationSchemaSyncTest{
     lateinit var hikariProperties: Properties
     lateinit var dataSource: DataSource
 
-    @Before
+    @BeforeEach
     fun setUp() {
         hikariProperties = MockServices.makeTestDataSourceProperties()
         dataSource = DataSourceFactory.createDataSource(hikariProperties)
@@ -50,7 +50,7 @@ class MigrationSchemaSyncTest{
             TestIdentity(ALICE_NAME, 70).name)
 
 
-    @Test(timeout=300_000)
+    @Test
     fun testSchemaScript(){
         schemaMigration().runMigration(false, setOf(GoodSchema), true)
         val persistence = CordaPersistence(
@@ -67,7 +67,7 @@ class MigrationSchemaSyncTest{
     }
 
 
-    @Test(timeout=300_000)
+    @Test
     fun checkThatSchemaSyncFixesLiquibaseException(){
         // Schema is missing if no migration is run and hibernate not allowed to create
         val persistenceBlank = CordaPersistence(

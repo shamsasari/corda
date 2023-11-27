@@ -10,7 +10,7 @@ import net.corda.serialization.internal.EmptyWhitelist
 import net.corda.serialization.internal.amqp.*
 import net.corda.serialization.internal.carpenter.ClassCarpenterImpl
 import org.apache.qpid.proton.codec.Data
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File.separatorChar
 import java.io.NotSerializableException
 import java.nio.file.Path

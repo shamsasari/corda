@@ -2,12 +2,12 @@ package net.corda.node.services.config
 
 import com.typesafe.config.ConfigFactory
 import net.corda.nodeapi.internal.config.toProperties
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class ConfigOperatorTests {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `config plus behaves the same as map plus`() {
         val config = arrayOf("x" to "y1", "a" to "b", "z" to "Z")
         val overrides = arrayOf("x" to "y2", "c" to "d", "z" to null)

@@ -15,12 +15,12 @@ import net.corda.node.services.statemachine.transitions.TopLevelTransition
 import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.CHARLIE_NAME
 import net.corda.testing.core.singleIdentity
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 @Suppress("MaxLineLength") // Byteman rules cannot be easily wrapped
-@Ignore("TODO JDK17: Fixme")
+@Disabled("TODO JDK17: Fixme")
 class StateMachineSubFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
 
     /**
@@ -39,7 +39,7 @@ class StateMachineSubFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      * if an error transition moves into another error transition. The flow still recovers from this state. 5 exceptions were thrown to verify
      * that 3 retries are attempted before recovering.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `initiating subflow - error during transition with CommitTransaction action that occurs during the first send will retry and complete successfully`() {
         startDriver {
             val (charlie, alice, port) = createNodeAndBytemanNode(CHARLIE_NAME, ALICE_NAME)
@@ -117,7 +117,7 @@ class StateMachineSubFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      * if an error transition moves into another error transition. The flow still recovers from this state. 5 exceptions were thrown to verify
      * that 3 retries are attempted before recovering.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `initiating subflow - error during transition with CommitTransaction action that occurs after the first receive will retry and complete successfully`() {
         startDriver {
             val (charlie, alice, port) = createNodeAndBytemanNode(CHARLIE_NAME, ALICE_NAME)
@@ -187,7 +187,7 @@ class StateMachineSubFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      * if an error transition moves into another error transition. The flow still recovers from this state. 5 exceptions were thrown to verify
      * that 3 retries are attempted before recovering.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `inline subflow - error during transition with CommitTransaction action that occurs during the first send will retry and complete successfully`() {
         startDriver {
             val (charlie, alice, port) = createNodeAndBytemanNode(CHARLIE_NAME, ALICE_NAME)
@@ -249,7 +249,7 @@ class StateMachineSubFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      * if an error transition moves into another error transition. The flow still recovers from this state. 5 exceptions were thrown to verify
      * that 3 retries are attempted before recovering.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `inline subflow - error during transition with CommitTransaction action that occurs during the first receive will retry and complete successfully`() {
         startDriver {
             val (charlie, alice, port) = createNodeAndBytemanNode(CHARLIE_NAME, ALICE_NAME)

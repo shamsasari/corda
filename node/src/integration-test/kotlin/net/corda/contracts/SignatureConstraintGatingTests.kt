@@ -11,19 +11,17 @@ import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.FINANCE_WORKFLOWS_CORDAPP
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 
 class SignatureConstraintGatingTests {
+    @TempDir
+    private lateinit var tempFolder: Path
 
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
-
-    @Test(timeout=300_000)
+    @Test
 	fun `signature constraints can be used with up to the maximum allowed number of (RSA) keys`() {
-        tempFolder.root.toPath().let {path ->
+        tempFolder.let { path ->
             val financeCordapp = cordappWithPackages("net.corda.finance.contracts", "net.corda.finance.schemas")
                                                     .signed(keyStorePath = path, numberOfSignatures = 20, keyAlgorithm = "RSA")
 
@@ -41,9 +39,9 @@ class SignatureConstraintGatingTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `signature constraints can be used with up to the maximum allowed number of (EC) keys`() {
-        tempFolder.root.toPath().let {path ->
+        tempFolder.let {path ->
             val financeCordapp = cordappWithPackages("net.corda.finance.contracts", "net.corda.finance.schemas")
                     .signed(keyStorePath = path, numberOfSignatures = 20, keyAlgorithm = "EC")
 
@@ -61,9 +59,9 @@ class SignatureConstraintGatingTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `signature constraints cannot be used with more than the maximum allowed number of keys`() {
-        tempFolder.root.toPath().let {path ->
+        tempFolder.let {path ->
             val financeCordapp = cordappWithPackages("net.corda.finance.contracts", "net.corda.finance.schemas")
                                                     .signed(keyStorePath = path, numberOfSignatures = 21)
 

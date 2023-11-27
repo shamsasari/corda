@@ -37,8 +37,8 @@ import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.rpcDriver
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.lang.IllegalStateException
 import java.lang.RuntimeException
 import java.lang.Thread.sleep
@@ -54,7 +54,7 @@ import kotlin.test.assertFalse
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
-@Ignore("TODO JDK17: Fixme")
+@Disabled("TODO JDK17: Fixme")
 class CordaRPCClientReconnectionTest {
 
     private val portAllocator = incrementalPortAllocation()
@@ -69,7 +69,7 @@ class CordaRPCClientReconnectionTest {
         val rpcUser = User("user1", "test", permissions = setOf(Permissions.all()))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `rpc node start when FlowsDrainingModeEnabled throws RejectedCommandException and won't attempt to reconnect`() {
         driver(DriverParameters(cordappsForAllNodes = FINANCE_CORDAPPS)) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())
@@ -97,7 +97,7 @@ class CordaRPCClientReconnectionTest {
     }
 
 
-    @Test(timeout=300_000)
+    @Test
     fun `minimum server protocol version should cause exception if higher than allowed`() {
         driver(DriverParameters(cordappsForAllNodes = FINANCE_CORDAPPS)) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())
@@ -120,7 +120,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `rpc client calls and returned observables continue working when the server crashes and restarts`() {
         driver(DriverParameters(cordappsForAllNodes = FINANCE_CORDAPPS)) {
             val latch = CountDownLatch(2)
@@ -158,7 +158,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `a client can successfully unsubscribe a reconnecting observable`() {
         driver(DriverParameters(cordappsForAllNodes = FINANCE_CORDAPPS)) {
             val latch = CountDownLatch(2)
@@ -196,7 +196,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `rpc client calls and returned observables continue working when there is failover between servers`() {
         driver(DriverParameters(cordappsForAllNodes = FINANCE_CORDAPPS)) {
             val latch = CountDownLatch(2)
@@ -235,7 +235,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `when user code throws an error on a reconnecting observable, then onError is invoked and observable is unsubscribed successfully`() {
         driver(DriverParameters(cordappsForAllNodes = FINANCE_CORDAPPS)) {
             val normalLatch = CountDownLatch(1)
@@ -276,7 +276,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `an RPC call fails, when the maximum number of attempts is exceeded`() {
         driver(DriverParameters(cordappsForAllNodes = emptyList())) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())
@@ -304,7 +304,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `establishing an RPC connection fails if there is no node listening to the specified address`() {
         rpcDriver {
             assertThatThrownBy {
@@ -315,7 +315,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `RPC connection can be shut down after being disconnected from the node`() {
         driver(DriverParameters(cordappsForAllNodes = emptyList())) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())
@@ -345,7 +345,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `RPC connection stops reconnecting after config number of retries`() {
         driver(DriverParameters(cordappsForAllNodes = emptyList())) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())
@@ -365,7 +365,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `rpc client does not attempt to reconnect after shutdown`() {
         driver(DriverParameters(cordappsForAllNodes = emptyList())) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())
@@ -388,7 +388,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `rpc returned flow -started with cient id- result future continue working when the node crashes and restarts`() {
         driver(DriverParameters(inMemoryDB = false, cordappsForAllNodes = listOf(this.enclosedCordapp()))) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())
@@ -453,7 +453,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `rpc returned flow -started with cient id- exception future continue working when the node crashes and restarts`() {
         driver(DriverParameters(inMemoryDB = false, cordappsForAllNodes = listOf(this.enclosedCordapp()))) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())
@@ -498,7 +498,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `rpc re attach to flow with client id tries to reconnect when the node is down`() {
         driver(DriverParameters(inMemoryDB = false, cordappsForAllNodes = listOf(this.enclosedCordapp()))) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())
@@ -532,7 +532,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `rpc remove client id tries to reconnect when the node is down`() {
         driver(DriverParameters(inMemoryDB = false, cordappsForAllNodes = listOf(this.enclosedCordapp()))) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())
@@ -564,7 +564,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `rpc re-attaches to client id flow on node restart with flows draining mode on`() {
         driver(DriverParameters(inMemoryDB = false, cordappsForAllNodes = listOf(this.enclosedCordapp()))) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())
@@ -598,7 +598,7 @@ class CordaRPCClientReconnectionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `reconnecting 'reattachFlowWithClientId' rpc works if called with non-existent client id`() {
         driver(DriverParameters(inMemoryDB = false, cordappsForAllNodes = listOf(this.enclosedCordapp()))) {
             val address = NetworkHostAndPort("localhost", portAllocator.nextPort())

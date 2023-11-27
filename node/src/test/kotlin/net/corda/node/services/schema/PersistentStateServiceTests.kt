@@ -17,18 +17,18 @@ import net.corda.testing.internal.LogHelper
 import net.corda.testing.internal.configureDatabase
 import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PersistentStateServiceTests {
-    @Before
+    @BeforeEach
     fun setUp() {
         LogHelper.setLevel(PersistentStateService::class)
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         LogHelper.reset(PersistentStateService::class)
     }
@@ -46,7 +46,7 @@ class PersistentStateServiceTests {
             get() = throw UnsupportedOperationException()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test child objects are persisted`() {
         val testSchema = TestSchema
         val schemaService = object : SchemaService {

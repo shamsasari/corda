@@ -1,18 +1,13 @@
 package net.corda.testing.node.internal
 
-
 import net.corda.cliutils.ExitCodes
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
-
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import kotlin.test.assertEquals
-@RunWith(value = Parameterized::class)
-class RunCordaNodeReturnCodeTests(val argument: String, val exitCode: Int){
 
+class RunCordaNodeReturnCodeTests {
     companion object {
         @JvmStatic
-        @Parameterized.Parameters
         fun data() = listOf(
                 arrayOf("--nonExistingOption", ExitCodes.FAILURE),
                 arrayOf("--help", ExitCodes.SUCCESS),
@@ -21,9 +16,9 @@ class RunCordaNodeReturnCodeTests(val argument: String, val exitCode: Int){
         )
     }
 
-    @Test(timeout=300_000)
-    fun runCordaWithArgumentAndAssertExitCode() {
-
+    @ParameterizedTest
+    @MethodSource("data")
+    fun runCordaWithArgumentAndAssertExitCode(argument: String, exitCode: Int) {
         val process = ProcessUtilities.startJavaProcess(
                 className = "net.corda.node.Corda",
                 arguments = listOf(argument)
@@ -31,6 +26,4 @@ class RunCordaNodeReturnCodeTests(val argument: String, val exitCode: Int){
         process.waitFor()
         assertEquals(exitCode, process.exitValue())
     }
-
-
 }

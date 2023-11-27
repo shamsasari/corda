@@ -12,7 +12,7 @@ import net.corda.serialization.internal.amqp.testutils.serialize
 import net.corda.serialization.internal.amqp.testutils.testDefaultFactory
 import net.corda.serialization.internal.amqp.testutils.writeTestResource
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class EvolutionObjectBuilderRenamedPropertyTests
 {
@@ -59,7 +59,7 @@ class EvolutionObjectBuilderRenamedPropertyTests
         constructor(cordappVersion: Int, data : String, x : Int?, participants: List<AbstractParty>) : this(cordappVersion, data, x?.toString(), participants)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Step 1 to Step 3`() {
 
         // The next two commented lines are how the serialized data is generated. To regenerate the data, uncomment these along

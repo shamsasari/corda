@@ -1,8 +1,5 @@
 package net.corda.node.internal
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.internal.delete
 import net.corda.core.internal.getJavaUpdateVersion
@@ -11,26 +8,34 @@ import net.corda.core.internal.readObject
 import net.corda.core.node.NodeInfo
 import net.corda.core.serialization.serialize
 import net.corda.core.utilities.NetworkHostAndPort
+import net.corda.coretesting.internal.createNodeInfoAndSigned
+import net.corda.coretesting.internal.rigorousMock
 import net.corda.node.VersionInfo
 import net.corda.node.internal.schemas.NodeInfoSchemaV1
-import net.corda.node.services.config.*
+import net.corda.node.services.config.FlowOverrideConfig
+import net.corda.node.services.config.FlowTimeoutConfiguration
+import net.corda.node.services.config.NodeConfigurationImpl
+import net.corda.node.services.config.NodeRpcSettings
+import net.corda.node.services.config.TelemetryConfiguration
+import net.corda.node.services.config.VerifierType
 import net.corda.nodeapi.internal.SignedNodeInfo
 import net.corda.nodeapi.internal.network.NodeInfoFilesCopier.Companion.NODE_INFO_FILE_NAME_PREFIX
 import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.testing.core.ALICE_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.internal.configureDatabase
-import net.corda.coretesting.internal.createNodeInfoAndSigned
-import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import org.apache.commons.lang3.JavaVersion
 import org.apache.commons.lang3.SystemUtils
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.nio.file.Path
 import java.time.Duration
 import kotlin.test.assertEquals
@@ -38,16 +43,13 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+@ExtendWith(SerializationExtension::class)
 class NodeTest {
-    @Rule
-    @JvmField
-    val temporaryFolder = TemporaryFolder()
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
+    @TempDir
+    private lateinit var temporaryFolder: Path
 
     private fun nodeInfoFile(): Path? {
-        return temporaryFolder.root.toPath().list { paths ->
+        return temporaryFolder.list { paths ->
             paths.filter { it.fileName.toString().startsWith(NODE_INFO_FILE_NAME_PREFIX) }.findAny().orElse(null)
         }
     }
@@ -63,7 +65,7 @@ class NodeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `generateAndSaveNodeInfo works`() {
         val configuration = createConfig(ALICE_NAME)
         val info = VersionInfo(789, "3.0", "SNAPSHOT", "R3")
@@ -73,7 +75,7 @@ class NodeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `check node service availability`() {
         val configuration = createConfig(ALICE_NAME)
         val info = VersionInfo(789, "3.0", "SNAPSHOT", "R3")
@@ -82,7 +84,7 @@ class NodeTest {
         assertNull(node.services.notaryService)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `clear network map cache works`() {
         val configuration = createConfig(ALICE_NAME)
         val (nodeInfo, _) = createNodeInfoAndSigned(ALICE_NAME)
@@ -109,7 +111,7 @@ class NodeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Node can start with multiple keypairs for its identity`() {
         val configuration = createConfig(ALICE_NAME)
         val (nodeInfo1, _) = createNodeInfoAndSigned(ALICE_NAME)
@@ -158,14 +160,14 @@ class NodeTest {
     }
 
     // JDK 11 check
-    @Test(timeout=300_000)
+    @Test
 	fun `test getJavaRuntimeVersion`() {
         assertTrue(SystemUtils.IS_JAVA_1_8 || SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_11))
     }
 
     // JDK11: revisit (JDK 9+ uses different numbering scheme: see https://docs.oracle.com/javase/9/docs/api/java/lang/Runtime.Version.html)
-    @Ignore
-    @Test(timeout=300_000)
+    @Disabled
+    @Test
 	fun `test getJavaUpdateVersion`() {
         assertThat(getJavaUpdateVersion("1.8.0_202-ea")).isEqualTo(202)
         assertThat(getJavaUpdateVersion("1.8.0_202")).isEqualTo(202)
@@ -184,7 +186,7 @@ class NodeTest {
     private fun createConfig(nodeName: CordaX500Name): NodeConfigurationImpl {
         val fakeAddress = NetworkHostAndPort("0.1.2.3", 456)
         return NodeConfigurationImpl(
-                baseDirectory = temporaryFolder.root.toPath(),
+                baseDirectory = temporaryFolder,
                 myLegalName = nodeName,
                 devMode = true, // Needed for identity cert.
                 emailAddress = "",

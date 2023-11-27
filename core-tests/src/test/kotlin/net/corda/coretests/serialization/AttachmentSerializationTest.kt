@@ -22,10 +22,10 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.nio.charset.StandardCharsets.UTF_8
 import java.util.zip.ZipEntry
@@ -65,14 +65,14 @@ private fun updateAttachment(attachmentId: SecureHash, data: ByteArray) {
     }
 }
 
-@Ignore("TODO JDK17: class cast exception")
+@Disabled("TODO JDK17: class cast exception")
 class AttachmentSerializationTest {
     private lateinit var mockNet: InternalMockNetwork
     private lateinit var server: TestStartedNode
     private lateinit var client: TestStartedNode
     private lateinit var serverIdentity: Party
 
-    @Before
+    @BeforeEach
     fun setUp() {
         mockNet = InternalMockNetwork()
         server = mockNet.createNode(InternalMockNodeParameters(legalName = ALICE_NAME))
@@ -82,7 +82,7 @@ class AttachmentSerializationTest {
         serverIdentity = server.info.singleIdentity()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNet.stopNodes()
     }
@@ -171,14 +171,14 @@ class AttachmentSerializationTest {
         return (client.smm.allStateMachines[0].stateMachine.resultFuture.apply { mockNet.runNetwork() }.getOrThrow() as ClientResult).attachmentContent
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `custom (and non-persisted) attachment should be saved in checkpoint`() {
         val attachmentId = SecureHash.sha256("any old data")
         launchFlow(CustomAttachmentLogic(serverIdentity, attachmentId, "custom"), 1)
         assertEquals("custom", rebootClientAndGetAttachmentContent())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `custom attachment should be saved in checkpoint even if its data was persisted`() {
         val attachmentId = client.saveAttachment("genuine")
         launchFlow(CustomAttachmentLogic(serverIdentity, attachmentId, "custom"), 1)
@@ -186,7 +186,7 @@ class AttachmentSerializationTest {
         assertEquals("custom", rebootClientAndGetAttachmentContent())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `only the hash of a regular attachment should be saved in checkpoint`() {
         val attachmentId = client.saveAttachment("genuine")
         client.attachments.checkAttachmentsOnLoad = false // Cached by AttachmentImpl.
@@ -195,7 +195,7 @@ class AttachmentSerializationTest {
         assertEquals("hacked", rebootClientAndGetAttachmentContent(false)) // Pass in false to allow non-genuine data to be loaded.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `only the hash of a FetchAttachmentsFlow attachment should be saved in checkpoint`() {
         val attachmentId = server.saveAttachment("genuine")
         launchFlow(FetchAttachmentLogic(serverIdentity, attachmentId), 2, sendData = true)

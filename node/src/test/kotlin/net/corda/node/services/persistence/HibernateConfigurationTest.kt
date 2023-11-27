@@ -1,6 +1,5 @@
 package net.corda.node.services.persistence
 
-import org.mockito.kotlin.*
 import net.corda.core.contracts.Amount
 import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.StateRef
@@ -41,7 +40,14 @@ import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.nodeapi.internal.persistence.HibernateConfiguration
 import net.corda.nodeapi.internal.persistence.HibernateSchemaChangeException
-import net.corda.testing.core.*
+import net.corda.testing.core.ALICE_NAME
+import net.corda.testing.core.BOB_NAME
+import net.corda.testing.core.BOC_NAME
+import net.corda.testing.core.CHARLIE_NAME
+import net.corda.testing.core.DUMMY_NOTARY_NAME
+import net.corda.testing.core.SerializationExtension
+import net.corda.testing.core.TestIdentity
+import net.corda.testing.core.singleIdentity
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.internal.vault.DummyDealStateSchemaV1
 import net.corda.testing.internal.vault.DummyLinearStateSchemaV1
@@ -49,19 +55,31 @@ import net.corda.testing.internal.vault.DummyLinearStateSchemaV2
 import net.corda.testing.internal.vault.VaultFiller
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
-import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.hibernate.SessionFactory
-import org.junit.*
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.argThat
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.math.BigDecimal
 import java.time.Clock
 import java.time.Instant
-import java.util.*
+import java.util.Currency
+import java.util.Random
+import java.util.UUID
 import javax.persistence.EntityManager
 import javax.persistence.Tuple
 import javax.persistence.criteria.CriteriaBuilder
 
+@ExtendWith(SerializationExtension::class)
 class HibernateConfigurationTest {
     private companion object {
         val ALICE = TestIdentity(ALICE_NAME, 70).party
@@ -73,9 +91,6 @@ class HibernateConfigurationTest {
         val BOC_KEY get() = bankOfCorda.keyPair
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
     lateinit var services: MockServices
     private lateinit var vaultFiller: VaultFiller
     private lateinit var bankServices: MockServices
@@ -99,7 +114,7 @@ class HibernateConfigurationTest {
     // test States
     private lateinit var cashStates: List<StateAndRef<Cash.State>>
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val cordappPackages = listOf("net.corda.testing.internal.vault", "net.corda.finance.contracts.asset", "net.corda.finance.schemas")
         bankServices = MockServices(cordappPackages, BOC.name, mock(), BOC_KEY)
@@ -159,12 +174,13 @@ class HibernateConfigurationTest {
 
     private fun sessionFactoryForSchemas(vararg schemas: MappedSchema) = hibernateConfig.sessionFactoryForSchemas(schemas.toSet())
     private fun consumeCash(amount: Amount<Currency>) = vaultFiller.consumeCash(amount, CHARLIE)
-    @After
+
+    @AfterEach
     fun cleanUp() {
         database.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `count rows`() {
         // structure query
         val countQuery = criteriaBuilder.createQuery(Long::class.java)
@@ -176,7 +192,7 @@ class HibernateConfigurationTest {
         assertThat(countResult).isEqualTo(10)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `consumed states`() {
         database.transaction {
             consumeCash(50.DOLLARS)
@@ -196,7 +212,7 @@ class HibernateConfigurationTest {
         assertThat(coins.toDecimal() >= BigDecimal("50.00"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `select by composite primary key`() {
         val issuedStates =
                 database.transaction {
@@ -221,7 +237,7 @@ class HibernateConfigurationTest {
         assertThat(queryResults.last().stateRef?.index).isEqualTo(issuedStates.states.last().ref.index)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `distinct contract types`() {
         database.transaction {
             // add 2 more contract types
@@ -236,10 +252,10 @@ class HibernateConfigurationTest {
 
         // execute query
         val queryResults = entityManager.createQuery(criteriaQuery).resultList
-        Assertions.assertThat(queryResults.size).isEqualTo(3)
+        assertThat(queryResults.size).isEqualTo(3)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `with sorting`() {
         // structure query
         val criteriaQuery = criteriaBuilder.createQuery(VaultSchemaV1.VaultStates::class.java)
@@ -256,7 +272,7 @@ class HibernateConfigurationTest {
         queryResultsAsc.map { println(it.recordedTime) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `with sorting by state ref desc and asc`() {
         // generate additional state ref indexes
         database.transaction {
@@ -282,7 +298,7 @@ class HibernateConfigurationTest {
         queryResultsAsc.map { println(it.stateRef) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `with sorting by state ref index and txId desc and asc`() {
         // generate additional state ref indexes
         database.transaction {
@@ -309,7 +325,7 @@ class HibernateConfigurationTest {
         queryResultsAsc.map { println(it.stateRef) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `with pagination`() {
         // add 100 additional cash entries
         database.transaction {
@@ -327,7 +343,7 @@ class HibernateConfigurationTest {
 
         // execute query
         val queryResults = query.resultList
-        Assertions.assertThat(queryResults.size).isEqualTo(15)
+        assertThat(queryResults.size).isEqualTo(15)
 
         // try towards end
         query.firstResult = 100
@@ -335,13 +351,13 @@ class HibernateConfigurationTest {
 
         val lastQueryResults = query.resultList
 
-        Assertions.assertThat(lastQueryResults.size).isEqualTo(10)
+        assertThat(lastQueryResults.size).isEqualTo(10)
     }
 
     /**
      *  VaultLinearState is a concrete table, extendible by any Contract extending a LinearState
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `select by composite primary key on LinearStates`() {
         database.transaction {
             vaultFiller.fillWithSomeTestLinearStates(10)
@@ -368,7 +384,7 @@ class HibernateConfigurationTest {
     /**
      *  CashSchemaV1 = original Cash schema (extending PersistentState)
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `count CashStates`() {
         // structure query
         val countQuery = criteriaBuilder.createQuery(Long::class.java)
@@ -380,7 +396,7 @@ class HibernateConfigurationTest {
         assertThat(countResult).isEqualTo(10)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `select by composite primary key on CashStates`() {
         // structure query
         val criteriaQuery = criteriaBuilder.createQuery(VaultSchemaV1.VaultStates::class.java)
@@ -392,7 +408,7 @@ class HibernateConfigurationTest {
         assertThat(queryResults).hasSize(10)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `select and join by composite primary key on CashStates`() {
         database.transaction {
             vaultFiller.fillWithSomeTestLinearStates(5)
@@ -410,7 +426,7 @@ class HibernateConfigurationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `calculate cash balances`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 10, issuer.ref(1))        // +$100 = $200
@@ -443,7 +459,7 @@ class HibernateConfigurationTest {
         assertThat(queryResults[2].get(1)).isEqualTo(20000L)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `calculate cash balance for single currency`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(50.POUNDS, issuerServices, 5, issuer.ref(1))            // £50 = £50
@@ -473,7 +489,7 @@ class HibernateConfigurationTest {
         assertThat(queryResults[0].get(1)).isEqualTo(7500L)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `calculate and order by cash balance for owner and currency`() {
         database.transaction {
             val bank = bankServices.myInfo.legalIdentities.single()
@@ -515,7 +531,7 @@ class HibernateConfigurationTest {
     /**
      *  CashSchemaV2 = optimised Cash schema (extending FungibleState)
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `count CashStates in V2`() {
         database.transaction {
             // persist cash states explicitly with V2 schema
@@ -537,7 +553,7 @@ class HibernateConfigurationTest {
         assertThat(countResult).isEqualTo(10)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `select by composite primary key on CashStates in V2`() {
         database.transaction {
             vaultFiller.fillWithSomeTestLinearStates(5)
@@ -573,7 +589,7 @@ class HibernateConfigurationTest {
     /**
      *  DummyLinearStateV1 = original DummyLinearState schema (extending PersistentState)
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `select by composite primary between VaultStates, VaultLinearStates and DummyLinearStates`() {
         database.transaction {
             vaultFiller.fillWithSomeTestLinearStates(8)
@@ -604,7 +620,7 @@ class HibernateConfigurationTest {
      *  DummyLinearSchemaV2 = optimised DummyLinear schema (extending LinearState)
      */
 
-    @Test(timeout=300_000)
+    @Test
 	fun `three way join by composite primary between VaultStates, VaultLinearStates and DummyLinearStates`() {
         database.transaction {
             vaultFiller.fillWithSomeTestLinearStates(8)
@@ -634,7 +650,7 @@ class HibernateConfigurationTest {
     /**
      *  Composite OR query
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `composite or query across VaultStates, VaultLinearStates and DummyLinearStates`() {
         val uniqueID456 = UniqueIdentifier("456")
         database.transaction {
@@ -680,7 +696,7 @@ class HibernateConfigurationTest {
     /**
      *  Test a OneToOne table mapping
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `select fungible states by owner party`() {
         database.transaction {
             // persist original cash states explicitly with V3 schema
@@ -704,7 +720,7 @@ class HibernateConfigurationTest {
     /**
      *  Test Query by Party (OneToOne table mapping)
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `query fungible states by owner party`() {
         database.transaction {
             // persist original cash states explicitly with V3 schema
@@ -757,7 +773,7 @@ class HibernateConfigurationTest {
     /**
      *  Test a OneToMany table mapping
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `select fungible states by participants`() {
         database.transaction {
             // persist cash states explicitly with V3 schema
@@ -782,7 +798,7 @@ class HibernateConfigurationTest {
     /**
      *  Test Query by participants (OneToMany table mapping)
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `query fungible states by participants`() {
         val firstCashState =
                 database.transaction {
@@ -841,7 +857,7 @@ class HibernateConfigurationTest {
     /**
      * Query with sorting on Common table attribute
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `with sorting on attribute from common table`() {
 
         database.transaction {
@@ -893,7 +909,7 @@ class HibernateConfigurationTest {
     /**
      * Query with sorting on Custom table attribute
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `with sorting on attribute from custom table`() {
 
         database.transaction {
@@ -949,7 +965,7 @@ class HibernateConfigurationTest {
     /**
      *  Test invoking SQL query using DB connection (session)
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `test calling an arbitrary JDBC native query`() {
         // DOCSTART JdbcSession
         val nativeQuery = "SELECT v.transaction_id, v.output_index FROM vault_states v WHERE v.state_status = 0"
@@ -962,14 +978,14 @@ class HibernateConfigurationTest {
             var count = 0
             while (rs.next()) {
                 val stateRef = StateRef(SecureHash.create(rs.getString(1)), rs.getInt(2))
-                Assert.assertTrue(cashStates.map { it.ref }.contains(stateRef))
+                assertTrue(cashStates.map { it.ref }.contains(stateRef))
                 count++
             }
-            Assert.assertEquals(cashStates.count(), count)
+            assertEquals(cashStates.count(), count)
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `schema change`() {
         fun createNewDB(schemas: Set<MappedSchema>, initialiseSchema: Boolean = true):  CordaPersistence {
             val schemaService = NodeSchemaService(extraSchemas = schemas)

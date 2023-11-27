@@ -22,9 +22,9 @@ import net.corda.testing.driver.NodeParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.User
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import rx.Observer
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -43,20 +43,20 @@ class MultiRpcClientTest {
 
     private var prevRpcClientSerializationEnv: SerializationEnvironment? = null
 
-    @Before
+    @BeforeEach
     fun setup() {
         prevRpcClientSerializationEnv = _rpcClientSerializationEnv.get()
         ensureSerialisationEnvNull()
     }
 
-    @After
+    @AfterEach
     fun after() {
         ensureSerialisationEnvNull()
         // Restore something that was changed during setup
         prevRpcClientSerializationEnv?.let { _rpcClientSerializationEnv.set(prevRpcClientSerializationEnv) }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can connect to custom RPC interface`() {
 
         // Allocate named port to be used for RPC interaction
@@ -97,7 +97,7 @@ class MultiRpcClientTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ensure onError populated on disconnect`() {
 
         // Allocate named port to be used for RPC interaction

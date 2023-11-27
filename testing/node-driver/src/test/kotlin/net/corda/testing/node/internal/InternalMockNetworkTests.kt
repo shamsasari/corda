@@ -5,8 +5,8 @@ import net.corda.core.serialization.internal.effectiveSerializationEnv
 import net.corda.node.services.messaging.Message
 import net.corda.coretesting.internal.rigorousMock
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -14,14 +14,14 @@ import kotlin.test.assertTrue
 class InternalMockNetworkTests {
     lateinit var mockNet: InternalMockNetwork
 
-    @After
+    @AfterEach
     fun tearDown() {
         if (this::mockNet.isInitialized) {
             mockNet.stopNodes()
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun basics() {
         mockNet = InternalMockNetwork()
 
@@ -46,7 +46,7 @@ class InternalMockNetworkTests {
         assertTrue(Arrays.equals(finalDelivery!!.data.bytes, bits))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun broadcast() {
         mockNet = InternalMockNetwork()
 
@@ -67,7 +67,7 @@ class InternalMockNetworkTests {
      * Tests that unhandled messages in the received queue are skipped and the next message processed, rather than
      * causing processing to return null as if there was no message.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `skip unhandled messages`() {
         mockNet = InternalMockNetwork()
 
@@ -99,7 +99,7 @@ class InternalMockNetworkTests {
         assertEquals(2, received)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `does not leak serialization env if init fails`() {
         val e = Exception("didn't work")
         assertThatThrownBy {

@@ -22,9 +22,9 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkNotarySpec
 import net.corda.testing.node.MockNodeParameters
 import net.corda.testing.node.StartedMockNode
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
@@ -36,7 +36,7 @@ class VaultFlowTest {
     private lateinit var partyB: StartedMockNode
     private lateinit var notaryNode: MockNetworkNotarySpec
 
-    @Before
+    @BeforeEach
     fun setup() {
         notaryNode = MockNetworkNotarySpec(CordaX500Name("Notary", "London", "GB"))
         mockNetwork = MockNetwork(
@@ -52,13 +52,13 @@ class VaultFlowTest {
         mockNetwork.startNodes()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNetwork.stopNodes()
         StaffedFlowHospital.onFlowKeptForOvernightObservation.clear()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Unique column constraint failing causes states to not persist to vaults`() {
         partyA.startFlow(Initiator(listOf(partyA.info.singleIdentity(), partyB.info.singleIdentity()))).get()
         val hospitalLatch = CountDownLatch(1)

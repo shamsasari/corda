@@ -2,8 +2,8 @@ package net.corda.client.jfx.utils
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class ReplayedListTest {
@@ -11,13 +11,13 @@ class ReplayedListTest {
     var sourceList: ObservableList<Int> = FXCollections.observableArrayList(1234)
     var replayedList = ReplayedList(sourceList)
 
-    @Before
+    @BeforeEach
     fun setup() {
         sourceList = FXCollections.observableArrayList(1234)
         replayedList = ReplayedList(sourceList)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addWorks() {
         assertEquals(replayedList.size, 1)
         assertEquals(replayedList[0], 1234)
@@ -50,7 +50,7 @@ class ReplayedListTest {
         assertEquals(replayedList[5], 34)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun removeWorks() {
         val firstRemoved = sourceList.removeAt(0)
         assertEquals(firstRemoved, 1234)
@@ -70,7 +70,7 @@ class ReplayedListTest {
         assertEquals(replayedList.size, 0)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun updateWorks() {
         assertEquals(replayedList[0], 1234)
         sourceList[0] = 4321

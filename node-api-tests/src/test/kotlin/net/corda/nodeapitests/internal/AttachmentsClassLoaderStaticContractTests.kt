@@ -1,10 +1,13 @@
 package net.corda.nodeapitests.internal
 
-import org.mockito.kotlin.any
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
-import net.corda.core.contracts.*
+import net.corda.core.contracts.Command
+import net.corda.core.contracts.CommandData
+import net.corda.core.contracts.Contract
+import net.corda.core.contracts.ContractAttachment
+import net.corda.core.contracts.ContractState
+import net.corda.core.contracts.PartyAndReference
+import net.corda.core.contracts.StateAndContract
+import net.corda.core.contracts.TypeOnlyCommandData
 import net.corda.core.crypto.SecureHash
 import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.CordaX500Name
@@ -17,32 +20,33 @@ import net.corda.core.serialization.deserialize
 import net.corda.core.serialization.serialize
 import net.corda.core.transactions.LedgerTransaction
 import net.corda.core.transactions.TransactionBuilder
-import net.corda.nodeapi.internal.cordapp.CordappLoader
+import net.corda.coretesting.internal.rigorousMock
 import net.corda.node.internal.cordapp.CordappProviderImpl
 import net.corda.node.internal.cordapp.JarScanningCordappLoader
+import net.corda.nodeapi.internal.cordapp.CordappLoader
 import net.corda.nodeapitests.internal.AttachmentsClassLoaderStaticContractTests.AttachmentDummyContract.Companion.ATTACHMENT_PROGRAM_ID
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.core.DUMMY_NOTARY_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.MockCordappConfigProvider
-import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.node.internal.cordappWithPackages
 import net.corda.testing.services.MockAttachmentStorage
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertEquals
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
+@ExtendWith(SerializationExtension::class)
 class AttachmentsClassLoaderStaticContractTests {
     private companion object {
         val DUMMY_NOTARY = TestIdentity(DUMMY_NOTARY_NAME, 20).party
         val MEGA_CORP = TestIdentity(CordaX500Name("MegaCorp", "London", "GB")).party
     }
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
 
     class AttachmentDummyContract : Contract {
         companion object {
@@ -85,17 +89,17 @@ class AttachmentsClassLoaderStaticContractTests {
         doReturn(attachmentStorage).whenever(it).attachments
         val attachment = rigorousMock<ContractAttachment>()
         doReturn(attachment).whenever(attachmentStorage).openAttachment(any())
-        doReturn(it.cordappProvider.getContractAttachmentID(AttachmentDummyContract.ATTACHMENT_PROGRAM_ID)).whenever(attachment).id
-        doReturn(setOf(AttachmentDummyContract.ATTACHMENT_PROGRAM_ID)).whenever(attachment).allContracts
+        doReturn(it.cordappProvider.getContractAttachmentID(ATTACHMENT_PROGRAM_ID)).whenever(attachment).id
+        doReturn(setOf(ATTACHMENT_PROGRAM_ID)).whenever(attachment).allContracts
         doReturn("app").whenever(attachment).uploader
         doReturn(emptyList<Party>()).whenever(attachment).signerKeys
         val contractAttachmentId = SecureHash.randomSHA256()
         doReturn(listOf(contractAttachmentId)).whenever(attachmentStorage)
-                .getLatestContractAttachments(AttachmentDummyContract.ATTACHMENT_PROGRAM_ID)
+                .getLatestContractAttachments(ATTACHMENT_PROGRAM_ID)
         doReturn(mock<IdentityService>()).whenever(it).identityService
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test serialization of WireTransaction with statically loaded contract`() {
         val tx = AttachmentDummyContract()
                 .generateInitial(MEGA_CORP.ref(0), 42, DUMMY_NOTARY)
@@ -107,7 +111,7 @@ class AttachmentsClassLoaderStaticContractTests {
         assertEquals(42, (copiedWireTransaction.outputs[0].data as AttachmentDummyContract.State).magicNumber)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verify that contract DummyContract is in classPath`() {
         val contractClass = Class.forName(ATTACHMENT_PROGRAM_ID)
         assertThat(contractClass.getDeclaredConstructor().newInstance()).isInstanceOf(Contract::class.java)

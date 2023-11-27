@@ -12,8 +12,8 @@ import net.corda.coretesting.internal.testThreadFactory
 import net.corda.testing.node.internal.RPCDriverDSL
 import net.corda.testing.node.internal.rpcDriver
 import org.apache.activemq.artemis.utils.collections.ConcurrentHashSet
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import rx.Observable
@@ -99,12 +99,12 @@ class RPCConcurrencyTests : AbstractRPCTest() {
     }
 
     private val pool = Executors.newFixedThreadPool(10, testThreadFactory())
-    @After
+    @AfterEach
     fun shutdown() {
         pool.shutdown()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `call multiple RPCs in parallel`() {
         rpcDriver {
             val proxy = testProxy()
@@ -140,7 +140,7 @@ class RPCConcurrencyTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `nested immediate observables sequence correctly`() {
         rpcDriver {
             // We construct a rose tree of immediate Observables and check that parent observations arrive before children.
@@ -164,7 +164,7 @@ class RPCConcurrencyTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `parallel nested observables`() {
         rpcDriver {
             val proxy = testProxy()

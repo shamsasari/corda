@@ -8,10 +8,10 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import java.util.concurrent.ExecutionException
 import kotlin.test.assertFailsWith
 
@@ -29,7 +29,7 @@ class MockNetworkSerializationWhitelistTest {
         @JvmField
         val badData = WhitelistData(DATA)
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun checkData() {
             assertNotCordaSerializable<WhitelistData>()
@@ -38,7 +38,7 @@ class MockNetworkSerializationWhitelistTest {
 
     private lateinit var mockNetwork: MockNetwork
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNetwork = MockNetwork(
             MockNetworkParameters(
@@ -48,12 +48,12 @@ class MockNetworkSerializationWhitelistTest {
         )
     }
 
-    @After
+    @AfterEach
     fun shutdown() {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test serialization whitelist with mock network`() {
         val node = mockNetwork.createPartyNode()
         val ex = assertFailsWith<ExecutionException> {

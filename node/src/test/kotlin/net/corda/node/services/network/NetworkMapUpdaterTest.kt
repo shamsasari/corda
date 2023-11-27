@@ -2,12 +2,6 @@ package net.corda.node.services.network
 
 import com.google.common.jimfs.Configuration.unix
 import com.google.common.jimfs.Jimfs
-import org.mockito.kotlin.any
-import org.mockito.kotlin.atLeast
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
 import net.corda.core.crypto.Crypto
 import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.generateKeyPair
@@ -47,7 +41,7 @@ import net.corda.nodeapi.internal.network.verifiedNetworkParametersCert
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.BOB_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.expect
 import net.corda.testing.core.expectEvents
 import net.corda.testing.core.sequence
@@ -56,12 +50,16 @@ import net.corda.testing.node.internal.network.NetworkMapServer
 import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.hamcrest.collection.IsIterableContainingInAnyOrder
-import org.junit.After
-import org.junit.Assert
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.atLeast
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
 import rx.schedulers.TestScheduler
 import java.io.IOException
 import java.net.URL
@@ -70,17 +68,15 @@ import java.nio.file.Path
 import java.security.KeyPair
 import java.time.Instant
 import java.time.temporal.ChronoUnit
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
+@ExtendWith(SerializationExtension::class)
 class NetworkMapUpdaterTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
     private val cacheExpiryMs = 1000
     private val privateNetUUID = UUID.randomUUID()
     private lateinit var fs: FileSystem
@@ -98,7 +94,7 @@ class NetworkMapUpdaterTest {
     private lateinit var networkMapClient: NetworkMapClient
     private var updater: NetworkMapUpdater? = null
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Register providers before creating Jimfs filesystem. JimFs creates an SSHD instance which
         // register BouncyCastle and EdDSA provider separately, which wrecks havoc.
@@ -116,7 +112,7 @@ class NetworkMapUpdaterTest {
                 VersionInfo(1, "TEST", "TEST", "TEST")).apply { start(setOf(DEV_ROOT_CA.certificate)) }
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         updater?.close()
         fs.close()
@@ -140,7 +136,7 @@ class NetworkMapUpdaterTest {
                 NetworkParameterAcceptanceSettings(autoAcceptNetworkParameters, excludedAutoAcceptNetworkParameters), null)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `process add node updates from network map, with additional node infos from dir`() {
         setUpdater()
         val (_, signedNodeInfo1) = createNodeInfoAndSigned("Info 1")
@@ -161,7 +157,7 @@ class NetworkMapUpdaterTest {
         //TODO: Remove sleep in unit test.
         Thread.sleep(2L * cacheExpiryMs)
 
-        Assert.assertThat(networkMapCache.allNodeHashes, IsIterableContainingInAnyOrder.containsInAnyOrder(signedNodeInfo1.raw.hash, signedNodeInfo2.raw.hash))
+        assertThat(networkMapCache.allNodeHashes).contains(signedNodeInfo1.raw.hash, signedNodeInfo2.raw.hash)
 
         assertThat(nodeReadyFuture).isDone()
 
@@ -173,16 +169,16 @@ class NetworkMapUpdaterTest {
         Thread.sleep(2L * cacheExpiryMs)
         //4 node info from network map, and 1 from file.
 
-        Assert.assertThat(networkMapCache.allNodeHashes, IsIterableContainingInAnyOrder.containsInAnyOrder(
+        assertThat(networkMapCache.allNodeHashes).contains(
                 signedNodeInfo1.raw.hash,
                 signedNodeInfo2.raw.hash,
                 signedNodeInfo3.raw.hash,
                 signedNodeInfo4.raw.hash,
                 fileNodeInfoAndSigned.signed.raw.hash
-        ))
+        )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `process remove node updates from network map, with additional node infos from dir`() {
         setUpdater()
         val (nodeInfo1, signedNodeInfo1) = createNodeInfoAndSigned("Info 1")
@@ -203,14 +199,13 @@ class NetworkMapUpdaterTest {
         //TODO: Remove sleep in unit test.
         Thread.sleep(2L * cacheExpiryMs)
 
-
-        Assert.assertThat(networkMapCache.allNodeHashes, IsIterableContainingInAnyOrder.containsInAnyOrder(
+        assertThat(networkMapCache.allNodeHashes).contains(
                 signedNodeInfo1.raw.hash,
                 signedNodeInfo2.raw.hash,
                 signedNodeInfo3.raw.hash,
                 signedNodeInfo4.raw.hash,
                 fileNodeInfoAndSigned.signed.raw.hash
-        ))
+        )
 
         //Test remove node.
         listOf(nodeInfo1, nodeInfo2, nodeInfo3, nodeInfo4).forEach {
@@ -228,7 +223,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsOnly(fileNodeInfoAndSigned.nodeInfo.serialize().hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `process remove, add, and update node from network map`() {
         setUpdater()
         val (nodeInfo1, signedNodeInfo1) = createNodeInfoAndSigned("Info 1")
@@ -248,10 +243,10 @@ class NetworkMapUpdaterTest {
         //TODO: Remove sleep in unit test.
         Thread.sleep(2L * cacheExpiryMs)
 
-        Assert.assertThat(networkMapCache.allNodeHashes, IsIterableContainingInAnyOrder.containsInAnyOrder(
+        assertThat(networkMapCache.allNodeHashes).contains(
                 signedNodeInfo1.raw.hash,
                 signedNodeInfo2.raw.hash
-        ))
+        )
 
         // remove one node, add another and update a third.
         server.removeNodeInfo(nodeInfo1)
@@ -271,7 +266,7 @@ class NetworkMapUpdaterTest {
         ))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `receive node infos from directory, without a network map`() {
         setUpdater(netMapClient = null)
         val fileNodeInfoAndSigned = createNodeInfoAndSigned("Info from file")
@@ -292,7 +287,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsOnly(fileNodeInfoAndSigned.nodeInfo.serialize().hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `receive node infos from directory after an error due to missing additional-node-infos directory`() {
         setUpdater(netMapClient = null)
         val fileNodeInfoAndSigned = createNodeInfoAndSigned("Info from file")
@@ -326,7 +321,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsOnly(fileNodeInfoAndSigned.nodeInfo.serialize().hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `emit new parameters update info on parameters update from network map`() {
         setUpdater()
         val paramsFeed = updater!!.trackParametersUpdate()
@@ -349,7 +344,7 @@ class NetworkMapUpdaterTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ack network parameters update`() {
         setUpdater()
         val newParameters = testNetworkParameters(epoch = 314, maxMessageSize = 10485761)
@@ -368,7 +363,7 @@ class NetworkMapUpdaterTest {
         assertEquals(newHash, server.latestParametersAccepted(ourKeyPair.public))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `network parameters auto-accepted when update only changes whitelist`() {
         setUpdater()
         val newParameters = testNetworkParameters(
@@ -386,7 +381,7 @@ class NetworkMapUpdaterTest {
         assertEquals(newHash, server.latestParametersAccepted(ourKeyPair.public))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `network parameters not auto-accepted when update only changes whitelist but parameter included in exclusion`() {
         setUpdater()
         val newParameters = testNetworkParameters(
@@ -400,7 +395,7 @@ class NetworkMapUpdaterTest {
         assert(!updateFile.exists()) { "network parameters should not be auto accepted" }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `network parameters not auto-accepted when update only changes whitelist but auto accept configured to be false`() {
         setUpdater()
         val newParameters = testNetworkParameters(
@@ -414,7 +409,7 @@ class NetworkMapUpdaterTest {
         assert(!updateFile.exists()) { "network parameters should not be auto accepted" }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `fetch nodes from private network`() {
         setUpdater(extraNetworkMapKeys = listOf(privateNetUUID))
         server.addNodesToPrivateNetwork(privateNetUUID, listOf(ALICE_NAME))
@@ -431,7 +426,7 @@ class NetworkMapUpdaterTest {
         assertEquals(aliceInfo, networkMapClient.getNodeInfo(aliceHash))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `update nodes is successful for network map supporting bulk operations but with only a few nodes requested`() {
         server.version = "2"
         setUpdater()
@@ -463,7 +458,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsExactlyInAnyOrder(nodeInfoHash1, nodeInfoHash2, nodeInfoHash3, nodeInfoHash4)
     }
 
-    @Test(timeout=300_000)
+    @Test
     @SuppressWarnings("SpreadOperator")
     fun `update nodes is successful for network map supporting bulk operations when high number of nodes is requested`() {
         server.version = "2"
@@ -481,7 +476,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsExactlyInAnyOrder(*(nodeInfoHashes.toTypedArray()))
     }
 
-    @Test(timeout=300_000)
+    @Test
     @SuppressWarnings("SpreadOperator")
     fun `update nodes is successful for network map not supporting bulk operations`() {
         setUpdater()
@@ -500,7 +495,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsExactlyInAnyOrder(*(nodeInfoHashes.toTypedArray()))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `remove node from filesystem deletes it from network map cache`() {
         setUpdater(netMapClient = null)
         val fileNodeInfoAndSigned1 = createNodeInfoAndSigned("Info from file 1")
@@ -523,7 +518,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsOnly(fileNodeInfoAndSigned2.signed.raw.hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `remove node info file, but node in network map server`() {
         setUpdater()
         val nodeInfoBuilder = TestNodeInfoBuilder()
@@ -557,7 +552,7 @@ class NetworkMapUpdaterTest {
     //Test fix for ENT-1882
     //This scenario can happen when signing of network map server is performed much longer after the node joined the network.
     //Network map will advertise hashes without that node.
-    @Test(timeout=300_000)
+    @Test
 	fun `not remove own node info when it is not in network map yet`() {
         val (myInfo, signedMyInfo) = createNodeInfoAndSigned("My node info")
         val (_, signedOtherInfo) = createNodeInfoAndSigned("Other info")
@@ -571,7 +566,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsExactlyInAnyOrder(signedMyInfo.raw.hash, signedOtherInfo.raw.hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `network map updater removes the correct node info after node info changes`() {
         setUpdater()
 
@@ -603,7 +598,7 @@ class NetworkMapUpdaterTest {
         assert(networkMapCache.allNodeHashes.first() == signedNodeInfo2.raw.hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `auto acceptance checks are correct`() {
         val packageOwnership = mapOf(
                 "com.example1" to generateKeyPair().public,

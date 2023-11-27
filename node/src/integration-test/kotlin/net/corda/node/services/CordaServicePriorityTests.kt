@@ -12,8 +12,8 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 /**
@@ -50,7 +50,7 @@ open class CordaServicePriorityTests {
         }
     }
 
-    @Before
+    @BeforeEach
     fun startUp() {
         eventsCaptured.clear()
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()),
@@ -68,7 +68,7 @@ open class CordaServicePriorityTests {
  */
 class CordaServiceDifferentPriorityTests : CordaServicePriorityTests() {
 
-    @Test(timeout=300_000)
+    @Test
     @Suppress("unused")
     fun `startup service events are delivered to Corda Services in priority order`() {
         // expect events to be delivered to these Corda Services in this order
@@ -105,7 +105,7 @@ class CordaServiceDifferentPriorityTests : CordaServicePriorityTests() {
  */
 class CordaServiceSamePriorityTests : CordaServicePriorityTests() {
 
-    @Test(timeout=300_000)
+    @Test
     @Suppress("unused")
     fun `startup service events are delivered to all equal-priority services, the ordering is not fixed`() {
         // expect the service events to be delivered to these Corda Services, but don;t care about the order.

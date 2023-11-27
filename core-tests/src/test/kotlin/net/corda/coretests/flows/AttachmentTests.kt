@@ -26,17 +26,17 @@ import net.corda.coretesting.internal.matchers.flow.willThrow
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.TestStartedNode
-import org.junit.AfterClass
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
-@Ignore("TODO JDK17: class cast exception")
+@Disabled("TODO JDK17: class cast exception")
 class AttachmentTests : WithMockNet {
     companion object {
         val classMockNet = InternalMockNetwork()
 
         @JvmStatic
-        @AfterClass
+        @AfterAll
         fun cleanUp() = classMockNet.stopNodes()
     }
 
@@ -47,7 +47,7 @@ class AttachmentTests : WithMockNet {
     private val bobNode = makeNode(BOB_NAME)
     private val alice = aliceNode.info.singleIdentity()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `download and store`() {
         // Insert an attachment into node zero's store directly.
         val id = aliceNode.importAttachment(fakeAttachment("file1.txt", "Some useful content"))
@@ -69,7 +69,7 @@ class AttachmentTests : WithMockNet {
                 willReturn(soleAttachment(attachment)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun missing() {
         val hash: SecureHash = SecureHash.randomSHA256()
 
@@ -84,7 +84,7 @@ class AttachmentTests : WithMockNet {
             FetchDataFlow.HashNotFound::requested,
             equalTo(expected))
 
-    @Test(timeout=300_000)
+    @Test
 	fun maliciousResponse() {
         // Make a node that doesn't do sanity checking at load time.
         val badAliceNode = makeBadNode(ALICE_NAME)

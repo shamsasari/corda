@@ -33,8 +33,8 @@ import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.bouncycastle.asn1.x509.GeneralName
 import org.bouncycastle.asn1.x509.GeneralSubtree
 import org.bouncycastle.asn1.x509.NameConstraints
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import javax.jms.JMSSecurityException
 import javax.security.auth.x500.X500Principal
@@ -52,13 +52,13 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         attacker.start(PEER_USER, PEER_USER)  // Login as a peer
     }
 
-    @Test(timeout=300_000)
-    @Ignore("TODO JDK17:Fixme - permission denied")
+    @Test
+    @Disabled("TODO JDK17:Fixme - permission denied")
 	fun `send message to RPC requests address`() {
         assertProducerQueueCreationAttackFails(RPCApi.RPC_SERVER_QUEUE_NAME)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `only the node running the broker can login using the special P2P node user`() {
         val attacker = clientTo(alice.node.configuration.p2pAddress)
         assertThatExceptionOfType(ActiveMQSecurityException::class.java).isThrownBy {
@@ -66,7 +66,7 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `login as the default cluster user`() {
         val attacker = clientTo(alice.node.configuration.p2pAddress)
         assertThatExceptionOfType(ActiveMQClusterSecurityException::class.java).isThrownBy {
@@ -74,7 +74,7 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `login without a username and password`() {
         val attacker = clientTo(alice.node.configuration.p2pAddress)
         assertThatExceptionOfType(ActiveMQSecurityException::class.java).isThrownBy {
@@ -82,7 +82,7 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `login to a non ssl port as a node user`() {
         val attacker = clientTo(alice.node.configuration.rpcOptions.address, sslConfiguration = null)
         assertThatExceptionOfType(ActiveMQSecurityException::class.java).isThrownBy {
@@ -90,7 +90,7 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `login to a non ssl port as a peer user`() {
         val attacker = clientTo(alice.node.configuration.rpcOptions.address, sslConfiguration = null)
         assertThatExceptionOfType(ActiveMQSecurityException::class.java).isThrownBy {
@@ -98,7 +98,7 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `login with invalid certificate chain`() {
         val certsDir = Files.createTempDirectory("certs")
         certsDir.createDirectories()
@@ -134,7 +134,7 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `login with invalid root`() {
         val legalName = CordaX500Name("MegaCorp", "London", "GB")
         val sslConfig = configureTestSSL(legalName)
@@ -148,7 +148,7 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `login with different roots`() {
         val (rootCa2, intermediateCa2) = createDevIntermediateCaCertPath(X500Principal("CN=Root2"))
         val (rootCa3, intermediateCa3) = createDevIntermediateCaCertPath(X500Principal("CN=Root3"))
@@ -184,7 +184,7 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         // assertProducerQueueCreationAttackFails(ArtemisMessagingComponent.NOTIFICATIONS_ADDRESS)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `send message on core protocol`() {
         val attacker = clientTo(alice.node.configuration.p2pAddress)
         attacker.start(PEER_USER, PEER_USER)
@@ -195,7 +195,7 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         }.withMessageContaining("CoreMessage").withMessageContaining("AMQPMessage")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `send AMQP message with correct validated user in header`() {
         val attacker = amqpClientTo(alice.node.configuration.p2pAddress)
         val session = attacker.start(PEER_USER, PEER_USER)
@@ -206,7 +206,7 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         producer.sendAndVerify(message)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `send AMQP message with incorrect validated user in header`() {
         val attacker = amqpClientTo(alice.node.configuration.p2pAddress)
         val session = attacker.start(PEER_USER, PEER_USER)
@@ -219,8 +219,8 @@ class MQSecurityAsNodeTest : P2PMQSecurityTest() {
         }.withMessageContaining("_AMQ_VALIDATED_USER mismatch")
     }
 
-    @Test(timeout = 300_000)
-    @Ignore("TODO JDK17: Fixme - intermittent")
+    @Test
+    @Disabled("TODO JDK17: Fixme - intermittent")
     fun `send AMQP message without header`() {
         val attacker = amqpClientTo(alice.node.configuration.p2pAddress)
         val session = attacker.start(PEER_USER, PEER_USER)

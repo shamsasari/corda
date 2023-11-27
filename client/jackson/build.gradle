@@ -6,7 +6,6 @@ apply plugin: 'corda.common-publishing'
 dependencies {
     implementation project(':core')
     implementation project(':serialization')
-
     // Jackson and its plugins: parsing to/from JSON and other textual formats.
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin:$jackson_kotlin_version") {
         exclude module: "jackson-databind"
@@ -16,10 +15,9 @@ dependencies {
     // This adds support for java.time types.
     implementation "com.fasterxml.jackson.datatype:jackson-datatype-jsr310:$jackson_version"
     implementation "com.google.guava:guava:$guava_version"
-
     // Bouncy castle support needed for X509 certificate manipulation
-    implementation "org.bouncycastle:bcprov-jdk18on:${bouncycastle_version}"
-    implementation "org.bouncycastle:bcpkix-jdk18on:${bouncycastle_version}"
+    implementation "org.bouncycastle:bcprov-jdk18on:$bouncycastle_version"
+    implementation "org.bouncycastle:bcpkix-jdk18on:$bouncycastle_version"
     implementation "org.slf4j:slf4j-api:$slf4j_version"
 
     testImplementation project(':finance:workflows')
@@ -28,16 +26,8 @@ dependencies {
     testImplementation project(':core-test-utils')
     testImplementation project(':test-utils')
     testImplementation project(path: ':core', configuration: 'testArtifacts')
-
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}"
-    testImplementation "junit:junit:$junit_version"
-
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junit_vintage_version}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_jupiter_version}"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junit_platform_version}"
-
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
-    
 }
 
 jar {

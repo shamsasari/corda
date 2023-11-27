@@ -2,7 +2,7 @@ package net.corda.serialization.internal.amqp
 
 import net.corda.core.serialization.ConstructorForDeserialization
 import net.corda.serialization.internal.amqp.testutils.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class SerializationPropertyOrdering {
@@ -17,7 +17,7 @@ class SerializationPropertyOrdering {
     // this test shows (not now it's fixed) a bug whereby deserializing objects
     // would break where refferenced objects were accessed before they'd been
     // processed thanks to the way the blob was deserialized
-    @Test(timeout=300_000)
+    @Test
 	fun refferenceOrdering() {
         data class Reffed(val c: String, val b: String, val a: String)
         data class User(val b: List<Reffed>, val a: List<Reffed>)
@@ -31,7 +31,7 @@ class SerializationPropertyOrdering {
         DeserializationInput(sf).deserialize(output.obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun randomOrder() {
         data class C(val c: Int, val d: Int, val b: Int, val e: Int, val a: Int)
 
@@ -61,7 +61,7 @@ class SerializationPropertyOrdering {
     }
 
     @Suppress("UNCHECKED_CAST")
-    @Test(timeout=300_000)
+    @Test
 	fun randomOrderSetter() {
         data class C(var c: Int, var d: Int, var b: Int, var e: Int, var a: Int) {
             // This will force the serialization engine to use getter / setter

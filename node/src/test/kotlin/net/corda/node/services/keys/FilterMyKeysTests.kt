@@ -3,19 +3,16 @@ package net.corda.node.services.keys
 import net.corda.core.crypto.Crypto
 import net.corda.core.identity.CordaX500Name
 import net.corda.testing.common.internal.testNetworkParameters
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 
+@ExtendWith(SerializationExtension::class)
 class FilterMyKeysTests {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Test(timeout=300_000)
+    @Test
 	fun test() {
         val name = CordaX500Name("Roger", "Office", "GB")
         val (_, services) = MockServices.makeTestDatabaseAndPersistentServices(

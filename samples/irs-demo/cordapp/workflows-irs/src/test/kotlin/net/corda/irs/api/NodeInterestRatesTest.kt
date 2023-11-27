@@ -18,11 +18,9 @@ import net.corda.testing.node.MockServices
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import net.corda.testing.node.createMockCordaService
 import net.corda.testing.node.makeTestIdentityService
-import org.junit.After
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.util.function.Predicate
 import kotlin.test.assertEquals
@@ -66,7 +64,7 @@ class NodeInterestRatesTest {
 
     private fun filterCmds(elem: Any): Boolean = elem is Command<*>
 
-    @Before
+    @BeforeEach
     fun setUp() {
         database = configureDatabase(makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null })
         database.transaction {
@@ -75,12 +73,12 @@ class NodeInterestRatesTest {
         }
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         database.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `query successfully`() {
         database.transaction {
             val q = NodeInterestRates.parseFixOf("LIBOR 2016-03-16 1M")
@@ -91,7 +89,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `query with one success and one missing`() {
         database.transaction {
             val q1 = NodeInterestRates.parseFixOf("LIBOR 2016-03-16 1M")
@@ -101,7 +99,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `query successfully with interpolated rate`() {
         database.transaction {
             val q = NodeInterestRates.parseFixOf("LIBOR 2016-03-16 5M")
@@ -112,7 +110,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `rate missing and unable to interpolate`() {
         database.transaction {
             val q = NodeInterestRates.parseFixOf("EURIBOR 2016-03-15 3M")
@@ -120,14 +118,14 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty query`() {
         database.transaction {
             assertFailsWith<IllegalArgumentException> { oracle.query(emptyList()) }
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `refuse to sign with no relevant commands`() {
         database.transaction {
             val tx = makeFullTx()
@@ -149,7 +147,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `sign successfully`() {
         database.transaction {
             val tx = makePartialTX()
@@ -163,7 +161,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `do not sign with unknown fix`() {
         database.transaction {
             val tx = makePartialTX()
@@ -177,7 +175,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `do not sign too many leaves`() {
         database.transaction {
             val tx = makePartialTX()
@@ -196,7 +194,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty partial transaction to sign`() {
         val tx = makeFullTx()
         val wtx = tx.toWireTransaction(services)

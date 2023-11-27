@@ -6,7 +6,7 @@ import net.corda.core.serialization.SerializationContext
 import net.corda.finance.contracts.asset.Cash
 import org.apache.qpid.proton.amqp.Symbol
 import org.apache.qpid.proton.codec.Data
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.lang.reflect.Type
 import kotlin.test.assertFailsWith
 import kotlin.test.assertSame
@@ -37,7 +37,7 @@ class CustomSerializerRegistryTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `a custom serializer cannot register to serialize a type already annotated with CordaSerializable`() {
         val serializerForEverything = TestCustomSerializer("a") { true }
         unit.register(serializerForEverything)
@@ -55,7 +55,7 @@ class CustomSerializerRegistryTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `exception types can have custom serializers`() {
         @CordaSerializable
         class MyCustomException : CordaException("Custom exception annotated with @CordaSerializable")
@@ -68,7 +68,7 @@ class CustomSerializerRegistryTests {
                 unit.find(MyCustomException::class.java))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `two custom serializers cannot register to serialize the same type`() {
         val weSerializeCash = TestCustomSerializer("a") { type -> type == Cash::class.java }
         val weMaliciouslySerializeCash = TestCustomSerializer("b") { type -> type == Cash::class.java }
@@ -83,7 +83,7 @@ class CustomSerializerRegistryTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `primitive types cannot have custom serializers`() {
         unit.register(TestCustomSerializer("a") { type -> type == Float::class.java })
 

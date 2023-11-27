@@ -14,9 +14,9 @@ import net.corda.testing.internal.InternalTestUtilsKt;
 import net.corda.testing.node.User;
 import net.corda.testing.node.internal.NodeBasedTest;
 import net.corda.testing.node.internal.TestCordappInternal;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
 import java.util.*;
@@ -63,7 +63,7 @@ public class CordaRPCJavaClientTest extends NodeBasedTest {
         rpcProxy = connection.getProxy();
     }
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() {
         super.setUp();
@@ -71,7 +71,7 @@ public class CordaRPCJavaClientTest extends NodeBasedTest {
         client = new CordaRPCClient(requireNonNull(node.getNode().getConfiguration().getRpcOptions().getAddress()));
     }
 
-    @After
+    @AfterEach
     public void done() throws IOException {
         connection.close();
     }

@@ -2,16 +2,20 @@ package net.corda.coretests.flows;
 
 import co.paralleluniverse.fibers.Suspendable;
 import com.google.common.primitives.Primitives;
-import net.corda.core.flows.*;
+import net.corda.core.flows.FlowException;
+import net.corda.core.flows.FlowLogic;
+import net.corda.core.flows.FlowSession;
+import net.corda.core.flows.InitiatedBy;
+import net.corda.core.flows.InitiatingFlow;
 import net.corda.core.identity.Party;
 import net.corda.testing.core.TestConstants;
 import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.MockNetworkParameters;
 import net.corda.testing.node.StartedMockNode;
-import org.junit.After;
-import org.junit.Before;
-import org.junit.Ignore;
-import org.junit.Test;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Disabled;
+import org.junit.jupiter.api.Test;
 
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Future;
@@ -20,9 +24,9 @@ import static java.util.Collections.singletonList;
 import static net.corda.testing.core.TestUtils.singleIdentity;
 import static net.corda.testing.node.internal.InternalTestUtilsKt.enclosedCordapp;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.junit.Assert.fail;
+import static org.junit.jupiter.api.Assertions.fail;
 
-@Ignore("TODO JDK17: class cast exception")
+@Disabled("TODO JDK17: class cast exception")
 public class FlowsInJavaTest {
     private final MockNetwork mockNet = new MockNetwork(
             new MockNetworkParameters().withCordappsForAllNodes(singletonList(enclosedCordapp(this)))
@@ -31,14 +35,14 @@ public class FlowsInJavaTest {
     private StartedMockNode bobNode;
     private Party bob;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         aliceNode = mockNet.createPartyNode(TestConstants.ALICE_NAME);
         bobNode = mockNet.createPartyNode(TestConstants.BOB_NAME);
         bob = singleIdentity(bobNode.getInfo());
     }
 
-    @After
+    @AfterEach
     public void cleanUp() {
         mockNet.stopNodes();
     }

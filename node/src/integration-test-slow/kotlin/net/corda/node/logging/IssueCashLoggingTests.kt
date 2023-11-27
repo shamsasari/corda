@@ -14,12 +14,12 @@ import net.corda.testing.driver.driver
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 
 class IssueCashLoggingTests {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issuing and sending cash as payment do not result in duplicate insertion warnings`() {
         val user = User("mark", "dadada", setOf(all()))
         driver(DriverParameters(cordappsForAllNodes = FINANCE_CORDAPPS)) {

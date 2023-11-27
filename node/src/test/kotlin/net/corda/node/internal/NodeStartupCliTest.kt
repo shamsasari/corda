@@ -5,9 +5,9 @@ import net.corda.core.internal.div
 import net.corda.core.internal.exists
 import net.corda.nodeapi.internal.config.UnknownConfigKeysPolicy
 import org.assertj.core.api.Assertions
-import org.junit.BeforeClass
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import picocli.CommandLine
@@ -24,7 +24,7 @@ class NodeStartupCliTest {
         private lateinit var workingDirectory: Path
         private lateinit var rootDirectory: Path
         private var customNodeConf = "custom_node.conf"
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun initDirectories() {
             workingDirectory = Paths.get(".").normalize().toAbsolutePath()
@@ -32,7 +32,7 @@ class NodeStartupCliTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `no command line arguments`() {
         CommandLine.populateCommand(startup)
         Assertions.assertThat(startup.cmdLineOptions.baseDirectory).isEqualTo(workingDirectory)
@@ -50,7 +50,7 @@ class NodeStartupCliTest {
         Assertions.assertThat(startup.cmdLineOptions.networkRootTrustStorePathParameter).isEqualTo(null)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `--base-directory`() {
         CommandLine.populateCommand(startup, CommonCliConstants.BASE_DIR, (workingDirectory / "another-base-dir").toString())
         Assertions.assertThat(startup.cmdLineOptions.baseDirectory).isEqualTo(workingDirectory / "another-base-dir")
@@ -58,20 +58,20 @@ class NodeStartupCliTest {
         Assertions.assertThat(startup.cmdLineOptions.networkRootTrustStorePathParameter).isEqualTo(null)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `--nodeconf using relative path will be changed to absolute path`() {
         CommandLine.populateCommand(startup, CommonCliConstants.CONFIG_FILE, customNodeConf)
         Assertions.assertThat(startup.cmdLineOptions.configFile).isEqualTo(workingDirectory / customNodeConf)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `--nodeconf using absolute path will not be changed`() {
         CommandLine.populateCommand(startup, CommonCliConstants.CONFIG_FILE, (rootDirectory / customNodeConf).toString())
         Assertions.assertThat(startup.cmdLineOptions.configFile).isEqualTo(rootDirectory / customNodeConf)
     }
 
     @Test(timeout=3_000)
-    @Ignore
+    @Disabled
     fun `test logs are written to correct location correctly if verbose flag set`() {
         val node = NodeStartupCli()
         val dir = Files.createTempDirectory("verboseLoggingTest")

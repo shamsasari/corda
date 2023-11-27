@@ -16,12 +16,12 @@ import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.singleIdentity
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class MessagingSendAllTest {
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow can exchange messages with multiple sessions to the same party in parallel`() {
         driver(DriverParameters(startNodesInProcess = true)) {
             val (alice, bob) = listOf(

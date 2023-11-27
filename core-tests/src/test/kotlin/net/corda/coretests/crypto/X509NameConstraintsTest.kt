@@ -11,7 +11,7 @@ import org.bouncycastle.asn1.x509.GeneralName
 import org.bouncycastle.asn1.x509.GeneralSubtree
 import org.bouncycastle.asn1.x509.NameConstraints
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.security.UnrecoverableKeyException
 import java.security.cert.CertPathValidator
 import java.security.cert.CertPathValidatorException
@@ -57,7 +57,7 @@ class X509NameConstraintsTest {
         return Pair(keyStore, trustStore)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `illegal common name`() {
         val acceptableNames = listOf("CN=Bank A TLS, O=Bank A", "CN=Bank A")
                 .map { GeneralSubtree(GeneralName(X500Name(it))) }.toTypedArray()
@@ -92,7 +92,7 @@ class X509NameConstraintsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `x500 name with correct cn and extra attribute`() {
         // Do not use Security.addProvider(BouncyCastleProvider()) to avoid EdDSA signature disruption in other tests.
         Crypto.findProvider(BouncyCastleProvider.PROVIDER_NAME)
@@ -137,7 +137,7 @@ class X509NameConstraintsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test private key retrieval`() {
         val acceptableNames = listOf("CN=Bank A TLS, UID=", "O=Bank A")
                 .map { GeneralSubtree(GeneralName(X500Name(it))) }.toTypedArray()

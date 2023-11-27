@@ -8,10 +8,10 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import java.util.concurrent.ExecutionException
 import kotlin.test.assertFailsWith
 
@@ -23,7 +23,7 @@ class MockNetworkCustomSerializerTest {
         @JvmField
         val currantsy = Currantsy(CURRANTS)
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun checkData() {
             assertNotCordaSerializable<Currantsy>()
@@ -32,7 +32,7 @@ class MockNetworkCustomSerializerTest {
 
     private lateinit var mockNetwork: MockNetwork
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNetwork = MockNetwork(
             MockNetworkParameters(
@@ -45,12 +45,12 @@ class MockNetworkCustomSerializerTest {
         )
     }
 
-    @After
+    @AfterEach
     fun shutdown() {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow with custom serializer mock network`() {
         val a = mockNetwork.createPartyNode()
         val ex = assertFailsWith<ExecutionException> {

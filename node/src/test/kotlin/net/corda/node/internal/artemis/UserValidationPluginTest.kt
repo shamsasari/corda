@@ -16,7 +16,7 @@ import org.apache.activemq.artemis.core.server.ServerSession
 import org.apache.activemq.artemis.protocol.amqp.broker.AMQPMessage
 import org.apache.activemq.artemis.protocol.amqp.broker.AMQPStandardMessage
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class UserValidationPluginTest {
     private val plugin = UserValidationPlugin()
@@ -34,18 +34,18 @@ class UserValidationPluginTest {
         doReturn(ALICE_NAME.toString()).whenever(it).validatedUser
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `accept AMQP message without user`() {
         plugin.beforeSend(session, rigorousMock(), amqpMessage, direct = false, noAutoCreateQueue = false)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `accept AMQP message with user`() {
         coreMessage.validatedUserID = ALICE_NAME.toString()
         plugin.beforeSend(session, rigorousMock(), amqpMessage, direct = false, noAutoCreateQueue = false)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reject AMQP message with different user`() {
         coreMessage.validatedUserID = BOB_NAME.toString()
         val localAmqpMessage = amqpMessage
@@ -54,7 +54,7 @@ class UserValidationPluginTest {
         }.withMessageContaining(Message.HDR_VALIDATED_USER.toString())
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `accept AMQP message with different user on internal session`() {
         val internalSession = rigorousMock<ServerSession>().also {
             doReturn(ArtemisMessagingComponent.NODE_P2P_USER).whenever(it).username
@@ -64,14 +64,14 @@ class UserValidationPluginTest {
         plugin.beforeSend(internalSession, rigorousMock(), amqpMessage, direct = false, noAutoCreateQueue = false)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reject core message`() {
         Assertions.assertThatExceptionOfType(ActiveMQSecurityException::class.java).isThrownBy {
             plugin.beforeSend(session, rigorousMock(), coreMessage, direct = false, noAutoCreateQueue = false)
         }.withMessageContaining("message type")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reject message with exception`() {
         val messageWithException = rigorousMock<AMQPMessage>().also {
             doThrow(IllegalStateException("My exception")).whenever(it).getStringProperty(any<SimpleString>())
@@ -82,7 +82,7 @@ class UserValidationPluginTest {
         }.withMessageContaining("Message validation failed")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reject message with security exception`() {
         val messageWithException = object : AMQPStandardMessage(0, ByteArray(0), null) {
             override fun getApplicationPropertiesMap(createIfAbsent: Boolean): MutableMap<String, Any> {

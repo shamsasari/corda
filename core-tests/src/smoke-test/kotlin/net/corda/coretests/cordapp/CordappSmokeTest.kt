@@ -25,9 +25,9 @@ import net.corda.smoketesting.NodeConfig
 import net.corda.smoketesting.NodeProcess
 import net.corda.smoketesting.NodeProcess.Companion.CORDAPPS_DIR_NAME
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
 import java.security.KeyPair
@@ -63,17 +63,17 @@ class CordappSmokeTest {
 
     private lateinit var notary: NodeProcess
 
-    @Before
+    @BeforeEach
     fun setUp() {
         notary = factory.create(notaryConfig)
     }
 
-    @After
+    @AfterEach
     fun done() {
         notary.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FlowContent appName returns the filename of the CorDapp jar`() {
         val baseDir = factory.baseDirectory(aliceConfig)
         val cordappsDir = (baseDir / CORDAPPS_DIR_NAME).createDirectories()
@@ -102,7 +102,7 @@ class CordappSmokeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty cordapps directory`() {
         (factory.baseDirectory(aliceConfig) / CORDAPPS_DIR_NAME).createDirectories()
         factory.create(aliceConfig).close()

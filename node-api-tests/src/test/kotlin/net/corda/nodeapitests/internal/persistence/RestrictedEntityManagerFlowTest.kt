@@ -12,8 +12,8 @@ import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 class RestrictedEntityManagerFlowTest {
@@ -53,12 +53,12 @@ class RestrictedEntityManagerFlowTest {
         }
     }
 
-    @After
+    @AfterEach
     fun done() {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `restricted connection is returned from ServiceHub#withEntityManager`() {
         mockNetwork = MockNetwork(MockNetworkParameters(listOf(enclosedCordapp().copy(targetPlatformVersion = PLATFORM_VERSION))))
         aliceNode = mockNetwork.createPartyNode(CordaX500Name("Alice", "London", "GB"))
@@ -66,7 +66,7 @@ class RestrictedEntityManagerFlowTest {
         mockNetwork.runNetwork()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `restricted methods are blocked when the target platform is the current corda version`() {
         mockNetwork = MockNetwork(MockNetworkParameters(listOf(enclosedCordapp().copy(targetPlatformVersion = PLATFORM_VERSION))))
         aliceNode = mockNetwork.createPartyNode(CordaX500Name("Alice", "London", "GB"))
@@ -81,7 +81,7 @@ class RestrictedEntityManagerFlowTest {
         mockNetwork.runNetwork()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `restricted methods are blocked when the target platform is 7`() {
         mockNetwork = MockNetwork(MockNetworkParameters(listOf(enclosedCordapp().copy(targetPlatformVersion = 7))))
         aliceNode = mockNetwork.createPartyNode(CordaX500Name("Alice", "London", "GB"))
@@ -96,7 +96,7 @@ class RestrictedEntityManagerFlowTest {
         mockNetwork.runNetwork()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `restricted methods are not blocked when the target platform is 6`() {
         mockNetwork = MockNetwork(MockNetworkParameters(listOf(enclosedCordapp().copy(targetPlatformVersion = 6))))
         aliceNode = mockNetwork.createPartyNode(CordaX500Name("Alice", "London", "GB"))

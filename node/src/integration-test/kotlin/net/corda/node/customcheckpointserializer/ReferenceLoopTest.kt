@@ -1,7 +1,5 @@
 package net.corda.node.customcheckpointserializer
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import net.corda.core.serialization.CheckpointCustomSerializer
 import net.corda.core.serialization.EncodingWhitelist
 import net.corda.core.serialization.internal.CheckpointSerializationContext
@@ -11,13 +9,17 @@ import net.corda.coretesting.internal.rigorousMock
 import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.CheckpointSerializationContextImpl
 import net.corda.serialization.internal.CordaSerializationEncoding
-import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule
-import org.junit.Assert
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.internal.CheckpointSerializationExtension
+import org.junit.jupiter.api.Assertions.assertSame
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
+import kotlin.test.assertEquals
 
+@ExtendWith(CheckpointSerializationExtension::class)
 @RunWith(Parameterized::class)
 class ReferenceLoopTest(private val compression: CordaSerializationEncoding?) {
     companion object {
@@ -26,8 +28,6 @@ class ReferenceLoopTest(private val compression: CordaSerializationEncoding?) {
         fun compression() = arrayOf<CordaSerializationEncoding?>(null) + CordaSerializationEncoding.values()
     }
 
-    @get:Rule
-    val serializationRule = CheckpointSerializationEnvironmentRule(inheritable = true)
     private val context: CheckpointSerializationContext = CheckpointSerializationContextImpl(
             deserializationClassLoader = javaClass.classLoader,
             whitelist = AllWhitelist,
@@ -41,15 +41,15 @@ class ReferenceLoopTest(private val compression: CordaSerializationEncoding?) {
             },
             checkpointCustomSerializers = listOf(PersonSerializer()))
 
-    @Test(timeout=300_000)
+    @Test
     fun `custom checkpoint serialization with reference loop`() {
         val person = Person("Test name")
 
         val result = person.checkpointSerialize(context).checkpointDeserialize(context)
 
-        Assert.assertEquals("Test name", result.name)
-        Assert.assertEquals("Test name", result.bestFriend.name)
-        Assert.assertSame(result, result.bestFriend)
+        assertEquals("Test name", result.name)
+        assertEquals("Test name", result.bestFriend.name)
+        assertSame(result, result.bestFriend)
     }
 
     /**

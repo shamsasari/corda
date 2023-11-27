@@ -12,13 +12,13 @@ import net.corda.serialization.internal.amqp.SerializerFactory;
 import net.corda.serialization.internal.amqp.testutils.TestSerializationContext;
 import net.corda.serialization.internal.model.RemoteTypeInformation;
 import net.corda.serialization.internal.model.TypeIdentifier;
-import net.corda.testing.core.SerializationEnvironmentRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import net.corda.testing.core.SerializationExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import static net.corda.serialization.internal.amqp.testutils.AMQPTestUtilsKt.testDefaultFactoryNoEvolution;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class JavaCalculatedValuesToClassCarpenterTest extends AmqpCarpenterBase {
     public JavaCalculatedValuesToClassCarpenterTest() {
@@ -52,13 +52,13 @@ public class JavaCalculatedValuesToClassCarpenterTest extends AmqpCarpenterBase 
         }
     }
 
-    @Rule
-    public final SerializationEnvironmentRule serializationEnvironmentRule = new SerializationEnvironmentRule();
+    @RegisterExtension
+    public final SerializationExtension serializationExtension = new SerializationExtension();
     private SerializationContext context;
 
-    @Before
+    @BeforeEach
     public void initSerialization() {
-        SerializationFactory factory = serializationEnvironmentRule.getSerializationFactory();
+        SerializationFactory factory = serializationExtension.getSerializationFactory();
         context = factory.getDefaultContext();
     }
 

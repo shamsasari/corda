@@ -7,7 +7,7 @@ import net.corda.core.cordapp.Cordapp
 import net.corda.core.cordapp.CordappContext
 import net.corda.core.internal.PLATFORM_VERSION
 import net.corda.core.node.ServiceHub
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.persistence.EntityManager
 import javax.persistence.EntityTransaction
 import javax.persistence.LockModeType
@@ -29,7 +29,7 @@ class RestrictedEntityManagerTest {
         restrictedEntityManager.close()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `clear with target platform version of current corda version throws unsupported exception`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(PLATFORM_VERSION)
         restrictedEntityManager.clear()
@@ -41,7 +41,7 @@ class RestrictedEntityManagerTest {
         restrictedEntityManager.metamodel
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `getTransaction with target platform version of current corda version executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(PLATFORM_VERSION)
         whenever(entitymanager.transaction).doReturn(transaction)
@@ -79,7 +79,7 @@ class RestrictedEntityManagerTest {
         restrictedEntityManager.close()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `clear with target platform version of 7 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(7)
         restrictedEntityManager.clear()
@@ -91,7 +91,7 @@ class RestrictedEntityManagerTest {
         restrictedEntityManager.metamodel
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `getTransaction with target platform version of 7 throws unsupported exception`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(7)
         whenever(entitymanager.transaction).doReturn(transaction)
@@ -123,51 +123,51 @@ class RestrictedEntityManagerTest {
         restrictedEntityManager.setProperty("number", 12)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `close with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedEntityManager.close()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `clear with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedEntityManager.clear()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `getMetaModel with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedEntityManager.metamodel
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `getTransaction with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         whenever(entitymanager.transaction).doReturn(transaction)
         assertTrue(restrictedEntityManager.transaction is RestrictedEntityTransaction)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `joinTransaction with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedEntityManager.joinTransaction()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `lock with two parameters with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedEntityManager.lock(Object(), LockModeType.OPTIMISTIC)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `lock with three parameters with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         val map: MutableMap<String, Any> = mutableMapOf()
         restrictedEntityManager.lock(Object(), LockModeType.OPTIMISTIC, map)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `setProperty with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedEntityManager.setProperty("number", 12)

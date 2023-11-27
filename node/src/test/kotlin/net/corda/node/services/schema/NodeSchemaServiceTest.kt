@@ -19,8 +19,8 @@ import net.corda.testing.node.internal.cordappsForPackages
 import net.corda.testing.node.internal.enclosedCordapp
 import org.hibernate.annotations.Cascade
 import org.hibernate.annotations.CascadeType
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import javax.persistence.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -29,7 +29,7 @@ class NodeSchemaServiceTest {
     /**
      * Note: this test requires explicitly registering custom contract schemas with a StartedMockNode
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `registering custom schemas for testing with MockNode`() {
         val mockNet = InternalMockNetwork(cordappsForAllNodes = cordappsForPackages(DummyLinearStateSchemaV1::class.packageName))
         val mockNode = mockNet.createNode()
@@ -38,7 +38,7 @@ class NodeSchemaServiceTest {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check node runs with minimal core schema set`() {
         val mockNet = InternalMockNetwork()
         val mockNode = mockNet.createNode()
@@ -49,7 +49,7 @@ class NodeSchemaServiceTest {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check node runs inclusive of notary node schema set`() {
         val mockNet = InternalMockNetwork()
         val mockNotaryNode = mockNet.notaryNodes.first()
@@ -63,7 +63,7 @@ class NodeSchemaServiceTest {
     /**
      * Note: this test verifies auto-scanning to register identified [MappedSchema] schemas.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `auto scanning of custom schemas for testing with Driver`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val result = defaultNotaryNode.getOrThrow().rpc.startFlow(::MappedSchemasFlow)
@@ -72,7 +72,7 @@ class NodeSchemaServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `custom schemas are loaded eagerly`() {
         val expected = setOf("PARENTS", "CHILDREN")
         val tables = driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
@@ -83,8 +83,8 @@ class NodeSchemaServiceTest {
         assertEquals<Set<*>>(expected, tables.toMutableSet().apply { retainAll(expected) })
     }
 
-    @Ignore
-    @Test(timeout=300_000)
+    @Disabled
+    @Test
 	fun `check node runs with minimal core schema set using driverDSL`() {
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList(), cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val node = startNode().getOrThrow()
@@ -96,7 +96,7 @@ class NodeSchemaServiceTest {
 
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check node runs inclusive of notary node schema set using driverDSL`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val notary = defaultNotaryNode.getOrThrow()

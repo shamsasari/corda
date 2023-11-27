@@ -8,13 +8,13 @@ import net.corda.serialization.internal.amqp.testutils.testDefaultFactory
 import net.corda.serialization.internal.carpenter.ClassCarpenterImpl
 import org.hamcrest.Matchers.equalTo
 import org.hamcrest.Matchers.`is`
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import java.util.Optional
 
 class OptionalSerializationTests {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `java optionals should serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())

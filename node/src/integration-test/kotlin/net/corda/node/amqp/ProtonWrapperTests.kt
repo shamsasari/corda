@@ -1,7 +1,5 @@
 package net.corda.node.amqp
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import io.netty.channel.EventLoopGroup
 import io.netty.channel.nio.NioEventLoopGroup
 import io.netty.util.concurrent.DefaultThreadFactory
@@ -41,10 +39,12 @@ import org.apache.activemq.artemis.api.core.QueueConfiguration
 import org.apache.activemq.artemis.api.core.RoutingType
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Assert.assertArrayEquals
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
+import java.nio.file.Path
 import java.security.cert.X509Certificate
 import java.util.concurrent.TimeUnit
 import javax.net.ssl.KeyManagerFactory
@@ -60,9 +60,8 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class ProtonWrapperTests {
-    @Rule
-    @JvmField
-    val temporaryFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var temporaryFolder: Path
 
     companion object {
         private val log = contextLogger()
@@ -75,7 +74,7 @@ class ProtonWrapperTests {
 
     private abstract class AbstractNodeConfiguration : NodeConfiguration
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Simple AMPQ Client to Server`() {
         val amqpServer = createServer(serverPort)
         amqpServer.use {
@@ -108,7 +107,7 @@ class ProtonWrapperTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `AMPQ Client fails to connect when crl soft fail check is disabled`() {
         val amqpServer = createServer(serverPort, maxMessageSize = MAX_MESSAGE_SIZE, crlCheckSoftFail = false)
         amqpServer.use {
@@ -123,7 +122,7 @@ class ProtonWrapperTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `AMPQ Client refuses to connect to unexpected server`() {
         val amqpServer = createServer(serverPort, CordaX500Name("Rogue 1", "London", "GB"))
         amqpServer.use {
@@ -143,9 +142,9 @@ class ProtonWrapperTests {
         trustStore.get(true)[X509Utilities.CORDA_ROOT_CA] = rootCert
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Test AMQP Client with invalid root certificate`() {
-        val certificatesDirectory = temporaryFolder.root.toPath()
+        val certificatesDirectory = temporaryFolder
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory, "serverstorepass")
         val sslConfig = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory, keyStorePassword = "serverstorepass")
 
@@ -214,7 +213,7 @@ class ProtonWrapperTests {
     }
 
     @Suppress("TooGenericExceptionCaught") // Too generic exception thrown!
-    @Test(timeout=300_000)
+    @Test
     fun `AMPQClient that fails to handshake with a server will retry the server`() {
         /*
             This test has been modelled on `Test AMQP Client with invalid root certificate`, above.
@@ -222,7 +221,7 @@ class ProtonWrapperTests {
             The test allows the AMQPClient to retry the connection (which it should do).
          */
 
-        val certificatesDirectory = temporaryFolder.root.toPath()
+        val certificatesDirectory = temporaryFolder
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory, "serverstorepass")
         val sslConfig = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory, keyStorePassword = "serverstorepass")
 
@@ -311,7 +310,7 @@ class ProtonWrapperTests {
     }
 
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Client Failover for multiple IP`() {
         val amqpServer = createServer(serverPort)
         val amqpServer2 = createServer(serverPort2)
@@ -365,7 +364,7 @@ class ProtonWrapperTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Send a message from AMQP to Artemis inbox`() {
         val (server, artemisClient) = createArtemisServerAndClient()
         val amqpClient = createClient()
@@ -392,7 +391,7 @@ class ProtonWrapperTests {
         server.stop()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Send a message larger then maxMessageSize from AMQP to Artemis inbox`() {
         val maxUserPayloadSize = 100_000
         val maxMessageSizeWithHeaders = maxUserPayloadSize + 512 // Adding a small "shim" to account for headers
@@ -441,7 +440,7 @@ class ProtonWrapperTests {
         server.stop()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `shared AMQPClient threadpool tests`() {
         val amqpServer = createServer(serverPort)
         amqpServer.use {
@@ -499,7 +498,7 @@ class ProtonWrapperTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Message sent from AMQP to non-existent Artemis inbox is marked as acknowledged to avoid infinite retries`() {
         val (server, artemisClient) = createArtemisServerAndClient()
         val amqpClient = createClient()
@@ -529,7 +528,7 @@ class ProtonWrapperTests {
     }
 
     private fun createArtemisServerAndClient(maxMessageSize: Int = MAX_MESSAGE_SIZE): Pair<ArtemisMessagingServer, ArtemisMessagingClient> {
-        val baseDirectory = temporaryFolder.root.toPath() / "artemis"
+        val baseDirectory = temporaryFolder / "artemis"
         val certificatesDirectory = baseDirectory / "certificates"
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory)
@@ -558,7 +557,7 @@ class ProtonWrapperTests {
                                      NetworkHostAndPort("localhost", serverPort),
                                      NetworkHostAndPort("localhost", serverPort2),
                                      NetworkHostAndPort("localhost", artemisPort))): AMQPClient {
-        val baseDirectory = temporaryFolder.root.toPath() / "client"
+        val baseDirectory = temporaryFolder / "client"
         val certificatesDirectory = baseDirectory / "certificates"
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory)
@@ -587,7 +586,7 @@ class ProtonWrapperTests {
     }
 
     private fun createSharedThreadsClient(sharedEventGroup: EventLoopGroup, id: Int, maxMessageSize: Int = MAX_MESSAGE_SIZE): AMQPClient {
-        val baseDirectory = temporaryFolder.root.toPath() / "client_%$id"
+        val baseDirectory = temporaryFolder / "client_%$id"
         val certificatesDirectory = baseDirectory / "certificates"
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory)
@@ -620,7 +619,7 @@ class ProtonWrapperTests {
                              name: CordaX500Name = ALICE_NAME,
                              maxMessageSize: Int = MAX_MESSAGE_SIZE,
                              crlCheckSoftFail: Boolean = true): AMQPServer {
-        val baseDirectory = temporaryFolder.root.toPath() / "server"
+        val baseDirectory = temporaryFolder / "server"
         val certificatesDirectory = baseDirectory / "certificates"
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory)

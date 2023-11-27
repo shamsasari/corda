@@ -10,7 +10,7 @@ dependencies {
     implementation "co.paralleluniverse:quasar-core:$quasar_version"
 
     testImplementation project(":core-test-utils")
-    testImplementation "junit:junit:$junit_version"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
 }
 
 cordapp {

@@ -1,13 +1,13 @@
 package net.corda.serialization.internal.carpenter
 
 import net.corda.serialization.internal.AllWhitelist
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class EnumClassTests : AmqpCarpenterBase(AllWhitelist) {
 
-    @Test(timeout=300_000)
+    @Test
 	fun oneValue() {
         val enumConstants = mapOf("A" to EnumField())
 
@@ -16,7 +16,7 @@ class EnumClassTests : AmqpCarpenterBase(AllWhitelist) {
         assertTrue(cc.build(schema).isEnum)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun oneValueInstantiate() {
         val enumConstants = mapOf("A" to EnumField())
         val schema = EnumSchema("gen.enum", enumConstants)
@@ -29,7 +29,7 @@ class EnumClassTests : AmqpCarpenterBase(AllWhitelist) {
         assertEquals("A", (clazz.enumConstants.first() as Enum<*>).name)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun twoValuesInstantiate() {
         val enumConstants = mapOf("left" to EnumField(), "right" to EnumField())
         val schema = EnumSchema("gen.enum", enumConstants)
@@ -47,7 +47,7 @@ class EnumClassTests : AmqpCarpenterBase(AllWhitelist) {
         assertEquals("right", right.name)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun manyValues() {
         val enumConstants = listOf("AAA", "BBB", "CCC", "DDD", "EEE", "FFF",
                 "GGG", "HHH", "III", "JJJ").associateBy({ it }, { EnumField() })
@@ -65,7 +65,7 @@ class EnumClassTests : AmqpCarpenterBase(AllWhitelist) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun assignment() {
         val enumConstants = listOf("AAA", "BBB", "CCC", "DDD", "EEE", "FFF").associateBy({ it }, { EnumField() })
         val schema = EnumSchema("gen.enum", enumConstants)
@@ -83,7 +83,7 @@ class EnumClassTests : AmqpCarpenterBase(AllWhitelist) {
 
     // if anything goes wrong with this test it's going to end up throwing *some*
     // exception, hence the lack of asserts
-    @Test(timeout=300_000)
+    @Test
 	fun assignAndTest() {
         val cc2 = ClassCarpenterImpl(whitelist = AllWhitelist)
 

@@ -2,17 +2,15 @@ package net.corda.finance.contracts.universal
 
 import net.corda.finance.contracts.FixOf
 import net.corda.finance.contracts.Tenor
-import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.SerializationExtension
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
 import java.time.LocalDate
 
+@ExtendWith(SerializationExtension::class)
 class Caplet {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
     val TEST_TX_TIME_1: Instant get() = Instant.parse("2017-09-02T12:00:00.00Z")
 
     val tradeDate: LocalDate = LocalDate.of(2016, 9, 1)
@@ -51,7 +49,7 @@ class Caplet {
     val stateFixed = UniversalContract.State(listOf(DUMMY_NOTARY), contractFixed)
 
     val stateFinal = UniversalContract.State(listOf(DUMMY_NOTARY), contractFinal)
-    @Test(timeout=300_000)
+    @Test
 	fun issue() {
         transaction {
             output(UNIVERSAL_PROGRAM_ID, stateStart)
@@ -66,7 +64,7 @@ class Caplet {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun execute() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateFixed)
@@ -82,7 +80,7 @@ class Caplet {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun fixing() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateStart)
@@ -121,7 +119,7 @@ class Caplet {
         }
     }
 
-    @Test(timeout=300_000) @Ignore
+    @Test @Disabled
     fun `pretty print`() {
         println ( prettyPrint(contract) )
 

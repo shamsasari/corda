@@ -41,12 +41,12 @@ import org.apache.activemq.artemis.api.core.QueueConfiguration
 import org.apache.activemq.artemis.api.core.RoutingType
 import org.assertj.core.api.Assertions.assertThat
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.Closeable
+import java.nio.file.Path
 import java.security.cert.X509Certificate
 import java.time.Duration
 import java.util.concurrent.BlockingQueue
@@ -56,9 +56,8 @@ import java.util.concurrent.atomic.AtomicInteger
 import java.util.stream.IntStream
 
 abstract class AbstractServerRevocationTest {
-    @Rule
-    @JvmField
-    val temporaryFolder = TemporaryFolder()
+    @TempDir
+    protected lateinit var temporaryFolder: Path
 
     private val portAllocation = incrementalPortAllocation()
     protected val serverPort = portAllocation.nextPort()
@@ -85,7 +84,7 @@ abstract class AbstractServerRevocationTest {
         }
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Do not use Security.addProvider(BouncyCastleProvider()) to avoid EdDSA signature disruption in other tests.
         Crypto.findProvider(BouncyCastleProvider.PROVIDER_NAME)
@@ -94,7 +93,7 @@ abstract class AbstractServerRevocationTest {
         defaultCrlDistPoints = CrlDistPoints(crlServer.hostAndPort)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         amqpClients.parallelStream().forEach(AMQPClient::close)
         if (::crlServer.isInitialized) {
@@ -102,7 +101,7 @@ abstract class AbstractServerRevocationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection succeeds when soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -110,7 +109,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection succeeds when soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -118,7 +117,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection fails when client's certificate is revoked and soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -127,7 +126,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection fails when client's certificate is revoked and soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -136,7 +135,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection fails when server's certificate is revoked and soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -145,7 +144,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection fails when server's certificate is revoked and soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -154,7 +153,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection succeeds when CRL cannot be obtained and soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -163,7 +162,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection fails when CRL cannot be obtained and soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -172,7 +171,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection succeeds when CRL is not defined for node CA cert and soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -181,7 +180,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection fails when CRL is not defined for node CA cert and soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -190,7 +189,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection succeeds when CRL is not defined for TLS cert and soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -199,7 +198,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection fails when CRL is not defined for TLS cert and soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -208,7 +207,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection succeeds when CRL endpoint is unreachable, soft fail is enabled and CRL timeouts are within SSL handshake timeout`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -218,7 +217,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection fails when CRL endpoint is unreachable, despite soft fail enabled, when CRL timeouts are not within SSL handshake timeout`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -228,7 +227,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `influx of new clients during CRL endpoint downtime does not cause existing connections to drop`() {
         val serverCrlSource = CertDistPointCrlSource()
         // Start the server and verify the first client has connected
@@ -275,7 +274,7 @@ abstract class AbstractServerRevocationTest {
                                    crlCheckSoftFail: Boolean,
                                    legalName: CordaX500Name,
                                    crlDistPoints: CrlDistPoints): Pair<AMQPClient, X509Certificate> {
-        val baseDirectory = temporaryFolder.root.toPath() / legalName.organisation
+        val baseDirectory = temporaryFolder / legalName.organisation
         val certificatesDirectory = baseDirectory / "certificates"
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory)
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
@@ -359,7 +358,7 @@ abstract class AbstractServerRevocationTest {
 class AMQPServerRevocationTest : AbstractServerRevocationTest() {
     private lateinit var amqpServer: AMQPServer
 
-    @After
+    @AfterEach
     fun shutDown() {
         if (::amqpServer.isInitialized) {
             amqpServer.close()
@@ -411,7 +410,7 @@ class AMQPServerRevocationTest : AbstractServerRevocationTest() {
                                  sslHandshakeTimeout: Duration?,
                                  remotingThreads: Int?): X509Certificate {
         check(!::amqpServer.isInitialized)
-        val baseDirectory = temporaryFolder.root.toPath() / legalName.organisation
+        val baseDirectory = temporaryFolder / legalName.organisation
         val certificatesDirectory = baseDirectory / "certificates"
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory)
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
@@ -449,14 +448,14 @@ class ArtemisServerRevocationTest : AbstractServerRevocationTest() {
     private lateinit var artemisNode: ArtemisNode
     private var crlCheckArtemisServer = true
 
-    @After
+    @AfterEach
     fun shutDown() {
         if (::artemisNode.isInitialized) {
             artemisNode.close()
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `connection succeeds with disabled CRL check on revoked node certificate`() {
         crlCheckArtemisServer = false
         verifyConnection(
@@ -519,7 +518,7 @@ class ArtemisServerRevocationTest : AbstractServerRevocationTest() {
                                  sslHandshakeTimeout: Duration?,
                                  remotingThreads: Int?): X509Certificate {
         check(!::artemisNode.isInitialized)
-        val baseDirectory = temporaryFolder.root.toPath() / legalName.organisation
+        val baseDirectory = temporaryFolder / legalName.organisation
         val certificatesDirectory = baseDirectory / "certificates"
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory, sslHandshakeTimeout = sslHandshakeTimeout)

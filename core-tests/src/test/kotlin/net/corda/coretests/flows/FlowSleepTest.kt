@@ -19,19 +19,19 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.internal.IS_S390X
-import org.junit.Assume
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import kotlin.test.assertTrue
 
-@Ignore("TODO JDK17: Fixme - flaky test")
+@Disabled("TODO JDK17: Fixme - flaky test")
 class FlowSleepTest {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow can sleep`() {
-        Assume.assumeFalse(IS_S390X)
+        assumeFalse(IS_S390X)
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
             val (start, finish) = alice.rpc.startFlow(::SleepyFlow).returnValue.getOrThrow(1.minutes)
@@ -41,7 +41,7 @@ class FlowSleepTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow can sleep multiple times`() {
         Assume.assumeFalse(IS_S390X)
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
@@ -56,7 +56,7 @@ class FlowSleepTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow can sleep and perform other suspending functions`() {
         Assume.assumeFalse(IS_S390X)
         // ensures that events received while the flow is sleeping are not processed

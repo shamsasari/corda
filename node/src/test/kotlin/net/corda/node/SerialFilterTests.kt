@@ -1,6 +1,6 @@
 package net.corda.node
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.IOException
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
@@ -8,7 +8,7 @@ import kotlin.test.assertTrue
 import kotlin.test.fail
 
 class SerialFilterTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `null and primitives are accepted and arrays are unwrapped`() {
         val acceptClass = { _: Class<*> -> fail("Should not be invoked.") }
         listOf(null, Byte::class.javaPrimitiveType, IntArray::class.java, Array<CharArray>::class.java).forEach {
@@ -16,7 +16,7 @@ class SerialFilterTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `the predicate is applied to the componentType`() {
         val classes = mutableListOf<Class<*>>()
         val acceptClass = { clazz: Class<*> ->

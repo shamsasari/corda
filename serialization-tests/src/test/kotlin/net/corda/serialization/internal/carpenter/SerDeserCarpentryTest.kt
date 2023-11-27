@@ -4,18 +4,15 @@ import net.corda.core.serialization.CordaSerializable
 import net.corda.core.serialization.SerializationFactory
 import net.corda.core.serialization.deserialize
 import net.corda.serialization.internal.amqp.testutils.readTestResource
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(SerializationExtension::class)
 class SerDeserCarpentryTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Test(timeout=300_000)
+    @Test
 	fun implementingGenericInterface() {
         // Original class that was serialised
 //        data class GenericData(val a: Int) : GenericInterface<String>
@@ -25,7 +22,7 @@ class SerDeserCarpentryTest {
         assertThat(data.javaClass.getMethod("getA").invoke(data)).isEqualTo(123)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun lenientCarpenter() {
         // Original class that was serialised
 //        data class Data(val b: Int) : AInterface {

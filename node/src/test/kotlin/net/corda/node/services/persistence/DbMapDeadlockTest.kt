@@ -12,11 +12,11 @@ import net.corda.nodeapi.internal.persistence.SchemaMigration
 import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.TestingNamedCacheFactory
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.lang.Thread.sleep
-import java.util.*
+import java.nio.file.Path
+import java.util.Properties
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.CyclicBarrier
 import java.util.concurrent.atomic.AtomicReference
@@ -71,9 +71,8 @@ class DbMapDeadlockTest {
         val log = contextLogger()
     }
 
-    @Rule
-    @JvmField
-    val temporaryFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var temporaryFolder: Path
 
     private val h2Properties: Properties
         get() {
@@ -85,7 +84,7 @@ class DbMapDeadlockTest {
             }
         }
 
-    @Test(timeout=300_000)
+    @Test
 	fun checkAppendOnlyPersistentMapForDeadlockH2() {
         recreateDeadlock(h2Properties)
     }

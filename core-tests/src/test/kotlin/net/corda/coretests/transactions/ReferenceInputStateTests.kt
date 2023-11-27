@@ -1,10 +1,16 @@
 package net.corda.coretests.transactions
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
-import net.corda.core.contracts.*
+import net.corda.core.contracts.AlwaysAcceptAttachmentConstraint
+import net.corda.core.contracts.BelongsToContract
+import net.corda.core.contracts.CommandData
+import net.corda.core.contracts.Contract
+import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.Requirements.using
+import net.corda.core.contracts.StateAndRef
+import net.corda.core.contracts.StateRef
+import net.corda.core.contracts.TransactionState
+import net.corda.core.contracts.requireSingleCommand
+import net.corda.core.contracts.requireThat
 import net.corda.core.crypto.SecureHash
 import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.CordaX500Name
@@ -14,20 +20,24 @@ import net.corda.core.node.services.IdentityService
 import net.corda.core.transactions.LedgerTransaction
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.finance.DOLLARS
-import net.corda.finance.`issued by`
 import net.corda.finance.contracts.asset.Cash
+import net.corda.finance.`issued by`
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.core.DUMMY_NOTARY_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.ledger
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 
 const val CONTRACT_ID = "net.corda.coretests.transactions.ReferenceStateTests\$ExampleContract"
 
+@ExtendWith(SerializationExtension::class)
 class ReferenceStateTests {
     private companion object {
         val DUMMY_NOTARY = TestIdentity(DUMMY_NOTARY_NAME, 20).party
@@ -40,9 +50,6 @@ class ReferenceStateTests {
         val BOB_PUBKEY get() = BOB.publicKey
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
     val defaultIssuer = ISSUER.ref(1)
     val bobCash = Cash.State(amount = 1000.DOLLARS `issued by` defaultIssuer, owner = BOB_PARTY)
     private val ledgerServices = MockServices(
@@ -103,7 +110,7 @@ class ReferenceStateTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create a reference state then refer to it multiple times`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             // Create a reference state. The reference state is created in the normal way. A transaction with one
@@ -142,7 +149,7 @@ class ReferenceStateTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Non-creator node cannot spend spend a reference state`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             transaction {
@@ -161,7 +168,7 @@ class ReferenceStateTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Can't use old reference states`() {
         val refData = ExampleState(ALICE_PARTY, "HELLO CORDA")
         ledgerServices.ledger(DUMMY_NOTARY) {
@@ -197,7 +204,7 @@ class ReferenceStateTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `state ref cannot be a reference input and regular input in the same transaction`() {
         val state = ExampleState(ALICE_PARTY, "HELLO CORDA")
         val stateAndRef = StateAndRef(TransactionState(state, CONTRACT_ID, DUMMY_NOTARY, constraint = AlwaysAcceptAttachmentConstraint), StateRef(SecureHash.zeroHash, 0))

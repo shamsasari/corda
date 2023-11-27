@@ -35,13 +35,13 @@ import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import net.corda.testing.node.internal.cordappWithPackages
 import org.apache.commons.io.IOUtils
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import rx.Observable
 import java.time.Duration
 import java.time.LocalDate
-import org.junit.Ignore
+import org.junit.jupiter.api.Disabled
 
-@Ignore
+@Disabled
 class IRSDemoTest {
     companion object {
         private val log = contextLogger()
@@ -52,7 +52,7 @@ class IRSDemoTest {
     private val futureDate: LocalDate = currentDate.plusMonths(6)
     private val maxWaitTime: Duration = 150.seconds
 
-    @Test(timeout=300_000)
+    @Test
     fun `runs IRS demo`() {
         springDriver(DriverParameters(
                 useTestClock = true,

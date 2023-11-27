@@ -1,7 +1,7 @@
 package net.corda.core.concurrent;
 
 import net.corda.core.internal.concurrent.OpenFuture;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.EOFException;
 import java.util.concurrent.*;
@@ -9,7 +9,7 @@ import java.util.concurrent.*;
 import static net.corda.core.internal.concurrent.CordaFutureImplKt.doneFuture;
 import static net.corda.core.internal.concurrent.CordaFutureImplKt.openFuture;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.*;
+import static org.junit.jupiter.api.Assertions.*;
 
 public class CordaFutureInJavaTest {
     @Test

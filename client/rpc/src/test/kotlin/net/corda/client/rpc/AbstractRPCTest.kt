@@ -5,22 +5,19 @@ import net.corda.core.internal.concurrent.map
 import net.corda.core.messaging.RPCOps
 import net.corda.core.utilities.seconds
 import net.corda.node.services.rpc.RPCServerConfiguration
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.RPCDriverDSL
 import net.corda.testing.node.internal.rpcTestUser
 import net.corda.testing.node.internal.startInVmRpcClient
 import net.corda.testing.node.internal.startRpcClient
 import org.apache.activemq.artemis.api.core.client.ClientSession
-import org.junit.Rule
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runners.Parameterized
 import java.time.Duration
 
+@ExtendWith(SerializationExtension::class)
 open class AbstractRPCTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
-
     enum class RPCTestMode {
         InVm,
         Netty

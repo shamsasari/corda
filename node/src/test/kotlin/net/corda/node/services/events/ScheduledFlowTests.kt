@@ -20,10 +20,10 @@ import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.dummyCommand
 import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.internal.*
-import org.junit.After
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import kotlin.reflect.jvm.jvmName
 import kotlin.test.assertEquals
@@ -110,7 +110,7 @@ class ScheduledFlowTests {
         }
     }
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, enclosedCordapp()), threadPerNode = true)
         aliceNode = mockNet.createNode(InternalMockNodeParameters(legalName = ALICE_NAME))
@@ -120,12 +120,12 @@ class ScheduledFlowTests {
         bob = bobNode.info.singleIdentity()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create and run scheduled flow then wait for result`() {
         var countScheduledFlows = 0
         aliceNode.smm.track().updates.subscribe {
@@ -148,7 +148,7 @@ class ScheduledFlowTests {
         assertTrue("Must be processed", stateFromB.state.data.processed)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `run a whole batch of scheduled flows`() {
         val N = 99
         val futures = mutableListOf<CordaFuture<*>>()

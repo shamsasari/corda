@@ -5,7 +5,7 @@ import net.corda.serialization.internal.CordaSerializationMagic
 import net.corda.serialization.internal.AMQP_P2P_CONTEXT
 import org.apache.qpid.proton.codec.Data
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.lang.reflect.Type
 import java.security.PublicKey
 
@@ -56,7 +56,7 @@ class OverridePKSerializerTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test publicKeySerializer is overridden`() {
         val scheme = AMQPTestSerializationScheme()
         val key = TestPublicKey()

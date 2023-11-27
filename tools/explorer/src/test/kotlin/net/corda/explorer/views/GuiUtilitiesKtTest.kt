@@ -1,12 +1,12 @@
 package net.corda.explorer.views
 
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.text.DecimalFormatSymbols
 import java.util.*
 
 class GuiUtilitiesKtTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `test to string with suffix`() {
         //Required for this test to be independent of the default Locale.
         val ds = DecimalFormatSymbols(Locale.getDefault()).decimalSeparator

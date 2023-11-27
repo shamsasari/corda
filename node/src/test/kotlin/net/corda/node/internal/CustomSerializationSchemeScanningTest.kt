@@ -5,7 +5,7 @@ import net.corda.core.serialization.SerializationContext
 import net.corda.core.serialization.SerializationSchemeContext
 import net.corda.core.utilities.ByteSequence
 import net.corda.node.internal.classloading.scanForCustomSerializationScheme
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import kotlin.test.assertFailsWith
 
@@ -31,7 +31,7 @@ class CustomSerializationSchemeScanningTest {
 
     class DummySerializationSchemeWithoutNoArgConstructor(val myArgument: String) : DummySerializationScheme()
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Can scan for custom serialization scheme and build a serialization scheme`() {
         val scheme = scanForCustomSerializationScheme(DummySerializationScheme::class.java.name, this::class.java.classLoader)
         val mockContext = Mockito.mock(SerializationContext::class.java)
@@ -40,7 +40,7 @@ class CustomSerializationSchemeScanningTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `verification fails with a helpful error if the class is not found in the classloader`() {
         val missingClassName = "org.testing.DoesNotExist"
         assertFailsWith<ConfigurationException>("$missingClassName was declared as a custom serialization scheme but could not " +
@@ -49,7 +49,7 @@ class CustomSerializationSchemeScanningTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `verification fails with a helpful error if the class is not a custom serialization scheme`() {
         val schemeName = NonSerializationScheme::class.java.name
         assertFailsWith<ConfigurationException>("$schemeName was declared as a custom serialization scheme but does not " +
@@ -58,7 +58,7 @@ class CustomSerializationSchemeScanningTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `verification fails with a helpful error if the class does not have a no arg constructor`() {
         val schemeName = DummySerializationSchemeWithoutNoArgConstructor::class.java.name
         assertFailsWith<ConfigurationException>("$schemeName was declared as a custom serialization scheme but does not " +

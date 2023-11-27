@@ -77,9 +77,9 @@ import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
 import net.corda.testing.node.ledger
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import rx.Observable
@@ -120,12 +120,12 @@ class TwoPartyTradeFlowTests(private val anonymous: Boolean) {
 
     private lateinit var mockNet: InternalMockNetwork
 
-    @Before
+    @BeforeEach
     fun before() {
         LogHelper.setLevel("platform.trade", "core.contract.TransactionGroup", "recordingmap")
     }
 
-    @After
+    @AfterEach
     fun after() {
         if (::mockNet.isInitialized) {
             mockNet.stopNodes()
@@ -133,7 +133,7 @@ class TwoPartyTradeFlowTests(private val anonymous: Boolean) {
         LogHelper.reset("platform.trade", "core.contract.TransactionGroup", "recordingmap")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `trade cash for commercial paper`() {
         // We run this in parallel threads to help catch any race conditions that may exist. The other tests
         // we run in the unit test thread exclusively to speed things up, ensure deterministic results and
@@ -242,7 +242,7 @@ class TwoPartyTradeFlowTests(private val anonymous: Boolean) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `shutdown and restore`() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = listOf(FINANCE_CONTRACTS_CORDAPP, FINANCE_WORKFLOWS_CORDAPP))
         val notaryNode = mockNet.defaultNotaryNode
@@ -351,7 +351,7 @@ class TwoPartyTradeFlowTests(private val anonymous: Boolean) {
         })
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check dependencies of sale asset are resolved`() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = listOf(FINANCE_CONTRACTS_CORDAPP))
         val notaryNode = mockNet.defaultNotaryNode
@@ -454,7 +454,7 @@ class TwoPartyTradeFlowTests(private val anonymous: Boolean) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `track works`() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = listOf(FINANCE_CONTRACTS_CORDAPP))
         val notaryNode = mockNet.defaultNotaryNode
@@ -531,7 +531,7 @@ class TwoPartyTradeFlowTests(private val anonymous: Boolean) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `dependency with error on buyer side`() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = listOf(FINANCE_CONTRACTS_CORDAPP))
         mockNet.defaultNotaryNode.services.ledger(mockNet.defaultNotaryIdentity) {
@@ -539,7 +539,7 @@ class TwoPartyTradeFlowTests(private val anonymous: Boolean) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `dependency with error on seller side`() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = listOf(FINANCE_CONTRACTS_CORDAPP))
         mockNet.defaultNotaryNode.services.ledger(mockNet.defaultNotaryIdentity) {

@@ -41,19 +41,16 @@ import net.corda.sleeping.SleepingFlow
 import net.corda.smoketesting.NodeConfig
 import net.corda.smoketesting.NodeProcess
 import org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM
-import org.hamcrest.text.MatchesPattern
-import org.junit.After
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.ExpectedException
+import org.assertj.core.api.Assertions.assertThatExceptionOfType
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.io.FilterInputStream
 import java.io.InputStream
 import java.util.Currency
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicInteger
-import java.util.regex.Pattern
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertNotEquals
@@ -87,10 +84,7 @@ class StandaloneCordaRPClientTest {
             users = listOf(superUser, nonUser, rpcUser, flowUser)
     )
 
-    @get:Rule
-    val exception: ExpectedException = ExpectedException.none()
-
-    @Before
+    @BeforeEach
     fun setUp() {
         factory = NodeProcess.Factory()
         StandaloneCordaRPCJavaClientTest.copyCordapps(factory, notaryConfig)
@@ -101,7 +95,7 @@ class StandaloneCordaRPClientTest {
         notaryNodeIdentity = rpcProxy.nodeInfo().legalIdentitiesAndCerts.first().party
     }
 
-    @After
+    @AfterEach
     fun done() {
         connection.use {
             notary.close()
@@ -109,42 +103,42 @@ class StandaloneCordaRPClientTest {
     }
 
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test attachments`() {
         val attachment = InputStreamAndHash.createInMemoryTestZip(attachmentSize, 1)
         assertFalse(rpcProxy.attachmentExists(attachment.sha256))
         val id = attachment.inputStream.use { rpcProxy.uploadAttachment(it) }
         assertEquals(attachment.sha256, id, "Attachment has incorrect SHA256 hash")
 
-        val hash = HashingInputStream(Hashing.sha256(), rpcProxy.openAttachment(id)).use { it ->
+        val hash = HashingInputStream(Hashing.sha256(), rpcProxy.openAttachment(id)).use {
             it.copyTo(NULL_OUTPUT_STREAM)
             SecureHash.createSHA256(it.hash().asBytes())
         }
         assertEquals(attachment.sha256, hash)
     }
 
-    @Ignore("CORDA-1520 - After switching from Kryo to AMQP this test won't work")
-    @Test(timeout=300_000)
+    @Disabled("CORDA-1520 - After switching from Kryo to AMQP this test won't work")
+    @Test
 	fun `test wrapped attachments`() {
         val attachment = InputStreamAndHash.createInMemoryTestZip(attachmentSize, 1)
         assertFalse(rpcProxy.attachmentExists(attachment.sha256))
         val id = WrapperStream(attachment.inputStream).use { rpcProxy.uploadAttachment(it) }
         assertEquals(attachment.sha256, id, "Attachment has incorrect SHA256 hash")
 
-        val hash = HashingInputStream(Hashing.sha256(), rpcProxy.openAttachment(id)).use { it ->
+        val hash = HashingInputStream(Hashing.sha256(), rpcProxy.openAttachment(id)).use {
             it.copyTo(NULL_OUTPUT_STREAM)
             SecureHash.createSHA256(it.hash().asBytes())
         }
         assertEquals(attachment.sha256, hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test starting flow`() {
         rpcProxy.startFlow(::CashIssueFlow, 127.POUNDS, OpaqueBytes.of(0), notaryNodeIdentity)
                 .returnValue.getOrThrow(timeout)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test starting tracked flow`() {
         var trackCount = 0
         val handle = rpcProxy.startTrackedFlow(
@@ -161,12 +155,12 @@ class StandaloneCordaRPClientTest {
         assertNotEquals(0, trackCount)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test network map`() {
         assertEquals(notaryConfig.legalName, notaryNodeIdentity.name)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test state machines`() {
         val (stateMachines, updates) = rpcProxy.stateMachinesFeed()
         assertEquals(0, stateMachines.size)
@@ -188,7 +182,7 @@ class StandaloneCordaRPClientTest {
         assertEquals(1, updateCount.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test vault track by`() {
         val (vault, vaultUpdates) = rpcProxy.vaultTrackBy<Cash.State>(paging = PageSpecification(DEFAULT_PAGE_NUM))
         assertEquals(0, vault.totalStatesAvailable)
@@ -211,7 +205,7 @@ class StandaloneCordaRPClientTest {
         assertEquals(629.POUNDS, cashBalance[Currency.getInstance("GBP")])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test vault query by`() {
         // Now issue some cash
         rpcProxy.startFlow(::CashIssueFlow, 629.POUNDS, OpaqueBytes.of(0), notaryNodeIdentity)
@@ -237,7 +231,7 @@ class StandaloneCordaRPClientTest {
         assertEquals(629.POUNDS, cashBalances[Currency.getInstance("GBP")])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test cash balances`() {
         val startCash = rpcProxy.getCashBalances()
         println(startCash)
@@ -252,19 +246,18 @@ class StandaloneCordaRPClientTest {
         assertEquals(629.DOLLARS, balance)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test kill flow without killFlow permission`() {
-        exception.expect(PermissionException::class.java)
-        exception.expectMessage(MatchesPattern(Pattern.compile("User not authorized to perform RPC call .*killFlow.*")))
-
         val flowHandle = rpcProxy.startFlow(::SleepingFlow, 1.minutes)
         notary.connect(nonUser).use { connection ->
             val rpcProxy = connection.proxy
-            rpcProxy.killFlow(flowHandle.id)
+            assertThatExceptionOfType(PermissionException::class.java).isThrownBy {
+                rpcProxy.killFlow(flowHandle.id)
+            }.withMessageMatching("User not authorized to perform RPC call .*killFlow.*")
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test kill flow with killFlow permission`() {
         val flowHandle = rpcProxy.startFlow(::SleepingFlow, 1.minutes)
         notary.connect(rpcUser).use { connection ->

@@ -23,9 +23,9 @@ import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.AfterClass
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.security.PublicKey
 
 class SwapIdentitiesFlowTests {
@@ -36,7 +36,7 @@ class SwapIdentitiesFlowTests {
                 cordappsForAllNodes = listOf(enclosedCordapp())
         )
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun tearDown() = mockNet.stopNodes()
     }
@@ -47,8 +47,8 @@ class SwapIdentitiesFlowTests {
     private val alice = aliceNode.info.singleIdentity()
     private val bob = bobNode.info.singleIdentity()
 
-    @Test(timeout=300_000)
-    @Ignore("TODO JDK17: Class cast exception")
+    @Test
+    @Disabled("TODO JDK17: Class cast exception")
 	fun `issue key`() {
         assertThat(
             aliceNode.services.startFlow(SwapIdentitiesInitiator(bob)),
@@ -74,7 +74,7 @@ class SwapIdentitiesFlowTests {
     /**
      * Check that flow is actually validating the name on the certificate presented by the counterparty.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `verifies identity name`() {
         val notBob = charlieNode.issueFreshKeyAndCert()
         val signature = charlieNode.signSwapIdentitiesFlowData(notBob, notBob.owningKey)
@@ -86,7 +86,7 @@ class SwapIdentitiesFlowTests {
     /**
      * Check that flow is actually validating its the signature presented by the counterparty.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `verification rejects signature if name is right but key is wrong`() {
         val evilBobNode = mockNet.createPartyNode(bobNode.info.singleIdentity().name)
         val evilBob = evilBobNode.info.singleIdentityAndCert()
@@ -98,7 +98,7 @@ class SwapIdentitiesFlowTests {
                 .hasMessage("Signature does not match the expected identity ownership assertion.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verification rejects signature if key is right but name is wrong`() {
         val anonymousAlice = aliceNode.issueFreshKeyAndCert()
         val anonymousBob = bobNode.issueFreshKeyAndCert()

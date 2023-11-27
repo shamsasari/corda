@@ -11,7 +11,7 @@ import net.corda.serialization.internal.amqp.testutils.testDefaultFactory
 import net.corda.serialization.internal.amqp.testutils.testName
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.NotSerializableException
 import java.net.URI
@@ -34,7 +34,7 @@ class EnumEvolveTests {
     // Version of the class as it's used in the test
     enum class DeserializeNewerSetToUnknown { A, B, C }
 
-    @Test(timeout=300_000)
+    @Test
 	fun deserialiseNewerSetToUnknown() {
         val resource = "${javaClass.simpleName}.${testName()}"
         val sf = testDefaultFactory()
@@ -62,7 +62,7 @@ class EnumEvolveTests {
     // Version of the class as it's used in the test
     enum class DeserializeNewerSetToUnknown2 { A, B, C }
 
-    @Test(timeout=300_000)
+    @Test
 	fun deserialiseNewerSetToUnknown2() {
         val resource = "${javaClass.simpleName}.${testName()}"
         val sf = testDefaultFactory()
@@ -102,7 +102,7 @@ class EnumEvolveTests {
     enum class DeserializeNewerWithNoRule { A, B, C }
 
     // Lets test to see if they forgot to provide an upgrade rule
-    @Test(timeout=300_000)
+    @Test
 	fun deserialiseNewerWithNoRule() {
         val resource = "${javaClass.simpleName}.${testName()}"
         val sf = testDefaultFactory()
@@ -150,7 +150,7 @@ class EnumEvolveTests {
     // Finally, the version we're using to test with
     enum class DeserializeWithRename { A, B, C }
 
-    @Test(timeout=300_000)
+    @Test
 	fun deserializeWithRename() {
         val resource = "${javaClass.simpleName}.${testName()}"
         val sf = testDefaultFactory()
@@ -272,7 +272,7 @@ class EnumEvolveTests {
     // Finally, the original version of teh class that we're going to be testing with
     enum class MultiOperations { A, B, C }
     
-    @Test(timeout=300_000)
+    @Test
 	fun multiOperations() {
         val resource = "${javaClass.simpleName}.${testName()}"
         val sf = testDefaultFactory()
@@ -371,7 +371,7 @@ class EnumEvolveTests {
     @CordaSerializationTransformEnumDefault(old = "A", new = "F")
     enum class BadNewValue { A, B, C, D }
 
-    @Test(timeout=300_000)
+    @Test
 	fun badNewValue() {
         val sf = testDefaultFactory()
 
@@ -388,7 +388,7 @@ class EnumEvolveTests {
     )
     enum class OutOfOrder { A, B, C, D, E }
 
-    @Test(timeout=300_000)
+    @Test
 	fun outOfOrder() {
         val sf = testDefaultFactory()
 
@@ -407,7 +407,7 @@ class EnumEvolveTests {
     @CordaSerializationTransformEnumDefault("D", "A")
     enum class ChangedOrdinality { A, B, D, C }
 
-    @Test(timeout=300_000)
+    @Test
 	fun changedOrdinality() {
         val resource = "${javaClass.simpleName}.${testName()}"
         val sf = testDefaultFactory()
@@ -436,7 +436,7 @@ class EnumEvolveTests {
     enum class ExtendedEnum { A, B, C, D, E}
 
     // See https://r3-cev.atlassian.net/browse/CORDA-2264.
-    @Test(timeout=300_000)
+    @Test
 	fun extendEnum() {
         val resource = "${javaClass.simpleName}.${testName()}"
         val sf = testDefaultFactory()

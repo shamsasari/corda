@@ -1,12 +1,18 @@
 package net.corda.node.services.attachments
 
 import com.codahale.metrics.MetricRegistry
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import net.corda.core.crypto.SecureHash
 import net.corda.core.crypto.sha256
-import net.corda.core.internal.*
+import net.corda.core.internal.AttachmentTrustCalculator
+import net.corda.core.internal.AttachmentTrustInfo
+import net.corda.core.internal.delete
+import net.corda.core.internal.div
+import net.corda.core.internal.hash
+import net.corda.core.internal.outputStream
+import net.corda.core.internal.read
+import net.corda.core.internal.readAll
 import net.corda.core.node.ServicesForResolution
+import net.corda.coretesting.internal.rigorousMock
 import net.corda.node.services.persistence.NodeAttachmentService
 import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
@@ -17,14 +23,14 @@ import net.corda.testing.core.internal.JarSignatureTestUtils.signJar
 import net.corda.testing.core.internal.SelfCleaningDir
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
-import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 import java.nio.file.Files
 import java.nio.file.Path
 import java.nio.file.Paths
@@ -35,9 +41,8 @@ import kotlin.test.assertTrue
 
 class AttachmentTrustCalculatorTest {
 
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var tempFolder: Path
 
     private lateinit var database: CordaPersistence
     private lateinit var storage: NodeAttachmentService
@@ -47,7 +52,7 @@ class AttachmentTrustCalculatorTest {
     }
     private val cacheFactory = TestingNamedCacheFactory()
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val dataSourceProperties = MockServices.makeTestDataSourceProperties()
         database = configureDatabase(dataSourceProperties, DatabaseConfig(), { null }, { null })
@@ -60,14 +65,14 @@ class AttachmentTrustCalculatorTest {
         attachmentTrustCalculator = NodeAttachmentTrustCalculator(storage, database, cacheFactory)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         database.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Jar uploaded by trusted uploader is trusted`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val (jar, _) = ContractJarTestUtils.makeTestSignedContractJar(
                 path,
                 "foo.bar.DummyContract"
@@ -85,9 +90,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar trusted if signed by same key and has same contract as existing jar uploaded by a trusted uploader`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val alias = "testAlias"
             val password = "testPassword"
             val jarV1 = ContractJarTestUtils.makeTestContractJar(path, "foo.bar.DummyContract")
@@ -110,9 +115,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar trusted if same key but different contract`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val alias = "testAlias"
             val password = "testPassword"
             val jarV1 = ContractJarTestUtils.makeTestContractJar(path, "foo.bar.DummyContract")
@@ -135,9 +140,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar trusted if the signing keys are a subset of an existing trusted jar's signers`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val alias = "testAlias"
             val password = "testPassword"
             val alias2 = "anotherTestAlias"
@@ -163,9 +168,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar trusted if the signing keys are an intersection of an existing trusted jar's signers`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val alias = "testAlias"
             val password = "testPassword"
             val alias2 = "anotherTestAlias"
@@ -194,9 +199,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar trusted if the signing keys are a superset of an existing trusted jar's signers`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val alias = "testAlias"
             val password = "testPassword"
             val alias2 = "anotherTestAlias"
@@ -222,9 +227,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar with inherited trust does not grant trust to other jars (no chain of trust)`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val aliasA = "Daredevil"
             val aliasB = "The Punisher"
             val aliasC = "Jessica Jones"
@@ -263,9 +268,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar not trusted if different key but same contract`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val alias = "testAlias"
             val password = "testPassword"
             val jarV1 = ContractJarTestUtils.makeTestContractJar(path, "foo.bar.DummyContract")
@@ -291,9 +296,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `neither jar trusted if same contract and signer but not uploaded by a trusted uploader`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val alias = "testAlias"
             val password = "testPassword"
             val jarV1 = ContractJarTestUtils.makeTestContractJar(path, "foo.bar.DummyContract")
@@ -316,9 +321,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non-contract jar trusted if trusted jar with same key present`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val alias = "testAlias"
             val password = "testPassword"
 
@@ -346,9 +351,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non-contract jars not trusted if uploaded by non trusted uploaders`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val alias = "testAlias"
             val password = "testPassword"
 
@@ -376,7 +381,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non-contract jars not trusted if unsigned`() {
         SelfCleaningDir().use {
             val (jarV1, _) = makeTestJar()
@@ -390,9 +395,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar not trusted if signed by a blacklisted key and not uploaded by trusted uploader`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
 
             val aliasA = "Antman"
             val aliasB = "The Wasp"
@@ -423,9 +428,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar uploaded by trusted uploader is still trusted even if it is signed by a blacklisted key`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
 
             val aliasA = "Thanos"
             val password = "what did it cost? everything"
@@ -446,9 +451,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `calculateAllTrustInfo returns all attachment trust roots`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val aliasA = "dan"
             val aliasB = "james"
             val aliasC = "tudor"
@@ -514,9 +519,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `calculateAllTrustInfo only returns signed attachments or attachments manually installed on the node`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
             val aliasA = "dan"
             val aliasB = "james"
             val password = "one day the attachment service will be refactored"
@@ -566,9 +571,9 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `calculateAllTrustInfo attachments signed by blacklisted keys output without trust root fields filled in`() {
-        tempFolder.root.toPath().let { path ->
+        tempFolder.let { path ->
 
             val aliasA = "batman"
             val aliasB = "the joker"
@@ -622,7 +627,7 @@ class AttachmentTrustCalculatorTest {
         )
     ): Pair<Path, SecureHash> {
         counter++
-        val file = Paths.get((tempFolder.root.toPath() / "$counter.jar").toString())
+        val file = Paths.get((tempFolder / "$counter.jar").toString())
         ContractJarTestUtils.makeTestJar(Files.newOutputStream(file), entries)
         return Pair(file, file.readAll().sha256())
     }

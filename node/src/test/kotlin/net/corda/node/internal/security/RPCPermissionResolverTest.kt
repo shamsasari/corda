@@ -2,7 +2,7 @@ package net.corda.node.internal.security
 
 import net.corda.core.messaging.RPCOps
 import net.corda.node.internal.rpc.proxies.RpcAuthHelper.methodFullName
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals
@@ -31,7 +31,7 @@ class RPCPermissionResolverTest {
     private val readAlphaMethod = methodFullName(Alpha::class.java.getMethod("readAlpha"))
     private val readAlphaMethodKey = readAlphaMethod.toLowerCase()
 
-    @Test(timeout=300_000)
+    @Test
     fun `test Alpha`() {
         with(RPCPermissionResolver.inspectInterface(Alpha::class.java.name)) {
             assertEquals(3, size, toString()) // protocolVersion, ALL, readAlpha
@@ -39,7 +39,7 @@ class RPCPermissionResolverTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test Beta`() {
         with(RPCPermissionResolver.inspectInterface(Beta::class.java.name)) {
             assertEquals(6, size, toString()) // protocolVersion, ALL, readAlpha
@@ -47,7 +47,7 @@ class RPCPermissionResolverTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test Gamma`() {
         with(RPCPermissionResolver.inspectInterface(Gamma::class.java.name)) {
             assertEquals(7, size, toString()) // protocolVersion, ALL, readAlpha,

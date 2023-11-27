@@ -24,16 +24,16 @@ import net.corda.testing.core.CHARLIE_NAME
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class IdenityServiceKeyRotationMigrationTest {
     private lateinit var liquibaseDB: Database
     private lateinit var cordaDB: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val schemaService = rigorousMock<SchemaService>()
         doReturn(setOf(IdentityTestSchemaV1, KMSTestSchemaV1)).whenever(schemaService).schemas
@@ -51,7 +51,7 @@ class IdenityServiceKeyRotationMigrationTest {
         liquibaseDB.isAutoCommit = true
     }
 
-    @After
+    @AfterEach
     fun close() {
         contextTransactionOrNull?.close()
         cordaDB.close()
@@ -66,7 +66,7 @@ class IdenityServiceKeyRotationMigrationTest {
 
     private fun TestIdentity.dbName() = IdentityTestSchemaV1.NodeNamedIdentities(name.toString(), publicKey.toStringShort())
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test migration`() {
         val alice = TestIdentity(ALICE_NAME, 70)
         val bob = TestIdentity(BOB_NAME, 80)

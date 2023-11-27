@@ -5,30 +5,33 @@ import net.corda.core.crypto.SignatureScheme
 import net.corda.core.crypto.internal.cordaBouncyCastleProvider
 import net.corda.core.internal.div
 import net.corda.core.utilities.days
+import net.corda.coretesting.internal.stubs.CertificateStoreStubs
 import net.corda.nodeapi.internal.config.CertificateStoreSupplier
 import net.corda.nodeapi.internal.crypto.CertificateType
 import net.corda.nodeapi.internal.crypto.X509Utilities
+import net.corda.nodeapi.internal.crypto.loadOrCreateKeyStore
 import net.corda.nodeapi.internal.cryptoservice.CryptoService
 import net.corda.nodeapi.internal.cryptoservice.CryptoServiceException
 import net.corda.nodeapi.internal.cryptoservice.WrappedPrivateKey
 import net.corda.nodeapi.internal.cryptoservice.WrappingMode
 import net.corda.testing.core.ALICE_NAME
-import net.corda.coretesting.internal.stubs.CertificateStoreStubs
-import net.corda.nodeapi.internal.crypto.loadOrCreateKeyStore
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import java.io.FileOutputStream
 import java.nio.file.Path
-import java.security.*
+import java.security.KeyPair
+import java.security.KeyPairGenerator
+import java.security.KeyStore
+import java.security.PublicKey
+import java.security.Signature
 import java.security.spec.ECGenParameterSpec
 import java.time.Duration
-import java.util.*
+import java.util.UUID
 import javax.crypto.Cipher
 import javax.security.auth.x500.X500Principal
 import kotlin.test.assertFailsWith
@@ -40,28 +43,26 @@ class BCCryptoServiceTests {
         val clearData = "data".toByteArray()
     }
 
-    @Rule
-    @JvmField
-    val temporaryFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var temporaryFolder: Path
     private lateinit var signingCertificateStore: CertificateStoreSupplier
 
-    @Rule
-    @JvmField
-    val temporaryKeystoreFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var temporaryKeystoreFolder: Path
 
     lateinit var certificatesDirectory: Path
     lateinit var wrappingKeyStorePath: Path
 
-    @Before
+    @BeforeEach
     fun setUp() {
-        val baseDirectory = temporaryFolder.root.toPath()
+        val baseDirectory = temporaryFolder
         certificatesDirectory = baseDirectory / "certificates"
         signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
         wrappingKeyStorePath = certificatesDirectory / "wrappingkeystore.pkcs12"
     }
 
-    @Test(timeout=300_000)
-    @Ignore("TODO JDK17: Fixme")
+    @Test
+    @Disabled("TODO JDK17: Fixme")
 	fun `BCCryptoService generate key pair and sign both data and cert`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
         // Testing every supported scheme.
@@ -94,8 +95,8 @@ class BCCryptoServiceTests {
         certificate.verify(pubKey)
     }
 
-    @Test(timeout=300_000)
-    @Ignore("TODO JDK17: Fixme")
+    @Test
+    @Disabled("TODO JDK17: Fixme")
 	fun `BCCryptoService generate key pair and sign with existing schemes`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
         // Testing every supported scheme.
@@ -109,8 +110,8 @@ class BCCryptoServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
-    @Ignore("TODO JDK17: Fixme")
+    @Test
+    @Disabled("TODO JDK17: Fixme")
 	fun `BCCryptoService generate key pair and sign with passed signing algorithm`() {
 
         assertTrue{signAndVerify(signAlgo = "NONEwithRSA", alias = "myKeyAlias", keyTypeAlgo = "RSA")}
@@ -150,7 +151,7 @@ class BCCryptoServiceTests {
         val keyStoreFilename = "keys-with-more-algos.jks"
         val keyStore = KeyStore.getInstance("pkcs12")
         keyStore.load(null, null)
-        val baseDirectory = temporaryKeystoreFolder.root.toPath()
+        val baseDirectory = temporaryKeystoreFolder
         val certificatesDirectory = baseDirectory / keyStoreFilename
 
         val x500Principal = X500Principal("CN=Test")
@@ -172,7 +173,7 @@ class BCCryptoServiceTests {
                 certificateStoreFileName = keyStoreFilename)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `When key does not exist getPublicKey, sign and getSigner should throw`() {
         val nonExistingAlias = "nonExistingAlias"
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
@@ -182,7 +183,7 @@ class BCCryptoServiceTests {
         assertFailsWith<CryptoServiceException> { cryptoService.getSigner(nonExistingAlias) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService supports degraded mode of wrapping`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
         val supportedMode = cryptoService.getWrappingMode()
@@ -190,7 +191,7 @@ class BCCryptoServiceTests {
         assertThat(supportedMode).isEqualTo(WrappingMode.DEGRADED_WRAPPED)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService does not fail when requested to create same wrapping key twice with failIfExists is false`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 
@@ -199,7 +200,7 @@ class BCCryptoServiceTests {
         cryptoService.createWrappingKey(keyAlias, failIfExists = false)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService does fail when requested to create same wrapping key twice with failIfExists is true`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 
@@ -211,7 +212,7 @@ class BCCryptoServiceTests {
                 .hasMessage("There is an existing key with the alias: $keyAlias")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService fails when asked to generate wrapped key pair or sign, but the master key specified does not exist`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 
@@ -228,7 +229,7 @@ class BCCryptoServiceTests {
                 .hasMessage("There is no master key under the alias: $wrappingKeyAlias")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService can generate wrapped key pair and sign with the private key successfully, using default algorithm`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 
@@ -237,7 +238,7 @@ class BCCryptoServiceTests {
         generateWrappedKeyPairSignAndVerify(cryptoService, wrappingKeyAlias)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService can generate wrapped key pair and sign with the private key successfully`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 
@@ -262,7 +263,7 @@ class BCCryptoServiceTests {
         Crypto.doVerify(publicKey, signature, data)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `cryptoService can sign with previously encoded version of wrapped key`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 

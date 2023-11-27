@@ -15,10 +15,10 @@ import net.corda.testing.core.DUMMY_BANK_A_NAME
 import net.corda.testing.core.DUMMY_BANK_B_NAME
 import net.corda.testing.core.singleIdentity
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Assert.*
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 class MockNetworkTest {
@@ -27,17 +27,17 @@ class MockNetworkTest {
     }
     private lateinit var mockNetwork: MockNetwork
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNetwork = MockNetwork(MockNetworkParameters())
     }
 
-    @After
+    @AfterEach
     fun done() {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `with a started node`() {
         val unstarted = mockNetwork.createUnstartedNode(DUMMY_BANK_A_NAME, forcedID = NODE_ID)
         assertFalse(unstarted.isStarted)
@@ -51,14 +51,14 @@ class MockNetworkTest {
         assertFailsWith<IllegalArgumentException> { started.info.identityFromX500Name(DUMMY_BANK_B_NAME) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `with an unstarted node`() {
         val unstarted = mockNetwork.createUnstartedNode(DUMMY_BANK_A_NAME, forcedID = NODE_ID)
         val ex = assertFailsWith<IllegalStateException> { unstarted.started }
         assertThat(ex).hasMessage("Node ID=$NODE_ID is not running")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun installCordaService() {
         val unstarted = mockNetwork.createUnstartedNode()
         assertThat(unstarted.installCordaService(TestService::class.java)).isNotNull()

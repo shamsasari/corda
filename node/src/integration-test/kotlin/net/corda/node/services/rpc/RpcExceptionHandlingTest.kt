@@ -17,7 +17,7 @@ import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startNode
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.SQLException
 import kotlin.test.assertEquals
 
@@ -25,7 +25,7 @@ class RpcExceptionHandlingTest {
     private val user = User("mark", "dadada", setOf(Permissions.all()))
     private val users = listOf(user)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `rpc client receives relevant exceptions`() {
         val params = NodeParameters(rpcUsers = users)
         val clientRelevantMessage = "This is for the players!"
@@ -43,7 +43,7 @@ class RpcExceptionHandlingTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `rpc client receives client-relevant message`() {
         val params = NodeParameters(rpcUsers = users)
         val clientRelevantMessage = "This is for the players!"
@@ -69,7 +69,7 @@ class RpcExceptionHandlingTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FlowException is received by the RPC client`() {
         val params = NodeParameters(rpcUsers = users)
         val expectedMessage = "Flow error!"
@@ -101,7 +101,7 @@ class RpcExceptionHandlingTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `rpc client handles exceptions thrown on counter-party side`() {
         val params = NodeParameters(rpcUsers = users)
 

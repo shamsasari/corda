@@ -1,21 +1,17 @@
 package net.corda.serialization.internal.amqp
 
+import net.corda.serialization.internal.accessAsClass
 import net.corda.serialization.internal.amqp.testutils.serializeAndReturnSchema
 import net.corda.serialization.internal.amqp.testutils.testDefaultFactory
-import net.corda.serialization.internal.accessAsClass
 import net.corda.serialization.internal.model.RemoteTypeInformation
-import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Assert.assertEquals
-import org.junit.Rule
-import org.junit.Test
-import java.util.*
+import net.corda.testing.core.SerializationExtension
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import java.util.UUID
 
+@ExtendWith(SerializationExtension::class)
 class AMQPRemoteTypeModelTests {
-
-    @Rule
-    @JvmField
-    val serializationEnvRule = SerializationEnvironmentRule()
-
     private val factory = testDefaultFactory()
     private val typeModel = AMQPRemoteTypeModel()
 
@@ -40,7 +36,7 @@ class AMQPRemoteTypeModelTests {
 
     class SimpleClass(val a: Int, val b: Double, val c: Short?, val d: ByteArray, val e: ByteArray?)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `round-trip some types through AMQP serialisations`() {
         arrayOf("").assertRemoteType("String[]")
         listOf(1).assertRemoteType("List<Object>")

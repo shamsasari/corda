@@ -22,7 +22,7 @@ import net.corda.testing.driver.driver
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
@@ -60,7 +60,7 @@ class HardRestartTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun restartShortPingPongFlowRandomly() {
         val demoUser = User("demo", "demo", setOf(Permissions.startFlow<Ping>(), Permissions.all()))
         driver(DriverParameters(
@@ -99,7 +99,7 @@ class HardRestartTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun restartLongPingPongFlowRandomly() {
         val demoUser = User("demo", "demo", setOf(Permissions.startFlow<Ping>(), Permissions.all()))
         driver(DriverParameters(
@@ -138,7 +138,7 @@ class HardRestartTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun softRestartLongPingPongFlowRandomly() {
         val demoUser = User("demo", "demo", setOf(Permissions.startFlow<Ping>(), Permissions.all()))
         driver(DriverParameters(
@@ -221,7 +221,7 @@ class HardRestartTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun restartRecursiveFlowRandomly() {
         val demoUser = User("demo", "demo", setOf(Permissions.startFlow<RecursiveA>(), Permissions.all()))
         driver(DriverParameters(

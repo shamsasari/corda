@@ -4,35 +4,32 @@ import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.util.DefaultClassResolver
 import net.corda.core.serialization.deserialize
 import net.corda.core.serialization.serialize
-import net.corda.nodeapi.internal.serialization.kryo.kryoMagic
 import net.corda.node.services.statemachine.DataSessionMessage
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.nodeapi.internal.serialization.kryo.kryoMagic
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.internal.kryoSpecific
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Assert.assertArrayEquals
-import org.junit.Assert.assertEquals
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.io.ByteArrayOutputStream
-import java.util.*
+import java.util.Collections
 
+@ExtendWith(SerializationExtension::class)
 class SetsSerializationTest {
     private companion object {
         val javaEmptySetClass = Collections.emptySet<Any>().javaClass
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Test(timeout=300_000)
+    @Test
 	fun `check set can be serialized as root of serialization graph`() {
         assertEqualAfterRoundTripSerialization(emptySet<Int>())
         assertEqualAfterRoundTripSerialization(setOf(1))
         assertEqualAfterRoundTripSerialization(setOf(1, 2))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check set can be serialized as part of DataSessionMessage`() {
         run {
             val sessionData = DataSessionMessage(setOf(1).serialize())
@@ -51,7 +48,7 @@ class SetsSerializationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check empty set serialises as Java emptySet`() = kryoSpecific("Checks Kryo header properties") {
         val nameID = 0
         val serializedForm = emptySet<Int>().serialize()
@@ -83,7 +80,7 @@ class SetsSerializationTest {
     We now check only for compatibility of the erased classes, so the call to propertyDescriptors() below should now succeed, returning the
     property descriptor for "p".
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `type variance on setter getter pair does not fail validation`() {
         assertThat(VarOfP::class.java.accessPropertyDescriptors()).containsKey("p")
     }

@@ -9,24 +9,22 @@ import net.corda.core.transactions.WireTransaction
 import net.corda.testing.contracts.DummyContract
 import net.corda.testing.contracts.DummyState
 import net.corda.testing.core.DUMMY_NOTARY_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.core.dummyCommand
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.internal.MockTransactionStorage
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import kotlin.math.abs
 import kotlin.test.assertEquals
 
+@ExtendWith(SerializationExtension::class)
 class TransactionGraphSearchTests {
     private companion object {
         val dummyNotary = TestIdentity(DUMMY_NOTARY_NAME, 20)
         val megaCorp = TestIdentity(CordaX500Name("MegaCorp", "London", "GB"))
     }
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
 
     class GraphTransactionStorage(val originTx: SignedTransaction, val inputTx: SignedTransaction) : MockTransactionStorage() {
         init {
@@ -35,16 +33,15 @@ class TransactionGraphSearchTests {
         }
     }
 
-    fun random31BitValue(): Int = Math.abs(newSecureRandom().nextInt())
+    private fun random31BitValue(): Int = abs(newSecureRandom().nextInt())
 
     /**
      * Build a pair of transactions. The first issues a dummy output state, and has a command applied, the second then
      * references that state.
      *
      * @param command the command to add to the origin transaction.
-     * @param signer signer for the two transactions and their commands.
      */
-    fun buildTransactions(command: CommandData): GraphTransactionStorage {
+    private fun buildTransactions(command: CommandData): GraphTransactionStorage {
         val megaCorpServices = MockServices(listOf("net.corda.testing.contracts"), megaCorp)
         val notaryServices = MockServices(listOf("net.corda.testing.contracts"), dummyNotary)
         val originBuilder = TransactionBuilder(dummyNotary.party)
@@ -63,7 +60,7 @@ class TransactionGraphSearchTests {
         return GraphTransactionStorage(originTx, inputTx)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `return empty from empty`() {
         val storage = buildTransactions(DummyContract.Commands.Create())
         val search = TransactionGraphSearch(storage, emptyList(), TransactionGraphSearch.Query())
@@ -73,7 +70,7 @@ class TransactionGraphSearchTests {
         assertEquals(expected, actual)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `return empty from no match`() {
         val storage = buildTransactions(DummyContract.Commands.Create())
         val search = TransactionGraphSearch(storage, listOf(storage.inputTx.tx), TransactionGraphSearch.Query())
@@ -83,7 +80,7 @@ class TransactionGraphSearchTests {
         assertEquals(expected, actual)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `return origin on match`() {
         val storage = buildTransactions(DummyContract.Commands.Create())
         val search = TransactionGraphSearch(storage, listOf(storage.inputTx.tx), TransactionGraphSearch.Query(DummyContract.Commands.Create::class.java))

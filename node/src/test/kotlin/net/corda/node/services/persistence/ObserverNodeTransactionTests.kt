@@ -19,16 +19,16 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.internal.*
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class ObserverNodeTransactionTests {
     private lateinit var mockNet: InternalMockNetwork
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(cordappWithPackages("net.corda.node.testing"), enclosedCordapp()),
@@ -37,7 +37,7 @@ class ObserverNodeTransactionTests {
         )
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
@@ -80,7 +80,7 @@ class ObserverNodeTransactionTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Broadcasting an old transaction does not cause 2 unconsumed states`() {
         val node = mockNet.createPartyNode(ALICE_NAME)
         val regulator = mockNet.createPartyNode(BOB_NAME)
@@ -96,7 +96,7 @@ class ObserverNodeTransactionTests {
         checkObserverTransactions(outputMessage, regulator)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Non relevant states are recorded if transaction is re-received with new states to record`() {
         val node = mockNet.createPartyNode(ALICE_NAME)
         val regulator = mockNet.createPartyNode(BOB_NAME)
@@ -112,7 +112,7 @@ class ObserverNodeTransactionTests {
         checkObserverTransactions(outputMessage, regulator)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Re-recording a transaction adds non-relevant states`() {
         val alice = mockNet.createPartyNode(ALICE_NAME)
         val bob = mockNet.createPartyNode(BOB_NAME)
@@ -127,7 +127,7 @@ class ObserverNodeTransactionTests {
         checkObserverTransactions(message, bob, 2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Re-recording a transaction at only relevant does not cause failures`() {
         val alice = mockNet.createPartyNode(ALICE_NAME)
         val bob = mockNet.createPartyNode(BOB_NAME)
@@ -142,7 +142,7 @@ class ObserverNodeTransactionTests {
         checkObserverTransactions(message, bob, 1)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Recording a transaction twice at all visible works`() {
         val alice = mockNet.createPartyNode(ALICE_NAME)
         val bob = mockNet.createPartyNode(BOB_NAME)

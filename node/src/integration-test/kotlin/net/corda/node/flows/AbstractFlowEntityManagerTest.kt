@@ -10,7 +10,7 @@ import net.corda.core.serialization.CordaSerializable
 import net.corda.core.utilities.getOrThrow
 import net.corda.core.utilities.seconds
 import net.corda.node.services.statemachine.StaffedFlowHospital
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import java.util.concurrent.Semaphore
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -33,7 +33,7 @@ abstract class AbstractFlowEntityManagerTest {
     @CordaSerializable
     enum class CommitStatus { INTERMEDIATE_COMMIT, NO_INTERMEDIATE_COMMIT }
 
-    @Before
+    @BeforeEach
     open fun before() {
         StaffedFlowHospital.onFlowDischarged.clear()
         StaffedFlowHospital.onFlowKeptForOvernightObservation.clear()

@@ -6,9 +6,9 @@ import net.corda.core.serialization.SingletonSerializeAsToken
 import net.corda.core.utilities.contextLogger
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.After
-import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
 
@@ -20,12 +20,12 @@ class NodeUnloadHandlerTests {
 
     private val mockNet = InternalMockNetwork(cordappsForAllNodes = listOf(enclosedCordapp()), notarySpecs = emptyList())
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should be able to register run on stop lambda`() {
         val node = mockNet.createNode()
         registerLatch.await()  // Make sure the handler is registered on node start up

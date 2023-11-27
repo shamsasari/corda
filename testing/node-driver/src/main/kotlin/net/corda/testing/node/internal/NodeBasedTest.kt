@@ -10,26 +10,31 @@ import net.corda.core.internal.div
 import net.corda.core.node.NodeInfo
 import net.corda.core.node.NotaryInfo
 import net.corda.core.utilities.getOrThrow
+import net.corda.coretesting.internal.testThreadFactory
 import net.corda.node.VersionInfo
 import net.corda.node.internal.FlowManager
 import net.corda.node.internal.Node
 import net.corda.node.internal.NodeFlowManager
 import net.corda.node.internal.NodeWithInfo
-import net.corda.node.services.config.*
+import net.corda.node.services.config.ConfigHelper
+import net.corda.node.services.config.FlowOverrideConfig
+import net.corda.node.services.config.NodeConfiguration
+import net.corda.node.services.config.configOf
+import net.corda.node.services.config.parseAsNodeConfiguration
+import net.corda.node.services.config.plus
 import net.corda.nodeapi.internal.DevIdentityGenerator
 import net.corda.nodeapi.internal.config.toConfig
 import net.corda.nodeapi.internal.network.NetworkParametersCopier
 import net.corda.testing.common.internal.testNetworkParameters
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.driver.internal.incrementalPortAllocation
-import net.corda.coretesting.internal.testThreadFactory
 import net.corda.testing.node.User
 import org.apache.commons.lang3.SystemUtils
 import org.apache.logging.log4j.Level
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.io.TempDir
 import rx.internal.schedulers.CachedThreadScheduler
 import java.nio.file.Path
 import java.util.concurrent.Executors
@@ -39,6 +44,7 @@ import kotlin.test.assertFalse
 // TODO Some of the logic here duplicates what's in the driver - the reason why it's not straightforward to replace it by
 // using DriverDSLImpl in `init()` and `stopAllNodes()` is because of the platform version passed to nodes (driver doesn't
 // support this, and it's a property of the Corda JAR)
+@ExtendWith(SerializationExtension::class)
 abstract class NodeBasedTest @JvmOverloads constructor(
     private val cordappPackages: Set<TestCordappInternal> = emptySet(),
     private val notaries: List<CordaX500Name> = emptyList()
@@ -47,12 +53,8 @@ abstract class NodeBasedTest @JvmOverloads constructor(
         private val WHITESPACE = "\\s++".toRegex()
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var tempFolder: Path
 
     private lateinit var defaultNetworkParameters: NetworkParametersCopier
     protected val notaryNodes = mutableListOf<NodeWithInfo>()
@@ -60,10 +62,10 @@ abstract class NodeBasedTest @JvmOverloads constructor(
     private val portAllocation = incrementalPortAllocation()
 
     init {
-        System.setProperty("consoleLogLevel", Level.DEBUG.name().toLowerCase())
+        System.setProperty("consoleLogLevel", Level.DEBUG.name().lowercase())
     }
 
-    @Before
+    @BeforeEach
     open fun setUp() {
         val notaryInfos = notaries.map { NotaryInfo(installNotary(it), true) } // todo only validating ones
         defaultNetworkParameters = NetworkParametersCopier(testNetworkParameters(notaries = notaryInfos))
@@ -79,7 +81,7 @@ abstract class NodeBasedTest @JvmOverloads constructor(
      * Stops the network map node and all the nodes started by [startNode]. This is called automatically after each test
      * but can also be called manually within a test.
      */
-    @After
+    @AfterEach
     fun stopAllNodes() {
         val nodesToShut = nodes + notaryNodes
         val shutdownExecutor = Executors.newScheduledThreadPool(nodesToShut.size)
@@ -144,7 +146,7 @@ abstract class NodeBasedTest @JvmOverloads constructor(
     }
 
     protected fun baseDirectory(legalName: CordaX500Name): Path {
-        return tempFolder.root.toPath() / legalName.organisation.replace(WHITESPACE, "")
+        return tempFolder / legalName.organisation.replace(WHITESPACE, "")
     }
 
     private fun ensureAllNetworkMapCachesHaveAllNodeInfos() {

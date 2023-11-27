@@ -31,8 +31,8 @@ import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 
 class CordappConstraintsTests {
 
@@ -45,7 +45,7 @@ class CordappConstraintsTests {
         val SIGNED_FINANCE_CORDAPP = UNSIGNED_FINANCE_CORDAPP.signed()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue cash using signature constraints`() {
         driver(DriverParameters(
                 networkParameters = testNetworkParameters(minimumPlatformVersion = 4),
@@ -72,7 +72,7 @@ class CordappConstraintsTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue cash using hash and signature constraints`() {
         driver(DriverParameters(
                 networkParameters = testNetworkParameters(minimumPlatformVersion = 4),
@@ -129,7 +129,7 @@ class CordappConstraintsTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue and consume cash using hash constraints`() {
         driver(DriverParameters(
                 cordappsForAllNodes = listOf(UNSIGNED_FINANCE_CORDAPP),
@@ -189,7 +189,7 @@ class CordappConstraintsTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue and consume cash using signature constraints`() {
         driver(DriverParameters(
                 cordappsForAllNodes = listOf(SIGNED_FINANCE_CORDAPP),
@@ -249,8 +249,8 @@ class CordappConstraintsTests {
         }
     }
 
-    @Test(timeout=300_000)
-@Ignore    // TODO(mike): rework
+    @Test
+@Disabled    // TODO(mike): rework
     fun `issue cash and transfer using hash to signature constraints migration`() {
         // signing key setup
         val keyStoreDir = SelfCleaningDir()

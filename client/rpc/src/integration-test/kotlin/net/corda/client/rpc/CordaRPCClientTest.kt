@@ -48,9 +48,9 @@ import org.apache.activemq.artemis.api.core.ActiveMQSecurityException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import rx.subjects.PublishSubject
 import java.net.URLClassLoader
 import java.nio.file.Paths
@@ -79,7 +79,7 @@ class CordaRPCClientTest : NodeBasedTest(FINANCE_CORDAPPS, notaries = listOf(DUM
         connection = client.start(username, password, externalTrace, impersonatedActor)
     }
 
-    @Before
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         node = startNode(ALICE_NAME, rpcUsers = listOf(rpcUser))
@@ -89,31 +89,31 @@ class CordaRPCClientTest : NodeBasedTest(FINANCE_CORDAPPS, notaries = listOf(DUM
         identity = notaryNodes.first().info.identityFromX500Name(DUMMY_NOTARY_NAME)
     }
 
-    @After
+    @AfterEach
     fun done() {
         connection?.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `log in with valid username and password`() {
         login(rpcUser.username, rpcUser.password)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `log in with unknown user`() {
         assertThatExceptionOfType(ActiveMQSecurityException::class.java).isThrownBy {
             login(random63BitValue().toString(), rpcUser.password)
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `log in with incorrect password`() {
         assertThatExceptionOfType(ActiveMQSecurityException::class.java).isThrownBy {
             login(rpcUser.username, random63BitValue().toString())
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `shutdown command stops the node`() {
         val nodeIsShut: PublishSubject<Unit> = PublishSubject.create()
         val latch = CountDownLatch(1)
@@ -170,7 +170,7 @@ class CordaRPCClientTest : NodeBasedTest(FINANCE_CORDAPPS, notaries = listOf(DUM
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `close-send deadlock and premature shutdown on empty observable`() {
         println("Starting client")
         login(rpcUser.username, rpcUser.password)
@@ -186,7 +186,7 @@ class CordaRPCClientTest : NodeBasedTest(FINANCE_CORDAPPS, notaries = listOf(DUM
         println("Result: ${flowHandle.returnValue.getOrThrow()}")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check basic flow has no progress`() {
         login(rpcUser.username, rpcUser.password)
         connection!!.proxy.startFlow(::CashPaymentFlow, 100.DOLLARS, identity).use {
@@ -194,7 +194,7 @@ class CordaRPCClientTest : NodeBasedTest(FINANCE_CORDAPPS, notaries = listOf(DUM
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `get cash balances`() {
         login(rpcUser.username, rpcUser.password)
         val proxy = connection!!.proxy
@@ -212,7 +212,7 @@ class CordaRPCClientTest : NodeBasedTest(FINANCE_CORDAPPS, notaries = listOf(DUM
         assertEquals(123.DOLLARS, cashDollars)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flow initiator via RPC`() {
         val externalTrace = Trace.newInstance()
         val impersonatedActor = Actor(Actor.Id("Mark Dadada"), AuthServiceId("Test"), owningLegalIdentity = BOB_NAME)
@@ -251,7 +251,7 @@ class CordaRPCClientTest : NodeBasedTest(FINANCE_CORDAPPS, notaries = listOf(DUM
     // We run the client in a separate process, without the finance module on its system classpath to ensure that the
     // additional class loader that we give it is used. Cash.State objects are used as they can't be synthesised fully
     // by the carpenter, and thus avoiding any false-positive results.
-    @Test(timeout=300_000)
+    @Test
 	fun `additional class loader used by WireTransaction when it deserialises its components`() {
         val financeLocation = Cash::class.java.location.toPath().toString()
         val classPathWithoutFinance = ProcessUtilities.defaultClassPath.filter { financeLocation !in it }
@@ -274,7 +274,7 @@ class CordaRPCClientTest : NodeBasedTest(FINANCE_CORDAPPS, notaries = listOf(DUM
         assertThat(outOfProcessRpc.waitFor()).isZero()  // i.e. no exceptions were thrown
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `nonspecific reconnect errors dont trigger graceful reconnect`() {
         val inputJar1 = Thread.currentThread().contextClassLoader.getResourceAsStream(testJar)!!
         val inputJar2 = Thread.currentThread().contextClassLoader.getResourceAsStream(testJar)!!

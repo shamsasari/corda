@@ -13,7 +13,7 @@ import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.User
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class RpcFlowsDrainingModeTest {
 
@@ -21,7 +21,7 @@ class RpcFlowsDrainingModeTest {
     private val user = User("mark", "dadada", setOf(Permissions.all()))
     private val users = listOf(user)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flows draining mode rejects start flows commands through rpc`() {
         driver(DriverParameters(startNodesInProcess = false, portAllocation = portAllocation, notarySpecs = emptyList())) {
             startNode(rpcUsers = users).getOrThrow().rpc.apply {

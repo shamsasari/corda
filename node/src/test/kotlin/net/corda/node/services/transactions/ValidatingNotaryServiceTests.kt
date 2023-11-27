@@ -29,9 +29,9 @@ import net.corda.testing.internal.createWireTransaction
 import net.corda.testing.node.TestClock
 import net.corda.testing.node.internal.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import java.util.*
@@ -46,7 +46,7 @@ class ValidatingNotaryServiceTests {
     private lateinit var notary: Party
     private lateinit var alice: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP),
@@ -58,12 +58,12 @@ class ValidatingNotaryServiceTests {
         alice = aliceNode.info.singleIdentity()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should report error for invalid transaction dependency`() {
         val stx = run {
             val inputState = issueInvalidState(aliceNode.services, alice, notary)
@@ -80,7 +80,7 @@ class ValidatingNotaryServiceTests {
         assertThat(notaryError.cause).isInstanceOf(SignedTransaction.SignaturesMissingException::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should report error for missing signatures`() {
         val expectedMissingKey = generateKeyPair().public
         val stx = run {
@@ -100,7 +100,7 @@ class ValidatingNotaryServiceTests {
         assertEquals(setOf(expectedMissingKey), missingKeys)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject transaction without network parameters`() {
         val inputState = issueState(aliceNode.services, alice).ref
         val wtx = createWireTransaction(inputs = listOf(inputState),
@@ -122,7 +122,7 @@ class ValidatingNotaryServiceTests {
         assertThat(notaryError.cause).hasMessageContaining("Transaction for notarisation doesn't contain network parameters hash.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should sign a unique transaction with a valid time-window`() {
         val stx = run {
             val inputStates = issueStates(aliceNode.services, alice)
@@ -139,7 +139,7 @@ class ValidatingNotaryServiceTests {
         signatures.forEach { it.verify(stx.id) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should sign a unique transaction without a time-window`() {
         val stx = run {
             val inputState = issueState(aliceNode.services, alice)
@@ -154,7 +154,7 @@ class ValidatingNotaryServiceTests {
         signatures.forEach { it.verify(stx.id) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should re-sign a transaction with an expired time-window`() {
         val stx = run {
             val inputState = issueState(aliceNode.services, alice)
@@ -178,7 +178,7 @@ class ValidatingNotaryServiceTests {
         assertEquals(sig2.by, notary.owningKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should report error for transaction with an invalid time-window`() {
         val stx = run {
             val inputState = issueState(aliceNode.services, alice)
@@ -195,7 +195,7 @@ class ValidatingNotaryServiceTests {
         assertThat(ex.error).isInstanceOf(NotaryError.TimeWindowInvalid::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `notarise issue tx with time-window`() {
         val stx = run {
             val tx = DummyContract.generateInitial(Random().nextInt(), notary, alice.ref(0))
@@ -207,7 +207,7 @@ class ValidatingNotaryServiceTests {
         assertEquals(sig.by, notary.owningKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should sign identical transaction multiple times (notarisation is idempotent)`() {
         val stx = run {
             val inputState = issueState(aliceNode.services, alice)
@@ -236,7 +236,7 @@ class ValidatingNotaryServiceTests {
         assertTrue(sig2.isValid(stx.id))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should report conflict when inputs are reused across transactions`() {
         val firstState = issueState(aliceNode.services, alice)
         val secondState = issueState(aliceNode.services, alice)
@@ -279,7 +279,7 @@ class ValidatingNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject when notarisation request not signed by the requesting party`() {
         runNotarisationAndInterceptClientPayload { originalPayload ->
             val transaction = originalPayload.signedTransaction
@@ -290,7 +290,7 @@ class ValidatingNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject when incorrect notarisation request signed - inputs don't match`() {
         runNotarisationAndInterceptClientPayload { originalPayload ->
             val transaction = originalPayload.signedTransaction
@@ -301,7 +301,7 @@ class ValidatingNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject when incorrect notarisation request signed - transaction id doesn't match`() {
         runNotarisationAndInterceptClientPayload { originalPayload ->
             val transaction = originalPayload.signedTransaction
@@ -312,7 +312,7 @@ class ValidatingNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject a transaction with too many inputs`() {
         NotaryServiceTests.notariseWithTooManyInputs(aliceNode, alice, notary, mockNet)
     }

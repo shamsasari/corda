@@ -4,7 +4,7 @@ import net.corda.core.serialization.SerializationSchemeContext
 import net.corda.core.serialization.CustomSerializationScheme
 import net.corda.core.utilities.ByteSequence
 import net.corda.nodeapi.internal.serialization.testutils.serializationContext
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertTrue
 import java.io.NotSerializableException
 import kotlin.test.assertFailsWith
@@ -58,7 +58,7 @@ class CustomSerializationSchemeAdapterTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `CustomSerializationSchemeAdapter calls the correct methods in CustomSerializationScheme`() {
         val scheme = CustomSerializationSchemeAdapter(SingleInputAndOutputScheme())
         val serializedData = scheme.serialize(DummyInputClass(), serializationContext)
@@ -66,7 +66,7 @@ class CustomSerializationSchemeAdapterTests {
         assertTrue(roundTripped is DummyOutputClass)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `CustomSerializationSchemeAdapter can adapt a Java implementation`() {
         val scheme = CustomSerializationSchemeAdapter(DummyCustomSerializationSchemeInJava())
         val serializedData = scheme.serialize(DummyInputClass(), serializationContext)
@@ -74,7 +74,7 @@ class CustomSerializationSchemeAdapterTests {
         assertTrue(roundTripped is DummyCustomSerializationSchemeInJava.DummyOutput)
     }
     
-    @Test(timeout=300_000)
+    @Test
     fun `CustomSerializationSchemeAdapter validates the magic`() {
         val inScheme = CustomSerializationSchemeAdapter(SingleInputAndOutputScheme())
         val serializedData = inScheme.serialize(DummyInputClass(), serializationContext)
@@ -84,7 +84,7 @@ class CustomSerializationSchemeAdapterTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `CustomSerializationSchemeAdapter preserves the serialized bytes between deserialize and serialize`() {
         val scheme = CustomSerializationSchemeAdapter(SameBytesInputAndOutputsAndScheme())
         val serializedData = scheme.serialize(Any(), serializationContext)

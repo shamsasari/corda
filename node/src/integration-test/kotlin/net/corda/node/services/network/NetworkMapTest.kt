@@ -2,7 +2,12 @@ package net.corda.node.services.network
 
 import net.corda.core.crypto.random63BitValue
 import net.corda.core.identity.Party
-import net.corda.core.internal.*
+import net.corda.core.internal.NODE_INFO_DIRECTORY
+import net.corda.core.internal.bufferUntilSubscribed
+import net.corda.core.internal.div
+import net.corda.core.internal.exists
+import net.corda.core.internal.list
+import net.corda.core.internal.readObject
 import net.corda.core.messaging.ParametersUpdateInfo
 import net.corda.core.node.NetworkParameters
 import net.corda.core.node.NodeInfo
@@ -17,36 +22,41 @@ import net.corda.nodeapi.internal.network.SignedNetworkParameters
 import net.corda.testing.common.internal.addNotary
 import net.corda.testing.common.internal.eventually
 import net.corda.testing.common.internal.testNetworkParameters
-import net.corda.testing.core.*
+import net.corda.testing.core.ALICE_NAME
+import net.corda.testing.core.BOB_NAME
+import net.corda.testing.core.SerializationExtension
+import net.corda.testing.core.TestIdentity
+import net.corda.testing.core.expect
+import net.corda.testing.core.expectEvents
+import net.corda.testing.core.sequence
 import net.corda.testing.driver.NodeHandle
 import net.corda.testing.driver.internal.NodeHandleInternal
 import net.corda.testing.driver.internal.incrementalPortAllocation
-import net.corda.testing.node.internal.*
+import net.corda.testing.node.internal.CompatibilityZoneParams
+import net.corda.testing.node.internal.DriverDSLImpl
+import net.corda.testing.node.internal.SplitCompatibilityZoneParams
+import net.corda.testing.node.internal.internalDriver
 import net.corda.testing.node.internal.network.NetworkMapServer
+import net.corda.testing.node.internal.startNode
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.hamcrest.CoreMatchers.`is`
-import org.junit.After
-import org.junit.Assert.assertEquals
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.net.URL
 import java.time.Instant
 
+@ExtendWith(SerializationExtension::class)
 class NetworkMapTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
-
     private val cacheTimeout = 1.seconds
     private val portAllocation = incrementalPortAllocation()
 
     private lateinit var networkMapServer: NetworkMapServer
     private lateinit var compatibilityZone: CompatibilityZoneParams
 
-    @Before
+    @BeforeEach
     fun start() {
         networkMapServer = NetworkMapServer(cacheTimeout, portAllocation.nextHostAndPort())
         val address = networkMapServer.start()
@@ -60,12 +70,12 @@ class NetworkMapTest {
         )
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         networkMapServer.close()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `parameters update test`() {
         internalDriver(
                 portAllocation = portAllocation,
@@ -124,7 +134,7 @@ class NetworkMapTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Can hotload parameters if the notary changes`() {
         internalDriver(
                 portAllocation = portAllocation,
@@ -146,7 +156,7 @@ class NetworkMapTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `If only the notary changes but parameters were not accepted, the node will still shut down on the flag day`() {
         internalDriver(
                 portAllocation = portAllocation,
@@ -171,7 +181,7 @@ class NetworkMapTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Can not hotload parameters if non-hotloadable parameter changes and the node will shut down`() {
         internalDriver(
                 portAllocation = portAllocation,
@@ -206,7 +216,7 @@ class NetworkMapTest {
         return alice
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `nodes process additions and removals from the network map correctly (and also download the network parameters)`() {
         internalDriver(
                 portAllocation = portAllocation,
@@ -236,7 +246,7 @@ class NetworkMapTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test node heartbeat`() {
         internalDriver(
                 portAllocation = portAllocation,
@@ -280,9 +290,9 @@ class NetworkMapTest {
         // Make sure the nodes aren't getting the node infos from their additional-node-infos directories
         val nodeInfosDir = baseDirectory / NODE_INFO_DIRECTORY
         if (nodeInfosDir.exists()) {
-            assertThat(nodeInfosDir.list().size, `is`(1))
-            assertThat(nodeInfosDir.list().single().readObject<SignedNodeInfo>()
-                    .verified().legalIdentities.first(), `is`(this.nodeInfo.legalIdentities.first()))
+            val files = nodeInfosDir.list()
+            assertThat(files).hasSize(1)
+            assertThat(files.single().readObject<SignedNodeInfo>().verified().legalIdentities.first()).isEqualTo(nodeInfo.legalIdentities.first())
         }
         assertThat(rpc.networkMapSnapshot()).containsOnly(*nodes)
     }

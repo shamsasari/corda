@@ -3,7 +3,7 @@ package net.corda.finance.contracts.universal
 import net.corda.core.crypto.generateKeyPair
 import net.corda.core.identity.CordaX500Name
 import net.corda.testing.core.TestIdentity
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -75,7 +75,7 @@ class ContractDefinition {
         }
     }
 
-    /*   @Test(timeout=300_000)
+    /*   @Test
 	fun `builder problem - should not compile`() {
            val arr = arrange {
                actions {
@@ -98,7 +98,7 @@ class ContractDefinition {
            }
        }
    */
-    @Test(timeout=300_000)
+    @Test
 	fun `builder problem - legal`() {
         val arr = arrange {
             actions {

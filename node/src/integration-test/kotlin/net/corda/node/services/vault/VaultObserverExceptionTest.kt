@@ -36,9 +36,8 @@ import net.corda.testing.driver.driver
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.findCordapp
 import org.assertj.core.api.Assertions
-import org.junit.After
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import java.sql.SQLException
 import java.util.concurrent.ConcurrentHashMap
 import java.util.concurrent.TimeUnit
@@ -60,7 +59,7 @@ class VaultObserverExceptionTest {
                 findCordapp("com.r3.dbfailure.schemas"))
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         StaffedFlowHospital.DatabaseEndocrinologist.customConditions.clear()
         StaffedFlowHospital.onFlowKeptForOvernightObservation.clear()
@@ -76,7 +75,7 @@ class VaultObserverExceptionTest {
      * Causing an SqlException via a syntax error in a vault observer causes the flow to hit the
      * DatabsaseEndocrinologist in the FlowHospital and being kept for overnight observation
      */
-    @Test(timeout=300_000)
+    @Test
     fun unhandledSqlExceptionFromVaultObserverGetsHospitalised() {
         val testControlFuture = openFuture<Boolean>().toCompletableFuture()
 
@@ -101,7 +100,7 @@ class VaultObserverExceptionTest {
             ).returnValue.then { testControlFuture.complete(false) }
             val foundExpectedException = testControlFuture.getOrThrow(waitForFlowDuration)
 
-            Assert.assertTrue(foundExpectedException)
+            assertTrue(foundExpectedException)
         }
     }
 
@@ -109,7 +108,7 @@ class VaultObserverExceptionTest {
      * Causing an SqlException via a syntax error in a vault observer causes the flow to hit the
      * DatabsaseEndocrinologist in the FlowHospital and being kept for overnight observation - Unsafe subscribe
      */
-    @Test(timeout=300_000)
+    @Test
     fun unhandledSqlExceptionFromVaultObserverGetsHospitalisedUnsafeSubscription() {
         DbListenerService.safeSubscription = false
         val testControlFuture = openFuture<Boolean>().toCompletableFuture()
@@ -135,7 +134,7 @@ class VaultObserverExceptionTest {
             ).returnValue.then { testControlFuture.complete(false) }
             val foundExpectedException = testControlFuture.getOrThrow(waitForFlowDuration)
 
-            Assert.assertTrue(foundExpectedException)
+            assertTrue(foundExpectedException)
         }
     }
 
@@ -144,7 +143,7 @@ class VaultObserverExceptionTest {
      * because the recording of transaction states failed. The flow will be hospitalized.
      * The exception will bring the rx.Observer down.
      */
-    @Test(timeout=300_000)
+    @Test
     fun exceptionFromVaultObserverCannotBeSuppressedInFlow() {
         var observation = 0
         val waitUntilHospitalised = Semaphore(0)
@@ -164,7 +163,7 @@ class VaultObserverExceptionTest {
             waitUntilHospitalised.acquire() // wait here until flow gets hospitalised
         }
 
-        Assert.assertEquals(1, observation)
+        assertEquals(1, observation)
     }
 
     /**
@@ -172,7 +171,7 @@ class VaultObserverExceptionTest {
      * because the recording of transaction states failed. The flow will be hospitalized.
      * The exception will bring the rx.Observer down.
      */
-    @Test(timeout=300_000)
+    @Test
     fun runtimeExceptionFromVaultObserverCannotBeSuppressedInFlow() {
         var observation = 0
         val waitUntilHospitalised = Semaphore(0)
@@ -192,14 +191,14 @@ class VaultObserverExceptionTest {
             waitUntilHospitalised.acquire() // wait here until flow gets hospitalised
         }
 
-        Assert.assertEquals(1, observation)
+        assertEquals(1, observation)
     }
 
     /**
      * If we have a state causing a persistence exception during record transactions (in NodeVaultService#processAndNotify),
      * the flow will be kept in for observation.
      */
-    @Test(timeout=300_000)
+    @Test
     fun persistenceExceptionDuringRecordTransactionsGetsKeptForObservation() {
         var counter = 0
         StaffedFlowHospital.DatabaseEndocrinologist.customConditions.add {
@@ -227,8 +226,8 @@ class VaultObserverExceptionTest {
                         .returnValue.getOrThrow(waitForFlowDuration)
             }
         }
-        Assert.assertTrue("Flow has not been to hospital", counter > 0)
-        Assert.assertEquals(1, observation)
+        assertTrue(counter > 0, "Flow has not been to hospital")
+        assertEquals(1, observation)
     }
 
     /**
@@ -236,7 +235,7 @@ class VaultObserverExceptionTest {
      * trying to catch and suppress that exception inside the flow does protect the flow, but the new
      * interceptor will fail the flow anyway. The flow will be kept in for observation.
      */
-    @Test(timeout=300_000)
+    @Test
     fun persistenceExceptionDuringRecordTransactionsCannotBeSuppressedInFlow() {
         var counter = 0
         StaffedFlowHospital.DatabaseEndocrinologist.customConditions.add {
@@ -261,7 +260,7 @@ class VaultObserverExceptionTest {
                             CreateStateFlow.ErrorTarget.FlowSwallowErrors))
             val flowResult = flowHandle.returnValue
             assertFailsWith<TimeoutException>("PersistenceException") { flowResult.getOrThrow(waitForFlowDuration) }
-            Assert.assertTrue("Flow has not been to hospital", counter > 0)
+            assertTrue(counter > 0, "Flow has not been to hospital")
         }
     }
 
@@ -270,7 +269,7 @@ class VaultObserverExceptionTest {
      * therefore handling it in flow code is no good, and the error will be passed to the flow hospital via the
      * interceptor.
      */
-    @Test(timeout=300_000)
+    @Test
     fun syntaxErrorInUserCodeInServiceCannotBeSuppressedInFlow() {
         val testControlFuture = openFuture<Boolean>()
         StaffedFlowHospital.onFlowKeptForOvernightObservation.add { _, _ ->
@@ -291,7 +290,7 @@ class VaultObserverExceptionTest {
                 log.info("Flow has finished")
                 testControlFuture.set(false)
             }
-            Assert.assertTrue("Flow has not been kept in hospital", testControlFuture.getOrThrow(waitForFlowDuration))
+        assertTrue(testControlFuture.getOrThrow(waitForFlowDuration), "Flow has not been kept in hospital")
         }
     }
 
@@ -299,7 +298,7 @@ class VaultObserverExceptionTest {
      * User code throwing a syntax error and catching suppressing that within the observer code is fine
      * and should not have any impact on the rest of the flow
      */
-    @Test(timeout=300_000)
+    @Test
     fun syntaxErrorInUserCodeInServiceCanBeSuppressedInService() {
         driver(DriverParameters(
                 startNodesInProcess = true,
@@ -320,7 +319,7 @@ class VaultObserverExceptionTest {
      * In case of a SQLException or PersistenceException, this was already "breaking" the database transaction
      * and therefore, the next checkpoint was failing.
      */
-    @Test(timeout=300_000)
+    @Test
     fun `attempt to checkpoint, following an error thrown in vault observer which gets supressed in flow, will fail`() {
         var counterBeforeFirstCheckpoint = 0
         var counterAfterFirstCheckpoint = 0
@@ -365,7 +364,7 @@ class VaultObserverExceptionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `vault observer failing with OnErrorFailedException gets hospitalised`() {
         DbListenerService.onError = {
             log.info("Error in rx.Observer#OnError! - Observer will fail with OnErrorFailedException")
@@ -390,10 +389,10 @@ class VaultObserverExceptionTest {
             waitUntilHospitalised.acquire() // wait here until flow gets hospitalised
         }
 
-        Assert.assertEquals(1, observation)
+        assertEquals(1, observation)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `out of memory error halts JVM, on node restart flow retries, and succeeds`() {
         driver(DriverParameters(inMemoryDB = false, cordappsForAllNodes = testCordapps())) {
             val aliceUser = User("user", "foo", setOf(Permissions.all()))
@@ -432,7 +431,7 @@ class VaultObserverExceptionTest {
      *
      * This test causes 2 failures inside of the observer to ensure that the observer is still subscribed.
      */
-    @Test(timeout=300_000)
+    @Test
     fun `Throw user error in VaultService rawUpdates during FinalityFlow blows up the flow but does not break the Observer - onNext check`() {
         var observationCounter = 0
         StaffedFlowHospital.onFlowKeptForOvernightObservation.add { _, _ -> ++observationCounter }
@@ -520,7 +519,7 @@ class VaultObserverExceptionTest {
      *
      * This test causes 2 failures inside of the observer to ensure that the observer is still subscribed.
      */
-    @Test(timeout=300_000)
+    @Test
     fun `Throw user error in VaultService rawUpdates during FinalityFlow blows up the flow but does not break the Observer - onNext and onError check`() {
         var observationCounter = 0
         StaffedFlowHospital.onFlowKeptForOvernightObservation.add { _, _ -> ++observationCounter }
@@ -609,7 +608,7 @@ class VaultObserverExceptionTest {
      *
      * This test causes 2 failures inside of the observer to ensure that the observer is still subscribed.
      */
-    @Test(timeout=300_000)
+    @Test
     fun `Throw user error in VaultService rawUpdates during counterparty FinalityFlow blows up the flow but does not break the Observer`() {
         var observationCounter = 0
         // Semaphore is used to wait until [PassErroneousOwnableStateReceiver] gets hospitalized, only after that moment let testing thread assert 'observationCounter'
@@ -695,7 +694,7 @@ class VaultObserverExceptionTest {
      *
      * This test causes 2 failures inside of the [rx.Observer] to ensure that the Observer is still subscribed.
      */
-    @Test(timeout=300_000)
+    @Test
     fun `Throw user error in VaultService rawUpdates during FinalityFlow blows up the flow but does not break the Observer`() {
         var observationCounter = 0
         StaffedFlowHospital.onFlowKeptForOvernightObservation.add { _, _ -> ++observationCounter }
@@ -767,7 +766,7 @@ class VaultObserverExceptionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Accessing NodeVaultService rawUpdates from a flow is not allowed` () {
         val user = User("user", "foo", setOf(Permissions.all()))
         driver(DriverParameters(startNodesInProcess = true,
@@ -791,7 +790,7 @@ class VaultObserverExceptionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Failing Observer wrapped with ResilientSubscriber will survive and be re-called upon flow retry`() {
         var onNextCount = 0
         var onErrorCount = 0
@@ -825,7 +824,7 @@ class VaultObserverExceptionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Users may subscribe to NodeVaultService rawUpdates with their own custom SafeSubscribers`() {
         var onNextCount = 0
         DbListenerService.onNextVisited = { _ -> onNextCount++ }

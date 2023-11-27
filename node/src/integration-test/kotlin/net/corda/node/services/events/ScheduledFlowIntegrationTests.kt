@@ -4,7 +4,13 @@ import co.paralleluniverse.fibers.Suspendable
 import com.google.common.collect.ImmutableList
 import net.corda.client.rpc.CordaRPCClient
 import net.corda.core.concurrent.CordaFuture
-import net.corda.core.flows.*
+import net.corda.core.flows.FinalityFlow
+import net.corda.core.flows.FlowLogic
+import net.corda.core.flows.FlowSession
+import net.corda.core.flows.InitiatedBy
+import net.corda.core.flows.InitiatingFlow
+import net.corda.core.flows.ReceiveFinalityFlow
+import net.corda.core.flows.StartableByRPC
 import net.corda.core.identity.Party
 import net.corda.core.internal.concurrent.transpose
 import net.corda.core.messaging.startFlow
@@ -28,11 +34,11 @@ import net.corda.testing.node.User
 import net.corda.testing.node.internal.DUMMY_CONTRACTS_CORDAPP
 import net.corda.testing.node.internal.cordappWithPackages
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.Ignore
-import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.time.Instant
-import java.util.*
+import java.util.UUID
 import kotlin.test.assertEquals
 
 class ScheduledFlowIntegrationTests {
@@ -101,10 +107,10 @@ class ScheduledFlowIntegrationTests {
         }
     }
 
-    @Ignore("ENT-5891: Unstable test we're not addressing in Corda 4.x")
-    @Test(timeout=300_000)
+    @Disabled("ENT-5891: Unstable test we're not addressing in Corda 4.x")
+    @Test
 	fun `test that when states are being spent at the same time that schedules trigger everything is processed`() {
-        Assume.assumeFalse(IS_S390X)
+        assumeFalse(IS_S390X)
         driver(DriverParameters(
                 startNodesInProcess = false,
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, cordappWithPackages("net.corda.testMessage", "net.corda.testing.core"), enclosedCordapp())

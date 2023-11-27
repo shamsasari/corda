@@ -6,8 +6,8 @@ import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.amqp.testutils.deserialize
 import net.corda.serialization.internal.carpenter.ClassCarpenterImpl
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.io.NotSerializableException
 import java.lang.reflect.Type
 import java.util.concurrent.ConcurrentHashMap
@@ -45,8 +45,8 @@ class StaticInitialisationOfSerializedObjectTest {
         C()
     }
 
-    @Ignore("Suppressing this, as it depends on obtaining internal access to serialiser cache")
-    @Test(timeout=300_000)
+    @Disabled("Suppressing this, as it depends on obtaining internal access to serialiser cache")
+    @Test
 	fun kotlinObjectWithCompanionObject() {
         data class D(val c: C)
 
@@ -72,7 +72,7 @@ class StaticInitialisationOfSerializedObjectTest {
         assertEquals(2, serialisersByType.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun deserializeTest() {
         data class D(val c: C2)
 
@@ -108,7 +108,7 @@ class StaticInitialisationOfSerializedObjectTest {
             SerializerFactoryBuilder.build(wl1, ClassCarpenterImpl(wl2, ClassLoader.getSystemClassLoader()))
 
     // This time have the serialization factory and the carpenter use different whitelists
-    @Test(timeout=300_000)
+    @Test
 	fun deserializeTest2() {
         data class D(val c: C2)
 

@@ -16,9 +16,9 @@ import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -30,7 +30,7 @@ class CashPaymentFlowTests {
     private lateinit var bankOfCorda: Party
     private lateinit var aliceNode: StartedMockNode
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = MockNetwork(MockNetworkParameters(servicePeerAllocationStrategy = RoundRobin(), cordappsForAllNodes = FINANCE_CORDAPPS))
         bankOfCordaNode = mockNet.createPartyNode(BOC_NAME)
@@ -40,12 +40,12 @@ class CashPaymentFlowTests {
         future.getOrThrow()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `pay some cash`() {
         val payTo = aliceNode.info.singleIdentity()
         val expectedPayment = 500.DOLLARS
@@ -82,7 +82,7 @@ class CashPaymentFlowTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `pay more than we have`() {
         val payTo = aliceNode.info.singleIdentity()
         val expected = 4000.DOLLARS
@@ -94,7 +94,7 @@ class CashPaymentFlowTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `pay zero cash`() {
         val payTo = aliceNode.info.singleIdentity()
         val expected = 0.DOLLARS

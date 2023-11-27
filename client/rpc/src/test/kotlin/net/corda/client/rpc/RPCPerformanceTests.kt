@@ -11,8 +11,8 @@ import net.corda.testing.node.internal.performance.startPublishingFixedRateInjec
 import net.corda.testing.node.internal.performance.startReporter
 import net.corda.testing.node.internal.performance.startTightLoopInjector
 import net.corda.testing.node.internal.rpcDriver
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.util.*
@@ -20,7 +20,7 @@ import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
 import java.util.concurrent.TimeUnit
 
-@Ignore("Only use this locally for profiling")
+@Disabled("Only use this locally for profiling")
 @RunWith(Parameterized::class)
 class RPCPerformanceTests : AbstractRPCTest() {
     companion object {
@@ -76,7 +76,7 @@ class RPCPerformanceTests : AbstractRPCTest() {
             val Mbps: Double
     )
 
-    @Test(timeout=300_000)
+    @Test
 	fun `measure Megabytes per second for simple RPCs`() {
         warmup()
         val inputOutputSizes = listOf(1024, 4096, 100 * 1024)
@@ -118,7 +118,7 @@ class RPCPerformanceTests : AbstractRPCTest() {
     /**
      * Runs 20k RPCs per second for two minutes and publishes relevant stats to JMX.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `consumption rate`() {
         rpcDriver {
             val metricRegistry = startReporter(shutdownManager)
@@ -148,7 +148,7 @@ class RPCPerformanceTests : AbstractRPCTest() {
             val Mbps: Double
     )
 
-    @Test(timeout=300_000)
+    @Test
 	fun `big messages`() {
         warmup()
         measure(listOf(1)) { clientParallelism ->

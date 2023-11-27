@@ -3,11 +3,11 @@ package net.corda.notary.experimental.bftsmart
 import net.corda.core.utilities.NetworkHostAndPort
 import net.corda.notary.experimental.bftsmart.BFTSmartConfigInternal.Companion.portIsClaimedFormat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class BFTSmartConfigTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `replica arithmetic`() {
         (1..20).forEach { n ->
             assertEquals(n, maxFaultyReplicas(n) + minCorrectReplicas(n))
@@ -18,7 +18,7 @@ class BFTSmartConfigTests {
         10.let { n -> assertEquals(3, maxFaultyReplicas(n)) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `min cluster size`() {
         assertEquals(1, minClusterSize(0))
         assertEquals(4, minClusterSize(1))
@@ -26,7 +26,7 @@ class BFTSmartConfigTests {
         assertEquals(10, minClusterSize(3))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `overlapping port ranges are rejected`() {
         fun config(vararg ports: Int) = BFTSmartConfigInternal(ports.map { NetworkHostAndPort("localhost", it) }, false, false)
         assertThatThrownBy { config(11000, 11001).use {} }

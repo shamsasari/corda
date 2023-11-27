@@ -2,7 +2,7 @@ package net.corda.node.services.events;
 
 import net.corda.core.flows.FlowLogic;
 import net.corda.node.services.statemachine.FlowLogicRefFactoryImpl;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 public class FlowLogicRefFromJavaTest {
 

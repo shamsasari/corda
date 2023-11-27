@@ -3,8 +3,8 @@ package net.corda.serialization.internal.amqp;
 import net.corda.core.serialization.CordaSerializable;
 import net.corda.core.serialization.SerializedBytes;
 import net.corda.serialization.internal.amqp.testutils.TestSerializationContext;
-import org.junit.Assert;
-import org.junit.Test;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.Test;
 
 import java.util.ArrayList;
 import java.util.List;

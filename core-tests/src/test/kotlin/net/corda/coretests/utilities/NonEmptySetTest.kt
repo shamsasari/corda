@@ -8,11 +8,11 @@ import junit.framework.TestSuite
 import net.corda.core.serialization.deserialize
 import net.corda.core.serialization.serialize
 import net.corda.core.utilities.NonEmptySet
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runner.RunWith
 import org.junit.runners.Suite
 
@@ -37,23 +37,20 @@ class NonEmptySetTest {
         }
     }
 
+    @ExtendWith(SerializationExtension::class)
     class General {
-        @Rule
-        @JvmField
-        val testSerialization = SerializationEnvironmentRule()
-
-        @Test(timeout=300_000)
-	fun `copyOf - empty source`() {
+        @Test
+        fun `copyOf - empty source`() {
             assertThatThrownBy { NonEmptySet.copyOf(HashSet<Int>()) }.isInstanceOf(IllegalArgumentException::class.java)
         }
 
-        @Test(timeout=300_000)
-	fun head() {
+        @Test
+        fun head() {
             assertThat(NonEmptySet.of(1, 2).head()).isEqualTo(1)
         }
 
-        @Test(timeout=300_000)
-	fun `serialize deserialize`() {
+        @Test
+        fun `serialize deserialize`() {
             val original = NonEmptySet.of(-17, 22, 17)
             val copy = original.serialize().deserialize()
             assertThat(copy).isEqualTo(original).isNotSameAs(original)

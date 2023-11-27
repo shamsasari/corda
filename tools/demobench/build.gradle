@@ -89,14 +89,10 @@ dependencies {
     testImplementation project(':core-test-utils')
     testImplementation project(':test-utils')
     testImplementation project(':testing:testserver')
-
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junit_vintage_version}"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junit_platform_version}"
-
     testImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
     testImplementation "org.jetbrains.kotlin:kotlin-test:$kotlin_version"
     testImplementation "org.assertj:assertj-core:$assertj_version"
-    testImplementation "junit:junit:$junit_version"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
 }
 
 tasks.withType(JavaCompile).configureEach {
@@ -156,7 +152,8 @@ distributions {
  * Bundles the application using JavaPackager,
  * using the ZIP distribution as source.
  */
-task javapackage(dependsOn: distZip) {
+tasks.register('javapackage') {
+    dependsOn distZip
 
     doLast {
         delete([pkg_source, pkg_outDir])
@@ -191,14 +188,14 @@ task javapackage(dependsOn: distZip) {
             }
             filter { line ->
                 line.replaceAll('@pkg_version@', pkg_version)
-                    .replaceAll('@signingKeyUserName@', pkg_macosxKeyUserName)
+                        .replaceAll('@signingKeyUserName@', pkg_macosxKeyUserName)
             }
             into "$pkg_source/package"
         }
 
         ant.taskdef(
-            resource: 'com/sun/javafx/tools/ant/antlib.xml',
-            classpath: "$pkg_source:$java_home/../lib/ant-javafx.jar"
+                resource: 'com/sun/javafx/tools/ant/antlib.xml',
+                classpath: "$pkg_source:$java_home/../lib/ant-javafx.jar"
         )
 
         ant.deploy(nativeBundles: packageType, outdir: pkg_outDir, outfile: 'DemoBench', verbose: 'true') {

@@ -2,21 +2,19 @@ package net.corda.coretests.flows;
 
 import net.corda.core.serialization.SerializationDefaults;
 import net.corda.core.serialization.SerializationFactory;
-import net.corda.testing.core.SerializationEnvironmentRule;
-import org.junit.Rule;
-import org.junit.Test;
+import net.corda.testing.core.SerializationExtension;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.ExtendWith;
 
 import static net.corda.core.serialization.SerializationAPIKt.serialize;
 import static net.corda.core.serialization.internal.CheckpointSerializationAPIKt.checkpointSerialize;
-import static org.junit.Assert.assertNull;
+import static org.junit.jupiter.api.Assertions.assertNull;
 
 /**
  * Enforce parts of the serialization API that aren't obvious from looking at the {@link net.corda.core.serialization.SerializationAPIKt} code.
  */
+@ExtendWith(SerializationExtension.class)
 public class SerializationApiInJavaTest {
-    @Rule
-    public final SerializationEnvironmentRule testSerialization = new SerializationEnvironmentRule();
-
     @Test
     public void enforceSerializationFactoryApi() {
         assertNull(SerializationFactory.Companion.getCurrentFactory());

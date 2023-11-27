@@ -4,7 +4,7 @@ import org.mockito.kotlin.*
 import net.corda.core.internal.concurrent.openFuture
 import net.corda.core.utilities.getOrThrow
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.slf4j.Logger
 import java.io.EOFException
 import java.util.concurrent.CancellationException
@@ -20,7 +20,7 @@ class ConcurrencyUtilsTest {
         doNothing().whenever(it).error(any(), any<Throwable>())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `firstOf short circuit`() {
         // Order not significant in this case:
         val g = firstOf(arrayOf(f2, f1), log) {
@@ -38,7 +38,7 @@ class ConcurrencyUtilsTest {
         verifyNoMoreInteractions(log)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `firstOf re-entrant handler attempt due to cancel`() {
         val futures = arrayOf(f1, f2)
         val g = firstOf(futures, log) {
@@ -56,7 +56,7 @@ class ConcurrencyUtilsTest {
     /**
      * Note that if you set CancellationException on CompletableFuture it will report isCancelled.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `firstOf re-entrant handler attempt not due to cancel`() {
         val futures = arrayOf(f1, f2)
         val nonCancel = IllegalStateException()
@@ -73,7 +73,7 @@ class ConcurrencyUtilsTest {
         assertThatThrownBy { f2.getOrThrow() }.isSameAs(nonCancel)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `firstOf cancel is not special`() {
         val g = firstOf(arrayOf(f2, f1), log) {
             ++invocations
@@ -85,7 +85,7 @@ class ConcurrencyUtilsTest {
         verifyNoMoreInteractions(log)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `match does not pass failure of success block into the failure block`() {
         val f = CompletableFuture.completedFuture(100)
         val successes = mutableListOf<Any?>()
@@ -101,7 +101,7 @@ class ConcurrencyUtilsTest {
         assertEquals(emptyList<Any?>(), failures)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `match does not pass ExecutionException to failure block`() {
         val e = Throwable()
         val f = CompletableFuture<Void>().apply { completeExceptionally(e) }

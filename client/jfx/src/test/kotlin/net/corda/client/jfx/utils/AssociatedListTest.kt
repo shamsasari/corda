@@ -3,8 +3,8 @@ package net.corda.client.jfx.utils
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
 import javafx.collections.ObservableMap
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class AssociatedListTest {
@@ -13,14 +13,14 @@ class AssociatedListTest {
     lateinit var associatedList: ObservableMap<Int, Int>
     lateinit var replayedMap: ObservableMap<Int, Int>
 
-    @Before
+    @BeforeEach
     fun setup() {
         sourceList = FXCollections.observableArrayList(0)
         associatedList = AssociatedList(sourceList, { it % 3 }) { _, number -> number }
         replayedMap = ReplayedMap(associatedList)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addWorks() {
         assertEquals(replayedMap.size, 1)
         assertEquals(replayedMap[0], 0)
@@ -37,7 +37,7 @@ class AssociatedListTest {
         assertEquals(replayedMap[1], 4)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun removeWorks() {
         sourceList.addAll(2, 4)
         assertEquals(replayedMap.size, 3)
@@ -57,7 +57,7 @@ class AssociatedListTest {
         assertEquals(replayedMap.size, 0)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun updateWorks() {
         sourceList.addAll(2, 4)
         assertEquals(replayedMap.size, 3)

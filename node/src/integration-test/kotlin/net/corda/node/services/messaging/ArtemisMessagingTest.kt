@@ -1,8 +1,6 @@
 package net.corda.node.services.messaging
 
 import com.codahale.metrics.MetricRegistry
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import net.corda.core.crypto.generateKeyPair
 import net.corda.core.internal.div
 import net.corda.core.utilities.NetworkHostAndPort
@@ -19,7 +17,7 @@ import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.MAX_MESSAGE_SIZE
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.internal.LogHelper
 import net.corda.testing.internal.TestingNamedCacheFactory
@@ -29,13 +27,16 @@ import net.corda.testing.node.internal.MOCK_VERSION_INFO
 import org.apache.activemq.artemis.api.core.ActiveMQConnectionTimedOutException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
 import rx.subjects.PublishSubject
 import java.net.ServerSocket
+import java.nio.file.Path
 import java.util.concurrent.BlockingQueue
 import java.util.concurrent.LinkedBlockingQueue
 import java.util.concurrent.TimeUnit.MILLISECONDS
@@ -44,18 +45,14 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNull
 import kotlin.test.assertTrue
 
+@ExtendWith(SerializationExtension::class)
 class ArtemisMessagingTest {
     companion object {
         const val TOPIC = "platform.self"
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Rule
-    @JvmField
-    val temporaryFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var temporaryFolder: Path
 
     private val portAllocation = incrementalPortAllocation()
     private val serverPort = portAllocation.nextPort()
@@ -68,17 +65,17 @@ class ArtemisMessagingTest {
 
     private lateinit var networkMapCache: PersistentNetworkMapCache
 
-    @Before
+    @BeforeEach
     fun setUp() {
         abstract class AbstractNodeConfiguration : NodeConfiguration
 
-        val baseDirectory = temporaryFolder.root.toPath()
+        val baseDirectory = temporaryFolder
         val certificatesDirectory = baseDirectory / "certificates"
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory)
 
         config = rigorousMock<AbstractNodeConfiguration>().also {
-            doReturn(temporaryFolder.root.toPath()).whenever(it).baseDirectory
+            doReturn(temporaryFolder).whenever(it).baseDirectory
             doReturn(ALICE_NAME).whenever(it).myLegalName
             doReturn(certificatesDirectory).whenever(it).certificatesDirectory
             doReturn(signingCertificateStore).whenever(it).signingCertificateStore
@@ -94,7 +91,7 @@ class ArtemisMessagingTest {
         networkMapCache = PersistentNetworkMapCache(TestingNamedCacheFactory(), database, rigorousMock()).apply { start(emptyList()) }
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         messagingClient?.stop()
         messagingServer?.stop()
@@ -102,7 +99,7 @@ class ArtemisMessagingTest {
         LogHelper.reset(PersistentUniquenessProvider::class)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `server starting with the port already bound should throw`() {
         ServerSocket(serverPort).use {
             val messagingServer = createMessagingServer()
@@ -110,7 +107,7 @@ class ArtemisMessagingTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `client should connect to remote server`() {
         val remoteServerAddress = portAllocation.nextHostAndPort()
 
@@ -119,7 +116,7 @@ class ArtemisMessagingTest {
         startNodeMessagingClient()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `client should throw if remote server not found`() {
         val serverAddress = portAllocation.nextHostAndPort()
         val invalidServerAddress = portAllocation.nextHostAndPort()
@@ -131,14 +128,14 @@ class ArtemisMessagingTest {
         messagingClient = null
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `client should connect to local server`() {
         createMessagingServer().start()
         createMessagingClient()
         startNodeMessagingClient()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `client should be able to send message to itself`() {
         val (messagingClient, receivedMessages) = createAndStartClientAndServer()
         val message = messagingClient.createMessage(TOPIC, data = "first msg".toByteArray())
@@ -149,7 +146,7 @@ class ArtemisMessagingTest {
         assertNull(receivedMessages.poll(200, MILLISECONDS))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `client should fail if message exceed maxMessageSize limit`() {
         val (messagingClient, receivedMessages) = createAndStartClientAndServer()
         val message = messagingClient.createMessage(TOPIC, data = ByteArray(MAX_MESSAGE_SIZE))
@@ -168,7 +165,7 @@ class ArtemisMessagingTest {
         assertNull(receivedMessages.poll(200, MILLISECONDS))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `server should not process if incoming message exceed maxMessageSize limit`() {
         val (messagingClient, receivedMessages) = createAndStartClientAndServer(clientMaxMessageSize = 100_000, serverMaxMessageSize = 50_000)
         val message = messagingClient.createMessage(TOPIC, data = ByteArray(50_000))
@@ -186,7 +183,7 @@ class ArtemisMessagingTest {
         this.messagingClient = null
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `platform version is included in the message`() {
         val (messagingClient, receivedMessages) = createAndStartClientAndServer(platformVersion = 3)
         val message = messagingClient.createMessage(TOPIC, data = "first msg".toByteArray())
@@ -233,7 +230,7 @@ class ArtemisMessagingTest {
                     MetricRegistry(),
                     TestingNamedCacheFactory(),
                     isDrainingModeOn = { false },
-                    drainingModeWasChangedEvents = PublishSubject.create<Pair<Boolean, Boolean>>(),
+                    drainingModeWasChangedEvents = PublishSubject.create(),
                     terminateOnConnectionError = false,
                     timeoutConfig = P2PMessagingClient.TimeoutConfig(10.seconds, 10.seconds, 10.seconds)).apply {
                 config.configureWithDevSSLCertificate()

@@ -5,27 +5,25 @@ import net.corda.core.crypto.generateKeyPair
 import net.corda.core.crypto.sign
 import net.corda.core.serialization.SerializedBytes
 import net.corda.core.serialization.serialize
-import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.SerializationExtension
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
 import java.security.SignatureException
 import kotlin.test.assertEquals
 
+@ExtendWith(SerializationExtension::class)
 class SignedDataTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Before
+    @BeforeEach
     fun initialise() {
         serialized = data.serialize()
     }
 
     val data = "Just a simple test string"
-    lateinit var serialized: SerializedBytes<String>
+    private lateinit var serialized: SerializedBytes<String>
 
-    @Test(timeout=300_000)
+    @Test
 	fun `make sure correctly signed data is released`() {
         val keyPair = generateKeyPair()
         val sig = keyPair.private.sign(serialized.bytes, keyPair.public)
@@ -35,12 +33,12 @@ class SignedDataTest {
         assertEquals(data, unwrappedData)
     }
 
-    @Test(expected = SignatureException::class, timeout=300_000)
+    @Test
     fun `make sure incorrectly signed data raises an exception`() {
         val keyPairA = generateKeyPair()
         val keyPairB = generateKeyPair()
         val sig = keyPairA.private.sign(serialized.bytes, keyPairB.public)
         val wrappedData = SignedData(serialized, sig)
-        wrappedData.verified()
+        assertThrows<SignatureException> { wrappedData.verified() }
     }
 }

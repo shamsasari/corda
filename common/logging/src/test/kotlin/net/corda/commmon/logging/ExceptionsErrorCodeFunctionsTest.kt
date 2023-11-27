@@ -5,7 +5,7 @@ import com.natpryce.hamkrest.contains
 import net.corda.common.logging.withErrorCodeFor
 import org.apache.logging.log4j.Level
 import org.apache.logging.log4j.message.SimpleMessage
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class ExceptionsErrorCodeFunctionsTest {

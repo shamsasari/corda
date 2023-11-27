@@ -3,14 +3,14 @@ package net.corda.node.jmx
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.JmxPolicy
 import net.corda.testing.driver.driver
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.test.assertTrue
 
 class PublishTest {
 
-    @Test(timeout=300_000)
+    @Test
     fun `node publishes node information via JMX when configured to do so`() {
         driver(DriverParameters(notarySpecs = emptyList(), jmxPolicy = JmxPolicy.defaultEnabled())) {
             val jmxAddress = startNode().get().jmxAddress.toString()

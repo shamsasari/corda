@@ -12,16 +12,16 @@ import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.core.singleIdentity
 import net.corda.testing.driver.NodeParameters
 import net.corda.testing.node.internal.internalDriver
-import org.junit.Assume.assumeFalse
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
 
 open class SignatureConstraintMigrationFromHashConstraintsTests : SignatureConstraintVersioningTests() {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can evolve from lower contract class version to higher one`() {
         assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win")) // See NodeStatePersistenceTests.kt.
 
@@ -68,7 +68,7 @@ open class SignatureConstraintMigrationFromHashConstraintsTests : SignatureConst
         assertEquals(transformedMessage, stateAndRef!!.state.data.message)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `auto migration from HashConstraint to SignatureConstraint`() {
         assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win")) // See NodeStatePersistenceTests.kt.
         val (issuanceTransaction, consumingTransaction) = upgradeCorDappBetweenTransactions(
@@ -84,7 +84,7 @@ open class SignatureConstraintMigrationFromHashConstraintsTests : SignatureConst
         assertTrue(consumingTransaction.outputs.single().constraint is SignatureAttachmentConstraint)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `HashConstraint cannot be migrated if 'disableHashConstraints' system property is not set to true`() {
         assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win")) // See NodeStatePersistenceTests.kt.
         val (issuanceTransaction, consumingTransaction) = upgradeCorDappBetweenTransactions(
@@ -100,7 +100,7 @@ open class SignatureConstraintMigrationFromHashConstraintsTests : SignatureConst
         assertTrue(consumingTransaction.outputs.single().constraint is HashAttachmentConstraint)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `HashConstraint cannot be migrated to SignatureConstraint if new jar is not signed`() {
         assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win")) // See NodeStatePersistenceTests.kt.
         val (issuanceTransaction, consumingTransaction) = upgradeCorDappBetweenTransactions(
@@ -116,7 +116,7 @@ open class SignatureConstraintMigrationFromHashConstraintsTests : SignatureConst
         assertTrue(consumingTransaction.outputs.single().constraint is HashAttachmentConstraint)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `HashConstraint cannot be migrated to SignatureConstraint if platform version is not 4 or greater`() {
         assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win")) // See NodeStatePersistenceTests.kt.
         val (issuanceTransaction, consumingTransaction) = upgradeCorDappBetweenTransactions(
@@ -133,8 +133,8 @@ open class SignatureConstraintMigrationFromHashConstraintsTests : SignatureConst
         assertTrue(consumingTransaction.outputs.single().constraint is HashAttachmentConstraint)
     }
 
-    @Ignore("ENT-5676: Disabling to isolate Gradle process death cause")
-    @Test(timeout=300_000)
+    @Disabled("ENT-5676: Disabling to isolate Gradle process death cause")
+    @Test
 	fun `HashConstraint cannot be migrated to SignatureConstraint if a HashConstraint is specified for one state and another uses an AutomaticPlaceholderConstraint`() {
         assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win")) // See NodeStatePersistenceTests.kt.
         val (issuanceTransaction, consumingTransaction) = upgradeCorDappBetweenTransactions(

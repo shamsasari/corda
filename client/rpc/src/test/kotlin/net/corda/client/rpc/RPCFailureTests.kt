@@ -5,20 +5,17 @@ import net.corda.core.concurrent.CordaFuture
 import net.corda.core.internal.concurrent.openFuture
 import net.corda.core.messaging.RPCOps
 import net.corda.core.utilities.getOrThrow
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.node.internal.rpcDriver
 import net.corda.testing.node.internal.startRpcClient
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
-@Ignore("TODO JDK17: Fixme")
+@ExtendWith(SerializationExtension::class)
+@Disabled("TODO JDK17: Fixme")
 class RPCFailureTests {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
-
     class Unserializable
     interface Ops : RPCOps {
         fun getUnserializable(): Unserializable
@@ -48,27 +45,27 @@ class RPCFailureTests {
         proc(startRpcClient<Ops>(server.broker.hostAndPort!!).getOrThrow())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `kotlin NPE`() = rpc {
         assertThatThrownBy { it.kotlinNPE() }.isInstanceOf(CordaRuntimeException::class.java)
                 .hasMessageContaining("kotlin.KotlinNullPointerException")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `kotlin NPE async`() = rpc {
         val future = it.kotlinNPEAsync()
         assertThatThrownBy { future.getOrThrow() }.isInstanceOf(CordaRuntimeException::class.java)
                 .hasMessageContaining("kotlin.KotlinNullPointerException")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun unserializable() = rpc {
         assertThatThrownBy { it.getUnserializable() }.isInstanceOf(CordaRuntimeException::class.java)
                 .hasMessageContaining("java.io.NotSerializableException:")
                 .hasMessageContaining("Unserializable\" is not on the whitelist or annotated with @CordaSerializable.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unserializable async`() = rpc {
         val future = it.getUnserializableAsync()
         assertThatThrownBy { future.getOrThrow() }.isInstanceOf(CordaRuntimeException::class.java)

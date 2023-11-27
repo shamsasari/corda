@@ -19,7 +19,7 @@ import net.corda.nodeapi.BrokerRpcSslOptions
 import net.corda.nodeapi.internal.ArtemisTcpTransport.Companion.rpcConnectorTcpTransport
 import net.corda.nodeapi.internal.config.MutualSslConfiguration
 import net.corda.nodeapi.internal.config.User
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.driver.PortAllocation
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.internal.TestingNamedCacheFactory
@@ -29,12 +29,13 @@ import org.apache.activemq.artemis.api.core.ActiveMQConnectionTimedOutException
 import org.apache.activemq.artemis.api.core.management.ActiveMQServerControl
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Path
 import javax.security.auth.x500.X500Principal
 
+@ExtendWith(SerializationExtension::class)
 class ArtemisRpcTests {
     private val ports: PortAllocation = incrementalPortAllocation()
 
@@ -42,43 +43,38 @@ class ArtemisRpcTests {
     private val users = listOf(user)
     private val securityManager = RPCSecurityManagerImpl.fromUserList(AuthServiceId("test"), users)
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
-
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var tempFolder: Path
 
     private val testName = X500Principal("CN=Test,O=R3 Ltd,L=London,C=GB")
 
-    @Test(timeout=300_000)
+    @Test
 	fun rpc_with_ssl_enabled() {
         val (rpcKeyPair, selfSignCert) = createKeyPairAndSelfSignedTLSCertificate(testName)
         val keyStorePath = saveToKeyStore(tempFile("rpcKeystore.jks"), rpcKeyPair, selfSignCert)
         val brokerSslOptions = BrokerRpcSslOptions(keyStorePath, "password")
         val trustStorePath = saveToTrustStore(tempFile("rpcTruststore.jks"), selfSignCert)
         val clientSslOptions = ClientRpcSslOptions(trustStorePath, "password")
-        testSslCommunication(p2pSslOptions(tempFolder.root.toPath()), brokerSslOptions, true, clientSslOptions)
+        testSslCommunication(p2pSslOptions(tempFolder), brokerSslOptions, true, clientSslOptions)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rpc_with_ssl_disabled() {
-        testSslCommunication(p2pSslOptions(tempFolder.root.toPath()), null, false, null)
+        testSslCommunication(p2pSslOptions(tempFolder), null, false, null)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rpc_with_no_ssl_on_client_side_and_ssl_on_server_side() {
         val (rpcKeyPair, selfSignCert) = createKeyPairAndSelfSignedTLSCertificate(testName)
         val keyStorePath = saveToKeyStore(tempFile("rpcKeystore.jks"), rpcKeyPair, selfSignCert)
         val brokerSslOptions = BrokerRpcSslOptions(keyStorePath, "password")
         // here client sslOptions are passed null (as in, do not use SSL)
         assertThatThrownBy {
-            testSslCommunication(p2pSslOptions(tempFolder.root.toPath()), brokerSslOptions, true, null)
+            testSslCommunication(p2pSslOptions(tempFolder), brokerSslOptions, true, null)
         }.isInstanceOf(ActiveMQConnectionTimedOutException::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rpc_client_certificate_untrusted_to_server() {
         val (rpcKeyPair, selfSignCert) = createKeyPairAndSelfSignedTLSCertificate(testName)
         val keyStorePath = saveToKeyStore(tempFile("rpcKeystore.jks"), rpcKeyPair, selfSignCert)
@@ -92,7 +88,7 @@ class ArtemisRpcTests {
         val clientSslOptions = ClientRpcSslOptions(trustStorePath, "password")
 
         assertThatThrownBy {
-            testSslCommunication(p2pSslOptions(tempFolder.root.toPath()), brokerSslOptions, true, clientSslOptions)
+            testSslCommunication(p2pSslOptions(tempFolder), brokerSslOptions, true, clientSslOptions)
         }.isInstanceOf(RPCException::class.java)
     }
 
@@ -102,7 +98,7 @@ class ArtemisRpcTests {
                                      clientSslOptions: ClientRpcSslOptions?,
                                      address: NetworkHostAndPort = ports.nextHostAndPort(),
                                      adminAddress: NetworkHostAndPort = ports.nextHostAndPort(),
-                                     baseDirectory: Path = tempFolder.root.toPath()
+                                     baseDirectory: Path = tempFolder
     ) {
         val maxMessageSize = 10000
         val jmxEnabled = false
@@ -144,6 +140,6 @@ class ArtemisRpcTests {
         override val protocolVersion: Int = 1000
     }
 
-    private fun tempFile(name: String): Path = tempFolder.root.toPath() / name
+    private fun tempFile(name: String): Path = tempFolder / name
 
 }

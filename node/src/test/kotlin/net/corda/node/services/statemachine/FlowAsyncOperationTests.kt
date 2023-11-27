@@ -13,9 +13,9 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
 import java.util.concurrent.ExecutionException
@@ -24,7 +24,7 @@ import kotlin.test.assertFailsWith
 class FlowAsyncOperationTests {
     private lateinit var mockNet: InternalMockNetwork
     private lateinit var aliceNode: TestStartedNode
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, enclosedCordapp()),
@@ -33,12 +33,12 @@ class FlowAsyncOperationTests {
         aliceNode = mockNet.createNode()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `operation errors are propagated correctly`() {
         val flow = object : FlowLogic<Unit>() {
             @Suspendable
@@ -56,7 +56,7 @@ class FlowAsyncOperationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `operation result errors are propagated correctly`() {
         val flow = object : FlowLogic<Unit>() {
             @Suspendable
@@ -68,7 +68,7 @@ class FlowAsyncOperationTests {
         assertFailsWith<SpecialException> { aliceNode.services.startFlow(flow).resultFuture.getOrThrow() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `operation result errors are propagated correctly, and can be caught by the flow`() {
         val flow = object : FlowLogic<Unit>() {
             @Suspendable
@@ -94,7 +94,7 @@ class FlowAsyncOperationTests {
 
     private class SpecialException : Exception()
 
-    @Test(timeout = 30_000)
+    @Test
     fun `flows waiting on an async operation do not block the thread`() {
         // Kick off 10 flows that submit a task to the service and wait until completion
         val numFlows = 10

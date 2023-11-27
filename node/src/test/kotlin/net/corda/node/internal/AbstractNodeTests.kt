@@ -1,6 +1,5 @@
 package net.corda.node.internal
 
-import org.mockito.kotlin.mock
 import net.corda.core.internal.concurrent.fork
 import net.corda.core.internal.concurrent.transpose
 import net.corda.core.utilities.contextLogger
@@ -8,27 +7,30 @@ import net.corda.core.utilities.getOrThrow
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.internal.ProcessUtilities.startJavaProcess
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.mock
 import org.slf4j.Logger
-import java.io.File
-import java.util.*
+import java.nio.file.Path
+import java.util.Properties
 import java.util.concurrent.Executors
+import kotlin.io.path.div
+import kotlin.system.exitProcess
 import kotlin.test.assertEquals
 
 class AbstractNodeTests {
-    @Rule
-    @JvmField
-    val temporaryFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var temporaryFolder: Path
+
     private var nextNodeIndex = 0
+
     private fun freshURL(): String {
-        val baseDir = File(temporaryFolder.root, nextNodeIndex++.toString())
+        val baseDir = temporaryFolder / nextNodeIndex++.toString()
         // Problems originally exposed by driver startNodesInProcess, so do what driver does:
         return "jdbc:h2:file:$baseDir/persistence;DB_CLOSE_ON_EXIT=FALSE;LOCK_TIMEOUT=10000;WRITE_DELAY=100;AUTO_SERVER_PORT=0"
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `logVendorString does not leak connection`() {
         // Note this test also covers a transaction that CordaPersistence does while it's instantiating:
         val database = configureDatabase(hikariProperties(freshURL()), DatabaseConfig(), { null }, { null })
@@ -39,7 +41,7 @@ class AbstractNodeTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `H2 fix is applied`() {
         val pool = Executors.newFixedThreadPool(5)
         (0 until 5).map {
@@ -77,10 +79,10 @@ class ColdJVM {
             }.transpose()
             try {
                 f.getOrThrow()
-                System.exit(0) // Kill non-daemon threads.
+                exitProcess(0) // Kill non-daemon threads.
             } catch (t: Throwable) {
                 log.error("H2 fix did not work:", t)
-                System.exit(1)
+                exitProcess(1)
             }
         }
 

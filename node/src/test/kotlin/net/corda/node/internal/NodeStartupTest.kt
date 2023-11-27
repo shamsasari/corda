@@ -1,7 +1,7 @@
 package net.corda.node.internal
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.channels.OverlappingFileLockException
 import java.nio.file.Files
 import java.util.concurrent.CountDownLatch
@@ -9,7 +9,7 @@ import kotlin.concurrent.thread
 import kotlin.test.assertFailsWith
 
 class NodeStartupTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `test that you cant start two nodes in the same directory`() {
         val dir = Files.createTempDirectory("node_startup_test")
         val latch = CountDownLatch(1)

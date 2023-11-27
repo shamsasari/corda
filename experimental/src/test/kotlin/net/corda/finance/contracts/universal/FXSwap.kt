@@ -1,15 +1,13 @@
 package net.corda.finance.contracts.universal
 
-import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.SerializationExtension
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
 
+@ExtendWith(SerializationExtension::class)
 class FXSwap {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
     val TEST_TX_TIME_1: Instant get() = Instant.parse("2017-09-02T12:00:00.00Z")
     val TEST_TX_TIME_TOO_EARLY: Instant get() = Instant.parse("2017-08-31T12:00:00.00Z")
 
@@ -39,7 +37,7 @@ class FXSwap {
     val outStateBad3 = UniversalContract.State(listOf(DUMMY_NOTARY), transferBad3)
 
     val inState = UniversalContract.State(listOf(DUMMY_NOTARY), contract)
-    @Test(timeout=300_000)
+    @Test
 	fun `issue - signature`() {
 
         transaction {
@@ -59,7 +57,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun execute() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -76,7 +74,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - reversed order`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -93,7 +91,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - not authorized`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -105,7 +103,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - before maturity`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -117,7 +115,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - outState mismatch 1`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -128,7 +126,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - outState mismatch 2`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -140,7 +138,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - outState mismatch 3`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -152,7 +150,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - outState mismatch 4`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -164,7 +162,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000) @Ignore
+    @Test @Disabled
     fun `pretty print`() {
         println ( prettyPrint(contract) )
     }

@@ -35,7 +35,7 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.CHARLIE_NAME
 import net.corda.testing.core.DUMMY_NOTARY_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.core.dummyCommand
 import net.corda.testing.internal.TestingNamedCacheFactory
@@ -45,11 +45,11 @@ import net.corda.testing.node.MockServices.Companion.makeTestDataSourcePropertie
 import net.corda.testing.node.TestClock
 import net.corda.testing.node.internal.MockEncryptionService
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.security.KeyPair
 import java.time.Clock
 import java.time.Duration
@@ -59,6 +59,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
 
+@ExtendWith(SerializationExtension::class)
 class DBTransactionStorageLedgerRecoveryTests {
     private companion object {
         val ALICE = TestIdentity(ALICE_NAME, 70)
@@ -67,24 +68,20 @@ class DBTransactionStorageLedgerRecoveryTests {
         val DUMMY_NOTARY = TestIdentity(DUMMY_NOTARY_NAME, 20)
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(inheritable = true)
-
     private lateinit var database: CordaPersistence
     private lateinit var transactionRecovery: DBTransactionStorageLedgerRecovery
     private lateinit var partyInfoCache: PersistentPartyInfoCache
 
     private val encryptionService = MockEncryptionService()
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val dataSourceProps = makeTestDataSourceProperties()
         database = configureDatabase(dataSourceProps, DatabaseConfig(), { null }, { null })
         newTransactionRecovery()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         database.close()
     }
@@ -93,7 +90,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         return transactionRecovery.clock.instant()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query local ledger for transactions with recovery peers within time window`() {
         val beforeFirstTxn = now().truncatedTo(ChronoUnit.SECONDS)
         val txn = newTransaction()
@@ -113,7 +110,7 @@ class DBTransactionStorageLedgerRecoveryTests {
                 untilTime = afterFirstTxn.plus(1, ChronoUnit.MINUTES))).size)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query local ledger for transactions within timeWindow and excluding remoteTransactionIds`() {
         val transaction1 = newTransaction()
         transactionRecovery.addUnnotarisedTransaction(transaction1)
@@ -127,7 +124,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         assertEquals(transaction2.id, results[0].txId)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query local ledger for transactions within timeWindow and for given peers`() {
         val transaction1 = newTransaction()
         transactionRecovery.addUnnotarisedTransaction(transaction1)
@@ -141,7 +138,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         assertEquals(transaction2.id, results[0].txId)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query local ledger by distribution record type`() {
         val transaction1 = newTransaction()
         // sender txn
@@ -169,7 +166,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         assertEquals(3, resultsAll.size)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query for sender distribution records by peers`() {
         val txn1 = newTransaction()
         transactionRecovery.addUnnotarisedTransaction(txn1)
@@ -198,7 +195,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         assertEquals(2, transactionRecovery.querySenderDistributionRecords(timeWindow, peers = setOf(CHARLIE_NAME)).size)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `query for receiver distribution records by initiator`() {
         val txn1 = newTransaction()
         transactionRecovery.addUnnotarisedTransaction(txn1)
@@ -243,7 +240,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         assertEquals(2, transactionRecovery.queryReceiverDistributionRecords(timeWindow, initiators = setOf(BOB_NAME, CHARLIE_NAME)).size)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `transaction without peers does not store recovery metadata in database`() {
         val senderTransaction = newTransaction()
         transactionRecovery.addUnnotarisedTransaction(senderTransaction)
@@ -252,7 +249,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         assertEquals(0, readSenderDistributionRecordFromDB(senderTransaction.id).size)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `create un-notarised transaction with flow metadata and validate status in db`() {
         val senderTransaction = newTransaction()
         transactionRecovery.addUnnotarisedTransaction(senderTransaction)
@@ -281,7 +278,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `finalize transaction with recovery metadata`() {
         val transaction = newTransaction(notarySig = false)
         transactionRecovery.finalizeTransaction(transaction)
@@ -295,7 +292,7 @@ class DBTransactionStorageLedgerRecoveryTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `remove un-notarised transaction and associated recovery metadata`() {
         val senderTransaction = newTransaction(notarySig = false)
         transactionRecovery.addUnnotarisedTransaction(senderTransaction)
@@ -326,8 +323,8 @@ class DBTransactionStorageLedgerRecoveryTests {
         assertNull(transactionRecovery.getTransactionWithStatus(receiverTransaction.id))
     }
 
-    @Test(timeout = 300_000)
-    @Ignore("TODO JDK17:Fixme datetime format issue")
+    @Test
+    @Disabled("TODO JDK17:Fixme datetime format issue")
     fun `test lightweight serialization and deserialization of hashed distribution list payload`() {
         val hashedDistList = HashedDistributionList(
                 ALL_VISIBLE,

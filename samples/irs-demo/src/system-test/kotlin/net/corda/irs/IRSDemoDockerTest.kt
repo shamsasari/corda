@@ -3,8 +3,7 @@ package net.corda.irs
 import com.palantir.docker.compose.DockerComposeRule
 import com.palantir.docker.compose.configuration.DockerComposeFiles
 import com.palantir.docker.compose.connection.waiting.HealthChecks
-import org.junit.ClassRule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.openqa.selenium.By
 import org.openqa.selenium.WebElement
 import org.openqa.selenium.phantomjs.PhantomJSDriver
@@ -37,7 +36,7 @@ class IRSDemoDockerTest {
                 .build()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `runs IRS demo selenium phantomjs`() {
 
         val driver = PhantomJSDriver()

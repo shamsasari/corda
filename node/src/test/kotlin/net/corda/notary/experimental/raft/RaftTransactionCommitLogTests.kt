@@ -20,44 +20,40 @@ import net.corda.node.services.schema.NodeSchemaService
 import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.testing.core.ALICE_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.internal.LogHelper
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
-import org.hamcrest.Matchers.instanceOf
-import org.junit.After
-import org.junit.Assert.assertThat
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.assertj.core.api.Assertions
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Clock
 import java.time.Instant
 import java.util.concurrent.CompletableFuture
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
 
+@ExtendWith(SerializationExtension::class)
 class RaftTransactionCommitLogTests {
     data class Member(val client: CopycatClient, val server: CopycatServer)
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
 
     private val databases: MutableList<CordaPersistence> = mutableListOf()
     private val portAllocation = incrementalPortAllocation()
 
     private lateinit var cluster: List<Member>
 
-    @Before
+    @BeforeEach
     fun setup() {
         LogHelper.setLevel("-org.apache.activemq")
         LogHelper.setLevel("+io.atomix")
         cluster = setUpCluster()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         LogHelper.reset("org.apache.activemq", "io.atomix")
         cluster.map { it.client.close().asCordaFuture() }.transpose().getOrThrow()
@@ -65,7 +61,7 @@ class RaftTransactionCommitLogTests {
         databases.forEach { it.close() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `stores entries correctly`() {
         val client = cluster.last().client
 
@@ -85,7 +81,7 @@ class RaftTransactionCommitLogTests {
         assertEquals(value2.getOrThrow(), txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `returns conflict for duplicate entries`() {
         val client = cluster.last().client
 
@@ -105,7 +101,7 @@ class RaftTransactionCommitLogTests {
         assertEquals(states.toSet(), conflict.consumedStates.keys)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions outside their time window are rejected`() {
         val client = cluster.last().client
 
@@ -119,10 +115,10 @@ class RaftTransactionCommitLogTests {
                 states, txId, requestingPartyName.toString(), requestSignature, timeWindow
         )
         val commitError = client.submit(commitCommand).getOrThrow()
-        assertThat(commitError, instanceOf(NotaryError.TimeWindowInvalid::class.java))
+        Assertions.assertThat(commitError).isInstanceOf(NotaryError.TimeWindowInvalid::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions can be re-notarised outside their time window`() {
         val client = cluster.last().client
 
@@ -158,7 +154,7 @@ class RaftTransactionCommitLogTests {
         val address = Address(myAddress.host, myAddress.port)
         val database = configureDatabase(makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null }, NodeSchemaService(extraSchemas = setOf(RaftNotarySchemaV1)))
         databases.add(database)
-        val stateMachineFactory = { RaftTransactionCommitLog(database, Clock.systemUTC(), { RaftUniquenessProvider.createMap(TestingNamedCacheFactory()) }) }
+        val stateMachineFactory = { RaftTransactionCommitLog(database, Clock.systemUTC()) { RaftUniquenessProvider.createMap(TestingNamedCacheFactory()) } }
 
         val server = CopycatServer.builder(address)
                 .withStateMachine(stateMachineFactory)

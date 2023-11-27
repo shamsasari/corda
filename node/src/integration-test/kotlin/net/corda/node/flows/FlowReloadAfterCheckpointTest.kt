@@ -32,7 +32,7 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.SQLTransientConnectionException
 import java.time.Duration
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -48,7 +48,7 @@ class FlowReloadAfterCheckpointTest {
         val cordapps = listOf(enclosedCordapp())
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow will reload from its checkpoint after suspending when reloadCheckpointAfterSuspend is true`() {
         val reloads = ConcurrentLinkedQueue<StateMachineRunId>()
         FlowStateMachineImpl.onReloadFlowFromCheckpoint = { id ->
@@ -74,7 +74,7 @@ class FlowReloadAfterCheckpointTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow will not reload from its checkpoint after suspending when reloadCheckpointAfterSuspend is false`() {
         val reloads = ConcurrentLinkedQueue<StateMachineRunId>()
         FlowStateMachineImpl.onReloadFlowFromCheckpoint = { id ->
@@ -98,7 +98,7 @@ class FlowReloadAfterCheckpointTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow will reload from its checkpoint after suspending when reloadCheckpointAfterSuspend is true and be kept for observation due to failed deserialization`() {
         val observations = QueueWithCountdown<StateMachineRunId>(1)
         val reloads = QueueWithCountdown<StateMachineRunId>(8)
@@ -132,7 +132,7 @@ class FlowReloadAfterCheckpointTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow will reload from a previous checkpoint after calling suspending function and skipping the persisting the current checkpoint when reloadCheckpointAfterSuspend is true`() {
         val reloads = QueueWithCountdown<StateMachineRunId>(11)
         FlowStateMachineImpl.onReloadFlowFromCheckpoint = { id ->
@@ -159,7 +159,7 @@ class FlowReloadAfterCheckpointTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `idempotent flow will reload from initial checkpoint after calling a suspending function when reloadCheckpointAfterSuspend is true`() {
         var reloadCount = 0
         FlowStateMachineImpl.onReloadFlowFromCheckpoint = { _ -> reloadCount += 1 }
@@ -175,7 +175,7 @@ class FlowReloadAfterCheckpointTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `idempotent flow will reload from initial checkpoint after calling a suspending function when reloadCheckpointAfterSuspend is true but can't throw deserialization error from objects in the call function`() {
         var reloadCount = 0
         FlowStateMachineImpl.onReloadFlowFromCheckpoint = { _ -> reloadCount += 1 }
@@ -191,7 +191,7 @@ class FlowReloadAfterCheckpointTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `timed flow will reload from initial checkpoint after calling a suspending function when reloadCheckpointAfterSuspend is true`() {
         val reloads = ConcurrentLinkedQueue<StateMachineRunId>()
         FlowStateMachineImpl.onReloadFlowFromCheckpoint = { runId -> reloads.add(runId) }
@@ -207,7 +207,7 @@ class FlowReloadAfterCheckpointTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow will correctly retry after an error when reloadCheckpointAfterSuspend is true`() {
         val reloads = ConcurrentLinkedQueue<StateMachineRunId>()
         FlowStateMachineImpl.onReloadFlowFromCheckpoint = { runId -> reloads.add(runId) }
@@ -226,7 +226,7 @@ class FlowReloadAfterCheckpointTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow continues reloading from checkpoints after node restart when reloadCheckpointAfterSuspend is true`() {
         val reloads = QueueWithCountdown<StateMachineRunId>(5)
         val firstLatch = CountDownLatch(2)
@@ -264,7 +264,7 @@ class FlowReloadAfterCheckpointTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `idempotent flow continues reloading from checkpoints after node restart when reloadCheckpointAfterSuspend is true`() {
         // restarts completely from the beginning and forgets the in-memory reload count therefore
         // it reloads an extra 2 times for checkpoints it had already reloaded before the node shutdown
@@ -303,7 +303,7 @@ class FlowReloadAfterCheckpointTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `more complicated flow will reload from its checkpoint after suspending when reloadCheckpointAfterSuspend is true`() {
         val reloads = QueueWithCountdown<StateMachineRunId>(13)
         FlowStateMachineImpl.onReloadFlowFromCheckpoint = { id ->

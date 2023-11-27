@@ -6,7 +6,7 @@ import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.accessAsClass
 import net.corda.serialization.internal.amqp.testutils.testSerializationContext
 import net.corda.serialization.internal.carpenter.ClassCarpenterImpl
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.lang.reflect.Type
 import kotlin.test.assertEquals
 
@@ -16,7 +16,7 @@ class ClassCarpentingTypeLoaderTests {
     private val remoteTypeCarpenter = SchemaBuildingRemoteTypeCarpenter(carpenter)
     private val typeLoader = ClassCarpentingTypeLoader(remoteTypeCarpenter, carpenter.classloader)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `carpent some related classes`() {
         val addressInformation = RemoteTypeInformation.Composable(
                 "address",

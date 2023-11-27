@@ -4,7 +4,7 @@ import com.github.benmanes.caffeine.cache.Cache
 import com.github.benmanes.caffeine.cache.CacheLoader
 import com.github.benmanes.caffeine.cache.Caffeine
 import com.github.benmanes.caffeine.cache.LoadingCache
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class NamedCacheTest : NamedCacheFactory {
@@ -26,7 +26,7 @@ class NamedCacheTest : NamedCacheFactory {
         assertEquals(throws, exceptionThrown)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun TestCheckCacheName() {
         checkNameHelper("abc_123.234", false)
         checkNameHelper("", true)

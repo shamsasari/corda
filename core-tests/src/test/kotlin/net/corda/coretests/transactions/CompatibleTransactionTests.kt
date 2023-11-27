@@ -1,24 +1,56 @@
 package net.corda.coretests.transactions
 
-import net.corda.core.contracts.*
-import net.corda.core.contracts.ComponentGroupEnum.*
-import net.corda.core.crypto.*
+import net.corda.core.contracts.Command
+import net.corda.core.contracts.ComponentGroupEnum.ATTACHMENTS_GROUP
+import net.corda.core.contracts.ComponentGroupEnum.COMMANDS_GROUP
+import net.corda.core.contracts.ComponentGroupEnum.INPUTS_GROUP
+import net.corda.core.contracts.ComponentGroupEnum.NOTARY_GROUP
+import net.corda.core.contracts.ComponentGroupEnum.OUTPUTS_GROUP
+import net.corda.core.contracts.ComponentGroupEnum.PARAMETERS_GROUP
+import net.corda.core.contracts.ComponentGroupEnum.SIGNERS_GROUP
+import net.corda.core.contracts.ComponentGroupEnum.TIMEWINDOW_GROUP
+import net.corda.core.contracts.PrivacySalt
+import net.corda.core.contracts.StateRef
+import net.corda.core.contracts.TimeWindow
+import net.corda.core.contracts.TransactionState
+import net.corda.core.crypto.DigestService
+import net.corda.core.crypto.MerkleTree
+import net.corda.core.crypto.PartialMerkleTree
+import net.corda.core.crypto.SecureHash
+import net.corda.core.crypto.generateKeyPair
+import net.corda.core.crypto.secureRandomBytes
 import net.corda.core.internal.accessAvailableComponentHashes
 import net.corda.core.internal.accessGroupHashes
 import net.corda.core.internal.accessGroupMerkleRoots
 import net.corda.core.internal.createComponentGroups
 import net.corda.core.serialization.serialize
-import net.corda.core.transactions.*
+import net.corda.core.transactions.ComponentGroup
+import net.corda.core.transactions.ComponentVisibilityException
+import net.corda.core.transactions.FilteredComponentGroup
+import net.corda.core.transactions.FilteredTransaction
+import net.corda.core.transactions.FilteredTransactionVerificationException
+import net.corda.core.transactions.NetworkParametersHash
+import net.corda.core.transactions.WireTransaction
 import net.corda.core.utilities.OpaqueBytes
 import net.corda.testing.contracts.DummyContract
 import net.corda.testing.contracts.DummyState
-import net.corda.testing.core.*
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.BOB_NAME
+import net.corda.testing.core.DUMMY_NOTARY_NAME
+import net.corda.testing.core.SerializationExtension
+import net.corda.testing.core.TestIdentity
+import net.corda.testing.core.dummyCommand
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
 import java.util.function.Predicate
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertFails
+import kotlin.test.assertFailsWith
+import kotlin.test.assertNotEquals
+import kotlin.test.assertNotNull
+import kotlin.test.assertNull
 
+@ExtendWith(SerializationExtension::class)
 class CompatibleTransactionTests {
     private companion object {
         val DUMMY_KEY_1 = generateKeyPair()
@@ -27,9 +59,6 @@ class CompatibleTransactionTests {
         val DUMMY_NOTARY = TestIdentity(DUMMY_NOTARY_NAME, 20).party
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
     private val dummyOutState = TransactionState(DummyState(0), DummyContract.PROGRAM_ID, DUMMY_NOTARY)
     private val stateRef1 = StateRef(SecureHash.randomSHA256(), 0)
     private val stateRef2 = StateRef(SecureHash.randomSHA256(), 1)
@@ -69,7 +98,7 @@ class CompatibleTransactionTests {
     }
     private val wireTransactionA by lazy { WireTransaction(componentGroups = componentGroupsA, privacySalt = privacySalt) }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Merkle root computations`() {
         // Merkle tree computation is deterministic if the same salt and ordering are used.
         val wireTransactionB = WireTransaction(componentGroups = componentGroupsA, privacySalt = privacySalt)
@@ -96,7 +125,7 @@ class CompatibleTransactionTests {
 
         // Ordering inside a component group matters.
         val inputsShuffled = listOf(stateRef2, stateRef1, stateRef3)
-        val inputShuffledGroup = ComponentGroup(INPUTS_GROUP.ordinal, inputsShuffled.map { it -> it.serialize() })
+        val inputShuffledGroup = ComponentGroup(INPUTS_GROUP.ordinal, inputsShuffled.map { it.serialize() })
         val componentGroupsB = listOf(
                 inputShuffledGroup,
                 outputGroup,
@@ -129,7 +158,7 @@ class CompatibleTransactionTests {
         assertEquals(wireTransactionA, WireTransaction(componentGroups = shuffledComponentGroupsA, privacySalt = privacySalt))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `WireTransaction constructors and compatibility`() {
         val groups = createComponentGroups(inputs, outputs, commands, attachments, notary, timeWindow, emptyList(), null)
         val wireTransactionOldConstructor = WireTransaction(groups, privacySalt)
@@ -198,17 +227,17 @@ class CompatibleTransactionTests {
         assertFails { WireTransaction(componentGroupsCompatibleEmptyNew, privacySalt) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FilteredTransaction constructors and compatibility`() {
         // Filter out all of the components.
-        val ftxNothing = wireTransactionA.buildFilteredTransaction(Predicate { false }) // Nothing filtered.
+        val ftxNothing = wireTransactionA.buildFilteredTransaction { false } // Nothing filtered.
         // Although nothing filtered, we still receive the group hashes for the top level Merkle tree.
         // Note that attachments are not sent, but group hashes include the allOnesHash flag for the attachment group hash; that's why we expect +1 group hashes.
         assertEquals(wireTransactionA.componentGroups.size + 1, ftxNothing.groupHashes.size)
         ftxNothing.verify()
 
         // Include all of the components.
-        val ftxAll = wireTransactionA.buildFilteredTransaction(Predicate { true }) // All filtered.
+        val ftxAll = wireTransactionA.buildFilteredTransaction { true } // All filtered.
         ftxAll.verify()
         ftxAll.checkAllComponentsVisible(INPUTS_GROUP)
         ftxAll.checkAllComponentsVisible(OUTPUTS_GROUP)
@@ -272,7 +301,7 @@ class CompatibleTransactionTests {
         assertNull(ftxCompatible.networkParametersHash)
 
         // Now, let's allow everything, including the new component type that we cannot process.
-        val ftxCompatibleAll = wireTransactionCompatibleA.buildFilteredTransaction(Predicate { true }) // All filtered, including the unknown component.
+        val ftxCompatibleAll = wireTransactionCompatibleA.buildFilteredTransaction { true } // All filtered, including the unknown component.
         ftxCompatibleAll.verify()
         assertEquals(wireTransactionCompatibleA.id, ftxCompatibleAll.id)
 
@@ -292,10 +321,10 @@ class CompatibleTransactionTests {
         ftxCompatibleNoInputs.verify()
         assertFailsWith<ComponentVisibilityException> { ftxCompatibleNoInputs.checkAllComponentsVisible(INPUTS_GROUP) }
         assertEquals(wireTransactionCompatibleA.componentGroups.size - 1, ftxCompatibleNoInputs.filteredComponentGroups.size)
-        assertEquals(wireTransactionCompatibleA.componentGroups.map { it.groupIndex }.max()!!, ftxCompatibleNoInputs.groupHashes.size - 1)
+        assertEquals(wireTransactionCompatibleA.componentGroups.maxOfOrNull { it.groupIndex }, ftxCompatibleNoInputs.groupHashes.size - 1)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Command visibility tests`() {
         // 1st and 3rd commands require a signature from KEY_1.
         val twoCommandsforKey1 = listOf(dummyCommand(DUMMY_KEY_1.public, DUMMY_KEY_2.public), dummyCommand(DUMMY_KEY_2.public), dummyCommand(DUMMY_KEY_1.public))
@@ -414,7 +443,7 @@ class CompatibleTransactionTests {
         allCommandsNoKey1Ftx.checkCommandVisibility(DUMMY_KEY_1.public) // This will pass, because there are indeed no commands to sign in the original transaction.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FilteredTransaction signer manipulation tests`() {
         // Required to call the private constructor.
         val ftxConstructor = FilteredTransaction::class.constructors.last()
@@ -451,7 +480,7 @@ class CompatibleTransactionTests {
         val key2CommandsFtx = wtx.buildFilteredTransaction(Predicate(::filterKEY2Commands))
 
         // val commandDataComponents = key1CommandsFtx.filteredComponentGroups[0].components
-        val commandDataHashes = wtx.accessAvailableComponentHashes()[ComponentGroupEnum.COMMANDS_GROUP.ordinal]!!
+        val commandDataHashes = wtx.accessAvailableComponentHashes()[COMMANDS_GROUP.ordinal]!!
         val noLastCommandDataPMT = PartialMerkleTree.build(
                 MerkleTree.getMerkleTree(commandDataHashes, wtx.digestService),
                 commandDataHashes.subList(0, 1)
@@ -466,7 +495,7 @@ class CompatibleTransactionTests {
         )
 
         val signerComponents = key1CommandsFtx.filteredComponentGroups[1].components
-        val signerHashes = wtx.accessAvailableComponentHashes()[ComponentGroupEnum.SIGNERS_GROUP.ordinal]!!
+        val signerHashes = wtx.accessAvailableComponentHashes()[SIGNERS_GROUP.ordinal]!!
         val noLastSignerPMT = PartialMerkleTree.build(
                 MerkleTree.getMerkleTree(signerHashes, wtx.digestService),
                 signerHashes.subList(0, 2)
@@ -527,7 +556,7 @@ class CompatibleTransactionTests {
         // Modify last signer (we have a pointer from commandData).
         // Update partial Merkle tree for signers.
         val alterSignerComponents = signerComponents.subList(0, 2) + signerComponents[1] // Third one is removed and the 2nd command is added twice.
-        val alterSignersHashes = wtx.accessAvailableComponentHashes()[ComponentGroupEnum.SIGNERS_GROUP.ordinal]!!.subList(0, 2) + wtx.digestService.componentHash(key1CommandsFtx.filteredComponentGroups[1].nonces[2], alterSignerComponents[2])
+        val alterSignersHashes = wtx.accessAvailableComponentHashes()[SIGNERS_GROUP.ordinal]!!.subList(0, 2) + wtx.digestService.componentHash(key1CommandsFtx.filteredComponentGroups[1].nonces[2], alterSignerComponents[2])
         val alterMTree = MerkleTree.getMerkleTree(alterSignersHashes, wtx.digestService)
         val alterSignerPMTK = PartialMerkleTree.build(
                 alterMTree,
@@ -557,7 +586,7 @@ class CompatibleTransactionTests {
         assertFailsWith<ComponentVisibilityException> { ftxAlterSignerB.checkCommandVisibility(DUMMY_KEY_1.public) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `parameters hash visibility`() {
         fun paramsFilter(elem: Any): Boolean = elem is NetworkParametersHash && elem.hash == paramsHash
         fun attachmentFilter(elem: Any): Boolean = elem is SecureHash && elem == paramsHash

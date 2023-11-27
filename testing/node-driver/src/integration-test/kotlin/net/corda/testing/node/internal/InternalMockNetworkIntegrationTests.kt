@@ -3,7 +3,7 @@ package net.corda.testing.node.internal
 import net.corda.core.internal.div
 import net.corda.testing.common.internal.ProjectStructure.projectRootDir
 import net.corda.testing.node.internal.ProcessUtilities.startJavaProcess
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class InternalMockNetworkIntegrationTests {
@@ -18,7 +18,7 @@ class InternalMockNetworkIntegrationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `does not leak non-daemon threads`() {
         val quasar = projectRootDir / "lib" / "quasar.jar"
         val quasarOptions = "m"

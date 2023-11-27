@@ -3,12 +3,12 @@ package net.corda.coretesting
 import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.TestIdentity
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class TestIdentityTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `entropy works`() {
         val a = TestIdentity(ALICE_NAME, 123)
         val b = TestIdentity(BOB_NAME, 123)
@@ -16,7 +16,7 @@ class TestIdentityTests {
         assertEquals(a.keyPair.private, b.keyPair.private)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `fresh works`() {
         val x = TestIdentity.fresh("xx")
         val y = TestIdentity.fresh("yy")

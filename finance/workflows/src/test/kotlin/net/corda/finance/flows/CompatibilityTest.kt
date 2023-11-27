@@ -10,9 +10,9 @@ import net.corda.serialization.internal.amqp.Schema
 import net.corda.serialization.internal.amqp.SerializationOutput
 import net.corda.serialization.internal.amqp.SerializerFactoryBuilder
 import net.corda.serialization.internal.amqp.custom.PublicKeySerializer
-import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.SerializationExtension
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue
@@ -20,17 +20,13 @@ import kotlin.test.fail
 
 // TODO: If this type of testing gets momentum, we can create a mini-framework that rides through list of files
 // and performs necessary validation on all of them.
+@ExtendWith(SerializationExtension::class)
 class CompatibilityTest {
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    val serializerFactory = SerializerFactoryBuilder.build(AllWhitelist, ClassLoader.getSystemClassLoader()).apply {
+    private val serializerFactory = SerializerFactoryBuilder.build(AllWhitelist, ClassLoader.getSystemClassLoader()).apply {
         register(PublicKeySerializer)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun issueCashTansactionReadTest() {
         val inputStream = javaClass.classLoader.getResourceAsStream("compatibilityData/v3/node_transaction.dat")
         assertNotNull(inputStream)
@@ -57,7 +53,7 @@ class CompatibilityTest {
         assertTrue(inByteArray.contentEquals(serializedBytes.bytes))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun performanceTest() {
         val inputStream = javaClass.classLoader.getResourceAsStream("compatibilityData/v3/node_transaction.dat")
         assertNotNull(inputStream)

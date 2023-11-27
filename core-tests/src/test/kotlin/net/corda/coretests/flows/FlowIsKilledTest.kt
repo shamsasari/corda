@@ -22,7 +22,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.Semaphore
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -34,7 +34,7 @@ class FlowIsKilledTest {
         const val EXCEPTION_MESSAGE = "Goodbye, cruel world!"
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `manually handle the isKilled check`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -53,7 +53,7 @@ class FlowIsKilledTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `manually handled killed flows propagate error to counter parties`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob, charlie) = listOf(ALICE_NAME, BOB_NAME, CHARLIE_NAME)
@@ -84,7 +84,7 @@ class FlowIsKilledTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `a manually killed initiated flow will propagate the killed error to the initiator and its counter parties`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -116,7 +116,7 @@ class FlowIsKilledTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `manually handle killed flows using checkFlowIsNotKilled`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -135,7 +135,7 @@ class FlowIsKilledTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `manually handle killed flows using checkFlowIsNotKilled with lazy message`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()

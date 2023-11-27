@@ -5,19 +5,19 @@ import net.corda.core.internal.CertRole
 import net.corda.nodeapi.internal.crypto.CertificateType
 import net.corda.nodeapi.internal.crypto.X509Utilities
 import org.bouncycastle.asn1.ASN1Integer
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.security.auth.x500.X500Principal
 import kotlin.test.*
 
 class CertRoleTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `should deserialize valid value`() {
         val expected = CertRole.DOORMAN_CA
         val actual = CertRole.getInstance(ASN1Integer(1L))
         assertEquals(expected, actual)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject invalid values`() {
         // Below the lowest used value
         assertFailsWith<IllegalArgumentException> { CertRole.getInstance(ASN1Integer(0L)) }
@@ -27,7 +27,7 @@ class CertRoleTests {
         assertFailsWith<IllegalArgumentException> { CertRole.getInstance(ASN1Integer(Integer.MAX_VALUE + 1L)) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check cert roles verify for various cert hierarchies`() {
 
         // Testing for various certificate hierarchies (with or without NodeCA).

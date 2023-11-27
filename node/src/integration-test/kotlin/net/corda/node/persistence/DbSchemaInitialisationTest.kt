@@ -11,11 +11,11 @@ import net.corda.testing.driver.driver
 import net.corda.testing.node.TestCordapp
 import net.corda.testing.node.internal.startNode
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 class DbSchemaInitialisationTest {
-    @Test(timeout = 300_000)
+    @Test
     fun `database initialisation not allowed in config`() {
         driver(DriverParameters(startNodesInProcess = isQuasarAgentSpecified(), cordappsForAllNodes = emptyList())) {
             assertFailsWith(IllegalStateException::class) {
@@ -24,7 +24,7 @@ class DbSchemaInitialisationTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `app migration resource is only mandatory when not in dev mode`() {
         driver(DriverParameters(startNodesInProcess = true,
                 cordappsForAllNodes = emptyList(),

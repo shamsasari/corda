@@ -32,9 +32,9 @@ import org.apache.activemq.artemis.api.core.QueueConfiguration
 import org.apache.activemq.artemis.api.core.RoutingType
 import org.apache.activemq.artemis.api.core.SimpleString
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 
@@ -48,7 +48,7 @@ abstract class MQSecurityTest : NodeBasedTest() {
     lateinit var attacker: SimpleMQClient
     private val runOnStop = ArrayList<() -> Any?>()
 
-    @Before
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         alice = startNode(ALICE_NAME, rpcUsers = extraRPCUsers + rpcUser)
@@ -62,35 +62,35 @@ abstract class MQSecurityTest : NodeBasedTest() {
 
     abstract fun startAttacker(attacker: SimpleMQClient)
 
-    @After
+    @AfterEach
     fun tearDown() {
         runOnStop.forEach { it() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create queue for valid RPC user`() {
         val user1Queue = "${RPCApi.RPC_CLIENT_QUEUE_NAME_PREFIX}.${rpcUser.username}.${random63BitValue()}"
         assertTempQueueCreationAttackFails(user1Queue)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create queue for invalid RPC user`() {
         val invalidRPCQueue = "${RPCApi.RPC_CLIENT_QUEUE_NAME_PREFIX}.${random63BitValue()}.${random63BitValue()}"
         assertTempQueueCreationAttackFails(invalidRPCQueue)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	open fun `send message to notifications address`() {
         assertSendAttackFails(NOTIFICATIONS_ADDRESS)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create random internal queue`() {
         val randomQueue = "$INTERNAL_PREFIX${random63BitValue()}"
         assertAllQueueCreationAttacksFail(randomQueue)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create random queue`() {
         val randomQueue = random63BitValue().toString()
         assertAllQueueCreationAttacksFail(randomQueue)

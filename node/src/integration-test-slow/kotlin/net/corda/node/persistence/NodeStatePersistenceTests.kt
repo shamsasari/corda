@@ -24,14 +24,14 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.User
-import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.Test
 import java.lang.management.ManagementFactory
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
 class NodeStatePersistenceTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `persistent state survives node restart`() {
         val user = User("mark", "dadada", setOf(Permissions.startFlow<SendMessageFlow>(), Permissions.invokeRpc("vaultQuery")))
         val message = Message("Hello world!")
@@ -63,11 +63,11 @@ class NodeStatePersistenceTests {
         assertEquals(message, retrievedMessage)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `persistent state survives node restart without reinitialising database schema`() {
         // Temporary disable this test when executed on Windows. It is known to be sporadically failing.
         // More investigation is needed to establish why.
-        Assume.assumeFalse(System.getProperty("os.name").toLowerCase().startsWith("win"))
+        assumeFalse(System.getProperty("os.name").lowercase().startsWith("win"))
 
         val user = User("mark", "dadada", setOf(Permissions.startFlow<SendMessageFlow>(), Permissions.invokeRpc("vaultQuery")))
         val message = Message("Hello world!")

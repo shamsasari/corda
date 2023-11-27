@@ -24,8 +24,8 @@ import net.corda.testing.node.User
 import net.corda.testing.node.internal.cordappWithFixups
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
@@ -54,7 +54,7 @@ class ContractWithMissingCustomSerializerTest(private val runInProcess: Boolean)
         @JvmStatic
         fun modes(): List<Array<Boolean>> = listOf(Array(1) { true }, Array(1) { false })
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun checkData() {
             assertNotCordaSerializable<CustomData>()
@@ -64,7 +64,7 @@ class ContractWithMissingCustomSerializerTest(private val runInProcess: Boolean)
     /*
      * Test that we can still verify a transaction that is missing a custom serializer.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `flow with missing custom serializer and fixup`() {
         val contractId = contractCorDapp.jarFile.hash
         val flowId = flowCorDapp.jarFile.hash
@@ -89,7 +89,7 @@ class ContractWithMissingCustomSerializerTest(private val runInProcess: Boolean)
     /*
      * Test we fail properly when we cannot fix-up a missing serializer.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `flow with missing custom serializer but without fixup`() {
         driver(driverParameters(listOf(flowCorDapp, contractCorDapp), runInProcess)) {
             val alice = startNode(providedName = ALICE_NAME, rpcUsers = listOf(user)).getOrThrow()
@@ -110,7 +110,7 @@ class ContractWithMissingCustomSerializerTest(private val runInProcess: Boolean)
      * Test that TransactionBuilder prevents us from creating a
      * transaction that has a custom serializer missing.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `transaction builder flow with missing custom serializer by rpc`() {
         driver(driverParameters(listOf(flowCorDapp, contractCorDapp), runInProcess)) {
             val alice = startNode(providedName = ALICE_NAME, rpcUsers = listOf(user)).getOrThrow()

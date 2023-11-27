@@ -16,12 +16,12 @@ import net.corda.testing.core.BOB_NAME
 import org.apache.qpid.proton.amqp.transport.Begin
 import org.apache.qpid.proton.amqp.transport.Open
 import org.apache.qpid.proton.engine.impl.TransportImpl
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 
 class EventProcessorTest {
-    @Test(timeout=300_000)
+    @Test
     fun `reject unacknowledged message on disconnect`() {
         val executor = DefaultEventLoop()
         val channel = channel(executor)
@@ -44,7 +44,7 @@ class EventProcessorTest {
         assertEquals(MessageStatus.Rejected, msg.onComplete.get(5, TimeUnit.SECONDS))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `reject unacknowledged message on disconnect without remote session being open`() {
         val executor = DefaultEventLoop()
         val channel = channel(executor)

@@ -32,8 +32,8 @@ import net.corda.node.internal.NodeServicesForResolution
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import java.security.PublicKey
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
@@ -157,20 +157,20 @@ class VaultSoftLockManagerTest {
         verifyNoMoreInteractions(mockVault)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `plain old state is not soft locked`() = run(false, PlainOldState(nodePair), false)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `plain old state is not soft locked with checkpoint`() = run(false, PlainOldState(nodePair), true)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `fungible asset is soft locked`() = run(true, FungibleAssetImpl(nodePair), false)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `fungible asset is soft locked with checkpoint`() = run(true, FungibleAssetImpl(nodePair), true)
 }

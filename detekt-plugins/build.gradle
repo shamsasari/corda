@@ -4,7 +4,7 @@ plugins {
 
 dependencies {
     implementation "io.gitlab.arturbosch.detekt:detekt-api:$detekt_version"
-    testImplementation "junit:junit:$junit_version"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
     testImplementation "io.gitlab.arturbosch.detekt:detekt-test:$detekt_version"
     testImplementation "org.assertj:assertj-core:$assertj_version"
 }

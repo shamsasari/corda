@@ -1,7 +1,7 @@
 package net.corda.errorUtilities.docsTable
 
-import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import java.lang.IllegalArgumentException
 import java.nio.file.Paths
 import java.util.*
@@ -22,7 +22,7 @@ class DocsTableGeneratorTest {
         /| test-error | foo, bar | Teachtaireacht tástála | Roinnt gníomhartha |
     """.trimMargin("/")
 
-    @Test(timeout = 1000)
+    @Test
     fun `check error table is produced as expected`() {
         val generator = DocsTableGenerator(RESOURCE_LOCATION, Locale.forLanguageTag("en-US"))
         val table = generator.generateMarkdown()
@@ -30,7 +30,7 @@ class DocsTableGeneratorTest {
         assertEquals(englishTable.split("\n").joinToString(System.lineSeparator()), table)
     }
 
-    @Test(timeout = 1000)
+    @Test
     fun `check table in other locales is produced as expected`() {
         val generator = DocsTableGenerator(RESOURCE_LOCATION, Locale.forLanguageTag("ga-IE"))
         val table = generator.generateMarkdown()

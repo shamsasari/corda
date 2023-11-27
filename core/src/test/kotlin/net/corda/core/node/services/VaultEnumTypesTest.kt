@@ -1,10 +1,10 @@
 package net.corda.core.node.services
 
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class VaultEnumTypesTest {
-    @Test(timeout=300_000)
+    @Test
 	fun vaultStatusReflectsOrdinalValues() {
         /**
          * Warning!!! Do not change the order of this Enum as ordinal values are stored in the database

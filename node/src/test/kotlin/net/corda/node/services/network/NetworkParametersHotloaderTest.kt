@@ -1,8 +1,5 @@
 package net.corda.node.services.network
 
-import org.mockito.kotlin.any
-import org.mockito.kotlin.never
-import org.mockito.kotlin.verify
 import net.corda.core.identity.Party
 import net.corda.core.internal.NetworkParametersStorage
 import net.corda.core.node.NetworkParameters
@@ -14,17 +11,19 @@ import net.corda.nodeapi.internal.createDevNetworkMapCa
 import net.corda.nodeapi.internal.crypto.CertificateAndKeyPair
 import net.corda.testing.common.internal.addNotary
 import net.corda.testing.common.internal.testNetworkParameters
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
-import org.junit.Assert
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.mockito.Mockito
+import org.mockito.kotlin.any
+import org.mockito.kotlin.never
+import org.mockito.kotlin.verify
 
+@ExtendWith(SerializationExtension::class)
 class NetworkParametersHotloaderTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
     private val networkMapCertAndKeyPair: CertificateAndKeyPair = createDevNetworkMapCa()
     private val trustRoots = setOf(DEV_ROOT_CA.certificate)
 
@@ -33,40 +32,40 @@ class NetworkParametersHotloaderTest {
     private val networkParametersWithNotary = originalNetworkParameters.addNotary(notary)
     private val networkParametersStorage = Mockito.mock(NetworkParametersStorage::class.java)
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can hotload if notary changes`() {
         `can hotload`(networkParametersWithNotary)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can not hotload if notary changes but another non-hotloadable property also changes`() {
 
         val newnetParamsWithNewNotaryAndMaxMsgSize = networkParametersWithNotary.copy(maxMessageSize = networkParametersWithNotary.maxMessageSize + 1)
         `can not hotload`(newnetParamsWithNewNotaryAndMaxMsgSize)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can hotload if only always hotloadable properties change`() {
 
         val newParametersWithAlwaysHotloadableProperties = originalNetworkParameters.copy(epoch = originalNetworkParameters.epoch + 1, modifiedTime = originalNetworkParameters.modifiedTime.plusSeconds(60))
         `can hotload`(newParametersWithAlwaysHotloadableProperties)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can not hotload if maxMessageSize changes`() {
 
         val parametersWithNewMaxMessageSize = originalNetworkParameters.copy(maxMessageSize = originalNetworkParameters.maxMessageSize + 1)
         `can not hotload`(parametersWithNewMaxMessageSize)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can not hotload if maxTransactionSize changes`() {
 
         val parametersWithNewMaxTransactionSize = originalNetworkParameters.copy(maxTransactionSize = originalNetworkParameters.maxMessageSize + 1)
         `can not hotload`(parametersWithNewMaxTransactionSize)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can not hotload if minimumPlatformVersion changes`() {
 
         val parametersWithNewMinimumPlatformVersion = originalNetworkParameters.copy(minimumPlatformVersion = originalNetworkParameters.minimumPlatformVersion + 1)
@@ -88,7 +87,7 @@ class NetworkParametersHotloaderTest {
             it.addNetworkParametersChangedListeners(networkParametersChangedListener)
         }
 
-        Assert.assertTrue(networkParametersHotloader.attemptHotload(newNetworkParameters.serialize().hash))
+        assertTrue(networkParametersHotloader.attemptHotload(newNetworkParameters.serialize().hash))
         verify(notaryUpdateListener).onNewNotaryList(newNetworkParameters.notaries)
         verify(networkParametersChangedListener).onNewNetworkParameters(newNetworkParameters)
     }
@@ -107,9 +106,9 @@ class NetworkParametersHotloaderTest {
             it.addNotaryUpdateListener(notaryUpdateListener)
             it.addNetworkParametersChangedListeners(networkParametersChangedListener)
         }
-        Assert.assertFalse(networkParametersHotloader.attemptHotload(newNetworkParameters.serialize().hash))
-        verify(notaryUpdateListener, never()).onNewNotaryList(any());
-        verify(networkParametersChangedListener, never()).onNewNetworkParameters(any());
+        assertFalse(networkParametersHotloader.attemptHotload(newNetworkParameters.serialize().hash))
+        verify(notaryUpdateListener, never()).onNewNotaryList(any())
+        verify(networkParametersChangedListener, never()).onNewNetworkParameters(any())
     }
 
     private fun createHotloaderWithMockedServices(newNetworkParameters: NetworkParameters): NetworkParametersHotloader {

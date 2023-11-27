@@ -9,37 +9,34 @@ import net.corda.core.identity.Party
 import net.corda.core.identity.PartyAndCertificate
 import net.corda.core.serialization.deserialize
 import net.corda.core.serialization.serialize
+import net.corda.coretesting.internal.DEV_ROOT_CA
 import net.corda.nodeapi.internal.crypto.X509KeyStore
 import net.corda.nodeapi.internal.crypto.X509Utilities
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.getTestPartyAndCertificate
-import net.corda.coretesting.internal.DEV_ROOT_CA
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.math.BigInteger
 import kotlin.test.assertFailsWith
 
+@ExtendWith(SerializationExtension::class)
 class PartyAndCertificateTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Before
+    @BeforeEach
     fun setUp() {
         // Register providers before creating Jimfs filesystem. JimFs creates an SSHD instance which
         // register BouncyCastle and EdDSA provider separately, which wrecks havoc.
         Crypto.registerProviders()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `reject a path with no roles`() {
         val path = X509Utilities.buildCertPath(DEV_ROOT_CA.certificate)
         assertFailsWith<IllegalArgumentException> { PartyAndCertificate(path) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `kryo serialisation`() {
         val original = getTestPartyAndCertificate(Party(
                 CordaX500Name(organisation = "Test Corp", locality = "Madrid", country = "ES"),
@@ -50,7 +47,7 @@ class PartyAndCertificateTest {
         assertThat(copy.certificate).isEqualTo(original.certificate)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jdk serialization`() {
         val identity = getTestPartyAndCertificate(Party(
                 CordaX500Name(organisation = "Test Corp", locality = "Madrid", country = "ES"),

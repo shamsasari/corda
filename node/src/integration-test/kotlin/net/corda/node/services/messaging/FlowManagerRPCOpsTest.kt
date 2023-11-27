@@ -15,13 +15,13 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.User
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
 import net.corda.core.internal.messaging.FlowManagerRPCOps as InternalFlowManagerRPCOps
 
 class FlowManagerRPCOpsTest {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `net_corda_core_internal_messaging_FlowManagerRPCOps can be accessed using the MultiRPCClient`() {
         val user = User("user", "password", setOf(Permissions.all()))
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
@@ -43,7 +43,7 @@ class FlowManagerRPCOpsTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `net_corda_core_messaging_flows_FlowManagerRPCOps can be accessed using the MultiRPCClient`() {
         val user = User("user", "password", setOf(Permissions.all()))
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {

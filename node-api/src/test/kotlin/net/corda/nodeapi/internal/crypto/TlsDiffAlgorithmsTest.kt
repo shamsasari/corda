@@ -8,8 +8,8 @@ import net.corda.nodeapi.internal.protonwrapper.netty.keyManagerFactory
 import net.corda.nodeapi.internal.protonwrapper.netty.trustManagerFactory
 import org.assertj.core.api.Assertions
 import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.io.DataInputStream
@@ -51,11 +51,10 @@ class TlsDiffAlgorithmsTest(private val serverAlgo: String, private val clientAl
         private val logger = contextLogger()
     }
 
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var tempFolder: Path
 
-    @Test(timeout=300_000)
+    @Test
 	fun testClientServerTlsExchange() {
 
         //System.setProperty("javax.net.debug", "all")

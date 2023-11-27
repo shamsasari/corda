@@ -16,9 +16,9 @@ import net.corda.core.utilities.getOrThrow
 import net.corda.node.VersionInfo
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.node.internal.*
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class ReferencedStatesFlowTests {
@@ -30,7 +30,7 @@ class ReferencedStatesFlowTests {
     )
     lateinit var nodes: List<TestStartedNode>
 
-    @Before
+    @BeforeEach
     fun setup() {
         nodes = (0..2).map {
             mockNet.createNode(
@@ -39,12 +39,12 @@ class ReferencedStatesFlowTests {
         }
     }
 
-    @After
+    @AfterEach
     fun stop() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `with referenced states flow blocks until the reference state update is received`() {
         // 1. Create reference state.
         val newRefTx = nodes[0].services.startFlow(CreateRefState()).resultFuture.getOrThrow()
@@ -70,7 +70,7 @@ class ReferencedStatesFlowTests {
         assertEquals(updatedRefState.ref, result.tx.references.single())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check ref state is persisted when used in tx with relevant states`() {
         // 1. Create a state to be used as a reference state. Don't share it.
         val newRefTx = nodes[0].services.startFlow(CreateRefState()).resultFuture.getOrThrow()
@@ -102,7 +102,7 @@ class ReferencedStatesFlowTests {
         assertEquals(newRefState, theReferencedStateAgain.states.single())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check schema mappings are updated for reference states`() {
         // 1. Create a state to be used as a reference state. Don't share it.
         val newRefTx = nodes[0].services.startFlow(CreateRefState()).resultFuture.getOrThrow()
@@ -118,7 +118,7 @@ class ReferencedStatesFlowTests {
         assertEquals(2, allRefStates.states.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check old ref state is consumed when update used in tx with relevant states`() {
         // 1. Create a state to be used as a reference state. Don't share it.
         val newRefTx = nodes[0].services.startFlow(CreateRefState()).resultFuture.getOrThrow()
@@ -170,7 +170,7 @@ class ReferencedStatesFlowTests {
         assertEquals(Vault.StateStatus.CONSUMED, theOriginalReferencedStateOnNodeZero.statesMetadata.single().status)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check consumed reference state is found if a transaction refers to it`() {
         // 1. Create a state to be used as a reference state. Don't share it.
         val newRefTx = nodes[0].services.startFlow(CreateRefState()).resultFuture.getOrThrow()

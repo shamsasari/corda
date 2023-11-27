@@ -3,7 +3,7 @@ package net.corda.node.services.statemachine
 import net.corda.core.flows.FlowLogic
 import net.corda.core.flows.IllegalFlowLogicException
 import net.corda.core.flows.SchedulableFlow
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import kotlin.reflect.jvm.jvmName
 
@@ -38,40 +38,40 @@ class FlowLogicRefFactoryImplTest {
     }
 
     private val flowLogicRefFactory = FlowLogicRefFactoryImpl(FlowLogicRefFactoryImpl::class.java.classLoader)
-    @Test(timeout=300_000)
+    @Test
 	fun `create kotlin no arg`() {
         flowLogicRefFactory.create(KotlinNoArgFlowLogic::class.jvmName)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should create kotlin types`() {
         val args = mapOf(Pair("A", ParamType1(1)), Pair("b", ParamType2("Hello Jack")))
         flowLogicRefFactory.createKotlin(KotlinFlowLogic::class.java, args)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create primary`() {
         flowLogicRefFactory.create(KotlinFlowLogic::class.jvmName, ParamType1(1), ParamType2("Hello Jack"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create kotlin void`() {
         flowLogicRefFactory.createKotlin(KotlinFlowLogic::class.java, emptyMap())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create kotlin non primary`() {
         val args = mapOf(Pair("C", ParamType2("Hello Jack")))
         flowLogicRefFactory.createKotlin(KotlinFlowLogic::class.java, args)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create java primitive no registration required`() {
         val args = mapOf(Pair("primitive", "A string"))
         flowLogicRefFactory.createKotlin(KotlinFlowLogic::class.java, args)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create kotlin primitive no registration required`() {
         val args = mapOf(Pair("kotlinType", 3))
         flowLogicRefFactory.createKotlin(KotlinFlowLogic::class.java, args)

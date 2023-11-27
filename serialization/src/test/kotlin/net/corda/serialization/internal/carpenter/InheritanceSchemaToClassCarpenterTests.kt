@@ -3,7 +3,7 @@ package net.corda.serialization.internal.carpenter
 import net.corda.core.serialization.CordaSerializable
 import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.amqp.testutils.testSerializationContext
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.*
 import java.io.NotSerializableException
 
@@ -35,7 +35,7 @@ interface IIII {
 }
 
 class InheritanceSchemaToClassCarpenterTests : AmqpCarpenterBase(AllWhitelist) {
-    @Test(timeout=300_000)
+    @Test
 	fun interfaceParent1() {
         class A(override val j: Int) : J
 
@@ -51,7 +51,7 @@ class InheritanceSchemaToClassCarpenterTests : AmqpCarpenterBase(AllWhitelist) {
         assertEquals(20, asJ.j)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun interfaceParent2() {
         @Suppress("UNUSED")
         class A(override val j: Int, val jj: Int) : J
@@ -67,7 +67,7 @@ class InheritanceSchemaToClassCarpenterTests : AmqpCarpenterBase(AllWhitelist) {
         assertEquals(23, asJ.j)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun multipleInterfaces() {
         class A(override val i: Int, override val ii: Int) : I, II
 
@@ -85,7 +85,7 @@ class InheritanceSchemaToClassCarpenterTests : AmqpCarpenterBase(AllWhitelist) {
         assertEquals(42, ii.ii)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedInterfaces() {
         class A(override val i: Int, override val iii: Int) : III
 
@@ -104,7 +104,7 @@ class InheritanceSchemaToClassCarpenterTests : AmqpCarpenterBase(AllWhitelist) {
         assertEquals(42, iii.iii)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun memberInterface() {
         class A(override val i: Int) : I
         class B(override val i: I, override val iiii: Int) : IIII
@@ -121,7 +121,7 @@ class InheritanceSchemaToClassCarpenterTests : AmqpCarpenterBase(AllWhitelist) {
         assertEquals(42, iiii.iiii)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun memberInterface2() {
         class A(override val i: Int) : I
 
@@ -134,7 +134,7 @@ class InheritanceSchemaToClassCarpenterTests : AmqpCarpenterBase(AllWhitelist) {
                 env.getMangled<A>().mangle<I>()) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun interfaceAndImplementation() {
         class A(override val i: Int) : I
 
@@ -144,7 +144,7 @@ class InheritanceSchemaToClassCarpenterTests : AmqpCarpenterBase(AllWhitelist) {
         assertCanLoadAll(testSerializationContext, env.getMangled<A>().mangle<I>(), env.getMangled<I>())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun twoInterfacesAndImplementation() {
         class A(override val i: Int, override val ii: Int) : I, II
 
@@ -157,7 +157,7 @@ class InheritanceSchemaToClassCarpenterTests : AmqpCarpenterBase(AllWhitelist) {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedInterfacesAndImplementation() {
         class A(override val i: Int, override val iii: Int) : III
 

@@ -4,24 +4,24 @@ import co.paralleluniverse.fibers.Suspendable
 import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import org.assertj.core.api.Assertions
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class MockNetworkCustomCheckpointSerializerTest {
     private lateinit var mockNetwork: MockNetwork
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNetwork = MockNetwork(MockNetworkParameters(cordappsForAllNodes = listOf(TestCorDapp.getCorDapp())))
     }
 
-    @After
+    @AfterEach
     fun shutdown() {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow suspend with custom kryo serializer`() {
         val node = mockNetwork.createPartyNode()
         val expected = 5
@@ -30,7 +30,7 @@ class MockNetworkCustomCheckpointSerializerTest {
         Assertions.assertThat(actual).isEqualTo(expected)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `check references are restored correctly`() {
         val node = mockNetwork.createPartyNode()
         val expectedReference = DifficultToSerialize.BrokenMapClass<String, Int>()
@@ -41,7 +41,7 @@ class MockNetworkCustomCheckpointSerializerTest {
         Assertions.assertThat(actualReference["one"]).isEqualTo(1)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     @Suspendable
     fun `check serialization of interfaces`() {
         val node = mockNetwork.createPartyNode()
@@ -49,7 +49,7 @@ class MockNetworkCustomCheckpointSerializerTest {
         Assertions.assertThat(result).isEqualTo(5)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     @Suspendable
     fun `check serialization of abstract classes`() {
         val node = mockNetwork.createPartyNode()
@@ -57,7 +57,7 @@ class MockNetworkCustomCheckpointSerializerTest {
         Assertions.assertThat(result).isEqualTo(5)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     @Suspendable
     fun `check serialization of final classes`() {
         val node = mockNetwork.createPartyNode()
@@ -65,7 +65,7 @@ class MockNetworkCustomCheckpointSerializerTest {
         Assertions.assertThat(result).isEqualTo(5)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     @Suspendable
     fun `check PublicKey serializer has not been overridden`() {
         val node = mockNetwork.createPartyNode()

@@ -13,13 +13,11 @@ dependencies {
     implementation (project(':core')) {
         transitive = false
     }
-
-    // Unit testing helpers.
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}"
-    testImplementation "junit:junit:$junit_version"
-
     // SLF4J: commons-logging bindings for a SLF4J back end
     implementation "org.slf4j:slf4j-api:$slf4j_version"
+
+    // Unit testing helpers.
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
 }
 
 configurations.implementation.canBeResolved = true

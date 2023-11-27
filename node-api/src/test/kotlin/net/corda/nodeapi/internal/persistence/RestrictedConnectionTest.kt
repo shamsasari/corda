@@ -6,7 +6,7 @@ import net.corda.core.cordapp.Cordapp
 import net.corda.core.cordapp.CordappContext
 import net.corda.core.internal.PLATFORM_VERSION
 import net.corda.core.node.ServiceHub
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.Connection
 import java.sql.Savepoint
 
@@ -232,104 +232,104 @@ class RestrictedConnectionTest {
         restrictedConnection.isReadOnly = true
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `abort with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.abort { println("I'm just an executor for this test...") }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `clearWarnings with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.clearWarnings()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `close with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.close()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `commit with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.commit()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `setSavepoint with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.setSavepoint()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `setSavepoint with name with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.setSavepoint(TEST_STRING)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `releaseSavepoint with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.releaseSavepoint(savePoint)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `rollback with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.rollback()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `rollbackWithSavepoint with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.rollback(savePoint)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `setCatalog with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.catalog = TEST_STRING
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `setTransactionIsolation with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.transactionIsolation = TEST_INT
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `setTypeMap with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         val map: MutableMap<String, Class<*>> = mutableMapOf()
         restrictedConnection.typeMap = map
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `setHoldability with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.holdability = TEST_INT
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `setSchema with target platform version of current 6 unsupported exception`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.schema = TEST_STRING
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `setNetworkTimeout with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.setNetworkTimeout({ println("I'm just an executor for this test...") }, TEST_INT)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `setAutoCommit with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.autoCommit = true
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `setReadOnly with target platform version of 6 executes successfully`() {
         whenever(cordapp.targetPlatformVersion).thenReturn(6)
         restrictedConnection.isReadOnly = true

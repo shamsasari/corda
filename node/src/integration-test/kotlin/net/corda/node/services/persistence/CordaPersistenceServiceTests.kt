@@ -17,7 +17,7 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.DriverManager
 import java.time.Instant
 import java.util.UUID
@@ -25,7 +25,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class CordaPersistenceServiceTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `corda service can save many transactions from different threads`() {
         driver(DriverParameters(inMemoryDB = false, startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
 

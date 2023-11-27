@@ -10,31 +10,31 @@ import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.NotarySpec
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.net.InetSocketAddress
 import java.net.ServerSocket
 
-@Ignore("TODO JDK17: Fixme")
+@Disabled("TODO JDK17: Fixme")
 class AddressBindingFailureTests {
 
     companion object {
         private val portAllocation = incrementalPortAllocation()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `p2p address`() = assertBindExceptionForOverrides { address -> mapOf("p2pAddress" to address.toString()) }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `rpc address`() = assertBindExceptionForOverrides { address -> mapOf("rpcSettings" to mapOf("address" to address.toString())) }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `rpc admin address`() = assertBindExceptionForOverrides { address -> mapOf("rpcSettings" to mapOf("adminAddress" to address.toString())) }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `H2 address`() = assertBindExceptionForOverrides { address -> mapOf("h2Settings" to mapOf("address" to address.toString()), "dataSourceProperties.dataSource.password" to "password") }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `notary P2P address`() {
         ServerSocket(0).use { socket ->
 

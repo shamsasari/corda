@@ -12,17 +12,18 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.CHARLIE_NAME
 import net.corda.testing.core.DUMMY_NOTARY_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
-import org.junit.After
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(SerializationExtension::class)
 class PersistentNetworkMapCacheTest {
     internal companion object {
         val ALICE = TestIdentity(ALICE_NAME, 70)
@@ -40,20 +41,16 @@ class PersistentNetworkMapCacheTest {
         val LONGER_PLC = TestIdentity(LONG_X500_NAME.copy(organisation = "Longer Plc"), 96)
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private var portCounter = 1000
     private val database = configureDatabase(makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null })
     private val charlieNetMapCache = PersistentNetworkMapCache(TestingNamedCacheFactory(), database, InMemoryIdentityService(trustRoot = DEV_ROOT_CA.certificate))
 
-    @After
+    @AfterEach
     fun cleanUp() {
         database.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addNode() {
         val alice = createNodeInfo(listOf(ALICE))
         charlieNetMapCache.addOrUpdateNode(alice)
@@ -66,7 +63,7 @@ class PersistentNetworkMapCacheTest {
         assertThat(fromDb).containsOnly(alice)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unknown legal name`() {
         charlieNetMapCache.addOrUpdateNode(createNodeInfo(listOf(ALICE)))
         assertThat(charlieNetMapCache.getNodesByLegalName(DUMMY_NOTARY_NAME)).isEmpty()
@@ -75,7 +72,7 @@ class PersistentNetworkMapCacheTest {
         assertThat(charlieNetMapCache.getPeerCertificateByLegalName(DUMMY_NOTARY_NAME)).isNull()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `nodes in distributed service`() {
         charlieNetMapCache.addOrUpdateNode(createNodeInfo(listOf(ALICE)))
 
@@ -93,7 +90,7 @@ class PersistentNetworkMapCacheTest {
                 .withMessageContaining(DUMMY_NOTARY_NAME.toString())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `get nodes by owning key and by name`() {
         val alice = createNodeInfo(listOf(ALICE))
         charlieNetMapCache.addOrUpdateNode(alice)
@@ -101,14 +98,14 @@ class PersistentNetworkMapCacheTest {
         assertThat(charlieNetMapCache.getNodeByLegalName(ALICE.name)).isEqualTo(alice)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `get nodes by address`() {
         val alice = createNodeInfo(listOf(ALICE))
         charlieNetMapCache.addOrUpdateNode(alice)
         assertThat(charlieNetMapCache.getNodeByAddress(alice.addresses[0])).isEqualTo(alice)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `insert two node infos with the same host and port`() {
         val alice = createNodeInfo(listOf(ALICE))
         charlieNetMapCache.addOrUpdateNode(alice)
@@ -118,13 +115,13 @@ class PersistentNetworkMapCacheTest {
         assertThat(nodeInfos).hasSize(2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `negative test - attempt to insert invalid node info`() {
         charlieNetMapCache.addOrUpdateNode(createNodeInfo(listOf(LONG_PLC)))
         assertThat(charlieNetMapCache.allNodes).hasSize(0)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `negative test - attempt to update existing node with invalid node info`() {
         charlieNetMapCache.addOrUpdateNode(createNodeInfo(listOf(ALICE)))
         val aliceUpdate = TestIdentity(LONG_X500_NAME, ALICE.keyPair)
@@ -134,7 +131,7 @@ class PersistentNetworkMapCacheTest {
         assertThat(charlieNetMapCache.getNodeByLegalName(LONG_X500_NAME)).isNull()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `negative test - insert two valid node infos and one invalid one`() {
         charlieNetMapCache.addOrUpdateNodes(listOf(createNodeInfo(listOf(ALICE)),
                                            createNodeInfo(listOf(BOB)),
@@ -143,7 +140,7 @@ class PersistentNetworkMapCacheTest {
         assertThat(charlieNetMapCache.allNodes.flatMap { it.legalIdentities }).isEqualTo(listOf(ALICE.party, BOB.party))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `negative test - insert three valid node infos and two invalid ones`() {
         charlieNetMapCache.addOrUpdateNodes(listOf(createNodeInfo(listOf(LONG_PLC)),
                 createNodeInfo(listOf(ALICE)),
@@ -154,7 +151,7 @@ class PersistentNetworkMapCacheTest {
         assertThat(charlieNetMapCache.allNodes.flatMap { it.legalIdentities }).isEqualTo(listOf(ALICE.party, BOB.party, CHARLIE.party))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `negative test - insert one valid node info then attempt to add one invalid node info and update the existing valid nodeinfo`() {
         charlieNetMapCache.addOrUpdateNode(createNodeInfo(listOf(ALICE)))
         val aliceUpdate = TestIdentity(LONG_X500_NAME, ALICE.keyPair)
@@ -165,7 +162,7 @@ class PersistentNetworkMapCacheTest {
         assertThat(charlieNetMapCache.getNodeByLegalName(BOB_NAME)).isNotNull
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `negative test - invalid trust root leads to no node added`() {
         val (_, badCert) = createKeyPairAndSelfSignedTLSCertificate(DEV_ROOT_CA.certificate.issuerX500Principal)
         val netMapCache = PersistentNetworkMapCache(TestingNamedCacheFactory(), database, InMemoryIdentityService(trustRoot = badCert))

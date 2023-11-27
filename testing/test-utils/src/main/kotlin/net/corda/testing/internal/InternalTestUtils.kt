@@ -46,7 +46,7 @@ import net.corda.nodeapi.internal.protonwrapper.netty.CrlSource
 import net.corda.nodeapi.internal.registerDevP2pCertificates
 import net.corda.serialization.internal.amqp.AMQP_ENABLED
 import net.corda.testing.core.ALICE_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import java.io.ByteArrayOutputStream
 import java.io.IOException
@@ -236,7 +236,7 @@ fun fakeAttachment(filePath1: String, content1: String, filePath2: String, conte
     return bs.toByteArray()
 }
 
-/** If [effectiveSerializationEnv] is not set, runs the block with a new [SerializationEnvironmentRule]. */
+/** If [effectiveSerializationEnv] is not set, runs the block with a new [SerializationExtension]. */
 fun <R> withTestSerializationEnvIfNotSet(block: () -> R): R {
     val serializationExists = try {
         effectiveSerializationEnv

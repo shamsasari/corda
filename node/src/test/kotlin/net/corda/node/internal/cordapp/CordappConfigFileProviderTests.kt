@@ -7,7 +7,7 @@ import com.typesafe.config.ConfigRenderOptions
 import net.corda.core.internal.div
 import net.corda.core.internal.writeText
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
 class CordappConfigFileProviderTests {
@@ -23,20 +23,20 @@ class CordappConfigFileProviderTests {
 
     private val provider = CordappConfigFileProvider(listOf(cordappDir))
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that config can be loaded`() {
         writeConfig(validConfig)
         assertThat(provider.getConfigByName(cordappName)).isEqualTo(validConfig)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `config is idempotent if the underlying file is not changed`() {
         writeConfig(validConfig)
         assertThat(provider.getConfigByName(cordappName)).isEqualTo(validConfig)
         assertThat(provider.getConfigByName(cordappName)).isEqualTo(validConfig)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `config is not idempotent if the underlying file is changed`() {
         writeConfig(validConfig)
         assertThat(provider.getConfigByName(cordappName)).isEqualTo(validConfig)

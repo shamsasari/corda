@@ -1,8 +1,5 @@
 package net.corda.node.amqp
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import net.corda.core.internal.JavaVersion
 import net.corda.core.internal.div
 import net.corda.core.toFuture
@@ -24,13 +21,14 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.BOB_NAME
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.internal.fixedCrlSource
-import org.junit.Assume.assumeFalse
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.Assumptions.assumeFalse
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
+import java.nio.file.Path
 import java.time.Duration
 import javax.net.ssl.KeyManagerFactory
 import javax.net.ssl.TrustManagerFactory
@@ -43,26 +41,15 @@ import kotlin.test.assertTrue
  *
  * In order to have control over handshake internals a simple TLS server is created which may have a configurable handshake delay.
  */
-@RunWith(Parameterized::class)
-class AMQPClientSslErrorsTest(@Suppress("unused") private val iteration: Int) {
+class AMQPClientSslErrorsTest {
 
     companion object {
         private const val MAX_MESSAGE_SIZE = 10 * 1024
         private val log = contextLogger()
-
-        @JvmStatic
-        @Parameterized.Parameters(name = "iteration = {0}")
-        fun iterations(): Iterable<Array<Int>> {
-            // It is possible to change this value to a greater number
-            // to ensure that the test is not flaking when executed on CI
-            val repsCount = 1
-            return (1..repsCount).map { arrayOf(it) }
-        }
     }
 
-    @Rule
-    @JvmField
-    val temporaryFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var temporaryFolder: Path
 
     private val portAllocation = incrementalPortAllocation()
 
@@ -74,14 +61,14 @@ class AMQPClientSslErrorsTest(@Suppress("unused") private val iteration: Int) {
 
     private lateinit var clientAmqpConfig: AMQPConfiguration
 
-    @Before
+    @BeforeEach
     fun setup() {
         setupServerCertificates()
         setupClientCertificates()
     }
 
     private fun setupServerCertificates() {
-        val baseDirectory = temporaryFolder.root.toPath() / "server"
+        val baseDirectory = temporaryFolder / "server"
         val certificatesDirectory = baseDirectory / "certificates"
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory)
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
@@ -111,7 +98,7 @@ class AMQPClientSslErrorsTest(@Suppress("unused") private val iteration: Int) {
     }
 
     private fun setupClientCertificates() {
-        val baseDirectory = temporaryFolder.root.toPath() / "client"
+        val baseDirectory = temporaryFolder / "client"
         val certificatesDirectory = baseDirectory / "certificates"
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory)
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
@@ -143,11 +130,8 @@ class AMQPClientSslErrorsTest(@Suppress("unused") private val iteration: Int) {
         )
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun trivialClientServerExchange() {
-        // SSL works quite differently in JDK 11 and re-work is needed
-        assumeFalse(JavaVersion.isVersionAtLeast(JavaVersion.Java_11))
-
         val serverPort = portAllocation.nextPort()
         val serverThread = ServerThread(serverKeyManagerFactory, serverTrustManagerFactory, serverPort).also { it.start() }
 
@@ -181,7 +165,7 @@ class AMQPClientSslErrorsTest(@Suppress("unused") private val iteration: Int) {
         assertFalse(serverThread.isActive)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun amqpClientServerConnect() {
         // SSL works quite differently in JDK 11 and re-work is needed
         assumeFalse(JavaVersion.isVersionAtLeast(JavaVersion.Java_11))
@@ -204,7 +188,7 @@ class AMQPClientSslErrorsTest(@Suppress("unused") private val iteration: Int) {
         assertFalse(serverThread.isActive)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun amqpClientServerHandshakeTimeout() {
         // SSL works quite differently in JDK 11 and re-work is needed
         assumeFalse(JavaVersion.isVersionAtLeast(JavaVersion.Java_11))

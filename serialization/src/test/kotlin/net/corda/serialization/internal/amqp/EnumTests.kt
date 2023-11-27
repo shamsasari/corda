@@ -12,8 +12,8 @@ import net.corda.serialization.internal.amqp.testutils.testDefaultFactoryNoEvolu
 import net.corda.serialization.internal.amqp.testutils.testName
 import net.corda.serialization.internal.carpenter.ClassCarpenterImpl
 import org.assertj.core.api.Assertions
-import org.junit.Assert.assertNotSame
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertNotSame
+import org.junit.jupiter.api.Test
 import java.io.NotSerializableException
 import java.time.DayOfWeek
 import kotlin.test.assertEquals
@@ -75,7 +75,7 @@ class EnumTests {
 
     private val sf1 = testDefaultFactoryNoEvolution()
 
-    @Test(timeout=300_000)
+    @Test
 	fun serialiseSimpleTest() {
         data class C(val c: Bras)
 
@@ -99,7 +99,7 @@ class EnumTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun deserialiseSimpleTest() {
         data class C(val c: Bras)
 
@@ -127,7 +127,7 @@ class EnumTests {
         assertEquals(obj.c, Bras.UNDERWIRE)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun multiEnum() {
         data class Support(val top: Bras, val day: DayOfWeek)
         data class WeeklySupport(val tops: List<Support>)
@@ -147,7 +147,7 @@ class EnumTests {
         assertEquals(week.tops[2].day, obj.tops[2].day)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun enumWithInit() {
         data class C(val c: BrasWithInit)
 
@@ -198,7 +198,7 @@ class EnumTests {
         DeserializationInput(sf1).deserialize(SerializedBytes<C>(sc2))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun enumNotWhitelistedFails() {
         data class C(val c: Bras)
 
@@ -218,7 +218,7 @@ class EnumTests {
         }.isInstanceOf(NotSerializableException::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun enumWhitelisted() {
         data class C(val c: Bras)
 
@@ -238,7 +238,7 @@ class EnumTests {
         TestSerializationOutput(VERBOSE, factory).serialize(C(Bras.UNDERWIRE))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun enumAnnotated() {
         @CordaSerializable data class C(val c: AnnotatedBras)
 
@@ -255,7 +255,7 @@ class EnumTests {
         TestSerializationOutput(VERBOSE, factory).serialize(C(AnnotatedBras.UNDERWIRE))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun deserializeNonWhitlistedEnum() {
         data class C(val c: Bras)
 
@@ -282,7 +282,7 @@ class EnumTests {
         }.isInstanceOf(NotSerializableException::class.java)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun deserializeCustomisedEnum() {
         val input = CustomEnumWrapper(CustomEnum.ONE)
         val factory1 = SerializerFactoryBuilder.build(EmptyWhitelist, ClassLoader.getSystemClassLoader())

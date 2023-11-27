@@ -2,37 +2,34 @@ package net.corda.testing.node.internal
 
 import org.hamcrest.MatcherAssert.assertThat
 import org.hamcrest.Matchers.matchesPattern
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.params.ParameterizedTest
+import org.junit.jupiter.params.provider.MethodSource
 import java.io.BufferedReader
 import java.io.InputStreamReader
-import java.util.stream.Collectors
+import java.util.stream.Collectors.joining
 
-
-@RunWith(value = Parameterized::class)
-class CordaCliWrapperErrorHandlingTests(val arguments: List<String>, val outputRegexPattern: String) {
-
+class CordaCliWrapperErrorHandlingTests {
     companion object {
-        val className = "net.corda.testing.node.internal.SampleCordaCliWrapper"
-
-        private val stackTraceRegex = "^.+Exception[^\\n]++(\\s+at .++)+[\\s\\S]*"
-        private val exceptionWithoutStackTraceRegex ="(\\?\\[31m)*\\Q${className}\\E(\\?\\[0m)*(\\s+.+)"
-        private val emptyStringRegex = "^$"
+        private const val CLASS_NAME = "net.corda.testing.node.internal.SampleCordaCliWrapper"
 
         @JvmStatic
-        @Parameterized.Parameters
-        fun data() = listOf(
-                arrayOf(listOf("--throw-exception", "--verbose"), stackTraceRegex),
-                arrayOf(listOf("--throw-exception"), exceptionWithoutStackTraceRegex),
-                arrayOf(listOf("--sample-command"), emptyStringRegex)
-        )
+        fun data(): List<Array<out Any>> {
+            val stackTraceRegex = "^.+Exception[^\\n]++(\\s+at .++)+[\\s\\S]*"
+            val exceptionWithoutStackTraceRegex ="(\\?\\[31m)*\\Q${CLASS_NAME}\\E(\\?\\[0m)*(\\s+.+)"
+            val emptyStringRegex = "^$"
+            return listOf(
+                    arrayOf(listOf("--throw-exception", "--verbose"), stackTraceRegex),
+                    arrayOf(listOf("--throw-exception"), exceptionWithoutStackTraceRegex),
+                    arrayOf(listOf("--sample-command"), emptyStringRegex)
+            )
+        }
     }
 
-    @Test(timeout=300_000)
-    fun `Run CordaCliWrapper sample app with arguments and check error output matches regExp`() {
+    @ParameterizedTest
+    @MethodSource("data")
+    fun `Run CordaCliWrapper sample app with arguments and check error output matches regExp`(arguments: List<String>, outputRegexPattern: String) {
         val process = ProcessUtilities.startJavaProcess(
-                className = className,
+                className = CLASS_NAME,
                 arguments = arguments,
                 inheritIO = false)
 
@@ -41,11 +38,8 @@ class CordaCliWrapperErrorHandlingTests(val arguments: List<String>, val outputR
         val processErrorOutput = BufferedReader(
                 InputStreamReader(process.errorStream))
                 .lines()
-                .filter { it.contains("Exception") ||
-                        it.contains("at ") ||
-                        it.contains("exception") }
-                .collect(Collectors.joining("\n"))
-                .toString()
+                .filter { "Exception" in it || "at " in it || "exception" in it }
+                .collect(joining("\n"))
 
         assertThat(processErrorOutput, matchesPattern(outputRegexPattern))
     }

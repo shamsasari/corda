@@ -19,30 +19,28 @@ import org.apache.activemq.artemis.api.core.ActiveMQException
 import org.apache.activemq.artemis.api.core.ActiveMQSecurityException
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import javax.security.auth.x500.X500Principal
 
 class RpcSslTest {
-
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var tempFolder: Path
 
     private val testName = X500Principal("CN=Test,O=R3 Ltd,L=London,C=GB")
 
-    @Test(timeout=300_000)
+    @Test
 	fun `RPC client using ssl is able to run a command`() {
         val user = User("mark", "dadada", setOf(all()))
         var successfulLogin = false
         var failedLogin = false
 
         val (keyPair, cert) = createKeyPairAndSelfSignedTLSCertificate(testName)
-        val keyStorePath = saveToKeyStore(tempFolder.root.toPath() / "keystore.jks", keyPair, cert)
+        val keyStorePath = saveToKeyStore(tempFolder / "keystore.jks", keyPair, cert)
         val brokerSslOptions = BrokerRpcSslOptions(keyStorePath, "password")
 
-        val trustStorePath = saveToTrustStore(tempFolder.root.toPath() / "truststore.jks", cert)
+        val trustStorePath = saveToTrustStore(tempFolder / "truststore.jks", cert)
         val clientSslOptions = ClientRpcSslOptions(trustStorePath, "password")
 
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList())) {
@@ -70,17 +68,17 @@ class RpcSslTest {
         assertThat(failedLogin).isFalse()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `RPC client using ssl will fail if connecting to a node that cannot present a matching certificate`() {
         val user = User("mark", "dadada", setOf(all()))
         var successful = false
 
         val (keyPair, cert) = createKeyPairAndSelfSignedTLSCertificate(testName)
-        val keyStorePath = saveToKeyStore(tempFolder.root.toPath() / "keystore.jks", keyPair, cert)
+        val keyStorePath = saveToKeyStore(tempFolder / "keystore.jks", keyPair, cert)
         val brokerSslOptions = BrokerRpcSslOptions(keyStorePath, "password")
 
         val (_, cert1) = createKeyPairAndSelfSignedTLSCertificate(testName)
-        val trustStorePath = saveToTrustStore(tempFolder.root.toPath() / "truststore.jks", cert1)
+        val trustStorePath = saveToTrustStore(tempFolder / "truststore.jks", cert1)
         val clientSslOptions = ClientRpcSslOptions(trustStorePath, "password")
 
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList())) {
@@ -99,7 +97,7 @@ class RpcSslTest {
         assertThat(successful).isFalse()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `RPC client not using ssl can run commands`() {
         val user = User("mark", "dadada", setOf(all()))
         var successful = false
@@ -115,12 +113,12 @@ class RpcSslTest {
         assertThat(successful).isTrue()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `The system RPC user can not connect to the rpc broker without the node's key`() {
         val (keyPair, cert) = createKeyPairAndSelfSignedTLSCertificate(testName)
-        val keyStorePath = saveToKeyStore(tempFolder.root.toPath() / "keystore.jks", keyPair, cert)
+        val keyStorePath = saveToKeyStore(tempFolder / "keystore.jks", keyPair, cert)
         val brokerSslOptions = BrokerRpcSslOptions(keyStorePath, "password")
-        val trustStorePath = saveToTrustStore(tempFolder.root.toPath() / "truststore.jks", cert)
+        val trustStorePath = saveToTrustStore(tempFolder / "truststore.jks", cert)
         val clientSslOptions = ClientRpcSslOptions(trustStorePath, "password")
 
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList())) {

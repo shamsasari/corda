@@ -10,12 +10,12 @@ import net.corda.nodeapi.internal.DEV_CA_PRIVATE_KEY_PASS
 import net.corda.nodeapi.internal.config.CertificateStore
 import net.corda.nodeapi.internal.crypto.X509Utilities.CORDA_CLIENT_TLS
 import net.corda.testing.internal.fixedCrlSource
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.net.ssl.SNIHostName
 import kotlin.test.assertEquals
 
 class SSLHelperTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `ensure SNI header in correct format`() {
         val legalName = CordaX500Name("Test", "London", "GB")
         val sslConfig = configureTestSSL(legalName)
@@ -44,7 +44,7 @@ class SSLHelperTest {
         assertEquals("$legalNameHash.corda.net", (sslHandler.engine().sslParameters.serverNames.first() as SNIHostName).asciiName)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test distributionPointsToString`() {
         val certStore = CertificateStore.fromResource(
                 "net/corda/nodeapi/internal/protonwrapper/netty/sslkeystore_Revoked.jks",

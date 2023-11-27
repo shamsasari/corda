@@ -4,59 +4,60 @@ import com.typesafe.config.ConfigFactory
 import net.corda.core.crypto.secureRandomBytes
 import net.corda.core.crypto.sha256
 import net.corda.core.identity.CordaX500Name
-import net.corda.core.internal.*
+import net.corda.core.internal.NODE_INFO_DIRECTORY
+import net.corda.core.internal.PLATFORM_VERSION
+import net.corda.core.internal.copyTo
+import net.corda.core.internal.createDirectories
+import net.corda.core.internal.div
+import net.corda.core.internal.exists
+import net.corda.core.internal.list
+import net.corda.core.internal.readAll
+import net.corda.core.internal.readObject
+import net.corda.core.internal.write
+import net.corda.core.internal.writeText
 import net.corda.core.node.NetworkParameters
 import net.corda.core.node.NodeInfo
 import net.corda.core.serialization.serialize
+import net.corda.core.utilities.days
+import net.corda.coretesting.internal.createNodeInfoAndSigned
 import net.corda.node.services.config.NotaryConfig
 import net.corda.nodeapi.internal.DEV_ROOT_CA
-import net.corda.core.internal.NODE_INFO_DIRECTORY
-import net.corda.core.utilities.days
 import net.corda.nodeapi.internal.SignedNodeInfo
 import net.corda.nodeapi.internal.config.parseAs
 import net.corda.nodeapi.internal.config.toConfig
-import net.corda.nodeapi.internal.network.NetworkBootstrapper.Companion.DEFAULT_MAX_MESSAGE_SIZE
-import net.corda.nodeapi.internal.network.NetworkBootstrapper.Companion.DEFAULT_MAX_TRANSACTION_SIZE
-import net.corda.nodeapi.internal.network.NodeInfoFilesCopier.Companion.NODE_INFO_FILE_NAME_PREFIX
-import net.corda.testing.core.ALICE_NAME
-import net.corda.testing.core.BOB_NAME
-import net.corda.testing.core.DUMMY_NOTARY_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
-import net.corda.testing.core.TestIdentity
-import net.corda.coretesting.internal.createNodeInfoAndSigned
 import net.corda.nodeapi.internal.network.CopyCordapps
 import net.corda.nodeapi.internal.network.NETWORK_PARAMS_FILE_NAME
 import net.corda.nodeapi.internal.network.NetworkBootstrapper
+import net.corda.nodeapi.internal.network.NetworkBootstrapper.Companion.DEFAULT_MAX_MESSAGE_SIZE
+import net.corda.nodeapi.internal.network.NetworkBootstrapper.Companion.DEFAULT_MAX_TRANSACTION_SIZE
 import net.corda.nodeapi.internal.network.NetworkParametersOverrides
+import net.corda.nodeapi.internal.network.NodeInfoFilesCopier.Companion.NODE_INFO_FILE_NAME_PREFIX
 import net.corda.nodeapi.internal.network.PackageOwner
 import net.corda.nodeapi.internal.network.SignedNetworkParameters
 import net.corda.nodeapi.internal.network.TestContractsJar
 import net.corda.nodeapi.internal.network.verifiedNetworkParametersCert
+import net.corda.testing.core.ALICE_NAME
+import net.corda.testing.core.BOB_NAME
+import net.corda.testing.core.DUMMY_NOTARY_NAME
+import net.corda.testing.core.SerializationExtension
+import net.corda.testing.core.TestIdentity
 import org.assertj.core.api.Assertions.assertThat
+import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
-import org.junit.AfterClass
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.ExpectedException
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.io.TempDir
 import java.nio.file.Files
 import java.nio.file.Path
 import java.security.PublicKey
 import java.time.Duration
 
+@ExtendWith(SerializationExtension::class)
 class NetworkBootstrapperTest {
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
-
-    @Rule
-    @JvmField
-    val expectedEx: ExpectedException = ExpectedException.none()
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
+    @TempDir
+    private lateinit var tempFolder: Path
 
     companion object {
         private val fakeEmbeddedCorda = fakeFileBytes()
@@ -69,7 +70,7 @@ class NetworkBootstrapperTest {
         }
 
         @JvmStatic
-        @AfterClass
+        @AfterAll
         fun cleanUp() {
             Files.delete(fakeEmbeddedCordaJar)
         }
@@ -102,14 +103,14 @@ class NetworkBootstrapperTest {
     private var providedCordaJar: ByteArray? = null
     private val configFiles = HashMap<Path, String>()
 
-    @After
+    @AfterEach
     fun `check config files are preserved`() {
         configFiles.forEach { file, text ->
             assertThat(file).hasContent(text)
         }
     }
 
-    @After
+    @AfterEach
     fun `check provided corda jar is preserved`() {
         if (providedCordaJar == null) {
             // Make sure we clean up if we used the embedded jar
@@ -120,14 +121,14 @@ class NetworkBootstrapperTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty dir`() {
         assertThatThrownBy {
             bootstrap()
         }.hasMessage("No nodes found")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `single node conf file`() {
         createNodeConfFile("node1", bobConfig)
         bootstrap()
@@ -139,7 +140,7 @@ class NetworkBootstrapperTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `node conf file and corda jar`() {
         createNodeConfFile("node1", bobConfig)
         val fakeCordaJar = fakeFileBytes(rootDir / "corda.jar")
@@ -147,14 +148,14 @@ class NetworkBootstrapperTest {
         assertBootstrappedNetwork(fakeCordaJar, "node1" to bobConfig)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `single node directory with just node conf file`() {
         createNodeDir("bob", bobConfig)
         bootstrap()
         assertBootstrappedNetwork(fakeEmbeddedCorda, "bob" to bobConfig)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `single node directory with node conf file and corda jar`() {
         val nodeDir = createNodeDir("bob", bobConfig)
         val fakeCordaJar = fakeFileBytes(nodeDir / "corda.jar")
@@ -162,7 +163,7 @@ class NetworkBootstrapperTest {
         assertBootstrappedNetwork(fakeCordaJar, "bob" to bobConfig)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `single node directory with just corda jar`() {
         val nodeCordaJar = (rootDir / "alice").createDirectories() / "corda.jar"
         val fakeCordaJar = fakeFileBytes(nodeCordaJar)
@@ -172,7 +173,7 @@ class NetworkBootstrapperTest {
         assertThat(nodeCordaJar).hasBinaryContent(fakeCordaJar)  // Make sure the corda.jar is left untouched
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `two node conf files, one of which is a notary`() {
         createNodeConfFile("alice", aliceConfig)
         createNodeConfFile("notary", notaryConfig)
@@ -181,7 +182,7 @@ class NetworkBootstrapperTest {
         networkParameters.assertContainsNotary("notary")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `two node conf files with the same legal name`() {
         createNodeConfFile("node1", aliceConfig)
         createNodeConfFile("node2", aliceConfig)
@@ -190,7 +191,7 @@ class NetworkBootstrapperTest {
         }.hasMessageContaining("Nodes must have unique legal names")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `one node directory and one node conf file`() {
         createNodeConfFile("alice", aliceConfig)
         createNodeDir("bob", bobConfig)
@@ -198,7 +199,7 @@ class NetworkBootstrapperTest {
         assertBootstrappedNetwork(fakeEmbeddedCorda, "alice" to aliceConfig, "bob" to bobConfig)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `node conf file and CorDapp jar`() {
         createNodeConfFile("alice", aliceConfig)
         val cordappBytes = createFakeCordappJar("sample-app", listOf("contract.class"))
@@ -210,7 +211,7 @@ class NetworkBootstrapperTest {
         ))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `no copy CorDapps`() {
         createNodeConfFile("alice", aliceConfig)
         val cordappBytes = createFakeCordappJar("sample-app", listOf("contract.class"))
@@ -222,7 +223,7 @@ class NetworkBootstrapperTest {
         ))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `add node to existing network`() {
         createNodeConfFile("alice", aliceConfig)
         bootstrap()
@@ -233,7 +234,7 @@ class NetworkBootstrapperTest {
         assertThat(networkParameters1).isEqualTo(networkParameters2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `add notary to existing network`() {
         createNodeConfFile("alice", aliceConfig)
         bootstrap()
@@ -244,7 +245,7 @@ class NetworkBootstrapperTest {
         assertThat(networkParameters.epoch).isEqualTo(2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `network parameters overrides`() {
         createNodeConfFile("alice", aliceConfig)
         val minimumPlatformVersion = 2
@@ -268,14 +269,14 @@ class NetworkBootstrapperTest {
     private val alicePackageName = "com.example.alice"
     private val bobPackageName = "com.example.bob"
 
-    @Test(timeout=300_000)
+    @Test
 	fun `register new package namespace in existing network`() {
         createNodeConfFile("alice", aliceConfig)
         bootstrap(packageOwnership = mapOf(Pair(alicePackageName, ALICE.publicKey)))
         assertContainsPackageOwner("alice", mapOf(Pair(alicePackageName, ALICE.publicKey)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `register additional package namespace in existing network`() {
         createNodeConfFile("alice", aliceConfig)
         bootstrap(packageOwnership = mapOf(Pair(alicePackageName, ALICE.publicKey)))
@@ -286,7 +287,7 @@ class NetworkBootstrapperTest {
         assertContainsPackageOwner("bob", mapOf(Pair(alicePackageName, ALICE.publicKey), Pair(bobPackageName, BOB.publicKey)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `attempt to register overlapping namespaces in existing network`() {
         createNodeConfFile("alice", aliceConfig)
         val greedyNamespace = "com.example"
@@ -294,12 +295,12 @@ class NetworkBootstrapperTest {
         assertContainsPackageOwner("alice", mapOf(Pair(greedyNamespace, ALICE.publicKey)))
         // register overlapping package name
         createNodeConfFile("bob", bobConfig)
-        expectedEx.expect(IllegalArgumentException::class.java)
-        expectedEx.expectMessage("Multiple packages added to the packageOwnership overlap.")
-        bootstrap(packageOwnership = mapOf(Pair(greedyNamespace, ALICE.publicKey), Pair(bobPackageName, BOB.publicKey)))
+        assertThatIllegalArgumentException().isThrownBy {
+            bootstrap(packageOwnership = mapOf(Pair(greedyNamespace, ALICE.publicKey), Pair(bobPackageName, BOB.publicKey)))
+        }.withMessage("Multiple packages added to the packageOwnership overlap.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unregister single package namespace in network of one`() {
         createNodeConfFile("alice", aliceConfig)
         bootstrap(packageOwnership = mapOf(Pair(alicePackageName, ALICE.publicKey)))
@@ -309,7 +310,7 @@ class NetworkBootstrapperTest {
         assertContainsPackageOwner("alice", emptyMap())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unregister single package namespace in network of many`() {
         createNodeConfFile("alice", aliceConfig)
         bootstrap(packageOwnership = mapOf(Pair(alicePackageName, ALICE.publicKey), Pair(bobPackageName, BOB.publicKey)))
@@ -318,7 +319,7 @@ class NetworkBootstrapperTest {
         assertContainsPackageOwner("alice", mapOf(Pair(alicePackageName, ALICE.publicKey)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unregister all package namespaces in existing network`() {
         createNodeConfFile("alice", aliceConfig)
         bootstrap(packageOwnership = mapOf(Pair(alicePackageName, ALICE.publicKey), Pair(bobPackageName, BOB.publicKey)))
@@ -327,7 +328,7 @@ class NetworkBootstrapperTest {
         assertContainsPackageOwner("alice", emptyMap())
     }
 
-    private val rootDir get() = tempFolder.root.toPath()
+    private val rootDir get() = tempFolder
 
     private fun bootstrap(copyCordapps: CopyCordapps = CopyCordapps.FirstRunOnly,
                           packageOwnership: Map<String, PublicKey>? = emptyMap(),

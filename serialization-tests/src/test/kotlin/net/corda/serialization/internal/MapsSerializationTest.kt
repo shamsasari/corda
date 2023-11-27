@@ -6,40 +6,37 @@ import net.corda.core.identity.CordaX500Name
 import net.corda.core.serialization.CordaSerializable
 import net.corda.core.serialization.deserialize
 import net.corda.core.serialization.serialize
-import net.corda.nodeapi.internal.serialization.kryo.kryoMagic
 import net.corda.node.services.statemachine.DataSessionMessage
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.nodeapi.internal.serialization.kryo.kryoMagic
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.internal.amqpSpecific
 import net.corda.testing.internal.kryoSpecific
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Assert.assertArrayEquals
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.io.ByteArrayOutputStream
-import java.util.*
+import java.util.Collections
 import kotlin.test.assertEquals
 
+@ExtendWith(SerializationExtension::class)
 class MapsSerializationTest {
     private companion object {
         val javaEmptyMapClass = Collections.emptyMap<Any, Any>().javaClass
         val smallMap = mapOf("foo" to "bar", "buzz" to "bull")
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Test(timeout=300_000)
+    @Test
 	fun `check EmptyMap serialization`() = amqpSpecific("kotlin.collections.EmptyMap is not enabled for Kryo serialization") {
         assertEqualAfterRoundTripSerialization(emptyMap<Any, Any>())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check Map can be root of serialization graph`() {
         assertEqualAfterRoundTripSerialization(smallMap)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check list can be serialized as part of SessionData`() {
         val sessionData = DataSessionMessage(smallMap.serialize())
         assertEqualAfterRoundTripSerialization(sessionData)
@@ -49,7 +46,7 @@ class MapsSerializationTest {
     @CordaSerializable
     data class WrongPayloadType(val payload: HashMap<String, String>)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check throws for forbidden declared type`() = amqpSpecific("Such exceptions are not expected in Kryo mode.") {
         val payload = HashMap<String, String>(smallMap)
         val wrongPayloadType = WrongPayloadType(payload)
@@ -64,7 +61,7 @@ class MapsSerializationTest {
     @CordaSerializable
     data class MyValue(val valueContent: CordaX500Name)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check map serialization works with custom types`() {
         val myMap = mapOf(
                 MyKey(1.0) to MyValue(CordaX500Name("OOO", "LLL", "CC")),
@@ -72,7 +69,7 @@ class MapsSerializationTest {
         assertEqualAfterRoundTripSerialization(myMap)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check empty map serialises as Java emptyMap`() {
         kryoSpecific("Specifically checks Kryo serialization") {
             val nameID = 0

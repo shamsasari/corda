@@ -2,25 +2,30 @@ package net.corda.serialization.internal
 
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.util.DefaultClassResolver
-import net.corda.core.serialization.*
-import net.corda.nodeapi.internal.serialization.kryo.kryoMagic
+import net.corda.core.serialization.CordaSerializable
+import net.corda.core.serialization.SerializationFactory
+import net.corda.core.serialization.SerializedBytes
+import net.corda.core.serialization.deserialize
+import net.corda.core.serialization.serialize
 import net.corda.node.services.statemachine.DataSessionMessage
+import net.corda.nodeapi.internal.serialization.kryo.kryoMagic
 import net.corda.serialization.internal.amqp.DeserializationInput
 import net.corda.serialization.internal.amqp.Envelope
 import net.corda.serialization.internal.amqp.SerializerFactoryBuilder
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.internal.amqpSpecific
 import net.corda.testing.internal.kryoSpecific
 import org.assertj.core.api.Assertions
-import org.junit.Assert.assertArrayEquals
-import org.junit.Assert.assertEquals
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.io.ByteArrayOutputStream
 import java.io.NotSerializableException
 import java.nio.charset.StandardCharsets.US_ASCII
-import java.util.*
+import java.util.Collections
 
+@ExtendWith(SerializationExtension::class)
 class ListsSerializationTest {
     private companion object {
         val javaEmptyListClass = Collections.emptyList<Any>().javaClass
@@ -33,18 +38,14 @@ class ListsSerializationTest {
                 }
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Test(timeout=300_000)
+    @Test
 	fun `check list can be serialized as root of serialization graph`() {
         assertEqualAfterRoundTripSerialization(emptyList<Int>())
         assertEqualAfterRoundTripSerialization(listOf(1))
         assertEqualAfterRoundTripSerialization(listOf(1, 2))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check list can be serialized as part of SessionData`() {
         run {
             val sessionData = DataSessionMessage(listOf(1).serialize())
@@ -63,7 +64,7 @@ class ListsSerializationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check empty list serialises as Java emptyList`() = kryoSpecific("Kryo specific test") {
         val nameID = 0
         val serializedForm = emptyList<Int>().serialize()
@@ -81,7 +82,7 @@ class ListsSerializationTest {
     @CordaSerializable
     data class WrongPayloadType(val payload: ArrayList<Int>)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check throws for forbidden declared type`() = amqpSpecific("Such exceptions are not expected in Kryo mode.") {
         val payload = ArrayList<Int>()
         payload.add(1)
@@ -99,7 +100,7 @@ class ListsSerializationTest {
     @CordaSerializable
     data class CovariantContainer<out T : Parent>(val payload: List<T>)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check covariance`() {
         val payload = ArrayList<Child>()
         payload.add(Child(1))
@@ -112,7 +113,7 @@ class ListsSerializationTest {
             }
         }
 
-        assertEqualAfterRoundTripSerialization(container, { bytes -> verifyEnvelope(bytes, ::verifyEnvelopeBody) })
+        assertEqualAfterRoundTripSerialization(container) { bytes -> verifyEnvelope(bytes, ::verifyEnvelopeBody) }
     }
 }
 

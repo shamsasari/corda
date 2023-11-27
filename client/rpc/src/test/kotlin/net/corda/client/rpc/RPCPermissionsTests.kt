@@ -7,7 +7,7 @@ import net.corda.node.services.rpc.rpcContext
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.RPCDriverDSL
 import net.corda.testing.node.internal.rpcDriver
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.assertFailsWith
@@ -49,7 +49,7 @@ class RPCPermissionsTests : AbstractRPCTest() {
 
     private fun userOf(name: String, permissions: Set<String>) = User(name, "password", permissions)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty user cannot use any flows`() {
         rpcDriver {
             val emptyUser = userOf("empty", emptySet())
@@ -63,7 +63,7 @@ class RPCPermissionsTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `admin user can use any flow`() {
         rpcDriver {
             val adminUser = userOf("admin", setOf(ALL_ALLOWED))
@@ -77,7 +77,7 @@ class RPCPermissionsTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `joe user is allowed to use DummyFlow`() {
         rpcDriver {
             val joeUser = userOf("joe", setOf(DUMMY_FLOW))
@@ -91,7 +91,7 @@ class RPCPermissionsTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `joe user is not allowed to use OtherFlow`() {
         rpcDriver {
             val joeUser = userOf("joe", setOf(DUMMY_FLOW))
@@ -117,7 +117,7 @@ class RPCPermissionsTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `joe user is not allowed to call other RPC methods`() {
         rpcDriver {
             val joeUser = userOf("joe", setOf(DUMMY_FLOW))
@@ -131,7 +131,7 @@ class RPCPermissionsTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `joe user can call different methods matching to a wildcard`() {
         rpcDriver {
             val joeUser = userOf("joe", setOf(WILDCARD_FLOW))
@@ -164,7 +164,7 @@ class RPCPermissionsTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `checking invokeRpc permissions entitlements`() {
         rpcDriver {
             val joeUser = userOf("joe", setOf("InvokeRpc.networkMapFeed"))

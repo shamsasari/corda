@@ -6,14 +6,14 @@ import net.corda.nodeapi.internal.DEV_INTERMEDIATE_CA
 import net.corda.testing.node.internal.network.CrlServer
 import org.assertj.core.api.Assertions.assertThat
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 class CertDistPointCrlSourceTest {
     private lateinit var crlServer: CrlServer
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Do not use Security.addProvider(BouncyCastleProvider()) to avoid EdDSA signature disruption in other tests.
         Crypto.findProvider(BouncyCastleProvider.PROVIDER_NAME)
@@ -21,14 +21,14 @@ class CertDistPointCrlSourceTest {
         crlServer.start()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         if (::crlServer.isInitialized) {
             crlServer.close()
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `happy path`() {
         val crlSource = CertDistPointCrlSource()
 

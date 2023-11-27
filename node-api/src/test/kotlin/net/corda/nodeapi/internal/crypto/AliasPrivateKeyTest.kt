@@ -2,23 +2,22 @@ package net.corda.nodeapi.internal.crypto
 
 import net.corda.core.crypto.internal.AliasPrivateKey
 import net.corda.coretesting.internal.stubs.CertificateStoreStubs
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
 class AliasPrivateKeyTest {
 
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var tempFolder: Path
 
-    @Test(timeout=300_000)
+    @Test
 	fun `store AliasPrivateKey entry and cert to keystore`() {
         val alias = "01234567890"
         val aliasPrivateKey = AliasPrivateKey(alias)
-        val certificatesDirectory = tempFolder.root.toPath()
+        val certificatesDirectory = tempFolder
         val signingCertStore = CertificateStoreStubs.Signing.withCertificatesDirectory(
                 certificatesDirectory,
                 "keystorepass").get(createNew = true)

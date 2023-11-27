@@ -3,12 +3,12 @@ package net.corda.common.configuration.parsing.internal
 import com.typesafe.config.ConfigException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.atomic.AtomicLong
 
 class PropertyTest {
 
-    @Test(timeout=300_000)
+    @Test
 	fun present_value_with_correct_type() {
 
         val key = "a.b.c"
@@ -25,7 +25,7 @@ class PropertyTest {
         assertThat(configuration.withOptions(Configuration.Options.defaults)[property]).isEqualTo(value)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun present_value_with_wrong_type() {
 
         val key = "a.b.c"
@@ -41,7 +41,7 @@ class PropertyTest {
         assertThatThrownBy { property.valueIn(configuration, Configuration.Options.defaults) }.isInstanceOf(ConfigException.WrongType::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun present_value_of_list_type() {
 
         val key = "a.b.c"
@@ -57,7 +57,7 @@ class PropertyTest {
         assertThat(property.valueIn(configuration, Configuration.Options.defaults)).isEqualTo(value)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun present_value_of_list_type_with_whole_list_mapping() {
 
         val key = "a.b.c"
@@ -73,7 +73,7 @@ class PropertyTest {
         assertThat(property.valueIn(configuration, Configuration.Options.defaults)).isEqualTo(value.max())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun absent_value_of_list_type_with_whole_list_mapping() {
 
         val key = "a.b.c"
@@ -88,7 +88,7 @@ class PropertyTest {
         assertThat(property.valueIn(configuration, Configuration.Options.defaults)).isEqualTo(null)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun present_value_of_list_type_with_single_element_and_whole_list_mapping() {
 
         val key = "a.b.c"
@@ -104,7 +104,7 @@ class PropertyTest {
         assertThat(property.valueIn(configuration, Configuration.Options.defaults)).isEqualTo(value.max())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun absent_value_of_list_type_with_single_element_and_whole_list_mapping() {
 
         val key = "a.b.c"
@@ -119,7 +119,7 @@ class PropertyTest {
         assertThat(property.valueIn(configuration, Configuration.Options.defaults)).isEqualTo(null)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun optional_present_value_of_list_type() {
 
         val key = "a.b.c"
@@ -135,7 +135,7 @@ class PropertyTest {
         assertThat(property.valueIn(configuration, Configuration.Options.defaults)).isEqualTo(value)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun optional_absent_value_of_list_type() {
 
         val key = "a.b.c"
@@ -151,7 +151,7 @@ class PropertyTest {
 
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun optional_absent_value_of_list_type_with_default_value() {
 
         val key = "a.b.c"
@@ -167,7 +167,7 @@ class PropertyTest {
         assertThat(property.valueIn(configuration, Configuration.Options.defaults)).isEqualTo(defaultValue)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun absent_value() {
 
         val key = "a.b.c"
@@ -182,7 +182,7 @@ class PropertyTest {
         assertThatThrownBy { property.valueIn(configuration, Configuration.Options.defaults) }.isInstanceOf(ConfigException.Missing::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun optional_present_value_with_correct_type() {
 
         val key = "a.b.c"
@@ -198,7 +198,7 @@ class PropertyTest {
         assertThat(property.valueIn(configuration, Configuration.Options.defaults)).isEqualTo(value)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun optional_present_value_with_wrong_type() {
 
         val key = "a.b.c"
@@ -214,7 +214,7 @@ class PropertyTest {
         assertThatThrownBy { property.valueIn(configuration, Configuration.Options.defaults) }.isInstanceOf(ConfigException.WrongType::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun optional_absent_value() {
 
         val key = "a.b.c"
@@ -229,7 +229,7 @@ class PropertyTest {
         assertThat(property.valueIn(configuration, Configuration.Options.defaults)).isNull()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun optional_absent_with_default_value() {
 
         val key = "a.b.c"

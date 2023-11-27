@@ -16,8 +16,8 @@ import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import org.junit.runners.Parameterized.Parameters
@@ -33,14 +33,14 @@ class ContractWithCustomSerializerTest(private val runInProcess: Boolean) {
         @JvmStatic
         fun modes(): List<Array<Boolean>> = listOf(Array(1) { true }, Array(1) { false })
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun checkData() {
             assertNotCordaSerializable<Currantsy>()
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flow with custom serializer by rpc`() {
         val user = User("u", "p", setOf(Permissions.all()))
         driver(DriverParameters(

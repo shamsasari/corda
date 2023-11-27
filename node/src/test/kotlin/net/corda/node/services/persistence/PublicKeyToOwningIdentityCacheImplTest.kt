@@ -1,6 +1,5 @@
 package net.corda.node.services.persistence
 
-import junit.framework.TestCase.assertEquals
 import net.corda.core.crypto.generateKeyPair
 import net.corda.core.node.services.KeyManagementService
 import net.corda.core.utilities.getOrThrow
@@ -9,24 +8,22 @@ import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.nodeapi.internal.persistence.withoutDatabaseAccess
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.core.ALICE_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.node.MockServices
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.security.PublicKey
-import java.util.*
+import java.util.UUID
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors
 
+@ExtendWith(SerializationExtension::class)
 class PublicKeyToOwningIdentityCacheImplTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private lateinit var database: CordaPersistence
     private lateinit var testCache: PublicKeyToOwningIdentityCacheImpl
     private lateinit var keyManagementService: KeyManagementService
@@ -34,7 +31,7 @@ class PublicKeyToOwningIdentityCacheImplTest {
     private val alice = TestIdentity(ALICE_NAME, 20)
     private lateinit var executor: ExecutorService
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val databaseAndServices = MockServices.makeTestDatabaseAndPersistentServices(
                 listOf(),
@@ -50,7 +47,7 @@ class PublicKeyToOwningIdentityCacheImplTest {
         executor = Executors.newFixedThreadPool(2)
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         database.close()
         executor.shutdown()
@@ -75,12 +72,12 @@ class PublicKeyToOwningIdentityCacheImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cache returns right key for each UUID`() {
         performTestRun()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `querying for key twice does not go to database the second time`() {
         performTestRun()
 
@@ -89,14 +86,14 @@ class PublicKeyToOwningIdentityCacheImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `entries can be fetched if cache invalidated`() {
         testCache = PublicKeyToOwningIdentityCacheImpl(database, TestingNamedCacheFactory(sizeOverride = 0))
 
         performTestRun()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cache access is thread safe`() {
         val executor = Executors.newFixedThreadPool(2)
         val f1 = executor.submit { performTestRun() }
@@ -109,7 +106,7 @@ class PublicKeyToOwningIdentityCacheImplTest {
         keyManagementService.freshKey(UUID.randomUUID())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can set multiple keys across threads`() {
         val executor = Executors.newFixedThreadPool(2)
         val f1 = executor.submit { repeat(5) { createAndAddKeys() } }
@@ -118,13 +115,13 @@ class PublicKeyToOwningIdentityCacheImplTest {
         f1.getOrThrow()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `requesting a key unknown to the node returns unmapped identity`() {
         val keys = generateKeyPair()
         assertEquals(KeyOwningIdentity.UnmappedIdentity, testCache[keys.public])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can request initial identity key`() {
         val key = alice.publicKey
         assertEquals(KeyOwningIdentity.UnmappedIdentity, testCache[key])

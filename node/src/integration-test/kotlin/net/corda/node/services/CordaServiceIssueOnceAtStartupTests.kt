@@ -24,8 +24,8 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import java.io.File
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -45,7 +45,7 @@ class CordaServiceIssueOnceAtStartupTests {
         private const val sentFlowMarker = "SentFlow"
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun test() {
         driver(DriverParameters(startNodesInProcess = false, cordappsForAllNodes = FINANCE_CORDAPPS + enclosedCordapp(), inMemoryDB = false,
                 systemProperties = mapOf(armedPropName to "true", tempFilePropertyName to tmpFile.absolutePath))) {
@@ -65,7 +65,7 @@ class CordaServiceIssueOnceAtStartupTests {
         }
     }
 
-    @After
+    @AfterEach
     fun testDown() {
         System.clearProperty(armedPropName)
         tmpFile.delete()

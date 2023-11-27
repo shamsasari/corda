@@ -2,16 +2,16 @@ package net.corda.node
 
 import com.google.common.base.Stopwatch
 import net.corda.testing.driver.driver
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.TimeUnit
 
-@Ignore("Only use locally")
+@Disabled("Only use locally")
 class NodeStartupPerformanceTests {
 
     // Measure the startup time of nodes. Note that this includes an RPC roundtrip, which causes e.g. Kryo initialisation.
-    @Test(timeout=300_000)
+    @Test
 	fun `single node startup time`() {
         driver {
             val times = ArrayList<Long>()

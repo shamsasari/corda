@@ -41,9 +41,9 @@ import net.corda.testing.node.internal.MessagingServiceSpy
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import java.util.Random
@@ -58,7 +58,7 @@ class NonValidatingNotaryServiceTests {
     private lateinit var notary: Party
     private lateinit var alice: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP),
@@ -70,12 +70,12 @@ class NonValidatingNotaryServiceTests {
         alice = aliceNode.info.singleIdentity()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should sign a unique transaction with a valid time-window`() {
         val stx = run {
             val input = issueState(aliceNode.services, alice)
@@ -91,7 +91,7 @@ class NonValidatingNotaryServiceTests {
         signatures.forEach { it.verify(stx.id) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should sign a unique transaction without a time-window`() {
         val stx = run {
             val inputStates = issueStates(aliceNode.services, alice)
@@ -107,7 +107,7 @@ class NonValidatingNotaryServiceTests {
         signatures.forEach { it.verify(stx.id) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should re-sign a transaction with an expired time-window`() {
         val stx = run {
             val inputState = issueState(aliceNode.services, alice)
@@ -131,7 +131,7 @@ class NonValidatingNotaryServiceTests {
         assertEquals(sig2.by, notary.owningKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should report error for transaction with an invalid time-window`() {
         val stx = run {
             val inputState = issueState(aliceNode.services, alice)
@@ -148,7 +148,7 @@ class NonValidatingNotaryServiceTests {
         assertThat(ex.error).isInstanceOf(NotaryError.TimeWindowInvalid::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `notarise issue tx with time-window`() {
         val stx = run {
             val tx = DummyContract.generateInitial(Random().nextInt(), notary, alice.ref(0))
@@ -160,7 +160,7 @@ class NonValidatingNotaryServiceTests {
         assertEquals(sig.by, notary.owningKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should sign identical transaction multiple times (notarisation is idempotent)`() {
         val stx = run {
             val inputState = issueState(aliceNode.services, alice)
@@ -189,7 +189,7 @@ class NonValidatingNotaryServiceTests {
         assertTrue(sig2.isValid(stx.id))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should report conflict when inputs are reused across transactions`() {
         val firstState = issueState(aliceNode.services, alice)
         val secondState = issueState(aliceNode.services, alice)
@@ -232,7 +232,7 @@ class NonValidatingNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject when notarisation request not signed by the requesting party`() {
         runNotarisationAndInterceptClientPayload { originalPayload ->
             val transaction = originalPayload.coreTransaction
@@ -243,7 +243,7 @@ class NonValidatingNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject when incorrect notarisation request signed - inputs don't match`() {
         runNotarisationAndInterceptClientPayload { originalPayload ->
             val transaction = originalPayload.coreTransaction
@@ -254,7 +254,7 @@ class NonValidatingNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject when incorrect notarisation request signed - transaction id doesn't match`() {
         runNotarisationAndInterceptClientPayload { originalPayload ->
             val transaction = originalPayload.coreTransaction
@@ -265,7 +265,7 @@ class NonValidatingNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should reject a transaction with too many inputs`() {
         NotaryServiceTests.notariseWithTooManyInputs(aliceNode, alice, notary, mockNet)
     }

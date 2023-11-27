@@ -26,7 +26,7 @@ import net.corda.testing.driver.driver
 import net.corda.testing.driver.internal.checkpoint.CheckpointRpcHelper.checkpointsRpc
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.util.concurrent.CountDownLatch
 import java.util.zip.ZipInputStream
@@ -39,7 +39,7 @@ class DumpCheckpointsTest {
         private val flowProceedLatch = CountUpDownLatch(1)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `verify checkpoint dump via RPC`() {
         val user = User("mark", "dadada", setOf(Permissions.all()))
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
@@ -63,7 +63,7 @@ class DumpCheckpointsTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `paused flows included in checkpoint dump output`() {
         val user = User("mark", "dadada", setOf(Permissions.all()))
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {

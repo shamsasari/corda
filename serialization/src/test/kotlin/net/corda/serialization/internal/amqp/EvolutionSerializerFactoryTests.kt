@@ -4,7 +4,7 @@ import net.corda.core.serialization.SerializedBytes
 import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.amqp.testutils.*
 import net.corda.serialization.internal.carpenter.ClassCarpenterImpl
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.io.NotSerializableException
 import kotlin.test.*
@@ -32,7 +32,7 @@ class EvolutionSerializerFactoryTests {
     // Version of the class as it's used in the test
     data class C(val a: Int)
 
-    @Test(timeout=300_000)
+    @Test
 	fun preservesDataWhenFlagSet() {
         val resource = "${javaClass.simpleName}.${testName()}"
 

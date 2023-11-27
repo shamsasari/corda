@@ -13,9 +13,9 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.MockNodeParameters
 import net.corda.testing.node.StartedMockNode
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
 
 class FlowRegistrationTest {
@@ -24,7 +24,7 @@ class FlowRegistrationTest {
     lateinit var initiator: StartedMockNode
     lateinit var responder: StartedMockNode
 
-    @Before
+    @BeforeEach
     fun setup() {
         // no cordapps scanned so it can be tested in isolation
         mockNetwork = MockNetwork(MockNetworkParameters())
@@ -33,19 +33,19 @@ class FlowRegistrationTest {
         mockNetwork.runNetwork()
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `succeeds when a subclass of a flow initiated by the same flow is registered`() {
         // register the same flow twice to invoke the error without causing errors in other tests
         responder.registerInitiatedFlow(Responder1::class.java)
         responder.registerInitiatedFlow(Responder1Subclassed::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `a single initiated flow can be registered without error`() {
         responder.registerInitiatedFlow(Responder1::class.java)
         val result = initiator.startFlow(Initiator(responder.info.singleIdentity()))

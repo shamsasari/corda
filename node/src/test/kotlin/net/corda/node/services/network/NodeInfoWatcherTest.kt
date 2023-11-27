@@ -12,14 +12,14 @@ import net.corda.coretesting.internal.createNodeInfoAndSigned
 import net.corda.nodeapi.internal.NodeInfoAndSigned
 import net.corda.nodeapi.internal.network.NodeInfoFilesCopier
 import net.corda.testing.core.ALICE_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.node.internal.MockKeyManagementService
 import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.junit.jupiter.api.io.TempDir
 import rx.observers.TestSubscriber
 import rx.schedulers.TestScheduler
 import java.nio.file.Files
@@ -29,14 +29,10 @@ import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
+@ExtendWith(SerializationExtension::class)
 class NodeInfoWatcherTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Rule
-    @JvmField
-    val tempFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var tempFolder: Path
 
     private val scheduler = TestScheduler()
     private val testSubscriber = TestSubscriber<List<NodeInfoUpdate>>()
@@ -48,7 +44,7 @@ class NodeInfoWatcherTest {
     // Object under test
     private lateinit var nodeInfoWatcher: NodeInfoWatcher
 
-    @Before
+    @BeforeEach
     fun start() {
         // Register providers before creating Jimfs filesystem. JimFs creates an SSHD instance which
         // register BouncyCastle and EdDSA provider separately, which wrecks havoc.
@@ -57,15 +53,15 @@ class NodeInfoWatcherTest {
         nodeInfoAndSigned = createNodeInfoAndSigned(ALICE_NAME)
         val identityService = makeTestIdentityService()
         keyManagementService = MockKeyManagementService(identityService)
-        nodeInfoWatcher = NodeInfoWatcher(tempFolder.root.toPath(), scheduler)
-        nodeInfoPath = tempFolder.root.toPath() / NODE_INFO_DIRECTORY
+        nodeInfoWatcher = NodeInfoWatcher(tempFolder, scheduler)
+        nodeInfoPath = tempFolder / NODE_INFO_DIRECTORY
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `save a NodeInfo`() {
         assertEquals(0,
                 tempFolder.root.list().filter { it.startsWith(NodeInfoFilesCopier.NODE_INFO_FILE_NAME_PREFIX) }.size)
-        NodeInfoWatcher.saveToFile(tempFolder.root.toPath(), nodeInfoAndSigned)
+        NodeInfoWatcher.saveToFile(tempFolder, nodeInfoAndSigned)
 
         val nodeInfoFiles = tempFolder.root.list().filter { it.startsWith(NodeInfoFilesCopier.NODE_INFO_FILE_NAME_PREFIX) }
         assertEquals(1, nodeInfoFiles.size)
@@ -76,14 +72,14 @@ class NodeInfoWatcherTest {
         assertThat(file.size).isGreaterThan(0)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `save a NodeInfo to JimFs`() {
         val jimFs = Jimfs.newFileSystem(Configuration.unix())
         val jimFolder = jimFs.getPath("/nodeInfo").createDirectories()
         NodeInfoWatcher.saveToFile(jimFolder, nodeInfoAndSigned)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `load an empty Directory`() {
         nodeInfoPath.createDirectories()
 
@@ -97,7 +93,7 @@ class NodeInfoWatcherTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `load a non empty Directory`() {
         createNodeInfoFileInPath()
 
@@ -113,7 +109,7 @@ class NodeInfoWatcherTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `polling folder`() {
         nodeInfoPath.createDirectories()
 
@@ -139,7 +135,7 @@ class NodeInfoWatcherTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `ignore tmp files`() {
         nodeInfoPath.createDirectories()
 

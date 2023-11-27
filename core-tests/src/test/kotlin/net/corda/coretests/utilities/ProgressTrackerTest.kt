@@ -5,21 +5,20 @@ import net.corda.core.serialization.internal.checkpointSerialize
 import net.corda.core.utilities.ProgressTracker
 import net.corda.coretests.utilities.ProgressTrackerTest.NonSingletonSteps.first
 import net.corda.coretests.utilities.ProgressTrackerTest.NonSingletonSteps.first2
-import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule
+import net.corda.testing.core.internal.CheckpointSerializationExtension
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import java.util.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.RegisterExtension
+import java.util.LinkedList
 import kotlin.test.assertEquals
 import kotlin.test.assertFails
 import kotlin.test.assertNotEquals
 
 class ProgressTrackerTest {
-
-    @Rule
+    @RegisterExtension
     @JvmField
-    val testCheckpointSerialization = CheckpointSerializationEnvironmentRule()
+    val testCheckpointSerialization = CheckpointSerializationExtension()
 
     object SimpleSteps {
         object ONE : ProgressTracker.Step("one")
@@ -51,7 +50,7 @@ class ProgressTrackerTest {
     lateinit var pt3: ProgressTracker
     lateinit var pt4: ProgressTracker
 
-    @Before
+    @BeforeEach
     fun before() {
         pt = SimpleSteps.tracker()
         pt2 = ChildSteps.tracker()
@@ -59,7 +58,7 @@ class ProgressTrackerTest {
         pt4 = ChildSteps.tracker()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check basic steps`() {
         assertEquals(ProgressTracker.UNSTARTED, pt.currentStep)
         assertEquals(0, pt.stepIndex)
@@ -76,14 +75,14 @@ class ProgressTrackerTest {
         assertEquals(ProgressTracker.DONE, pt.nextStep())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cannot go beyond end`() {
         pt.currentStep = SimpleSteps.FOUR
         pt.nextStep()
         assertFails { pt.nextStep() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `nested children are stepped correctly`() {
         val stepNotification = LinkedList<ProgressTracker.Change>()
         pt.changes.subscribe {
@@ -109,7 +108,7 @@ class ProgressTrackerTest {
         assertEquals(ChildSteps.BEE, pt2.nextStep())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `steps tree index counts children steps`() {
         pt.setChildProgressTracker(SimpleSteps.TWO, pt2)
 
@@ -148,7 +147,7 @@ class ProgressTrackerTest {
         assertThat(stepsTreeNotification).hasSize(2) // The initial tree state, plus one per tree update
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `steps tree index counts two levels of children steps`() {
         pt.setChildProgressTracker(SimpleSteps.FOUR, pt2)
         pt2.setChildProgressTracker(ChildSteps.SEA, pt3)
@@ -183,7 +182,7 @@ class ProgressTrackerTest {
         assertThat(stepsTreeNotification).hasSize(3) // The initial tree state, plus one per update
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `structure changes are pushed down when progress trackers are added`() {
         pt.setChildProgressTracker(SimpleSteps.TWO, pt2)
 
@@ -220,7 +219,7 @@ class ProgressTrackerTest {
         assertThat(stepsTreeNotification).hasSize(3) // The initial tree state, plus one per update.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `structure changes are pushed down when progress trackers are removed`() {
         pt.setChildProgressTracker(SimpleSteps.TWO, pt2)
 
@@ -255,7 +254,7 @@ class ProgressTrackerTest {
         assertThat(stepsTreeNotification).hasSize(3) // The initial tree state, plus one per update
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can be rewound`() {
         pt.setChildProgressTracker(SimpleSteps.TWO, pt2)
         repeat(4) { pt.nextStep() }
@@ -263,7 +262,7 @@ class ProgressTrackerTest {
         assertEquals(SimpleSteps.TWO, pt.nextStep())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `all index changes seen if subscribed mid flow`() {
         pt.setChildProgressTracker(SimpleSteps.TWO, pt2)
 
@@ -280,7 +279,7 @@ class ProgressTrackerTest {
         assertThat(stepsIndexNotifications).containsExactlyElementsOf(listOf(0, 1, 2, 3))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `all step changes seen if subscribed mid flow`() {
         val steps = mutableListOf<String>()
         pt.nextStep()
@@ -293,7 +292,7 @@ class ProgressTrackerTest {
         assertEquals(listOf("Starting", "one", "two", "three", "four", "Done"), steps)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `all tree changes seen if subscribed mid flow`() {
         val stepTreeNotifications = mutableListOf<List<Pair<Int, String>>>()
         val firstStepLabels = pt.allStepsLabels
@@ -310,7 +309,7 @@ class ProgressTrackerTest {
         assertEquals(listOf(firstStepLabels, secondStepLabels, thirdStepLabels), stepTreeNotifications)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `trees with child trackers with duplicate steps reported correctly`() {
         val stepTreeNotifications = mutableListOf<List<Pair<Int, String>>>()
         val stepIndexNotifications = mutableListOf<Int>()
@@ -329,7 +328,7 @@ class ProgressTrackerTest {
         assertEquals(listOf(0, 1, 2, 3, 4, 5, 6), stepIndexNotifications)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cannot assign step not belonging to this progress tracker`() {
         assertFails { pt.currentStep = BabySteps.UNOS }
     }
@@ -341,16 +340,16 @@ class ProgressTrackerTest {
         fun tracker() = ProgressTracker(first, second, first2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Serializing and deserializing a tracker maintains equality`() {
-        val step = NonSingletonSteps.first
+        val step = first
         val recreatedStep = step
                 .checkpointSerialize(testCheckpointSerialization.checkpointSerializationContext)
                 .checkpointDeserialize(testCheckpointSerialization.checkpointSerializationContext)
         assertEquals(step, recreatedStep)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can assign a recreated equal step`() {
         val tracker = NonSingletonSteps.tracker()
         val recreatedStep = first
@@ -359,13 +358,13 @@ class ProgressTrackerTest {
         tracker.currentStep = recreatedStep
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Steps with the same label defined in different places are not equal`() {
         val one = ProgressTracker.Step("one")
         assertNotEquals(one, SimpleSteps.ONE)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Steps with the same label defined in the same place are also not equal`() {
         assertNotEquals(first, first2)
     }

@@ -28,7 +28,7 @@ import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.nodeapi.internal.persistence.DatabaseTransaction
 import net.corda.testing.core.ALICE_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.LogHelper
 import net.corda.testing.internal.configureDatabase
@@ -37,14 +37,13 @@ import net.corda.testing.node.MockServices.Companion.makeTestDataSourcePropertie
 import org.apache.commons.lang3.exception.ExceptionUtils
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
-import org.junit.Assert.assertNotNull
-import org.junit.Assert.assertNull
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertNotNull
+import org.junit.jupiter.api.Assertions.assertNull
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Clock
-import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -55,35 +54,30 @@ internal fun CheckpointStorage.checkpoints(): List<Checkpoint.Serialized> {
     }
 }
 
+@ExtendWith(SerializationExtension::class)
 class DBCheckpointStorageTests {
     private companion object {
-
         val log = contextLogger()
-
         val ALICE = TestIdentity(ALICE_NAME, 70).party
     }
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
 
     private lateinit var checkpointStorage: DBCheckpointStorage
     private lateinit var database: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         LogHelper.setLevel(PersistentUniquenessProvider::class)
         database = configureDatabase(makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null })
         newCheckpointStorage()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         database.close()
         LogHelper.reset(PersistentUniquenessProvider::class)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `add new checkpoint`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.serializeFlowState()
@@ -110,7 +104,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `update a checkpoint`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.serializeFlowState()
@@ -143,7 +137,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `update a checkpoint to completed`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.serializeFlowState()
@@ -163,7 +157,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `update a checkpoint to paused`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.serializeFlowState()
@@ -183,7 +177,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `removing a checkpoint when there is no result does not fail`() {
         val exception = IllegalStateException("I am a naughty exception")
         val (id, checkpoint) = newCheckpoint()
@@ -223,7 +217,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `removing a checkpoint when there is no exception does not fail`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.serializeFlowState()
@@ -262,7 +256,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `add and remove checkpoint in single commit operation`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.serializeFlowState()
@@ -288,7 +282,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `add two checkpoints then remove first one`() {
         val (id, firstCheckpoint) = newCheckpoint()
         val serializedFirstFlowState = firstCheckpoint.serializeFlowState()
@@ -319,7 +313,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `add checkpoint and then remove after 'restart'`() {
         val (id, originalCheckpoint) = newCheckpoint()
         val serializedOriginalFlowState = originalCheckpoint.serializeFlowState()
@@ -343,7 +337,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `adding a new checkpoint creates a metadata record`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.serializeFlowState()
@@ -357,7 +351,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `updating a checkpoint does not change the metadata record`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.serializeFlowState()
@@ -383,7 +377,7 @@ class DBCheckpointStorageTests {
         assertEquals(metadata, potentiallyUpdatedMetadata)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `verify checkpoints compatible`() {
         val mockServices = MockServices(emptyList(), ALICE.name)
         database.transaction {
@@ -409,7 +403,7 @@ class DBCheckpointStorageTests {
         }.isInstanceOf(CheckpointIncompatibleException::class.java)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `update checkpoint with result information creates new result database record`() {
         val result = "This is the result"
         val (id, checkpoint) = newCheckpoint()
@@ -433,7 +427,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `update checkpoint with error information creates a new error database record`() {
         val exception = IllegalStateException("I am a naughty exception")
         val (id, checkpoint) = newCheckpoint()
@@ -454,13 +448,12 @@ class DBCheckpointStorageTests {
             val deserializedException = exceptionDetails.value?.let { SerializedBytes<Any>(it) }?.deserialize(context = SerializationDefaults.STORAGE_CONTEXT)
             // IllegalStateException does not implement [CordaThrowable] therefore gets deserialized as a [CordaRuntimeException]
             assertTrue(deserializedException is CordaRuntimeException)
-            val cordaRuntimeException = deserializedException as CordaRuntimeException
-            assertEquals(IllegalStateException::class.java.name, cordaRuntimeException.originalExceptionClassName)
-            assertEquals("I am a naughty exception", cordaRuntimeException.originalMessage!!)
+            assertEquals(IllegalStateException::class.java.name, deserializedException.originalExceptionClassName)
+            assertEquals("I am a naughty exception", deserializedException.originalMessage!!)
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Checkpoint can be updated with flow io request information`() {
         val (id, checkpoint) = newCheckpoint(1)
         database.transaction {
@@ -484,7 +477,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Checkpoint truncates long progressTracker step name`() {
         val maxProgressStepLength = 256
         val (id, checkpoint) = newCheckpoint(1)
@@ -511,7 +504,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Checkpoints can be fetched from the database by status`() {
         val (_, checkpoint) = newCheckpoint(1)
         // runnables
@@ -549,7 +542,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `-not greater than DBCheckpointStorage_MAX_STACKTRACE_LENGTH- stackTrace gets persisted as a whole`() {
         val smallerDummyStackTrace = ArrayList<StackTraceElement>()
         val dummyStackTraceElement = StackTraceElement("class", "method", "file", 0)
@@ -581,7 +574,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `-greater than DBCheckpointStorage_MAX_STACKTRACE_LENGTH- stackTrace gets truncated to MAX_LENGTH_VARCHAR, and persisted`() {
         val smallerDummyStackTrace = ArrayList<StackTraceElement>()
         val dummyStackTraceElement = StackTraceElement("class", "method", "file", 0)
@@ -632,7 +625,7 @@ class DBCheckpointStorageTests {
         else -> throw IllegalStateException("Unknown line.separator")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `paused checkpoints can be extracted`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.serializeFlowState()
@@ -658,7 +651,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `checkpoints correctly change there status to paused`() {
         val (_, checkpoint) = newCheckpoint(1)
         // runnables
@@ -704,7 +697,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `'updateCheckpoint' setting 'DBFlowCheckpoint_blob' to null whenever flow fails or gets hospitalized doesn't break ORM relationship`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.flowState.checkpointSerialize(context = CheckpointSerializationDefaults.CHECKPOINT_CONTEXT)
@@ -724,7 +717,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `update only the flow status`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.serializeFlowState()
@@ -742,7 +735,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `update only compatible`() {
         val (id, checkpoint) = newCheckpoint()
         val serializedFlowState = checkpoint.serializeFlowState()
@@ -760,7 +753,7 @@ class DBCheckpointStorageTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `'getFinishedFlowsResultsMetadata' fetches flows results metadata for finished flows only`() {
         val (_, checkpoint) = newCheckpoint(1)
         val runnable = changeStatus(checkpoint, Checkpoint.FlowStatus.RUNNABLE)
@@ -803,7 +796,7 @@ class DBCheckpointStorageTests {
         assertTrue(Checkpoint.FlowStatus.FAILED in finishedStatuses)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `'getPausedCheckpoints' fetches paused flows with and without database exceptions`() {
         val (_, checkpoint) = newCheckpoint(1)
         val serializedFlowState = checkpoint.flowState.checkpointSerialize(context = CheckpointSerializationDefaults.CHECKPOINT_CONTEXT)

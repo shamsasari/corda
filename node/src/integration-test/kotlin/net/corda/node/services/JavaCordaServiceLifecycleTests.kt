@@ -8,7 +8,7 @@ import net.corda.node.services.JavaCordaServiceLifecycle.eventsCaptured
 import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class JavaCordaServiceLifecycleTests {
@@ -17,7 +17,7 @@ class JavaCordaServiceLifecycleTests {
         const val TEST_PHRASE = "javaTestPhrase"
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `corda service receives events`() {
         eventsCaptured.clear()
         val result = driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList())) {

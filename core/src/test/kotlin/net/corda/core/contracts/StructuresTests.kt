@@ -4,8 +4,8 @@ import org.mockito.kotlin.doAnswer
 import org.mockito.kotlin.spy
 import org.mockito.kotlin.whenever
 import net.corda.core.identity.Party
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.IOException
 import java.util.*
@@ -18,9 +18,9 @@ import kotlin.test.fail
 
 class AttachmentTest {
 
-    @Test(timeout=300_000)
+    @Test
     @Suppress("ThrowsCount")
-    @Ignore("TODO JDK17: Line too long no longer thrown?")
+    @Disabled("TODO JDK17: Line too long no longer thrown?")
 	fun `openAsJAR does not leak file handle if attachment has corrupted manifest`() {
         var closeCalls = 0
         val inputStream = spy(ByteArrayOutputStream().apply {
@@ -50,7 +50,7 @@ class AttachmentTest {
 
 class UniqueIdentifierTests {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unique identifier comparison`() {
         val ids = listOf(UniqueIdentifier.fromString("e363f00e-4759-494d-a7ca-0dc966a92494"),
                 UniqueIdentifier.fromString("10ed0cc3-7bdf-4000-b610-595e36667d7d"),
@@ -63,7 +63,7 @@ class UniqueIdentifierTests {
         assertEquals(0, ids[1].compareTo(ids[2]))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unique identifier equality`() {
         val ids = listOf(UniqueIdentifier.fromString("e363f00e-4759-494d-a7ca-0dc966a92494"),
                 UniqueIdentifier.fromString("10ed0cc3-7bdf-4000-b610-595e36667d7d"),

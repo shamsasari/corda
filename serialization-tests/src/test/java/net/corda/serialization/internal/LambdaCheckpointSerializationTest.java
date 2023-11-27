@@ -1,13 +1,13 @@
 package net.corda.serialization.internal;
 
-import net.corda.core.serialization.*;
+import net.corda.core.serialization.SerializedBytes;
 import net.corda.core.serialization.internal.CheckpointSerializationContext;
 import net.corda.core.serialization.internal.CheckpointSerializer;
 import net.corda.nodeapi.internal.serialization.kryo.CordaClosureSerializer;
-import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule;
-import org.junit.Before;
-import org.junit.Rule;
-import org.junit.Test;
+import net.corda.testing.core.internal.CheckpointSerializationExtension;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.extension.RegisterExtension;
 
 import java.io.NotSerializableException;
 import java.io.Serializable;
@@ -18,15 +18,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.ThrowableAssert.catchThrowable;
 
 public final class LambdaCheckpointSerializationTest {
-
-    @Rule
-    public final CheckpointSerializationEnvironmentRule testCheckpointSerialization =
-            new CheckpointSerializationEnvironmentRule();
+    @RegisterExtension
+    public final CheckpointSerializationExtension testCheckpointSerialization = new CheckpointSerializationExtension();
 
     private CheckpointSerializationContext context;
     private CheckpointSerializer serializer;
 
-    @Before
+    @BeforeEach
     public void setup() {
         context = new CheckpointSerializationContextImpl(
                 getClass().getClassLoader(),
@@ -52,8 +50,7 @@ public final class LambdaCheckpointSerializationTest {
     }
 
     @Test
-    @SuppressWarnings("unchecked")
-    public final void serialization_fails_for_not_serializable_java_lambdas() throws Exception {
+    public final void serialization_fails_for_not_serializable_java_lambdas() {
         String value = "Hey";
         Callable<String> target = () -> value;
 

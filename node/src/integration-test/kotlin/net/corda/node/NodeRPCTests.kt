@@ -5,7 +5,7 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.FINANCE_CONTRACTS_CORDAPP
 import net.corda.testing.node.internal.FINANCE_WORKFLOWS_CORDAPP
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
 
@@ -22,7 +22,7 @@ class NodeRPCTests {
     private val CORDAPP_LICENCE = "Open Source (Apache 2)"
     private val HEXADECIMAL_REGEX = "[0-9a-fA-F]+".toRegex()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `run nodeDiagnosticInfo`() {
         driver(DriverParameters(notarySpecs = emptyList(), cordappsForAllNodes = CORDAPPS, extraCordappPackagesToScan = emptyList())) {
             val nodeDiagnosticInfo = startNode().get().rpc.nodeDiagnosticInfo()

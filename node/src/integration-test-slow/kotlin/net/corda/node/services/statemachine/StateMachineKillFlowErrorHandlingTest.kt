@@ -13,8 +13,8 @@ import net.corda.core.utilities.seconds
 import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.CHARLIE_NAME
 import net.corda.testing.core.singleIdentity
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.temporal.ChronoUnit
 import java.util.concurrent.TimeoutException
@@ -23,7 +23,7 @@ import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue
 
 @Suppress("MaxLineLength") // Byteman rules cannot be easily wrapped
-@Ignore("TODO JDK17: Fixme")
+@Disabled("TODO JDK17: Fixme")
 class StateMachineKillFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
 
     /**
@@ -33,7 +33,7 @@ class StateMachineKillFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      *
      * No pass through the hospital is recorded. As the flow is marked as `isRemoved`.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `error during transition due to killing a flow will terminate the flow`() {
         startDriver {
             val alice = createNode(ALICE_NAME)
@@ -70,7 +70,7 @@ class StateMachineKillFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      *
      * No pass through the hospital is recorded. As the flow is marked as `isRemoved`.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `flow killed during user code execution stops and removes the flow correctly`() {
         startDriver {
             val alice = createNode(ALICE_NAME)
@@ -103,7 +103,7 @@ class StateMachineKillFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      * Killing the flow does not lead to any passes through the hospital. All the recorded passes through the hospital are
      * from the original flow that was put in for observation.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `flow killed when it is in the flow hospital for observation is removed correctly`() {
         startDriver {
             val (charlie, alice, port) = createNodeAndBytemanNode(CHARLIE_NAME, ALICE_NAME)
@@ -149,7 +149,7 @@ class StateMachineKillFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      *
      * The flow is then manually killed which triggers the flow to go through the normal kill flow process.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `a dead flow can be killed`() {
         startDriver {
             val (alice, port) = createBytemanNode(ALICE_NAME)
@@ -197,7 +197,7 @@ class StateMachineKillFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      *
      * Since the flow was started with a client id, record of the [KilledFlowException] should exists in the database.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `a dead flow that was started with a client id can be killed`() {
         startDriver {
             val (alice, port) = createBytemanNode(ALICE_NAME)
@@ -247,7 +247,7 @@ class StateMachineKillFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      *
      * The flow is then manually killed which triggers the flow to go through the normal kill flow process.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `a dead flow that is killed and fails again will forcibly kill itself`() {
         startDriver {
             val (alice, port) = createBytemanNode(ALICE_NAME)

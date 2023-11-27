@@ -12,9 +12,9 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 
@@ -24,17 +24,17 @@ class CustomSerializationSchemeMockNetworkTest {
 
     val customSchemeCordapp: CustomCordapp = CustomSerializationSchemeDriverTest().enclosedCordapp()
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNetwork = InternalMockNetwork(cordappsForAllNodes = listOf(customSchemeCordapp))
     }
 
-    @After
+    @AfterEach
     fun shutdown() {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `transactions network parameter hash is correct`() {
         val alice = mockNetwork.createNode(InternalMockNodeParameters(legalName = ALICE_NAME))
         val bob = mockNetwork.createNode(InternalMockNodeParameters(legalName = BOB_NAME))
@@ -47,7 +47,7 @@ class CustomSerializationSchemeMockNetworkTest {
         assertEquals(alice.internals.networkParametersStorage.defaultHash, serializedHash.deserialize())
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `transaction can be written to the ledger`() {
         val alice = mockNetwork.createNode(InternalMockNodeParameters(legalName = ALICE_NAME))
         val bob = mockNetwork.createNode(InternalMockNodeParameters(legalName = BOB_NAME))

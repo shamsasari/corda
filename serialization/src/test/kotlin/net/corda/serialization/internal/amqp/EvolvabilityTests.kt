@@ -23,8 +23,8 @@ import net.corda.serialization.internal.amqp.testutils.serializeAndReturnSchema
 import net.corda.serialization.internal.amqp.testutils.testDefaultFactory
 import net.corda.serialization.internal.amqp.testutils.testName
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertNotSame
 import java.io.File
 import java.io.NotSerializableException
@@ -53,7 +53,7 @@ class EvolvabilityTests {
         private val DUMMY_NOTARY_PARTY = Party(DUMMY_NOTARY_NAME, Crypto.deriveKeyPairFromEntropy(Crypto.DEFAULT_SIGNATURE_SCHEME, BigInteger.valueOf(20)).public)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun simpleOrderSwapSameType() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.simpleOrderSwapSameType"
@@ -76,7 +76,7 @@ class EvolvabilityTests {
         assertEquals(B, deserializedC.b)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun simpleOrderSwapDifferentType() {
         val sf = testDefaultFactory()
         val A = 1
@@ -98,7 +98,7 @@ class EvolvabilityTests {
         assertEquals(B, deserializedC.b)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addAdditionalParamNotMandatory() {
         val sf = testDefaultFactory()
         val A = 1
@@ -144,7 +144,7 @@ class EvolvabilityTests {
     }
 
     @Suppress("UNUSED_VARIABLE")
-    @Test(timeout=300_000)
+    @Test
 	fun removeParameters() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.removeParameters"
@@ -168,7 +168,7 @@ class EvolvabilityTests {
     }
 
     @Suppress("UNUSED_VARIABLE")
-    @Test(timeout=300_000)
+    @Test
 	fun removeParameterWithCalculatedParameter() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.removeParameterWithCalculatedParameter"
@@ -196,7 +196,7 @@ class EvolvabilityTests {
     }
 
     @Suppress("UNUSED_VARIABLE")
-    @Test(timeout=300_000)
+    @Test
 	fun addAndRemoveParameters() {
         val sf = testDefaultFactory()
         val A = 1
@@ -222,7 +222,7 @@ class EvolvabilityTests {
         assertEquals(D, deserializedCC.d)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addMandatoryFieldWithAltConstructor() {
         val sf = testDefaultFactory()
         val A = 1
@@ -246,7 +246,7 @@ class EvolvabilityTests {
         assertEquals("hello", deserializedCC.b)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addMandatoryFieldWithAltConstructorForceReorder() {
         val sf = testDefaultFactory()
         val z = 30
@@ -271,7 +271,7 @@ class EvolvabilityTests {
         assertEquals(z, deserializedCC.z)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun moreComplexNonNullWithReorder() {
         val resource = "${javaClass.simpleName}.${testName()}"
 
@@ -352,7 +352,7 @@ class EvolvabilityTests {
         DeserializationInput(sf).deserialize(SerializedBytes<CC>(url.readBytes()))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addMandatoryFieldWithAltReorderedConstructor() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.addMandatoryFieldWithAltReorderedConstructor"
@@ -382,7 +382,7 @@ class EvolvabilityTests {
         assertEquals("wibble", deserializedCC.d)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addMandatoryFieldWithAltReorderedConstructorAndRemoval() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.addMandatoryFieldWithAltReorderedConstructorAndRemoval"
@@ -413,7 +413,7 @@ class EvolvabilityTests {
         assertEquals("wibble", deserializedCC.d)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun multiVersion() {
         val sf = testDefaultFactory()
         val resource1 = "EvolvabilityTests.multiVersion.1"
@@ -483,7 +483,7 @@ class EvolvabilityTests {
         assertEquals(-1, db3.e)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun changeSubType() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.changeSubType"
@@ -520,7 +520,7 @@ class EvolvabilityTests {
         assertEquals("new value", newOuter.b.b)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun multiVersionWithRemoval() {
         val sf = testDefaultFactory()
 
@@ -612,8 +612,8 @@ class EvolvabilityTests {
     // to regenerate at a specific version add that test to a checkout at the desired sha then take
     // the resulting file and add to the repo, changing the filename as appropriate
     //
-    @Test(timeout=300_000)
-@Ignore("Test fails after moving NetworkParameters and NotaryInfo into core from node-api")
+    @Test
+@Disabled("Test fails after moving NetworkParameters and NotaryInfo into core from node-api")
     fun readBrokenNetworkParameters() {
         val sf = testDefaultFactory()
         sf.register(net.corda.serialization.internal.amqp.custom.InstantSerializer(sf))
@@ -651,7 +651,7 @@ class EvolvabilityTests {
     // to regenerate at a specific version add that test to a checkout at the desired sha then take
     // the resulting file and add to the repo, changing the filename as appropriate
     //
-    @Test(timeout=300_000)
+    @Test
     fun `read corda 4-11 network parameters`() {
         val sf = testDefaultFactory()
         sf.register(net.corda.serialization.internal.amqp.custom.InstantSerializer(sf))
@@ -682,8 +682,8 @@ class EvolvabilityTests {
     // This test created a serialized and signed set of Network Parameters to test whether we
     // can still deserialize them
     //
-    @Test(timeout=300_000)
-@Ignore("This test simply regenerates the test file used for readBrokenNetworkParameters")
+    @Test
+@Disabled("This test simply regenerates the test file used for readBrokenNetworkParameters")
     fun `regenerate broken network parameters`() {
         // note: 6a6b6f256 is the sha that generates the file
         val resource = "networkParams.<corda version>.<commit sha>"
@@ -705,7 +705,7 @@ class EvolvabilityTests {
     }
 
     @Suppress("UNCHECKED_CAST")
-    @Test(timeout=300_000)
+    @Test
 	fun getterSetterEvolver1() {
         val resource = "EvolvabilityTests.getterSetterEvolver1"
         val sf = testDefaultFactory()
@@ -752,7 +752,7 @@ class EvolvabilityTests {
     // Class before evolution
     data class Evolved(val fnord: String)
 
-    @Test(timeout=300_000)
+    @Test
 	fun evolutionWithCarpentry() {
         val resource = "EvolvabilityTests.evolutionWithCarpentry"
         val sf = testDefaultFactory()
@@ -779,7 +779,7 @@ class EvolvabilityTests {
     data class Parameterized<A, B>(val a: A, val b: Set<B>) : ForceEvolution
 
     // See CORDA-2742
-    @Test(timeout=300_000)
+    @Test
 	fun evolutionWithPrimitives() {
         val resource = "EvolvabilityTests.evolutionWithPrimitives"
         val sf = testDefaultFactory()
@@ -794,7 +794,7 @@ class EvolvabilityTests {
         assertEquals(10, deserialized.parameterized?.a)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addMandatoryFieldWithAltConstructorAndMakeExistingIntFieldNullable() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.addMandatoryFieldWithAltConstructorAndMakeExistingIntFieldNullable"
@@ -817,7 +817,7 @@ class EvolvabilityTests {
         assertEquals(42, deserializedCC.b)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addMandatoryFieldWithAltConstructorAndMakeExistingNullableIntFieldMandatory() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.addMandatoryFieldWithAltConstructorAndMakeExistingNullableIntFieldMandatory"
@@ -840,7 +840,7 @@ class EvolvabilityTests {
         assertEquals(42, deserializedCC.b)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addMandatoryFieldAndRemoveExistingNullableIntField() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.addMandatoryFieldAndRemoveExistingNullableIntField"
@@ -863,7 +863,7 @@ class EvolvabilityTests {
         assertEquals("<not provided>", deserializedCC.b)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun removeExistingNullableIntFieldWithAltConstructor() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.removeExistingNullableIntFieldWithAltConstructor"
@@ -885,7 +885,7 @@ class EvolvabilityTests {
         assertEquals("written<not provided>", deserializedCC.data)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun notarisationRequestStabilityTest() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.notarisationRequest"
@@ -924,7 +924,7 @@ class EvolvabilityTests {
         assertNotSame(deserialized2.statesToConsume[2].txhash, deserialized2.statesToConsume[3].txhash)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun maybeSerializedTransaction() {
         val sf = testDefaultFactory()
         val resource = "EvolvabilityTests.maybeSerializedTransaction"

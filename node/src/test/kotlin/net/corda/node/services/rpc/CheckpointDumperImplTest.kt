@@ -2,10 +2,6 @@ package net.corda.node.services.rpc
 
 import com.natpryce.hamkrest.assertion.assertThat
 import com.natpryce.hamkrest.containsSubstring
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
-import junit.framework.TestCase.assertNull
 import net.corda.core.context.InvocationContext
 import net.corda.core.flows.FlowLogic
 import net.corda.core.flows.StateMachineRunId
@@ -17,7 +13,6 @@ import net.corda.core.internal.div
 import net.corda.core.internal.inputStream
 import net.corda.core.internal.readFully
 import net.corda.core.node.ServiceHub
-import net.corda.core.serialization.SerializeAsToken
 import net.corda.core.serialization.SerializedBytes
 import net.corda.core.serialization.internal.CheckpointSerializationDefaults
 import net.corda.core.serialization.internal.checkpointSerialize
@@ -32,26 +27,26 @@ import net.corda.node.services.statemachine.SubFlowVersion
 import net.corda.nodeapi.internal.lifecycle.NodeLifecycleEvent
 import net.corda.nodeapi.internal.lifecycle.NodeServicesContext
 import net.corda.nodeapi.internal.persistence.CordaPersistence
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.TestClock
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.Clock
 import java.time.Instant
 import java.util.zip.ZipInputStream
+import kotlin.test.assertNull
 
+@ExtendWith(SerializationExtension::class)
 class CheckpointDumperImplTest {
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private val organisation = "MeTheMyself"
     private val myself = TestIdentity(CordaX500Name(organisation, "London", "GB"))
     private val currentTimestamp = Instant.parse("2019-12-25T10:15:30.00Z")
@@ -64,15 +59,15 @@ class CheckpointDumperImplTest {
     private lateinit var services: ServiceHub
     private lateinit var checkpointStorage: DBCheckpointStorage
 
-    private val mockAfterStartEvent = {
+    private val mockAfterStartEvent = run {
         val nodeServicesContextMock = mock<NodeServicesContext>()
-        whenever(nodeServicesContextMock.tokenizableServices).doReturn(emptyList<SerializeAsToken>())
+        whenever(nodeServicesContextMock.tokenizableServices).doReturn(emptyList())
         val eventMock = mock<NodeLifecycleEvent.AfterNodeStart<*>>()
         whenever(eventMock.nodeServicesContext).doReturn(nodeServicesContextMock)
         eventMock
-    }()
+    }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val (db, mockServices) = MockServices.makeTestDatabaseAndPersistentServices(
                 cordappPackages = emptyList(),
@@ -95,13 +90,13 @@ class CheckpointDumperImplTest {
         file.deleteIfExists()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         database.close()
         baseDirectory.deleteRecursively()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testDumpCheckpoints() {
         val dumper = CheckpointDumperImpl(checkpointStorage, database, services, baseDirectory, corDappDirectories)
         dumper.update(mockAfterStartEvent)
@@ -116,7 +111,7 @@ class CheckpointDumperImplTest {
 	    checkDumpFile()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Checkpoint dumper doesn't output completed checkpoints`() {
         val dumper = CheckpointDumperImpl(checkpointStorage, database, services, baseDirectory, corDappDirectories)
         dumper.update(mockAfterStartEvent)
@@ -140,7 +135,7 @@ class CheckpointDumperImplTest {
 
     private fun checkDumpFile() {
         ZipInputStream(file.inputStream()).use { zip ->
-            val entry = zip.nextEntry
+            val entry = zip.nextEntry!!
             assertThat(entry.name, containsSubstring("json"))
             val content = zip.readFully()
             assertThat(String(content), containsSubstring(organisation))
@@ -156,7 +151,7 @@ class CheckpointDumperImplTest {
 
     // This test will only succeed when the VM startup includes the "checkpoint-agent":
     // -javaagent:tools/checkpoint-agent/build/libs/checkpoint-agent.jar
-    @Test(timeout=300_000)
+    @Test
 	fun testDumpCheckpointsAndAgentDiagnostics() {
         val dumper = CheckpointDumperImpl(checkpointStorage, database, services, Paths.get("."), Paths.get("cordapps"))
         dumper.update(mockAfterStartEvent)

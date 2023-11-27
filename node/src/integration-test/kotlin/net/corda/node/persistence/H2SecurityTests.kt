@@ -14,7 +14,7 @@ import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.enclosedCordapp
 import org.h2.jdbc.JdbcSQLNonTransientException
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.DriverManager
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull
@@ -28,7 +28,7 @@ class H2SecurityTests {
         private const val dbPasswordKey = "dataSourceProperties.dataSource.password"
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `h2 server starts when h2Settings are set`() {
         driver(DriverParameters(
                 inMemoryDB = false,
@@ -44,7 +44,7 @@ class H2SecurityTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `remote code execution via h2 server is disabled`() {
         driver(DriverParameters(
                 inMemoryDB = false,
@@ -65,7 +65,7 @@ class H2SecurityTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `malicious flow tries to enable remote code execution via h2 server`() {
         val user = User("mark", "dadada", setOf(Permissions.startFlow<MaliciousFlow>()))
         driver(DriverParameters(

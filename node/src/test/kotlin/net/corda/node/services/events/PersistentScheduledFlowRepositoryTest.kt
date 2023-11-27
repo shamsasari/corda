@@ -7,7 +7,7 @@ import net.corda.core.utilities.days
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import kotlin.test.assertEquals
 import kotlin.test.assertNull
@@ -16,7 +16,7 @@ class PersistentScheduledFlowRepositoryTest {
     private val databaseConfig: DatabaseConfig = DatabaseConfig()
     private val mark = Instant.now()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that earliest item is returned`() {
         val laterTime = mark + 1.days
         val dataSourceProps = MockServices.makeTestDataSourceProperties()
@@ -38,7 +38,7 @@ class PersistentScheduledFlowRepositoryTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that item is rescheduled`() {
         val laterTime = mark + 1.days
         val dataSourceProps = MockServices.makeTestDataSourceProperties()

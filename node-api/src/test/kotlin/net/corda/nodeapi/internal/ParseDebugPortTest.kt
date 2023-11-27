@@ -1,7 +1,7 @@
 package net.corda.nodeapi.internal
 
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
@@ -24,7 +24,7 @@ class ParseDebugPortTest(private val args: Iterable<String>,
         )
     }
 
-    @Test(timeout = 10_000)
+    @Test)
     fun test() {
         val port = JVMAgentUtilities.parseDebugPort(args)
         Assert.assertEquals(expectedPort, port)

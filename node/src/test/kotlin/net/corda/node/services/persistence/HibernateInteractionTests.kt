@@ -16,39 +16,34 @@ import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.OpaqueBytes
 import net.corda.finance.DOLLARS
-import net.corda.finance.`issued by`
 import net.corda.finance.contracts.asset.Cash
+import net.corda.finance.`issued by`
 import net.corda.finance.issuedBy
 import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.testing.common.internal.testNetworkParameters
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.annotations.Cascade
 import org.hibernate.annotations.CascadeType
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import java.lang.IllegalArgumentException
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import javax.persistence.Entity
+import javax.persistence.GeneratedValue
+import javax.persistence.GenerationType
 import javax.persistence.Id
 import javax.persistence.OneToMany
 import javax.persistence.Table
-import javax.persistence.GeneratedValue
-import javax.persistence.GenerationType
 import kotlin.test.assertEquals
 
 /**
  * These tests cover the interactions between Corda and Hibernate with regards to flushing/detaching/cascading.
  */
+@ExtendWith(SerializationExtension::class)
 class HibernateInteractionTests {
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private val cordapps = listOf("net.corda.finance", "net.corda.node.services.persistence")
 
     private val myself = TestIdentity(CordaX500Name("Me", "London", "GB"))
@@ -57,7 +52,7 @@ class HibernateInteractionTests {
     lateinit var services: MockServices
     lateinit var database: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val (db, mockServices) = MockServices.makeTestDatabaseAndPersistentServices(
                 cordappPackages = cordapps,
@@ -74,7 +69,7 @@ class HibernateInteractionTests {
 
     // AbstractPartyToX500NameAsStringConverter could cause circular flush of Hibernate session because it is invoked during flush, and a
     // cache miss was doing a flush.  This also checks that loading during flush does actually work.
-    @Test(timeout=300_000)
+    @Test
 	fun `issue some cash on a notary that exists only in the database to check cache loading works in our identity column converters during flush of vault update`() {
         val expected = 500.DOLLARS
         val ref = OpaqueBytes.of(0x01)
@@ -90,7 +85,7 @@ class HibernateInteractionTests {
         assertEquals(expected.`issued by`(ourIdentity.ref(ref)), output.amount)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `when a cascade is in progress (because of nested entities), the node avoids to flush & detach entities, since it's not allowed by Hibernate`() {
         val ourIdentity = services.myInfo.legalIdentities.first()
 

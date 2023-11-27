@@ -2,21 +2,20 @@ package net.corda.explorer.model
 
 import net.corda.core.internal.div
 import net.corda.core.internal.exists
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import java.nio.file.Path
 import kotlin.test.assertEquals
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class SettingsModelTest {
-    @Rule
-    @JvmField
-    val tempFolder: TemporaryFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var tempFolder: Path
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test save config and rollback`() {
-        val path = tempFolder.root.toPath() / "conf"
+        val path = tempFolder / "conf"
         val config = path / "CordaExplorer.properties"
 
         val setting = SettingsModel(path)

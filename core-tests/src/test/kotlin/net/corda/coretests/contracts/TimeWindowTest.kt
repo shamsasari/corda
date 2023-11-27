@@ -6,7 +6,7 @@ import net.corda.core.internal.times
 import net.corda.core.utilities.millis
 import net.corda.core.utilities.minutes
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import java.time.LocalDate
@@ -15,7 +15,7 @@ import java.time.ZoneOffset.UTC
 class TimeWindowTest {
     private val now = Instant.now()
 
-    @Test(timeout=300_000)
+    @Test
 	fun fromOnly() {
         val timeWindow = TimeWindow.fromOnly(now)
         assertThat(timeWindow.fromTime).isEqualTo(now)
@@ -27,7 +27,7 @@ class TimeWindowTest {
         assertThat(timeWindow.contains(now + 1.millis)).isTrue()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun untilOnly() {
         val timeWindow = TimeWindow.untilOnly(now)
         assertThat(timeWindow.fromTime).isNull()
@@ -39,7 +39,7 @@ class TimeWindowTest {
         assertThat(timeWindow.contains(now + 1.millis)).isFalse()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun between() {
         val today = LocalDate.now()
         val fromTime = today.atTime(12, 0).toInstant(UTC)
@@ -56,7 +56,7 @@ class TimeWindowTest {
         assertThat(timeWindow.contains(untilTime + 1.millis)).isFalse()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun fromStartAndDuration() {
         val duration = 10.minutes
         val timeWindow = TimeWindow.fromStartAndDuration(now, duration)
@@ -66,7 +66,7 @@ class TimeWindowTest {
         assertThat(timeWindow.length).isEqualTo(duration)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun withTolerance() {
         val tolerance = 10.minutes
         val timeWindow = TimeWindow.withTolerance(now, tolerance)

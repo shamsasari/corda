@@ -9,26 +9,22 @@ import net.corda.node.services.network.PersistentNetworkMapCacheTest.Companion.B
 import net.corda.node.services.network.PersistentNetworkMapCacheTest.Companion.CHARLIE
 import net.corda.nodeapi.internal.DEV_ROOT_CA
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 
+@ExtendWith(SerializationExtension::class)
 class PersistentPartyInfoCacheTest {
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private var portCounter = 1000
     private val database = configureDatabase(makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null })
     private val charlieNetMapCache = PersistentNetworkMapCache(TestingNamedCacheFactory(), database, InMemoryIdentityService(trustRoot = DEV_ROOT_CA.certificate))
 
-    @Test(timeout=300_000)
+    @Test
 	fun `get party id from CordaX500Name sourced from NetworkMapCache`() {
         charlieNetMapCache.addOrUpdateNodes(listOf(
                 createNodeInfo(listOf(ALICE)),
@@ -41,7 +37,7 @@ class PersistentPartyInfoCacheTest {
         assertThat(partyInfoCache.getPartyIdByCordaX500Name(CHARLIE.name)).isEqualTo(SecureHash.sha256(CHARLIE.name.toString()))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `get party id from CordaX500Name sourced from backing database`() {
         charlieNetMapCache.addOrUpdateNodes(listOf(
                 createNodeInfo(listOf(ALICE)),
@@ -56,7 +52,7 @@ class PersistentPartyInfoCacheTest {
         assertThat(partyInfoCache.getPartyIdByCordaX500Name(CHARLIE.name)).isEqualTo(SecureHash.sha256(CHARLIE.name.toString()))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `get party CordaX500Name from id sourced from NetworkMapCache`() {
         charlieNetMapCache.addOrUpdateNodes(listOf(
                 createNodeInfo(listOf(ALICE)),
@@ -69,7 +65,7 @@ class PersistentPartyInfoCacheTest {
         assertThat(partyInfoCache.getCordaX500NameByPartyId(SecureHash.sha256(CHARLIE.name.toString()))).isEqualTo(CHARLIE.name)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `get party CordaX500Name from id sourced from backing database`() {
         charlieNetMapCache.addOrUpdateNodes(listOf(
                 createNodeInfo(listOf(ALICE)),

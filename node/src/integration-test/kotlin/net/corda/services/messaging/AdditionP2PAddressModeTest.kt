@@ -1,7 +1,7 @@
 package net.corda.services.messaging
 
 import com.typesafe.config.ConfigValueFactory
-import junit.framework.TestCase.assertEquals
+import org.junit.jupiter.api.Assertions.assertEquals
 import net.corda.client.rpc.CordaRPCClient
 import net.corda.core.contracts.Amount
 import net.corda.core.contracts.Issued
@@ -21,12 +21,12 @@ import net.corda.testing.driver.driver
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 
 class AdditionP2PAddressModeTest {
     private val portAllocation = incrementalPortAllocation()
-    @Test(timeout=300_000)
+    @Test
 	fun `runs nodes with one configured to use additionalP2PAddresses`() {
         val testUser = User("test", "test", setOf(all()))
         driver(DriverParameters(startNodesInProcess = true, inMemoryDB = true, cordappsForAllNodes = FINANCE_CORDAPPS)) {

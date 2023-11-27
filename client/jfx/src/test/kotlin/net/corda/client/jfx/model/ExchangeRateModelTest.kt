@@ -6,7 +6,7 @@ import net.corda.finance.GBP
 import net.corda.finance.RUB
 import net.corda.finance.USD
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.util.*
 import kotlin.test.assertEquals
@@ -23,7 +23,7 @@ class ExchangeRateModelTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `perform fx testing`() {
         val tenSwissies = Amount(10, BigDecimal.ONE, CHF)
         assertEquals(instance.exchangeAmount(tenSwissies, CHF), tenSwissies)

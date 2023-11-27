@@ -18,10 +18,10 @@ import net.corda.testing.node.internal.MockNodeFlowManager
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import rx.Observable
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue
@@ -37,7 +37,7 @@ class FlowFrameworkPersistenceTests {
     private lateinit var aliceNode: TestStartedNode
     private lateinit var bobNode: TestStartedNode
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP),
@@ -52,14 +52,14 @@ class FlowFrameworkPersistenceTests {
         }
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         aliceNode.internals.manuallyCloseDB()
         bobNode.internals.manuallyCloseDB()
         mockNet.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `newly added flow is preserved on restart`() {
         aliceNode.services.startFlow(NoOpFlow(nonTerminating = true))
         aliceNode.internals.acceptableLiveFiberCountOnStop = 1
@@ -67,7 +67,7 @@ class FlowFrameworkPersistenceTests {
         assertThat(restoredFlow.flowStarted).isTrue()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flow restarted just after receiving payload`() {
         val bob = bobNode.info.singleIdentity()
         bobNode.registerCordappFlowFactory(SendFlow::class) { InitiatedReceiveFlow(it)
@@ -84,7 +84,7 @@ class FlowFrameworkPersistenceTests {
         assertThat(restoredFlow.receivedPayloads[0]).isEqualTo("Hello")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flow loaded from checkpoint will respond to messages from before start`() {
         val alice = aliceNode.info.singleIdentity()
         aliceNode.registerCordappFlowFactory(ReceiveFlow::class) { InitiatedSendFlow("Hello", it) }
@@ -93,8 +93,8 @@ class FlowFrameworkPersistenceTests {
         assertThat(restoredFlow.receivedPayloads[0]).isEqualTo("Hello")
     }
 
-    @Ignore("Some changes in startup order make this test's assumptions fail.")
-    @Test(timeout=300_000)
+    @Disabled("Some changes in startup order make this test's assumptions fail.")
+    @Test
 	fun `flow with send will resend on interrupted restart`() {
         val receivedSessionMessages: List<SessionTransfer> = mutableListOf<SessionTransfer>().also { messages ->
             receivedSessionMessagesObservable().forEach { messages += it }

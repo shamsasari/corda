@@ -31,11 +31,11 @@ import net.corda.testing.node.internal.newContext
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.h2.util.Utils
-import org.junit.After
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.sql.SQLException
 import java.time.Duration
 import java.time.Instant
@@ -53,7 +53,7 @@ class RetryFlowMockTest {
     private lateinit var nodeA: TestStartedNode
     private lateinit var nodeB: TestStartedNode
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = InternalMockNetwork(threadPerNode = true, cordappsForAllNodes = listOf(enclosedCordapp()))
         nodeA = mockNet.createNode()
@@ -70,19 +70,19 @@ class RetryFlowMockTest {
         return this.services.startFlow(logic, this.services.newContext()).flatMap { it.resultFuture }
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
         StaffedFlowHospital.DatabaseEndocrinologist.customConditions.clear()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Single retry`() {
         assertEquals(Unit, nodeA.startFlow(RetryFlow(1)).get())
         assertEquals(2, RetryFlow.count)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Retry does not set senderUUID`() {
         val messagesSent = Collections.synchronizedList(mutableListOf<Message>())
         val partyB = nodeB.info.legalIdentities.first()
@@ -98,8 +98,8 @@ class RetryFlowMockTest {
         assertEquals(2, SendAndRetryFlow.count)
     }
 
-    @Ignore("CORDA-4045: Disable flaky test")
-    @Test(timeout=300_000)
+    @Disabled("CORDA-4045: Disable flaky test")
+    @Test
 	fun `Restart does not set senderUUID`() {
         val messagesSent = Collections.synchronizedList(mutableListOf<Message>())
         val partyB = nodeB.info.legalIdentities.first()
@@ -131,7 +131,7 @@ class RetryFlowMockTest {
         assertNotNull(messagesSent.singleOrNull { it.senderUUID != null })
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Early end session message does not hang receiving flow`() {
         val partyB = nodeB.info.legalIdentities.first()
         assertThatExceptionOfType(UnexpectedFlowEndException::class.java).isThrownBy {
@@ -139,13 +139,13 @@ class RetryFlowMockTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Retry duplicate insert`() {
         assertEquals(Unit, nodeA.startFlow(RetryInsertFlow(1)).get())
         assertEquals(2, RetryInsertFlow.count)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Patient records do not leak in hospital`() {
         assertEquals(Unit, nodeA.startFlow(RetryFlow(1)).get())
         // Need to make sure the state machine has finished.  Otherwise this test is flakey.
@@ -154,7 +154,7 @@ class RetryFlowMockTest {
         assertEquals(2, RetryFlow.count)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Patient records do not leak in hospital when using killFlow`() {
         // Make sure we have seen an update from the hospital, and thus the flow went there.
         val alice = TestIdentity(CordaX500Name.parse("L=London,O=Alice Ltd,OU=Trade,C=GB")).party

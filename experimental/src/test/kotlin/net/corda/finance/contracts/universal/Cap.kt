@@ -1,8 +1,5 @@
 package net.corda.finance.contracts.universal
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.node.services.IdentityService
 import net.corda.finance.contracts.BusinessCalendar
@@ -10,16 +7,19 @@ import net.corda.finance.contracts.FixOf
 import net.corda.finance.contracts.Frequency
 import net.corda.finance.contracts.Tenor
 import net.corda.testing.core.DUMMY_NOTARY_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.dsl.EnforceVerifyOrFail
 import net.corda.testing.dsl.TransactionDSL
 import net.corda.testing.dsl.TransactionDSLInterpreter
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.transaction
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.time.Instant
 import java.time.LocalDate
 
@@ -33,10 +33,8 @@ fun transaction(script: TransactionDSL<TransactionDSLInterpreter>.() -> EnforceV
             }).transaction(DUMMY_NOTARY, script)
 }
 
+@ExtendWith(SerializationExtension::class)
 class Cap {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
     val TEST_TX_TIME_1: Instant get() = Instant.parse("2017-09-02T12:00:00.00Z")
 
     val notional = 50.M
@@ -187,7 +185,7 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun issue() {
         transaction {
             output(UNIVERSAL_PROGRAM_ID, stateInitial)
@@ -202,7 +200,7 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `first fixing`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateInitial)
@@ -241,7 +239,7 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `first execute`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateAfterFixingFirst)
@@ -258,7 +256,7 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `final execute`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateAfterFixingFinal)
@@ -274,7 +272,7 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `second fixing`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateAfterExecutionFirst)
@@ -313,8 +311,8 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
-@Ignore
+    @Test
+@Disabled
     fun `pretty print`() {
         println(prettyPrint(contractInitial))
 

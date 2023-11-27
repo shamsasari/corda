@@ -14,14 +14,14 @@ import net.corda.testing.node.InMemoryMessagingNetwork
 import net.corda.testing.node.internal.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.AssertionsForClassTypes
-import org.junit.After
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import rx.Observable
 import java.util.*
 
-@Ignore("TODO JDK17: Fixme")
+@Disabled("TODO JDK17: Fixme")
 class FlowFrameworkTripartyTests {
     companion object {
         init {
@@ -39,7 +39,7 @@ class FlowFrameworkTripartyTests {
         private val receivedSessionMessages = ArrayList<SessionTransfer>()
     }
 
-    @Before
+    @BeforeEach
     fun setUpGlobalMockNet() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP),
@@ -60,7 +60,7 @@ class FlowFrameworkTripartyTests {
         receivedSessionMessagesObservable().forEach { receivedSessionMessages += it }
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
         receivedSessionMessages.clear()
@@ -70,7 +70,7 @@ class FlowFrameworkTripartyTests {
         return mockNet.messagingNetwork.receivedMessages.toSessionTransfers()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `sending to multiple parties`() {
         bobNode.registerCordappFlowFactory(SendFlow::class) { InitiatedReceiveFlow(it)
                 .nonTerminating() }
@@ -101,7 +101,7 @@ class FlowFrameworkTripartyTests {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `receiving from multiple parties`() {
         val bobPayload = "Test 1"
         val charliePayload = "Test 2"
@@ -129,7 +129,7 @@ class FlowFrameworkTripartyTests {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FlowException only propagated to parent`() {
         charlieNode.registerCordappFlowFactory(ReceiveFlow::class) { ExceptionFlow { MyFlowException("Chain") } }
         bobNode.registerCordappFlowFactory(ReceiveFlow::class) { ReceiveFlow(charlie) }
@@ -139,7 +139,7 @@ class FlowFrameworkTripartyTests {
                 .isThrownBy { receivingFiber.resultFuture.getOrThrow() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FlowException thrown and there is a 3rd unrelated party flow`() {
         // Bob will send its payload and then block waiting for the receive from Alice. Meanwhile Alice will move
         // onto Charlie which will throw the exception

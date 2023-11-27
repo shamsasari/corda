@@ -11,8 +11,8 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.util.*
 import javax.persistence.Column
@@ -33,7 +33,7 @@ class MissingSchemaMigrationTest {
     lateinit var hikariProperties: Properties
     lateinit var dataSource: DataSource
 
-    @Before
+    @BeforeEach
     fun setUp() {
         hikariProperties = MockServices.makeTestDataSourceProperties()
         dataSource = DataSourceFactory.createDataSource(hikariProperties)
@@ -43,21 +43,21 @@ class MissingSchemaMigrationTest {
             TestIdentity(ALICE_NAME, 70).name)
 
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that an error is thrown when forceThrowOnMissingMigration is set and a mapped schema is missing a migration`() {
         assertThatThrownBy {
             schemaMigration().runMigration(dataSource.connection.use { DBCheckpointStorage.getCheckpointCount(it) != 0L }, setOf(GoodSchema), true)
         }.isInstanceOf(MissingMigrationException::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that an error is not thrown when forceThrowOnMissingMigration is not set and a mapped schema is missing a migration`() {
         assertDoesNotThrow {
             schemaMigration().runMigration(dataSource.connection.use { DBCheckpointStorage.getCheckpointCount(it) != 0L }, setOf(GoodSchema), false)
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that there are no missing migrations for the node`() {
         assertDoesNotThrow("This test failure indicates " +
                 "a new table has been added to the node without the appropriate migration scripts being present") {

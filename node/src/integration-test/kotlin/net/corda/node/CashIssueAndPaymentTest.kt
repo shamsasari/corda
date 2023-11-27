@@ -21,7 +21,7 @@ import net.corda.testing.driver.driver
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.internal.findCordapp
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.util.concurrent.CountDownLatch
 import kotlin.test.assertEquals
@@ -53,7 +53,7 @@ class CashIssueAndPaymentTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test can issue cash`() {
         driver(parametersFor()) {
             val alice = startNode(providedName = ALICE_NAME, customOverrides = configOverrides).getOrThrow()
@@ -74,7 +74,7 @@ class CashIssueAndPaymentTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test can issue cash and see consumming transaction id in rpc client`() {
         driver(parametersFor()) {
             val alice = startNode(providedName = ALICE_NAME, customOverrides = configOverrides).getOrThrow()

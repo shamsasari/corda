@@ -25,9 +25,9 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.cordappsForPackages
-import org.junit.AfterClass
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledOnJre
 import org.junit.jupiter.api.condition.JRE
 import javax.persistence.Column
@@ -46,7 +46,7 @@ class VaultQueryJoinTest {
         private val createdStateRefs = mutableListOf<StateRef>()
         private const val numObjectsInLedger = DEFAULT_PAGE_SIZE + 1
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun setup() {
             mockNetwork = MockNetwork(
@@ -69,7 +69,7 @@ class VaultQueryJoinTest {
             System.setProperty("net.corda.vault.query.disable.corda3879", "false");
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun teardown() {
             mockNetwork?.stopNodes()
@@ -99,7 +99,7 @@ class VaultQueryJoinTest {
     private val queryToCheckStateRef =
             QueryCriteria.VaultQueryCriteria(Vault.StateStatus.UNCONSUMED, stateRefs = listOf(createdStateRefs[numObjectsInLedger-1]))
 
-    @Test(timeout = 300_000)
+    @Test
     fun `filter query with OR operator`() {
         val results = serviceHubHandle.vaultService.queryBy<DummyState>(
                 queryToCheckId.or(queryToCheckStateRef)
@@ -108,7 +108,7 @@ class VaultQueryJoinTest {
         assertEquals(2, results.statesMetadata.size)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `filter query with sorting`() {
         val sorting = Sort(listOf(Sort.SortColumn(SortAttribute.Custom(DummySchema.DummyState::class.java, "stateRef"), Sort.Direction.DESC)))
 
@@ -120,7 +120,7 @@ class VaultQueryJoinTest {
         assertEquals(1, results.statesMetadata.size)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `filter query with OR operator and sorting`() {
         val sorting = Sort(listOf(Sort.SortColumn(SortAttribute.Custom(DummySchema.DummyState::class.java, "stateRef"), Sort.Direction.DESC)))
 

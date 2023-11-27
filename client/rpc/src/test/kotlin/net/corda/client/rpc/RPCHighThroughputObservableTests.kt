@@ -4,7 +4,7 @@ import net.corda.core.messaging.RPCOps
 import net.corda.core.utilities.millis
 import net.corda.testing.node.internal.RPCDriverDSL
 import net.corda.testing.node.internal.rpcDriver
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import rx.Observable
@@ -29,7 +29,7 @@ class RPCHighThroughputObservableTests : AbstractRPCTest() {
         override fun makeObservable(): Observable<Int> = Observable.interval(0, TimeUnit.MICROSECONDS).map { it.toInt() + 1 }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `simple observable`() {
         rpcDriver {
             val proxy = testProxy()

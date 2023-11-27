@@ -10,27 +10,27 @@ import net.corda.core.transactions.SignedTransaction
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.days
 import net.corda.core.utilities.seconds
+import net.corda.coretesting.internal.TEST_TX_TIME
 import net.corda.finance.DOLLARS
-import net.corda.finance.`issued by`
 import net.corda.finance.contracts.asset.CASH
 import net.corda.finance.contracts.asset.Cash
 import net.corda.finance.contracts.asset.STATE
-import net.corda.finance.workflows.asset.CashUtils
+import net.corda.finance.`issued by`
 import net.corda.finance.workflows.CommercialPaperUtils
+import net.corda.finance.workflows.asset.CashUtils
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.core.*
 import net.corda.testing.dsl.EnforceVerifyOrFail
 import net.corda.testing.dsl.TransactionDSL
 import net.corda.testing.dsl.TransactionDSLInterpreter
-import net.corda.coretesting.internal.TEST_TX_TIME
 import net.corda.testing.internal.vault.VaultFiller
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.MockServices.Companion.makeTestDatabaseAndMockServices
 import net.corda.testing.node.ledger
 import net.corda.testing.node.makeTestIdentityService
 import net.corda.testing.node.transaction
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.time.Instant
@@ -92,6 +92,7 @@ class KotlinCommercialPaperLegacyTest : ICommercialPaperTestTemplate {
     override fun getContract() = CommercialPaper.CP_PROGRAM_ID
 }
 
+@ExtendWith(SerializationExtension::class)
 @RunWith(Parameterized::class)
 class CommercialPaperTestsGeneric {
     companion object {
@@ -108,16 +109,12 @@ class CommercialPaperTestsGeneric {
     @Parameterized.Parameter
     lateinit var thisTest: ICommercialPaperTestTemplate
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private val megaCorpRef = megaCorp.ref(123)
     private val ledgerServices = object : MockServices(listOf("net.corda.finance.schemas"), megaCorp, miniCorp) {
         override fun loadState(stateRef: StateRef): TransactionState<*> = TransactionState(thisTest.getPaper(), thisTest.getContract(), dummyNotary.party) // Simulates the state is recorded in the node service
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `trade lifecycle test`() {
         val someProfits = 1200.DOLLARS `issued by` megaCorpRef
         ledgerServices.ledger(dummyNotary.party) {
@@ -190,7 +187,7 @@ class CommercialPaperTestsGeneric {
         ledgerServices.transaction(dummyNotary.party, script)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `key mismatch at issue`() {
         transaction {
             attachment(CP_PROGRAM_ID)
@@ -202,7 +199,7 @@ class CommercialPaperTestsGeneric {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `face value is not zero`() {
         transaction {
             attachment(CP_PROGRAM_ID)
@@ -214,7 +211,7 @@ class CommercialPaperTestsGeneric {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `maturity date not in the past`() {
         transaction {
             attachment(CP_PROGRAM_ID)
@@ -226,7 +223,7 @@ class CommercialPaperTestsGeneric {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue cannot replace an existing state`() {
         transaction {
             attachment(CP_PROGRAM_ID)
@@ -239,7 +236,7 @@ class CommercialPaperTestsGeneric {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue move and then redeem`() {
         // Set up a test environment with 4 parties:
         // 1. The notary

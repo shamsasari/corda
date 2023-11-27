@@ -2,7 +2,7 @@ package net.corda.serialization.internal.amqp;
 
 import net.corda.core.serialization.SerializedBytes;
 import net.corda.serialization.internal.amqp.testutils.TestSerializationContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.NotSerializableException;
 import java.util.ArrayList;
@@ -10,7 +10,7 @@ import java.util.List;
 
 import static net.corda.serialization.internal.amqp.testutils.AMQPTestUtilsKt.testDefaultFactory;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 public class SetterConstructorTests {
 

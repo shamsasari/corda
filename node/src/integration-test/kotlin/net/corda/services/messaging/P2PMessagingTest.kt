@@ -21,8 +21,8 @@ import net.corda.testing.driver.internal.internalServices
 import net.corda.testing.node.ClusterSpec
 import net.corda.testing.node.NotarySpec
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean
 
@@ -31,8 +31,8 @@ class P2PMessagingTest {
         val DISTRIBUTED_SERVICE_NAME = CordaX500Name("DistributedService", "London", "GB")
     }
 
-    @Test(timeout=300_000)
-@Ignore
+    @Test
+@Disabled
     fun `communicating with a distributed service which we're part of`() {
         startDriverWithDistributedService { distributedService ->
             assertAllNodesAreUsed(distributedService, DISTRIBUTED_SERVICE_NAME, distributedService[0])

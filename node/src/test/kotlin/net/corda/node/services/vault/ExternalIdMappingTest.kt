@@ -11,22 +11,18 @@ import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.contracts.DummyContract
 import net.corda.testing.contracts.DummyState
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
-import java.util.*
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import java.util.UUID
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
+@ExtendWith(SerializationExtension::class)
 class ExternalIdMappingTest {
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private val cordapps = listOf(
             "net.corda.node.services.persistence",
             "net.corda.testing.contracts"
@@ -41,7 +37,7 @@ class ExternalIdMappingTest {
     lateinit var services: MockServices
     lateinit var database: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val (db, mockServices) = MockServices.makeTestDatabaseAndPersistentServices(
                 cordappPackages = cordapps,
@@ -64,7 +60,7 @@ class ExternalIdMappingTest {
         return stx.tx.outputsOfType<DummyState>().single()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Two states can be mapped to a single externalId`() {
         val vaultService = services.vaultService
         // Create new external ID and two keys mapped to it.
@@ -87,7 +83,7 @@ class ExternalIdMappingTest {
         assertEquals(setOf(dummyStateOne, dummyStateTwo), resultTwo.map { it.state.data }.toSet())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `externalIds query criteria test`() {
         val vaultService = services.vaultService
 
@@ -128,7 +124,7 @@ class ExternalIdMappingTest {
         assertEquals(setOf(dummyStateOne, dummyStateTwo, dummyStateThree), resultFour.map { it.state.data }.toSet())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `One state can be mapped to multiple externalIds`() {
         val vaultService = services.vaultService
         // Create new external ID.
@@ -145,7 +141,7 @@ class ExternalIdMappingTest {
         assertEquals(dummyState, result.single().state.data)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `roger uber keys test`() {
         // IDs.
         val id = UUID.randomUUID()

@@ -1,24 +1,23 @@
 package net.corda.client.rpc
 
-import org.mockito.kotlin.mock
 import net.corda.client.rpc.RPCMultipleInterfacesTests.StringRPCOpsImpl.testPhrase
 import net.corda.core.crypto.SecureHash
 import net.corda.core.messaging.CordaRPCOps
 import net.corda.core.messaging.RPCOps
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.node.internal.rpcDriver
 import net.corda.testing.node.internal.startRpcClient
 import org.assertj.core.api.Assertions
-import org.junit.Assert.*
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.mock
 import rx.Observable
 
+@ExtendWith(SerializationExtension::class)
 class RPCMultipleInterfacesTests {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
-
     companion object {
         const val sampleSize = 30
     }
@@ -64,7 +63,7 @@ class RPCMultipleInterfacesTests {
 
     interface ImaginaryFriend : RPCOps
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can talk multiple interfaces`() {
         rpcDriver {
             val server = startRpcServer(listOps = listOf(IntRPCOpsImpl(), StringRPCOpsImpl, MyCordaRpcOpsImpl)).get()
@@ -76,7 +75,7 @@ class RPCMultipleInterfacesTests {
             val clientString = startRpcClient<StringRPCOps>(server.broker.hostAndPort!!).get()
             val stringList = clientString.stream(sampleSize).toList().toBlocking().single()
             assertEquals(sampleSize, stringList.size)
-            assertTrue(stringList.toString(), stringList.all { it.matches("[0-7]*".toRegex()) })
+            assertTrue(stringList.all { it.matches("[0-7]*".toRegex()) }, stringList.toString())
             assertEquals(testPhrase, clientString.stringTestMethod())
 
             val rpcOpsClient = startRpcClient<CordaRPCOps>(server.broker.hostAndPort!!).get()

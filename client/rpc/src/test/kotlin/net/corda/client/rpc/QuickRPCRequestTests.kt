@@ -8,8 +8,8 @@ import net.corda.coretesting.internal.testThreadFactory
 import net.corda.node.services.rpc.RPCServerConfiguration
 import net.corda.testing.node.internal.RPCDriverDSL
 import net.corda.testing.node.internal.rpcDriver
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.util.concurrent.ConcurrentHashMap
@@ -67,12 +67,12 @@ class QuickRPCRequestTests : AbstractRPCTest() {
     }
 
     private val pool = Executors.newFixedThreadPool(10, testThreadFactory())
-    @After
+    @AfterEach
     fun shutdown() {
         pool.shutdown()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `quick RPCs by-pass the standard RPC thread pool`() {
         /*
             1. Set up a node with N RPC threads

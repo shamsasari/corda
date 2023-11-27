@@ -3,11 +3,11 @@ package net.corda.coretesting.internal
 import com.natpryce.hamkrest.MatchResult
 import com.natpryce.hamkrest.equalTo
 import net.corda.coretesting.internal.matchers.hasEntries
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class MatcherTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `nested items indent`() {
         val nestedMap = mapOf(
                 "a" to mapOf(

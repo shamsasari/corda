@@ -24,7 +24,7 @@ import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.DUMMY_BANK_A_NAME
 import net.corda.testing.core.DUMMY_NOTARY_NAME
 import net.corda.testing.core.TestIdentity
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class TransactionVerificationExceptionSerialisationTests {
@@ -41,7 +41,7 @@ class TransactionVerificationExceptionSerialisationTests {
     private val attachmentHash = SecureHash.allOnesHash
     private val factory = defaultFactory()
 
-    @Test(timeout=300_000)
+    @Test
 	fun contractConstraintRejectionTest() {
         val excp = TransactionVerificationException.ContractConstraintRejection(txid, "This is only a test")
         val excp2 = DeserializationInput(factory).deserialize(
@@ -53,7 +53,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(excp.txId, excp2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun contractRejectionTest() {
         class TestContract(val thing: Int) : Contract {
             override fun verify(tx: LedgerTransaction) = Unit
@@ -72,7 +72,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun missingAttachmentRejectionTest() {
         val exception = TransactionVerificationException.MissingAttachmentRejection(txid, "Some contract class")
         val exception2 = DeserializationInput(factory).deserialize(
@@ -84,7 +84,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun conflictingAttachmentsRejectionTest() {
         val exception = TransactionVerificationException.ContractConstraintRejection(txid, "Some contract class")
         val exception2 = DeserializationInput(factory).deserialize(
@@ -96,7 +96,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun invalidConstraintRejectionError() {
         val exception = TransactionVerificationException.InvalidConstraintRejection(txid, "Some contract class", "for being too funny")
         val exceptionAfterSerialisation = DeserializationInput(factory).deserialize(
@@ -110,7 +110,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.reason, exceptionAfterSerialisation.reason)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun contractCreationErrorTest() {
         val cause = Throwable("wibble")
         val exception = createContractCreationError(txid, "Some contract class", cause)
@@ -123,7 +123,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun transactionMissingEncumbranceTest() {
         val exception = TransactionVerificationException.TransactionMissingEncumbranceException(
                 txid, 12, TransactionVerificationException.Direction.INPUT)
@@ -136,7 +136,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun notaryChangeInWrongTransactionTypeTest() {
         val dummyBankA = TestIdentity(DUMMY_BANK_A_NAME, 40).party
         val dummyNotary = TestIdentity(DUMMY_NOTARY_NAME, 20).party
@@ -153,7 +153,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun overlappingAttachmentsExceptionTest() {
         val exc = TransactionVerificationException.OverlappingAttachmentsException(txid, "foo/bar/baz")
         val exc2 = DeserializationInput(factory).deserialize(
@@ -163,7 +163,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exc.message, exc2.message)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun packageOwnershipExceptionTest() {
         val exc = TransactionVerificationException.PackageOwnershipException(
                 txid,
@@ -178,7 +178,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exc.message, exc2.message)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun invalidAttachmentExceptionTest() {
         val exc = TransactionVerificationException.InvalidAttachmentException(
                 txid,
@@ -191,7 +191,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exc.message, exc2.message)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun untrustedAttachmentsExceptionTest() {
         val exc = TransactionVerificationException.UntrustedAttachmentsException(
                 txid,
@@ -205,7 +205,7 @@ class TransactionVerificationExceptionSerialisationTests {
     }
 
 
-    @Test(timeout=300_000)
+    @Test
     fun unsupportedHashTypeExceptionTest() {
         val exc = TransactionVerificationException.UnsupportedHashTypeException(txid)
 
@@ -216,7 +216,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exc.message, exc2.message)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun transactionNetworkParameterOrderingExceptionTest() {
         val exception = TransactionVerificationException.TransactionNetworkParameterOrderingException(
                 txid,
@@ -234,7 +234,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun missingNetworkParametersExceptionTest() {
         val exception = TransactionVerificationException.MissingNetworkParametersException(txid, SecureHash.zeroHash)
         val exception2 = DeserializationInput(factory)
@@ -248,7 +248,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun constraintPropagationRejectionTest() {
         val exception = TransactionVerificationException.ConstraintPropagationRejection(txid, "com.test.Contract",
                 AlwaysAcceptAttachmentConstraint, AlwaysAcceptAttachmentConstraint)
@@ -264,7 +264,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals("com.test.Contract", exception2.contractClass)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun transactionDuplicateEncumbranceExceptionTest() {
         val exception = TransactionVerificationException.TransactionDuplicateEncumbranceException(txid, 1)
         val exception2 = DeserializationInput(factory)
@@ -278,7 +278,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun transactionNonMatchingEncumbranceExceptionTest() {
         val exception = TransactionVerificationException.TransactionNonMatchingEncumbranceException(txid, listOf(1, 2, 3))
         val exception2 = DeserializationInput(factory)
@@ -292,7 +292,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun transactionNotaryMismatchEncumbranceExceptionTest() {
         val exception = TransactionVerificationException.TransactionNotaryMismatchEncumbranceException(
                 txid, 1, 2, Party(ALICE_NAME, generateKeyPair().public), Party(BOB_NAME, generateKeyPair().public))
@@ -307,7 +307,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun transactionContractConflictExceptionTest() {
         val exception = TransactionVerificationException.TransactionContractConflictException(
                 txid, TransactionState(DummyContractState(), notary = Party(BOB_NAME, generateKeyPair().public)), "aa")
@@ -322,7 +322,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun transactionRequiredContractUnspecifiedExceptionTest() {
         val exception = TransactionVerificationException.TransactionRequiredContractUnspecifiedException(
                 txid, TransactionState(DummyContractState(), notary = Party(BOB_NAME, generateKeyPair().public)))
@@ -337,7 +337,7 @@ class TransactionVerificationExceptionSerialisationTests {
         assertEquals(exception.txId, exception2.txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun unsupportedClassVersionErrorTest() {
         val cause = UnsupportedClassVersionError("wobble")
         val exception = TransactionVerificationException.UnsupportedClassVersionError(txid, cause.message!!, cause)

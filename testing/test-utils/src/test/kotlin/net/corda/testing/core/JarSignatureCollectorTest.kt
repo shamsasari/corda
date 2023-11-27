@@ -9,10 +9,10 @@ import net.corda.testing.core.internal.JarSignatureTestUtils.addIndexList
 import net.corda.core.identity.Party
 import net.corda.core.internal.*
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.AfterClass
-import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.AfterAll
+import org.junit.jupiter.api.BeforeAll
+import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Path
 import java.security.PublicKey
@@ -31,7 +31,7 @@ class JarSignatureCollectorTest {
         private const val CHARLIE = "Charlie"
         private const val CHARLIE_PASS = "charliepass"
 
-        @BeforeClass
+        @BeforeAll
         @JvmStatic
         fun beforeClass() {
             dir.generateKey(ALICE, "storepass", ALICE_NAME.toString(), keyPassword = ALICE_PASS)
@@ -43,7 +43,7 @@ class JarSignatureCollectorTest {
             (dir / "_signable3").writeLines(listOf("signable3"))
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun afterClass() {
             dir.deleteRecursively()
@@ -52,7 +52,7 @@ class JarSignatureCollectorTest {
 
     private val List<Party>.keys get() = map { it.owningKey }
 
-    @After
+    @AfterEach
     fun tearDown() {
         dir.list {
             it.filter { !it.fileName.toString().startsWith("_") }.forEach(Path::deleteRecursively)
@@ -60,7 +60,7 @@ class JarSignatureCollectorTest {
         assertThat(dir.list()).hasSize(5)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty jar has no signers`() {
         (dir / "META-INF").createDirectory() // At least one arg is required, and jar cvf conveniently ignores this.
         dir.createJar(FILENAME, "META-INF")
@@ -70,7 +70,7 @@ class JarSignatureCollectorTest {
         assertEquals(emptyList(), dir.getJarSigners(FILENAME)) // There needs to have been a file for ALICE to sign.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unsigned jar has no signers`() {
         dir.createJar(FILENAME, "_signable1")
         assertEquals(emptyList(), dir.getJarSigners(FILENAME))
@@ -79,7 +79,7 @@ class JarSignatureCollectorTest {
         assertEquals(emptyList(), dir.getJarSigners(FILENAME))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `one signer`() {
         dir.createJar(FILENAME, "_signable1", "_signable2")
         val key = signAsAlice()
@@ -90,7 +90,7 @@ class JarSignatureCollectorTest {
         assertEquals(listOf(key), dir.getJarSigners(FILENAME)) // Unsigned directory is irrelevant.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `two signers`() {
         dir.createJar(FILENAME, "_signable1", "_signable2")
         val key1 = signAsAlice()
@@ -99,7 +99,7 @@ class JarSignatureCollectorTest {
         assertEquals(setOf(key1, key2), dir.getJarSigners(FILENAME).toSet())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `all files must be signed by the same set of signers`() {
         dir.createJar(FILENAME, "_signable1")
         val key1 = signAsAlice()
@@ -115,7 +115,7 @@ class JarSignatureCollectorTest {
         ) { dir.getJarSigners(FILENAME) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `bad signature is caught even if the party would not qualify as a signer`() {
         (dir / "volatile").writeLines(listOf("volatile"))
         dir.createJar(FILENAME, "volatile")
@@ -131,7 +131,7 @@ class JarSignatureCollectorTest {
 
     // Signing with EC algorithm produces META-INF/*.EC file name not compatible with JAR File Spec however it's compatible with java.util.JarVerifier
     // and our JarSignatureCollector
-    @Test(timeout=300_000)
+    @Test
 	fun `one signer with EC algorithm`() {
         dir.createJar(FILENAME, "_signable1", "_signable2")
         // JDK11: Warning:  Different store and key passwords not supported for PKCS12 KeyStores. Ignoring user-specified -keypass value.
@@ -139,7 +139,7 @@ class JarSignatureCollectorTest {
         assertEquals(listOf(key), dir.getJarSigners(FILENAME)) // We only used CHARLIE's distinguished name, so the keys will be different.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar with jar index file`() {
         dir.createJar(FILENAME, "_signable1")
         dir.addIndexList(FILENAME)

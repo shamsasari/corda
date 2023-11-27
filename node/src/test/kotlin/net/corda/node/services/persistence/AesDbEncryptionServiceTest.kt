@@ -9,9 +9,9 @@ import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.nio.ByteBuffer
 import java.security.GeneralSecurityException
 import java.util.UUID
@@ -21,7 +21,7 @@ class AesDbEncryptionServiceTest {
     private lateinit var database: CordaPersistence
     private lateinit var encryptionService: AesDbEncryptionService
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val dataSourceProps = MockServices.makeTestDataSourceProperties()
         database = configureDatabase(dataSourceProps, DatabaseConfig(), { null }, { null })
@@ -29,12 +29,12 @@ class AesDbEncryptionServiceTest {
         encryptionService.start(identity)
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         database.close()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `same instance can decrypt ciphertext`() {
         val ciphertext = encryptionService.encrypt("Hello World".toByteArray())
         val (plaintext, authenticatedData) = encryptionService.decrypt(ciphertext)
@@ -42,13 +42,13 @@ class AesDbEncryptionServiceTest {
         assertThat(authenticatedData).isNull()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `encypting twice produces different ciphertext`() {
         val plaintext = "Hello".toByteArray()
         assertThat(encryptionService.encrypt(plaintext)).isNotEqualTo(encryptionService.encrypt(plaintext))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ciphertext can be decrypted after restart`() {
         val ciphertext = encryptionService.encrypt("Hello World".toByteArray())
         encryptionService = AesDbEncryptionService(database)
@@ -57,7 +57,7 @@ class AesDbEncryptionServiceTest {
         assertThat(String(plaintext)).isEqualTo("Hello World")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `encrypting with authenticated data`() {
         val ciphertext = encryptionService.encrypt("Hello World".toByteArray(), "Additional data".toByteArray())
         val (plaintext, authenticatedData) = encryptionService.decrypt(ciphertext)
@@ -65,14 +65,14 @@ class AesDbEncryptionServiceTest {
         assertThat(authenticatedData?.let { String(it) }).isEqualTo("Additional data")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun extractUnauthenticatedAdditionalData() {
         val ciphertext = encryptionService.encrypt("Hello World".toByteArray(), "Additional data".toByteArray())
         val additionalData = encryptionService.extractUnauthenticatedAdditionalData(ciphertext)
         assertThat(additionalData?.let { String(it) }).isEqualTo("Additional data")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ciphertext cannot be decrypted if the authenticated data is modified`() {
         val ciphertext = ByteBuffer.wrap(encryptionService.encrypt("Hello World".toByteArray(), "1234".toByteArray()))
 
@@ -84,7 +84,7 @@ class AesDbEncryptionServiceTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ciphertext cannot be decrypted if the key used is deleted`() {
         val ciphertext = encryptionService.encrypt("Hello World".toByteArray())
         val keyId = ByteBuffer.wrap(ciphertext).getKeyId()
@@ -102,7 +102,7 @@ class AesDbEncryptionServiceTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ciphertext cannot be decrypted if forced to use a different key`() {
         val ciphertext = ByteBuffer.wrap(encryptionService.encrypt("Hello World".toByteArray()))
         val keyId = ciphertext.getKeyId()

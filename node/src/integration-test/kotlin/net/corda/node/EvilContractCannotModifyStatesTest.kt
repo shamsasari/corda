@@ -16,7 +16,7 @@ import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 class EvilContractCannotModifyStatesTest {
@@ -42,7 +42,7 @@ class EvilContractCannotModifyStatesTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun testContractThatTriesToModifyStates() {
         val evilData = MutableDataObject(5000)
         driver(driverParameters(runInProcess = false)) {

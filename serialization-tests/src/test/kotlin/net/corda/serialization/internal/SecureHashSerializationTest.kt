@@ -7,20 +7,17 @@ import net.corda.core.crypto.algorithm
 import net.corda.core.serialization.SerializationDefaults
 import net.corda.core.serialization.deserialize
 import net.corda.core.serialization.serialize
-import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Assert.assertArrayEquals
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.SerializationExtension
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
+@ExtendWith(SerializationExtension::class)
 class SecureHashSerializationTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
-    @Test(timeout = 300_000)
+    @Test
     fun `serialize and deserialize SHA-256`() {
         val before = SecureHash.randomSHA256()
         val bytes = before.serialize(context = SerializationDefaults.P2P_CONTEXT.withoutReferences()).bytes
@@ -33,7 +30,7 @@ class SecureHashSerializationTest {
         assertSame(before, after)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `serialize and deserialize SHA-512`() {
         val before = SecureHash.random(SHA2_512)
         val bytes = before.serialize(context = SerializationDefaults.P2P_CONTEXT.withoutReferences()).bytes

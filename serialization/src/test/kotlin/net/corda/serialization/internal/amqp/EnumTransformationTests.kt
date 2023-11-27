@@ -6,8 +6,8 @@ import net.corda.core.serialization.CordaSerializationTransformRename
 import net.corda.core.serialization.CordaSerializationTransformRenames
 import net.corda.serialization.internal.model.EnumTransforms
 import net.corda.serialization.internal.model.InvalidEnumTransformsException
-import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
 class EnumTransformationTests {
@@ -23,7 +23,7 @@ class EnumTransformationTests {
     enum class MultiOperations { A, B, C, D, BOB }
 
     // See https://r3-cev.atlassian.net/browse/CORDA-1497
-    @Test(timeout=300_000)
+    @Test
 	fun defaultAndRename() {
         val transforms = EnumTransforms.build(
                 TransformsAnnotationProcessor.getTransformsSchema(MultiOperations::class.java),
@@ -42,7 +42,7 @@ class EnumTransformationTests {
     )
     enum class RenameCycle { A, B, C, D, E}
 
-    @Test(timeout=300_000)
+    @Test
 	fun cycleDetection() {
         assertFailsWith<InvalidEnumTransformsException> {
             EnumTransforms.build(
@@ -57,7 +57,7 @@ class EnumTransformationTests {
     )
     enum class DanglingRenames { A, B, C }
 
-    @Test(timeout=300_000)
+    @Test
 	fun renameCycleDoesNotTerminateInConstant() {
         assertFailsWith<InvalidEnumTransformsException> {
             EnumTransforms.build(
@@ -72,7 +72,7 @@ class EnumTransformationTests {
     )
     enum class RenamesExisting { Q, R, S }
 
-    @Test(timeout=300_000)
+    @Test
 	fun renamesRenameExistingConstant() {
         assertFailsWith<InvalidEnumTransformsException> {
             EnumTransforms.build(

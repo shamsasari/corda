@@ -1,8 +1,5 @@
 package net.corda.coretests.transactions
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
 import net.corda.core.contracts.Command
 import net.corda.core.contracts.ContractAttachment
 import net.corda.core.contracts.HashAttachmentConstraint
@@ -12,7 +9,7 @@ import net.corda.core.contracts.StateAndRef
 import net.corda.core.contracts.StateRef
 import net.corda.core.contracts.TimeWindow
 import net.corda.core.contracts.TransactionState
-import net.corda.core.contracts.TransactionVerificationException
+import net.corda.core.contracts.TransactionVerificationException.UnsupportedHashTypeException
 import net.corda.core.cordapp.CordappProvider
 import net.corda.core.crypto.CompositeKey
 import net.corda.core.crypto.DigestService
@@ -37,32 +34,33 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.DUMMY_NOTARY_NAME
 import net.corda.testing.core.DummyCommandData
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Assert.assertFalse
-import org.junit.Assert.assertTrue
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertFalse
+import org.junit.jupiter.api.Assertions.assertTrue
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.security.PublicKey
 import java.time.Instant
 import kotlin.test.assertFailsWith
 
+@ExtendWith(SerializationExtension::class)
 class TransactionBuilderTest {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private val notary = TestIdentity(DUMMY_NOTARY_NAME).party
     private val services = rigorousMock<ServicesForResolution>()
     private val contractAttachmentId = SecureHash.randomSHA256()
     private val attachments = rigorousMock<AttachmentStorage>()
     private val networkParametersService = mock<NetworkParametersService>()
 
-    @Before
+    @BeforeEach
     fun setup() {
         val cordappProvider = rigorousMock<CordappProvider>()
         val networkParameters = testNetworkParameters(minimumPlatformVersion = PLATFORM_VERSION)
@@ -85,7 +83,7 @@ class TransactionBuilderTest {
                 .getLatestContractAttachments("net.corda.testing.contracts.DummyContract")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `bare minimum issuance tx`() {
         val outputState = TransactionState(
                 data = DummyState(),
@@ -102,7 +100,7 @@ class TransactionBuilderTest {
         assertThat(wtx.networkParametersHash).isEqualTo(networkParametersService.currentHash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `automatic hash constraint`() {
         doReturn(unsignedAttachment).whenever(attachments).openAttachment(contractAttachmentId)
 
@@ -114,7 +112,7 @@ class TransactionBuilderTest {
         assertThat(wtx.outputs).containsOnly(outputState.copy(constraint = HashAttachmentConstraint(contractAttachmentId)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `reference states`() {
         doReturn(unsignedAttachment).whenever(attachments).openAttachment(contractAttachmentId)
 
@@ -136,7 +134,7 @@ class TransactionBuilderTest {
         assertThat(wtx.references).containsOnly(referenceStateRef)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `automatic signature constraint`() {
         val aliceParty = TestIdentity(ALICE_NAME).party
         val bobParty = TestIdentity(BOB_NAME).party
@@ -173,7 +171,7 @@ class TransactionBuilderTest {
         override val signerKeys: List<PublicKey> get() = parties.map { it.owningKey }
     }, DummyContract.PROGRAM_ID, signerKeys = parties.map { it.owningKey })
 
-    @Test(timeout=300_000)
+    @Test
     fun `list accessors are mutable copies`() {
         val inputState1 = TransactionState(DummyState(), DummyContract.PROGRAM_ID, notary)
         val inputStateRef1 = StateRef(SecureHash.randomSHA256(), 0)
@@ -203,7 +201,7 @@ class TransactionBuilderTest {
         assertThat(builder.referenceStates()).hasSize(1)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `copy makes copy except lockId`() {
         val inputState = TransactionState(DummyState(), DummyContract.PROGRAM_ID, notary)
         val inputStateRef = StateRef(SecureHash.randomSHA256(), 0)
@@ -231,7 +229,7 @@ class TransactionBuilderTest {
         assertThat(builder.referenceStates()).isEqualTo(copy.referenceStates())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `copy makes deep copy of lists`() {
         val inputState1 = TransactionState(DummyState(), DummyContract.PROGRAM_ID, notary)
         val inputStateRef1 = StateRef(SecureHash.randomSHA256(), 0)
@@ -269,8 +267,8 @@ class TransactionBuilderTest {
         assertThat(builder.referenceStates()).hasSize(1)
     }
 
-    @Ignore
-    @Test(timeout=300_000, expected = TransactionVerificationException.UnsupportedHashTypeException::class)
+    @Disabled
+    @Test
     fun `throws with non-default hash algorithm`() {
         HashAgility.init()
         try {
@@ -286,13 +284,13 @@ class TransactionBuilderTest {
                     .addOutputState(outputState)
                     .addCommand(DummyCommandData, notary.owningKey)
 
-            builder.toWireTransaction(services)
+            assertThrows<UnsupportedHashTypeException> { builder.toWireTransaction(services) }
         } finally {
             HashAgility.init()
         }
     }
 
-    @Test(timeout=300_000, expected = Test.None::class)
+    @Test
     fun `allows non-default hash algorithm`() {
         HashAgility.init(txHashAlgoName = DigestService.sha2_384.hashAlgorithm)
         assertThat(services.digestService).isEqualTo(DigestService.sha2_384)
@@ -315,7 +313,7 @@ class TransactionBuilderTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `toWireTransaction fails if no scheme is registered with schemeId`() {
         val outputState = TransactionState(
                 data = DummyState(),

@@ -12,9 +12,9 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -26,7 +26,7 @@ class CashExitFlowTests {
     private lateinit var bankOfCorda: Party
     private lateinit var notary: Party
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = MockNetwork(MockNetworkParameters(servicePeerAllocationStrategy = RoundRobin(), cordappsForAllNodes = FINANCE_CORDAPPS))
         bankOfCordaNode = mockNet.createPartyNode(BOC_NAME)
@@ -37,12 +37,12 @@ class CashExitFlowTests {
         future.getOrThrow()
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `exit some cash`() {
         val exitAmount = 500.DOLLARS
         val future = bankOfCordaNode.startFlow(CashExitFlow(exitAmount, ref))
@@ -55,7 +55,7 @@ class CashExitFlowTests {
         assertEquals(expected, output.amount)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `exit zero cash`() {
         val expected = 0.DOLLARS
         val future = bankOfCordaNode.startFlow(CashExitFlow(expected, ref))

@@ -5,8 +5,8 @@ import net.corda.testing.core.DUMMY_BANK_A_NAME
 import net.corda.testing.core.DUMMY_NOTARY_NAME
 import net.corda.testing.core.TestIdentity
 import net.corda.verification.flows.TestCommsFlowInitiator
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions
+import org.junit.jupiter.api.Test
 
 class TestCommsFlowInitiatorTest {
 
@@ -14,7 +14,7 @@ class TestCommsFlowInitiatorTest {
     val NOTARY = TestIdentity(DUMMY_NOTARY_NAME, 12)
     val DUMMY_BANK_A = TestIdentity(DUMMY_BANK_A_NAME, 3)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should allow all node infos through if no x500 is passed`() {
         val testCommsFlowInitiator = TestCommsFlowInitiator()
 
@@ -23,7 +23,7 @@ class TestCommsFlowInitiatorTest {
         Assert.assertTrue(testCommsFlowInitiator.matchesX500(DUMMY_BANK_A.party))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should allow only specified x500 if no x500 is passed`() {
         val testCommsFlowInitiator = TestCommsFlowInitiator(ALICE_NAME)
 

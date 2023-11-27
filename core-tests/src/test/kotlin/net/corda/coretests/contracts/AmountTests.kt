@@ -6,7 +6,7 @@ import net.corda.core.contracts.AmountTransfer
 import net.corda.core.contracts.SourceAndAmount
 import net.corda.core.contracts.TokenizableAssetInfo
 import net.corda.finance.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.util.*
 import java.util.stream.Collectors
@@ -19,13 +19,13 @@ import kotlin.test.assertTrue
  * Tests of the [Amount] class.
  */
 class AmountTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `make sure Amount has decimal places`() {
         val x = Amount(1, Currency.getInstance("USD"))
         assertTrue("0.01" in x.toString())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `decimal conversion`() {
         val quantity = 1234L
         val amountGBP = Amount(quantity, GBP)
@@ -48,7 +48,7 @@ class AmountTests {
         override fun toString(): String = name
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun split() {
         for (baseQuantity in 0..1000) {
             val baseAmount = Amount(baseQuantity.toLong(), GBP)
@@ -63,7 +63,7 @@ class AmountTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `amount transfers equality`() {
         val partyA = "A"
         val partyB = "B"
@@ -88,7 +88,7 @@ class AmountTests {
         assertNotEquals(transferE.hashCode(), transferA.hashCode())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `amount transfer aggregation`() {
         val partyA = "A"
         val partyB = "B"
@@ -119,7 +119,7 @@ class AmountTests {
         assertEquals(negativeTransfer, sumUntilNegative)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `amount transfer apply`() {
         val partyA = "A"
         val partyB = "B"
@@ -167,7 +167,7 @@ class AmountTests {
         assertEquals(originalTotals[Pair(partyB, GBP)], newTotals3[Pair(partyB, GBP)])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testGbpParse() {
         assertEquals(POUNDS(10), Amount.parseCurrency("10 GBP"))
         assertEquals(POUNDS(11), Amount.parseCurrency("£11"))

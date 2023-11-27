@@ -1,16 +1,14 @@
 package net.corda.finance.contracts.universal
 
 import net.corda.finance.contracts.Frequency
-import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.SerializationExtension
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
 import kotlin.test.assertEquals
 
+@ExtendWith(SerializationExtension::class)
 class RollOutTests {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
     val TEST_TX_TIME_1: Instant get() = Instant.parse("2017-09-02T12:00:00.00Z")
 
     val contract = arrange {
@@ -120,27 +118,27 @@ class RollOutTests {
         next()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `arrangement equality transfer`() {
         assertEquals(contract_transfer1, contract_transfer2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `arrangement equality action`() {
         assertEquals(contract_action1, contract_action2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `arrangement equality and`() {
         assertEquals(contract_and1, contract_and2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `arrangement equality complex`() {
         assertEquals(contract, contract2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun issue() {
         transaction {
             output(UNIVERSAL_PROGRAM_ID, stateStart)
@@ -155,7 +153,7 @@ class RollOutTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun execute() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateStart)

@@ -2,8 +2,8 @@ package net.corda.client.jfx.utils
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class LeftOuterJoinedMapTest {
@@ -16,7 +16,7 @@ class LeftOuterJoinedMapTest {
     lateinit var joinedList: ObservableList<Pair<Person, ObservableList<Dog>>>
     lateinit var replayedList: ObservableList<out Pair<Person, ObservableList<Dog>>>
 
-    @Before
+    @BeforeEach
     fun setup() {
         people = FXCollections.observableArrayList<Person>(Person("Alice", 12))
         dogs = FXCollections.observableArrayList<Dog>(Dog("Scruffy", owner = "Bob"))
@@ -26,7 +26,7 @@ class LeftOuterJoinedMapTest {
     }
 
     // TODO perhaps these are too brittle because they test indices that are not stable. Use Expect dsl?
-    @Test(timeout=300_000)
+    @Test
 	fun addWorks() {
         assertEquals(replayedList.size, 1)
         assertEquals(replayedList[0].first.name, "Alice")
@@ -73,7 +73,7 @@ class LeftOuterJoinedMapTest {
 
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun removeWorks() {
         dogs.add(Dog("Scooby", owner = "Alice"))
         people.add(Person("Bob", 34))

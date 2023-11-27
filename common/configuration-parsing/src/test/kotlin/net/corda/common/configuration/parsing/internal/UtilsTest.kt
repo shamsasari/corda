@@ -2,11 +2,11 @@ package net.corda.common.configuration.parsing.internal
 
 import com.typesafe.config.ConfigFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class UtilsTest {
 
-    @Test(timeout=300_000)
+    @Test
 	fun serialize_deserialize_configuration() {
 
         var rawConfiguration = ConfigFactory.empty()

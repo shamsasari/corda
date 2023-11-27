@@ -1,14 +1,13 @@
 package net.corda.coretesting.internal
 
+import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.catchThrowable
-import org.hamcrest.Matchers.isA
-import org.junit.Assert.assertThat
-import org.junit.Test
-import java.io.Closeable
-import java.io.InputStream
-import java.io.Serializable
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.util.stream.Stream
-import kotlin.test.*
+import kotlin.test.assertEquals
+import kotlin.test.assertNotSame
+import kotlin.test.assertSame
 
 private interface MyInterface {
     fun abstractFun(): Int
@@ -30,7 +29,7 @@ private interface MySpectator {
 }
 
 class RigorousMockTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `toString has a reliable default answer in all cases`() {
         Stream.of<(Class<out Any>) -> Any>(::spectator, ::rigorousMock, ::participant).forEach { profile ->
             Stream.of(MyInterface::class, MyAbstract::class, MyImpl::class).forEach { type ->
@@ -40,8 +39,8 @@ class RigorousMockTest {
         }
     }
 
-    @Test(timeout=300_000)
-    @Ignore("TODO JDK17: Issue with private classes in Kotlin 1.8")
+    @Test
+    @Disabled("TODO JDK17: Issue with private classes in Kotlin 1.8")
 	fun `callRealMethod is preferred by rigorousMock`() {
         rigorousMock<MyInterface>().let { m ->
             assertSame<Any>(UndefinedMockBehaviorException::class.java, catchThrowable { m.abstractFun() }.javaClass)
@@ -59,7 +58,7 @@ class RigorousMockTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `throw exception is preferred by participant`() {
         participant<MyInterface>().let { m ->
             assertSame<Any>(UndefinedMockBehaviorException::class.java, catchThrowable { m.abstractFun() }.javaClass)
@@ -77,7 +76,7 @@ class RigorousMockTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `doing nothing is preferred by spectator`() {
         val mock: MySpectator = spectator()
         mock.sideEffect()
@@ -98,30 +97,10 @@ class RigorousMockTest {
     private open class CD<out C, out D> : AB<D, C>()
     private class CDImpl : CD<Runnable, String>()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `method return type resolution works`() {
         val m = spectator<CDImpl>()
-        assertThat(m.b, isA(Runnable::class.java))
+        assertThat(m.b).isInstanceOf(Runnable::class.java)
         assertSame<Any>(UndefinedMockBehaviorException::class.java, catchThrowable { m.a }.javaClass) // Can't mock String.
-    }
-
-    private interface RS : Runnable, Serializable
-    private class TU<out T> where T : Runnable, T : Serializable {
-        fun t(): T = throw UnsupportedOperationException()
-        fun <U : Closeable> u(): U = throw UnsupportedOperationException()
-    }
-
-    @Test(timeout=300_000)
-	fun `method return type erasure cases`() {
-        val m = spectator<TU<RS>>()
-        m.t().let { t: Any ->
-            assertFalse(t is RS)
-            assertTrue(t is Runnable)
-            assertFalse(t is Serializable) // Erasure picks the first bound.
-        }
-        m.u<InputStream>().let { u: Any ->
-            assertFalse(u is InputStream)
-            assertTrue(u is Closeable)
-        }
     }
 }

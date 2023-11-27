@@ -1,7 +1,7 @@
 package net.corda.node.utilities
 
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.atomic.AtomicReference
@@ -11,13 +11,13 @@ class AffinityExecutorTests {
     private var _executor: AffinityExecutor.ServiceAffinityExecutor? = null
     private val executor: AffinityExecutor.ServiceAffinityExecutor get() = _executor!!
 
-    @After
+    @AfterEach
     fun shutdown() {
         _executor?.shutdown()
         _executor = null
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flush handles nested executes`() {
         _executor = AffinityExecutor.ServiceAffinityExecutor("test4", 1)
         var nestedRan = false
@@ -31,7 +31,7 @@ class AffinityExecutorTests {
         assertTrue(nestedRan)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `single threaded affinity executor runs on correct thread`() {
         val thisThread = Thread.currentThread()
         _executor = AffinityExecutor.ServiceAffinityExecutor("test thread", 1)
@@ -53,7 +53,7 @@ class AffinityExecutorTests {
         assertEquals(thread2.get(), thread.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `pooled executor`() {
         _executor = AffinityExecutor.ServiceAffinityExecutor("test2", 3)
         assertFalse(executor.isOnThread)

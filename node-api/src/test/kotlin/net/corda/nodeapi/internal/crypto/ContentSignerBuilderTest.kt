@@ -2,7 +2,7 @@ package net.corda.nodeapi.internal.crypto
 
 import net.corda.core.crypto.Crypto
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.security.InvalidKeyException
 
@@ -11,7 +11,7 @@ class ContentSignerBuilderTest {
         private const val entropy = "20200723"
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `should build content signer for valid eddsa key`() {
         val signatureScheme = Crypto.EDDSA_ED25519_SHA512
         val provider = Crypto.findProvider(signatureScheme.providerName)
@@ -19,7 +19,7 @@ class ContentSignerBuilderTest {
         ContentSignerBuilder.build(signatureScheme, issuerKeyPair.private, provider)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `should fail to build content signer for incorrect key type`() {
         val signatureScheme = Crypto.EDDSA_ED25519_SHA512
         val provider = Crypto.findProvider(signatureScheme.providerName)

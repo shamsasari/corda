@@ -21,9 +21,9 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNodeParameters
 import net.corda.testing.node.StartedMockNode
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import kotlin.test.assertEquals
 
@@ -46,7 +46,7 @@ class OracleNodeTearOffTests {
     private lateinit var oracleNode: StartedMockNode
     private val oracle get() = oracleNode.services.myInfo.singleIdentity()
 
-    @Before
+    @BeforeEach
     // DOCSTART 1
     fun setUp() {
         mockNet = @Suppress("DEPRECATION") MockNetwork(cordappPackages = listOf("net.corda.finance.contracts", "net.corda.irs"))
@@ -59,13 +59,13 @@ class OracleNodeTearOffTests {
     }
     // DOCEND 1
 
-    @After
+    @AfterEach
     fun tearDown() {
         mockNet.stopNodes()
     }
 
     // DOCSTART 2
-    @Test(timeout=300_000)
+    @Test
 	fun `verify that the oracle signs the transaction if the interest rate within allowed limit`() {
         // Create a partial transaction
         val tx = TransactionBuilder(DUMMY_NOTARY)
@@ -91,7 +91,7 @@ class OracleNodeTearOffTests {
     }
     // DOCEND 2
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verify that the oracle rejects the transaction if the interest rate is outside the allowed limit`() {
         val tx = makePartialTX()
         val fixOf = NodeInterestRates.parseFixOf("LIBOR 2016-03-16 1M")
@@ -106,7 +106,7 @@ class OracleNodeTearOffTests {
         }.isInstanceOf(RatesFixFlow.FixOutOfRange::class.java).hasMessage("Fix out of range by 0.017")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verify that the oracle rejects the transaction if there is a privacy leak`() {
         val tx = makePartialTX()
         val fixOf = NodeInterestRates.parseFixOf("LIBOR 2016-03-16 1M")

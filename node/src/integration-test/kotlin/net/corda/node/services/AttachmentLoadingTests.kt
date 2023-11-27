@@ -24,7 +24,7 @@ import net.corda.testing.driver.driver
 import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.net.URL
 import java.net.URLClassLoader
 
@@ -44,7 +44,7 @@ class AttachmentLoadingTests {
         fun loadFromIsolated(className: String): Class<*> = Class.forName(className, false, isolatedClassLoader)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `contracts downloaded from the network are not executed`() {
         driver(DriverParameters(
                 startNodesInProcess = false,
@@ -67,7 +67,7 @@ class AttachmentLoadingTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `contract is executed if installed locally`() {
         driver(DriverParameters(
                 startNodesInProcess = false,

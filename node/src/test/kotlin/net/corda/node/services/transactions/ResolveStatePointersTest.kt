@@ -1,6 +1,14 @@
 package net.corda.node.services.transactions
 
-import net.corda.core.contracts.*
+import net.corda.core.contracts.BelongsToContract
+import net.corda.core.contracts.Command
+import net.corda.core.contracts.ContractState
+import net.corda.core.contracts.LinearPointer
+import net.corda.core.contracts.LinearState
+import net.corda.core.contracts.StateAndRef
+import net.corda.core.contracts.StatePointer
+import net.corda.core.contracts.StaticPointer
+import net.corda.core.contracts.UniqueIdentifier
 import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.node.NotaryInfo
@@ -8,22 +16,18 @@ import net.corda.core.transactions.TransactionBuilder
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.contracts.DummyContract
 import net.corda.testing.core.DUMMY_NOTARY_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.makeTestIdentityService
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
+@ExtendWith(SerializationExtension::class)
 class ResolveStatePointersTest {
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private val myself = TestIdentity(CordaX500Name("Me", "London", "GB"))
     private val notary = TestIdentity(DUMMY_NOTARY_NAME, 20)
     private val cordapps = listOf("net.corda.testing.contracts")
@@ -55,7 +59,7 @@ class ResolveStatePointersTest {
         }
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val databaseAndServices = MockServices.makeTestDatabaseAndMockServices(
                 cordappPackages = cordapps,
@@ -66,7 +70,7 @@ class ResolveStatePointersTest {
         services = databaseAndServices.second
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `resolve linear pointers and check reference state is not added to transaction when isResolved is false`() {
         val stateAndRef = createPointedToState(barOne)
         val linearId = stateAndRef.state.data.linearId
@@ -86,7 +90,7 @@ class ResolveStatePointersTest {
         assertEquals(emptyList(), ltx.referenceStates)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `resolve linear pointers and check reference state is added to transaction when isResolved is true`() {
         val stateAndRef = createPointedToState(barOne)
         val linearId = stateAndRef.state.data.linearId
@@ -106,7 +110,7 @@ class ResolveStatePointersTest {
         assertEquals(barOne, ltx.referenceStates.single())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `resolve static pointers and check reference state is not added to transaction when isResolved is false`() {
         val stateAndRef = createPointedToState(barOne)
         val stateRef = stateAndRef.ref
@@ -126,7 +130,7 @@ class ResolveStatePointersTest {
         assertEquals(emptyList(), ltx.referenceStates)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `resolve static pointers and check reference state is added to transaction when isResolved is true`() {
         val stateAndRef = createPointedToState(barOne)
         val stateRef = stateAndRef.ref
@@ -146,7 +150,7 @@ class ResolveStatePointersTest {
         assertEquals(barOne, ltx.referenceStates.single())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `resolving nested pointers is possible`() {
         // Create barOne.
         val barOneStateAndRef = createPointedToState(barOne)
@@ -170,7 +174,7 @@ class ResolveStatePointersTest {
         assertEquals(setOf(barOneStateAndRef.ref, barTwoStateAndRef.ref), tx.referenceStates().toSet())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Resolving to an unknown state throws an exception`() {
         // Don't create the pointed to state.
         // Resolve the pointer for barTwo.
@@ -179,7 +183,7 @@ class ResolveStatePointersTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `resolving an exited state throws an exception`() {
         // Create barOne.
         val stateAndRef = createPointedToState(barOne)
@@ -198,7 +202,7 @@ class ResolveStatePointersTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `resolve linear pointer with correct type`() {
         val stateAndRef = createPointedToState(barOne)
         val linearPointer = LinearPointer(stateAndRef.state.data.linearId, barOne::class.java)
@@ -206,7 +210,7 @@ class ResolveStatePointersTest {
         assertEquals(stateAndRef::class.java, resolvedPointer::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `resolve state pointer in ledger transaction`() {
         val stateAndRef = createPointedToState(barOne)
         val linearId = stateAndRef.state.data.linearId

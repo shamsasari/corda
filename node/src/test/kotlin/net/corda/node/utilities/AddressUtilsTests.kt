@@ -1,11 +1,11 @@
 package net.corda.node.utilities
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 
 class AddressUtilsTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `correctly determines if the provided address is public`() {
         assertFalse { AddressUtils.isPublic("localhost") }
         assertFalse { AddressUtils.isPublic("127.0.0.1") }

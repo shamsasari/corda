@@ -1,9 +1,10 @@
 package net.corda.coretests.transactions
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.whenever
-import net.corda.core.contracts.*
+import net.corda.core.contracts.AutomaticPlaceholderConstraint
+import net.corda.core.contracts.Contract
+import net.corda.core.contracts.ContractState
+import net.corda.core.contracts.TransactionVerificationException
+import net.corda.core.contracts.requireThat
 import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.CordaX500Name
 import net.corda.core.node.NotaryInfo
@@ -11,28 +12,28 @@ import net.corda.core.node.services.IdentityService
 import net.corda.core.transactions.LedgerTransaction
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.finance.DOLLARS
-import net.corda.finance.`issued by`
 import net.corda.finance.contracts.asset.Cash
+import net.corda.finance.`issued by`
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.core.DUMMY_NOTARY_NAME
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.ledger
 import org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.whenever
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertFailsWith
 
 const val TEST_TIMELOCK_ID = "net.corda.coretests.transactions.TransactionEncumbranceTests\$DummyTimeLock"
 
+@ExtendWith(SerializationExtension::class)
 class TransactionEncumbranceTests {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
-
     private companion object {
         val DUMMY_NOTARY = TestIdentity(DUMMY_NOTARY_NAME, 20).party
         val DUMMY_NOTARY2 = TestIdentity(DUMMY_NOTARY_NAME.copy(organisation = "${DUMMY_NOTARY_NAME.organisation}2"), 30).party
@@ -82,7 +83,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `states must be bi-directionally encumbered`() {
         // Basic encumbrance example for encumbrance index links 0 -> 1 and 1 -> 0
         ledgerServices.ledger(DUMMY_NOTARY) {
@@ -145,7 +146,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non bi-directional encumbrance will fail`() {
         // Single encumbrance with no back link.
         assertFailsWith<TransactionVerificationException.TransactionNonMatchingEncumbranceException> {
@@ -214,7 +215,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `state can transition if encumbrance rules are met`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             unverifiedTransaction {
@@ -235,7 +236,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `state cannot transition if the encumbrance contract fails to verify`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             unverifiedTransaction {
@@ -256,7 +257,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `state must be consumed along with its encumbrance`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             unverifiedTransaction {
@@ -275,7 +276,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `state cannot be encumbered by itself`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             transaction {
@@ -288,7 +289,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `encumbrance state index must be valid`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             transaction {
@@ -302,7 +303,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `correct encumbrance state must be provided`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             unverifiedTransaction {
@@ -323,7 +324,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `encumbered states cannot be assigned to different notaries`() {
         // Single encumbrance with different notaries.
         assertFailsWith<TransactionVerificationException.TransactionNotaryMismatchEncumbranceException> {

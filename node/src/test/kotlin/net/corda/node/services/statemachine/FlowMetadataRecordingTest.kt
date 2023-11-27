@@ -44,9 +44,9 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.User
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
-import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import java.util.UUID
@@ -67,7 +67,7 @@ class FlowMetadataRecordingTest {
     private val string = "I must be delivered for 4.5"
     private val someObject = SomeObject("Store me in the database please", 1234)
 
-    @Before
+    @BeforeEach
     fun before() {
         MyFlow.hookAfterInitialCheckpoint = null
         MyFlow.hookAfterSuspend = null
@@ -75,7 +75,7 @@ class FlowMetadataRecordingTest {
         MyFlowWithoutParameters.hookAfterInitialCheckpoint = null
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `rpc started flows have metadata recorded`() {
         driver(DriverParameters(startNodesInProcess = true)) {
 
@@ -127,7 +127,7 @@ class FlowMetadataRecordingTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `rpc started flows have metadata recorded - no parameters`() {
         driver(DriverParameters(startNodesInProcess = true)) {
 
@@ -169,7 +169,7 @@ class FlowMetadataRecordingTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `rpc started flows have their arguments removed from in-memory checkpoint after zero'th checkpoint`() {
         driver(DriverParameters(startNodesInProcess = true)) {
 
@@ -223,7 +223,7 @@ class FlowMetadataRecordingTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `initiated flows have metadata recorded`() {
         driver(DriverParameters(startNodesInProcess = true)) {
 
@@ -272,7 +272,7 @@ class FlowMetadataRecordingTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `service started flows have metadata recorded`() {
         driver(DriverParameters(startNodesInProcess = true)) {
 
@@ -321,7 +321,7 @@ class FlowMetadataRecordingTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `scheduled flows have metadata recorded`() {
         driver(DriverParameters(startNodesInProcess = true)) {
 
@@ -378,8 +378,8 @@ class FlowMetadataRecordingTest {
     }
 
     // Ignoring test since completed flows are not currently keeping their checkpoints in the database
-    @Ignore
-    @Test(timeout = 300_000)
+    @Disabled
+    @Test
     fun `flows have their finish time recorded when completed`() {
         driver(DriverParameters(startNodesInProcess = true)) {
 
@@ -417,7 +417,7 @@ class FlowMetadataRecordingTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `assert that flow started with longer client id than MAX_CLIENT_ID_LENGTH fails`() {
         val clientId = "1".repeat(513) // DBCheckpointStorage.MAX_CLIENT_ID_LENGTH == 512
         driver(DriverParameters(startNodesInProcess = true)) {

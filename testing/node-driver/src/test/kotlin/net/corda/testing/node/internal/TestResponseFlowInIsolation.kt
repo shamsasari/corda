@@ -10,8 +10,8 @@ import net.corda.testing.internal.chooseIdentity
 import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 
 /**
  * Test based on the example given as an answer to this SO question:
@@ -26,7 +26,7 @@ class TestResponseFlowInIsolation {
     private val a = network.createNode()
     private val b = network.createNode()
 
-    @After
+    @AfterEach
     fun tearDown() = network.stopNodes()
 
     // This is the real implementation of Initiator.
@@ -61,7 +61,7 @@ class TestResponseFlowInIsolation {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun test() {
         // This method returns the Responder flow object used by node B.
         // We tell node B to respond to BadInitiator with Responder.

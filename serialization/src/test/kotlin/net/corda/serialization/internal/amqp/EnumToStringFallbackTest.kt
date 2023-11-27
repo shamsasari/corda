@@ -7,9 +7,9 @@ import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.SerializationContextImpl
 import net.corda.serialization.internal.amqp.testutils.TestSerializationOutput
 import net.corda.serialization.internal.amqp.testutils.testDefaultFactory
-import org.junit.Assert.assertEquals
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 
 /**
  * Corda 4.4 briefly serialised [Enum] values using [Enum.toString] rather
@@ -29,12 +29,12 @@ class EnumToStringFallbackTest {
         encoding = null
     )
 
-    @Before
+    @BeforeEach
     fun setup() {
         serializationOutput = TestSerializationOutput(verbose = false)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun deserializeEnumWithToString() {
         val broken = BrokenContainer(Broken.Twice)
         val brokenData = serializationOutput.serialize(broken, createTestContext())

@@ -16,18 +16,18 @@ import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.Test
 
 class CashSelectionTest {
     private val mockNet = InternalMockNetwork(cordappsForAllNodes = FINANCE_CORDAPPS, threadPerNode = true)
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unconsumed cash states`() {
         val issuerRef = OpaqueBytes.of(0)
         val issuedAmount = 1000.DOLLARS
@@ -47,7 +47,7 @@ class CashSelectionTest {
         assertThat(availableBalanceAfterExit).isEqualTo(issuedAmount - exitedAmount)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cash selection sees states added in the same transaction`() {
         val node = mockNet.createNode()
         val nodeIdentity = node.services.myInfo.singleIdentity()
@@ -72,7 +72,7 @@ class CashSelectionTest {
         assertThat(exitStates.size).isEqualTo(returnedCoinsNumber)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `don't return extra coins if the selected amount has been reached`() {
         val node = mockNet.createNode()
         val nodeIdentity = node.services.myInfo.singleIdentity()
@@ -102,7 +102,7 @@ class CashSelectionTest {
         assertThat(exitStates.size).isEqualTo(returnedCoinsNumber)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `select cash states issued by single transaction and give change`() {
         val node = mockNet.createNode()
         val nodeIdentity = node.services.myInfo.singleIdentity()

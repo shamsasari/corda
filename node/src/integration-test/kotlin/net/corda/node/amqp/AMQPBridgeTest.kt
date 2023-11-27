@@ -1,11 +1,11 @@
 package net.corda.node.amqp
 
-import org.mockito.kotlin.doReturn
-import org.mockito.kotlin.whenever
 import net.corda.core.crypto.toStringShort
 import net.corda.core.internal.div
 import net.corda.core.toFuture
 import net.corda.core.utilities.loggerFor
+import net.corda.coretesting.internal.rigorousMock
+import net.corda.coretesting.internal.stubs.CertificateStoreStubs
 import net.corda.node.services.config.NodeConfiguration
 import net.corda.node.services.config.configureWithDevSSLCertificate
 import net.corda.node.services.messaging.ArtemisMessagingServer
@@ -15,29 +15,28 @@ import net.corda.nodeapi.internal.bridging.AMQPBridgeManager
 import net.corda.nodeapi.internal.bridging.BridgeManager
 import net.corda.nodeapi.internal.protonwrapper.netty.AMQPConfiguration
 import net.corda.nodeapi.internal.protonwrapper.netty.AMQPServer
+import net.corda.nodeapi.internal.protonwrapper.netty.toRevocationConfig
 import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.MAX_MESSAGE_SIZE
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.driver.internal.incrementalPortAllocation
-import net.corda.coretesting.internal.rigorousMock
-import net.corda.coretesting.internal.stubs.CertificateStoreStubs
-import net.corda.nodeapi.internal.protonwrapper.netty.toRevocationConfig
 import org.apache.activemq.artemis.api.core.Message.HDR_DUPLICATE_DETECTION_ID
 import org.apache.activemq.artemis.api.core.QueueConfiguration
 import org.apache.activemq.artemis.api.core.RoutingType
 import org.apache.activemq.artemis.api.core.SimpleString
-import org.junit.Assert.assertArrayEquals
-import org.junit.Rule
-import org.junit.Test
-import org.junit.rules.TemporaryFolder
-import java.util.*
+import org.junit.jupiter.api.Assertions.assertArrayEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.io.TempDir
+import org.mockito.kotlin.doReturn
+import org.mockito.kotlin.whenever
+import java.nio.file.Path
+import java.util.UUID
 import kotlin.test.assertEquals
 
 class AMQPBridgeTest {
-    @Rule
-    @JvmField
-    val temporaryFolder = TemporaryFolder()
+    @TempDir
+    private lateinit var temporaryFolder: Path
 
     private val log = loggerFor<AMQPBridgeTest>()
 
@@ -49,7 +48,7 @@ class AMQPBridgeTest {
 
     private abstract class AbstractNodeConfiguration : NodeConfiguration
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test acked and nacked messages`() {
         // Create local queue
         val sourceQueueName = "internal.peers." + BOB.publicKey.toStringShort()
@@ -170,7 +169,7 @@ class AMQPBridgeTest {
         artemisServer.stop()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `bridge with strict CRL checking does not connect to server with invalid certificates`() {
         // Note that the opposite of this test (that a connection is established if strict checking is disabled) is carried out by the
         // ack/nack test above. "Strict CRL checking" means that soft fail mode is disabled.
@@ -189,7 +188,7 @@ class AMQPBridgeTest {
     }
 
     private fun createArtemis(sourceQueueName: String?, crlCheckSoftFail: Boolean = true): Triple<ArtemisMessagingServer, ArtemisMessagingClient, BridgeManager> {
-        val baseDir = temporaryFolder.root.toPath() / "artemis"
+        val baseDir = temporaryFolder / "artemis"
         val certificatesDirectory = baseDir / "certificates"
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory)
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
@@ -231,12 +230,12 @@ class AMQPBridgeTest {
     }
 
     private fun createAMQPServer(maxMessageSize: Int = MAX_MESSAGE_SIZE): AMQPServer {
-        val baseDir = temporaryFolder.root.toPath() / "server"
+        val baseDir = temporaryFolder / "server"
         val certificatesDirectory = baseDir / "certificates"
         val p2pSslConfiguration = CertificateStoreStubs.P2P.withCertificatesDirectory(certificatesDirectory)
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory)
         val serverConfig = rigorousMock<AbstractNodeConfiguration>().also {
-            doReturn(temporaryFolder.root.toPath() / "server").whenever(it).baseDirectory
+            doReturn(temporaryFolder / "server").whenever(it).baseDirectory
             doReturn(BOB_NAME).whenever(it).myLegalName
             doReturn(certificatesDirectory).whenever(it).certificatesDirectory
             doReturn(signingCertificateStore).whenever(it).signingCertificateStore

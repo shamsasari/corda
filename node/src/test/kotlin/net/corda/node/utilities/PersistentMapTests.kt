@@ -6,7 +6,7 @@ import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PersistentMapTests {
@@ -31,7 +31,7 @@ class PersistentMapTests {
         ).apply { preload() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `make sure persistence works`() {
         val testHash = SecureHash.randomSHA256().toString()
 
@@ -47,7 +47,7 @@ class PersistentMapTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `make sure persistence works with SHA-512`() {
         val testHash = SecureHash.random(SecureHash.SHA2_512).toString()
 
@@ -63,7 +63,7 @@ class PersistentMapTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `make sure persistence works using assignment operator`() {
         val testHash = SecureHash.randomSHA256().toString()
 
@@ -79,7 +79,7 @@ class PersistentMapTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `make sure updating works`() {
         val testHash = SecureHash.randomSHA256().toString()
 
@@ -97,7 +97,7 @@ class PersistentMapTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `make sure updating works using assignment operator`() {
         val testHash = SecureHash.randomSHA256().toString()
 
@@ -115,7 +115,7 @@ class PersistentMapTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `make sure removal works`() {
         val testHash = SecureHash.randomSHA256().toString()
 
@@ -141,7 +141,7 @@ class PersistentMapTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `make sure persistence works against base class`() {
         val testHash = SecureHash.randomSHA256().toString()
 
@@ -157,7 +157,7 @@ class PersistentMapTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `make sure persistence works using assignment operator base class`() {
         val testHash = SecureHash.randomSHA256().toString()
 

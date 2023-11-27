@@ -1,6 +1,5 @@
 package net.corda.node.services.vault
 
-import org.mockito.kotlin.mock
 import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.InsufficientBalanceException
 import net.corda.core.contracts.LinearState
@@ -19,32 +18,45 @@ import net.corda.core.node.services.vault.QueryCriteria
 import net.corda.core.node.services.vault.QueryCriteria.VaultQueryCriteria
 import net.corda.core.transactions.TransactionBuilder
 import net.corda.core.utilities.getOrThrow
-import net.corda.finance.*
+import net.corda.finance.DOLLARS
+import net.corda.finance.POUNDS
+import net.corda.finance.SWISS_FRANCS
+import net.corda.finance.USD
 import net.corda.finance.contracts.asset.Cash
+import net.corda.finance.`issued by`
 import net.corda.finance.schemas.CashSchemaV1
 import net.corda.finance.workflows.asset.CashUtils
 import net.corda.finance.workflows.getCashBalance
 import net.corda.nodeapi.internal.persistence.CordaPersistence
 import net.corda.testing.common.internal.addNotary
 import net.corda.testing.common.internal.testNetworkParameters
-import net.corda.testing.core.*
+import net.corda.testing.core.BOB_NAME
+import net.corda.testing.core.DUMMY_NOTARY_NAME
+import net.corda.testing.core.SerializationExtension
+import net.corda.testing.core.TestIdentity
+import net.corda.testing.core.dummyCommand
 import net.corda.testing.internal.LogHelper
-import net.corda.testing.internal.vault.*
+import net.corda.testing.internal.vault.DUMMY_DEAL_PROGRAM_ID
+import net.corda.testing.internal.vault.DUMMY_LINEAR_CONTRACT_PROGRAM_ID
+import net.corda.testing.internal.vault.DummyDealContract
+import net.corda.testing.internal.vault.DummyLinearContract
+import net.corda.testing.internal.vault.VaultFiller
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.MockServices.Companion.makeTestDatabaseAndMockServices
 import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.After
-import org.junit.Before
-import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.mock
 import java.util.concurrent.Executors
 import kotlin.test.assertEquals
 import kotlin.test.fail
 
 // TODO: Move this to the cash contract tests once mock services are further split up.
-
+@ExtendWith(SerializationExtension::class)
 class VaultWithCashTest {
     private companion object {
         val cordappPackages = listOf("net.corda.testing.internal.vault", "net.corda.finance.contracts.asset", CashSchemaV1::class.packageName, "net.corda.core.contracts")
@@ -61,9 +73,6 @@ class VaultWithCashTest {
         val MINI_CORP_IDENTITY get() = miniCorp.identity
     }
 
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
     private val servicesKey = generateKeyPair()
     lateinit var services: MockServices
     private lateinit var vaultFiller: VaultFiller
@@ -73,7 +82,7 @@ class VaultWithCashTest {
     private lateinit var notaryServices: MockServices
     private lateinit var notary: Party
 
-    @Before
+    @BeforeEach
     fun setUp() {
         LogHelper.setLevel(VaultWithCashTest::class)
 
@@ -83,7 +92,8 @@ class VaultWithCashTest {
                 makeTestIdentityService(MEGA_CORP_IDENTITY, MINI_CORP_IDENTITY, dummyCashIssuer.identity, dummyNotary.identity),
                 TestIdentity(MEGA_CORP.name, servicesKey),
                 networkParameters,
-                moreKeys = *arrayOf(dummyNotary.keyPair))
+                moreKeys = arrayOf(dummyNotary.keyPair)
+        )
         database = databaseAndServices.first
         services = databaseAndServices.second
         vaultFiller = VaultFiller(services, dummyNotary)
@@ -94,13 +104,13 @@ class VaultWithCashTest {
         notary = notaryServices.myInfo.legalIdentitiesAndCerts.single().party
     }
 
-    @After
+    @AfterEach
     fun tearDown() {
         LogHelper.reset(VaultWithCashTest::class)
         database.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun splits() {
         database.transaction {
             // Fix the PRNG so that we get the same splits every time.
@@ -124,7 +134,7 @@ class VaultWithCashTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue and spend total correctly and irrelevant ignored`() {
         val megaCorpServices = MockServices(cordappPackages, MEGA_CORP.name, mock(), MEGA_CORP_KEY)
         val freshKey = services.keyManagementService.freshKey()
@@ -172,7 +182,7 @@ class VaultWithCashTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue and attempt double spend`() {
         val freshKey = services.keyManagementService.freshKey()
         val criteriaLocked = VaultQueryCriteria(softLockingCondition = QueryCriteria.SoftLockingCondition(QueryCriteria.SoftLockingType.LOCKED_ONLY))
@@ -262,7 +272,7 @@ class VaultWithCashTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `branching LinearStates fails to verify`() {
         database.transaction {
             val freshKey = services.keyManagementService.freshKey()
@@ -283,7 +293,7 @@ class VaultWithCashTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `sequencing LinearStates works`() {
         val freshKey = services.keyManagementService.freshKey()
         val freshIdentity = AnonymousParty(freshKey)
@@ -324,7 +334,7 @@ class VaultWithCashTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `spending cash in vault of mixed state types works`() {
 
         val freshKey = services.keyManagementService.freshKey()
@@ -362,7 +372,7 @@ class VaultWithCashTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `consuming multiple contract state types`() {
 
         val freshKey = services.keyManagementService.freshKey()

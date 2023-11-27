@@ -1,14 +1,7 @@
 package net.corda.client.rpc
 
-import org.mockito.kotlin.any
-import org.mockito.kotlin.atLeastOnce
-import org.mockito.kotlin.mock
-import org.mockito.kotlin.never
-import org.mockito.kotlin.times
-import org.mockito.kotlin.verify
-import org.mockito.kotlin.whenever
-import net.corda.client.rpc.internal.RPCClient
 import net.corda.client.rpc.ext.RPCConnectionListener
+import net.corda.client.rpc.internal.RPCClient
 import net.corda.core.messaging.RPCOps
 import net.corda.core.utilities.NetworkHostAndPort
 import net.corda.core.utilities.contextLogger
@@ -17,18 +10,23 @@ import net.corda.core.utilities.millis
 import net.corda.core.utilities.seconds
 import net.corda.core.utilities.threadDumpAsString
 import net.corda.testing.common.internal.eventually
-import net.corda.testing.core.SerializationEnvironmentRule
+import net.corda.testing.core.SerializationExtension
 import net.corda.testing.node.internal.rpcDriver
 import net.corda.testing.node.internal.rpcTestUser
 import org.apache.activemq.artemis.api.core.ActiveMQSecurityException
 import org.apache.activemq.artemis.api.core.management.ActiveMQServerControl
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Assert.assertEquals
-import org.junit.Rule
-import org.junit.Test
-import org.junit.runner.RunWith
-import org.junit.runners.Parameterized
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
+import org.mockito.kotlin.any
+import org.mockito.kotlin.atLeastOnce
+import org.mockito.kotlin.mock
+import org.mockito.kotlin.never
+import org.mockito.kotlin.times
+import org.mockito.kotlin.verify
+import org.mockito.kotlin.whenever
 import java.util.concurrent.Callable
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors
@@ -38,25 +36,11 @@ import kotlin.test.assertNull
 import kotlin.test.assertSame
 import kotlin.test.assertTrue
 
-@RunWith(Parameterized::class)
-class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) {
-
+@ExtendWith(SerializationExtension::class)
+class RPCConnectionListenerTest {
     companion object {
         private val logger = contextLogger()
-
-        @JvmStatic
-        @Parameterized.Parameters(name = "iteration = {0}")
-        fun iterations(): Iterable<Array<Int>> {
-            // It is possible to change this value to a greater number
-            // to ensure that the test is not flaking when executed on CI
-            val repsCount = 1
-            return (1..repsCount).map { arrayOf(it) }
-        }
     }
-
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule(true)
 
     interface StringRPCOps : RPCOps {
         fun stringTestMethod(): String
@@ -71,7 +55,7 @@ class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) 
         override fun stringTestMethod(): String = testPhrase
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `basic listener scenario`() {
         rpcDriver {
             val server = startRpcServer(listOps = listOf(StringRPCOpsImpl)).get()
@@ -103,7 +87,7 @@ class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) 
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `wrong credentials`() {
         rpcDriver {
             val server = startRpcServer(listOps = listOf(StringRPCOpsImpl)).get()
@@ -132,7 +116,7 @@ class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) 
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `failover listener scenario`() {
         rpcDriver {
             val primary = startRpcServer(listOps = listOf(StringRPCOpsImpl)).get()
@@ -182,7 +166,7 @@ class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) 
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `exceed number of retries scenario`() {
         rpcDriver {
             val primary = startRpcServer(listOps = listOf(StringRPCOpsImpl)).get()
@@ -233,9 +217,9 @@ class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) 
         }
     }
 
-    private class KickAndReconnectCallable constructor(private val serverControl: ActiveMQServerControl,
-                                                               private val client: RPCClient<StringRPCOps>,
-                                                               private val proxy: StringRPCOps) : Callable<Unit> {
+    private class KickAndReconnectCallable(private val serverControl: ActiveMQServerControl,
+                                           private val client: RPCClient<StringRPCOps>,
+                                           private val proxy: StringRPCOps) : Callable<Unit> {
         override fun call() {
             val latch = CountDownLatch(1)
             val reConnectListener = object : RPCConnectionListener<StringRPCOps> {
@@ -268,7 +252,7 @@ class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) 
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `multi-threaded scenario`() {
         rpcDriver {
             val server = startRpcServer(listOps = listOf(StringRPCOpsImpl)).get()

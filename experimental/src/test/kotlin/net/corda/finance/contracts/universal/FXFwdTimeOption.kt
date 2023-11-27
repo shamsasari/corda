@@ -1,15 +1,13 @@
 package net.corda.finance.contracts.universal
 
-import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Ignore
-import org.junit.Rule
-import org.junit.Test
+import net.corda.testing.core.SerializationExtension
+import org.junit.jupiter.api.Disabled
+import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.extension.ExtendWith
 import java.time.Instant
 
+@ExtendWith(SerializationExtension::class)
 class FXFwdTimeOption {
-    @Rule
-    @JvmField
-    val testSerialization = SerializationEnvironmentRule()
     // An FX Fwd with Time Option is an early exercise call option that must be exercised no later than maturity
     val initialContract = arrange {
 
@@ -48,7 +46,7 @@ class FXFwdTimeOption {
     val inState = UniversalContract.State(listOf(DUMMY_NOTARY), initialContract)
     val outState1 = UniversalContract.State(listOf(DUMMY_NOTARY), outContract1)
     val outState2 = UniversalContract.State(listOf(DUMMY_NOTARY), outContract2)
-    @Test(timeout=300_000)
+    @Test
 	fun `issue - signature`() {
         transaction {
             output(UNIVERSAL_PROGRAM_ID, inState)
@@ -67,7 +65,7 @@ class FXFwdTimeOption {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `maturity, bank exercise`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -96,7 +94,7 @@ class FXFwdTimeOption {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `maturity, corp exercise`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -125,7 +123,7 @@ class FXFwdTimeOption {
         }
     }
 
-    @Test(timeout=300_000) @Ignore
+    @Test @Disabled
     fun `pretty print`() {
         println ( prettyPrint(initialContract) )
 

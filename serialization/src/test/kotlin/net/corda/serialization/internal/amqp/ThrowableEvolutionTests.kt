@@ -7,7 +7,7 @@ import net.corda.serialization.internal.amqp.testutils.serialize
 import net.corda.serialization.internal.amqp.testutils.testDefaultFactory
 import net.corda.serialization.internal.amqp.testutils.writeTestResource
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ThrowableEvolutionTests
 {
@@ -32,7 +32,7 @@ class ThrowableEvolutionTests
 //    class AddAndRemoveConstructorParametersException(message: String, val toBeRemoved: String) : CordaRuntimeException(message)
     class AddAndRemoveConstructorParametersException(message: String, val added: String?) : CordaRuntimeException(message)
 
-    @Test(timeout=300_000)
+    @Test
     fun `We can evolve exceptions by adding constructor parameters`() {
 
 //        val exception = AddConstructorParametersException(message)
@@ -47,7 +47,7 @@ class ThrowableEvolutionTests
         assertThat(deserializedException).isInstanceOf(AddConstructorParametersException::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `We can evolve exceptions by removing constructor parameters`() {
 
 //        val exception = RemoveConstructorParametersException(message, toBeRemovedValue)
@@ -61,7 +61,7 @@ class ThrowableEvolutionTests
         assertThat(deserializedException).isInstanceOf(RemoveConstructorParametersException::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `We can evolve exceptions by adding and removing constructor parameters`() {
 
 //        val exception = AddAndRemoveConstructorParametersException(message, toBeRemovedValue)

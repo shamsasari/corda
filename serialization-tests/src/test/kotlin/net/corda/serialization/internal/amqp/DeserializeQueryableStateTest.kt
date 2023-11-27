@@ -12,7 +12,7 @@ import net.corda.serialization.internal.AMQP_RPC_SERVER_CONTEXT
 import net.corda.serialization.internal.AllWhitelist
 import net.corda.testing.core.DUMMY_BANK_A_NAME
 import net.corda.testing.core.TestIdentity
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
 
@@ -44,7 +44,7 @@ class DeserializeQueryableStateTest {
     /**
      * https://r3-cev.atlassian.net/browse/CORDA-2330
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `should deserialize subclass of QueryableState that is not present in the class loader`() {
         val testParty = TestIdentity(DUMMY_BANK_A_NAME).identity.party
         val instance = TestState(listOf(testParty))

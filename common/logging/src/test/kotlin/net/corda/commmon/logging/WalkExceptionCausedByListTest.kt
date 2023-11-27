@@ -1,8 +1,8 @@
 package net.corda.commmon.logging
 
 import net.corda.common.logging.walkExceptionCausedByList
-import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Assertions.assertEquals
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 
@@ -52,8 +52,8 @@ class WalkExceptionCausedByListTest(@Suppress("UNUSED_PARAMETER") testTitle: Str
         }
     }
 
-    @Test(timeout = 1000)
+    @Test
     fun test() {
-        Assert.assertEquals(expectedExceptionSequence, e.walkExceptionCausedByList().asSequence().toList())
+        assertEquals(expectedExceptionSequence, e.walkExceptionCausedByList().asSequence().toList())
     }
 }

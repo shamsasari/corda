@@ -15,9 +15,9 @@ import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.makeTestIdentityService
-import org.junit.After
-import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.AfterEach
+import org.junit.jupiter.api.BeforeEach
+import org.junit.jupiter.api.Test
 import java.io.Serializable
 import javax.persistence.Column
 import javax.persistence.Entity
@@ -41,7 +41,7 @@ class ExposeJpaToFlowsTests {
     lateinit var services: MockServices
     lateinit var database: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         mockNet = MockNetwork(MockNetworkParameters(cordappsForAllNodes = listOf(enclosedCordapp())))
         val (db, mockServices) = MockServices.makeTestDatabaseAndMockServices(
@@ -55,12 +55,12 @@ class ExposeJpaToFlowsTests {
         database = db
     }
 
-    @After
+    @AfterEach
     fun cleanUp() {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can persist and query custom entities`() {
         val foo = FooSchemaV1.PersistentFoo(UniqueIdentifier().id.toString(), "Bar")
 
@@ -80,7 +80,7 @@ class ExposeJpaToFlowsTests {
         assertEquals("Bar", result.single().fooData)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can't perform suspendable operations inside withEntityManager`() {
         val mockNode = mockNet.createNode()
         assertFailsWith(KryoException::class) {
