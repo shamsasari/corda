@@ -17,7 +17,7 @@ import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith
@@ -30,7 +30,7 @@ class CashPaymentFlowTests {
     private lateinit var bankOfCorda: Party
     private lateinit var aliceNode: StartedMockNode
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = MockNetwork(MockNetworkParameters(servicePeerAllocationStrategy = RoundRobin(), cordappsForAllNodes = FINANCE_CORDAPPS))
         bankOfCordaNode = mockNet.createPartyNode(BOC_NAME)

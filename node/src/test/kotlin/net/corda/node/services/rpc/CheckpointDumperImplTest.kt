@@ -37,7 +37,7 @@ import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.TestClock
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
@@ -72,7 +72,7 @@ class CheckpointDumperImplTest {
         eventMock
     }()
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val (db, mockServices) = MockServices.makeTestDatabaseAndPersistentServices(
                 cordappPackages = emptyList(),

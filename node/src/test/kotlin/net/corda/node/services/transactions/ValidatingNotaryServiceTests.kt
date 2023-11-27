@@ -30,7 +30,7 @@ import net.corda.testing.node.TestClock
 import net.corda.testing.node.internal.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
@@ -46,7 +46,7 @@ class ValidatingNotaryServiceTests {
     private lateinit var notary: Party
     private lateinit var alice: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP),

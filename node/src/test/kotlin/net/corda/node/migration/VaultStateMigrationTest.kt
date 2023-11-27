@@ -105,7 +105,7 @@ class VaultStateMigrationTest {
     lateinit var cordaDB: CordaPersistence
     lateinit var notaryServices: MockServices
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val identityService = makeTestIdentityService(dummyNotary.identity, BOB_IDENTITY, ALICE_IDENTITY)
         notaryServices = MockServices(cordappPackages, dummyNotary, identityService, dummyCashIssuer.keyPair, BOC_KEY)

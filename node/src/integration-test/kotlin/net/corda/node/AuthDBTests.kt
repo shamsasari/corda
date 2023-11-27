@@ -22,7 +22,7 @@ import org.apache.activemq.artemis.api.core.ActiveMQSecurityException
 import org.apache.shiro.authc.credential.DefaultPasswordService
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assume
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -56,7 +56,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
     @Parameterized.Parameter
     lateinit var passwordEncryption: PasswordEncryption
 
-    @Before
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         db = UsersDB(

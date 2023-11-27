@@ -19,7 +19,7 @@ import net.corda.testing.node.internal.network.NetworkMapServer
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.io.IOException
@@ -38,7 +38,7 @@ class NetworkMapClientTest {
     private lateinit var server: NetworkMapServer
     private lateinit var networkMapClient: NetworkMapClient
 
-    @Before
+    @BeforeEach
     fun setUp() {
         server = NetworkMapServer(cacheTimeout)
         val address = server.start()

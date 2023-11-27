@@ -56,7 +56,7 @@ import net.corda.testing.node.internal.findCordapp
 import net.corda.testing.node.testContext
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.sql.SQLException
 import java.util.Random
@@ -76,7 +76,7 @@ class FlowHospitalTest {
                 CustomCordapp(targetPlatformVersion = 3, classes = setOf(FinalityFlow::class.java))))
     }
 
-    @Before
+    @BeforeEach
     fun before() {
         SpendStateAndCatchDoubleSpendResponderFlow.exceptionSeenInUserFlow = false
         CreateTransactionButDontFinalizeResponderFlow.exceptionSeenInUserFlow = false

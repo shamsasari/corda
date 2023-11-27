@@ -18,12 +18,12 @@ import net.corda.testing.internal.configureDatabase
 import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class PersistentStateServiceTests {
-    @Before
+    @BeforeEach
     fun setUp() {
         LogHelper.setLevel(PersistentStateService::class)
     }

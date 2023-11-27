@@ -23,7 +23,7 @@ import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.internal.network.NetworkMapServer
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.net.URL
@@ -44,7 +44,7 @@ class NetworkParametersReaderTest {
     private lateinit var server: NetworkMapServer
     private lateinit var networkMapClient: NetworkMapClient
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Register providers before creating Jimfs filesystem. JimFs creates an SSHD instance which
         // register BouncyCastle and EdDSA provider separately, which wrecks havoc.

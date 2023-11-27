@@ -9,7 +9,7 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.NodeBasedTest
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class FlowsExecutionModeTests : NodeBasedTest() {
@@ -18,7 +18,7 @@ class FlowsExecutionModeTests : NodeBasedTest() {
     private lateinit var node: NodeWithInfo
     private lateinit var client: CordaRPCClient
 
-    @Before
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         node = startNode(ALICE_NAME, rpcUsers = listOf(rpcUser))

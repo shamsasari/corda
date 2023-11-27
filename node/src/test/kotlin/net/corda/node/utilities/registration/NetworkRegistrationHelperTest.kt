@@ -37,7 +37,7 @@ import org.bouncycastle.asn1.x509.NameConstraints
 import org.bouncycastle.pkcs.PKCS10CertificationRequest
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.lang.IllegalStateException
 import java.nio.file.Files
@@ -58,7 +58,7 @@ class NetworkRegistrationHelperTest {
     private val networkRootTrustStoreFileName = "network-root-truststore.jks"
     private val networkRootTrustStorePassword = "network-root-truststore-password"
 
-    @Before
+    @BeforeEach
     fun init() {
         // Register providers before creating Jimfs filesystem. JimFs creates an SSHD instance which
         // register BouncyCastle and EdDSA provider separately, which wrecks havoc.

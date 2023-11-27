@@ -20,7 +20,7 @@ import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.internal.*
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -28,7 +28,7 @@ import kotlin.test.assertNotNull
 class ObserverNodeTransactionTests {
     private lateinit var mockNet: InternalMockNetwork
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(cordappWithPackages("net.corda.node.testing"), enclosedCordapp()),

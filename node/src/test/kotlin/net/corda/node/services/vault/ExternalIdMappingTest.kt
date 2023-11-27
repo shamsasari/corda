@@ -14,7 +14,7 @@ import net.corda.testing.contracts.DummyState
 import net.corda.testing.core.SerializationEnvironmentRule
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -41,7 +41,7 @@ class ExternalIdMappingTest {
     lateinit var services: MockServices
     lateinit var database: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val (db, mockServices) = MockServices.makeTestDatabaseAndPersistentServices(
                 cordappPackages = cordapps,

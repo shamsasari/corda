@@ -14,7 +14,7 @@ import net.corda.testing.core.dummyCommand
 import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.internal.*
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.util.concurrent.CountDownLatch
@@ -38,7 +38,7 @@ class ScheduledFlowsDrainingModeTest {
 
     private var executor: ScheduledExecutorService? = null
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, enclosedCordapp()),

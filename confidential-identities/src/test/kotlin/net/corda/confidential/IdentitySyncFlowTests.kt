@@ -22,7 +22,7 @@ import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.startFlow
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -32,7 +32,7 @@ import kotlin.test.assertNull
 class IdentitySyncFlowTests {
     private lateinit var mockNet: InternalMockNetwork
 
-    @Before
+    @BeforeEach
     fun before() {
         // We run this in parallel threads to help catch any race conditions that may exist.
         mockNet = InternalMockNetwork(

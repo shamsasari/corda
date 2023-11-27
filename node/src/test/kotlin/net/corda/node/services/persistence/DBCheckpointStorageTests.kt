@@ -40,7 +40,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.time.Clock
@@ -70,7 +70,7 @@ class DBCheckpointStorageTests {
     private lateinit var checkpointStorage: DBCheckpointStorage
     private lateinit var database: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         LogHelper.setLevel(PersistentUniquenessProvider::class)
         database = configureDatabase(makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null })

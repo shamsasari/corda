@@ -26,7 +26,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bouncycastle.pkcs.PKCS10CertificationRequest
 import org.bouncycastle.pkcs.jcajce.JcaPKCS10CertificationRequest
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
@@ -59,7 +59,7 @@ class NodeRegistrationTest {
     private lateinit var server: NetworkMapServer
     private lateinit var serverHostAndPort: NetworkHostAndPort
 
-    @Before
+    @BeforeEach
     fun startServer() {
         server = NetworkMapServer(
                 pollInterval = 1.seconds,

@@ -43,7 +43,7 @@ import net.corda.smoketesting.NodeProcess
 import org.apache.commons.io.output.NullOutputStream.NULL_OUTPUT_STREAM
 import org.hamcrest.text.MatchesPattern
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -90,7 +90,7 @@ class StandaloneCordaRPClientTest {
     @get:Rule
     val exception: ExpectedException = ExpectedException.none()
 
-    @Before
+    @BeforeEach
     fun setUp() {
         factory = NodeProcess.Factory()
         StandaloneCordaRPCJavaClientTest.copyCordapps(factory, notaryConfig)

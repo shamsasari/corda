@@ -13,7 +13,7 @@ import net.corda.core.utilities.seconds
 import net.corda.node.services.config.FlowTimeoutConfiguration
 import net.corda.testing.node.internal.*
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
@@ -30,7 +30,7 @@ class IdempotentFlowTests {
         val suspendedOnce = AtomicBoolean(false)
     }
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = InternalMockNetwork(threadPerNode = true, cordappsForAllNodes = listOf(enclosedCordapp()))
         nodeA = mockNet.createNode(InternalMockNodeParameters(

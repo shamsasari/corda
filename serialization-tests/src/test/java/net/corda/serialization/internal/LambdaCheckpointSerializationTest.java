@@ -5,7 +5,7 @@ import net.corda.core.serialization.internal.CheckpointSerializationContext;
 import net.corda.core.serialization.internal.CheckpointSerializer;
 import net.corda.nodeapi.internal.serialization.kryo.CordaClosureSerializer;
 import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 
@@ -26,7 +26,7 @@ public final class LambdaCheckpointSerializationTest {
     private CheckpointSerializationContext context;
     private CheckpointSerializer serializer;
 
-    @Before
+    @BeforeEach
     public void setup() {
         context = new CheckpointSerializationContextImpl(
                 getClass().getClassLoader(),

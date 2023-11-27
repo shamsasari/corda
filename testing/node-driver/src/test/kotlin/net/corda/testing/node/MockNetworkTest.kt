@@ -17,7 +17,7 @@ import net.corda.testing.core.singleIdentity
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.*
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFailsWith
 
@@ -27,7 +27,7 @@ class MockNetworkTest {
     }
     private lateinit var mockNetwork: MockNetwork
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNetwork = MockNetwork(MockNetworkParameters())
     }

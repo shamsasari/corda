@@ -7,7 +7,7 @@ import net.corda.coretests.utilities.ProgressTrackerTest.NonSingletonSteps.first
 import net.corda.coretests.utilities.ProgressTrackerTest.NonSingletonSteps.first2
 import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -51,7 +51,7 @@ class ProgressTrackerTest {
     lateinit var pt3: ProgressTracker
     lateinit var pt4: ProgressTracker
 
-    @Before
+    @BeforeEach
     fun before() {
         pt = SimpleSteps.tracker()
         pt2 = ChildSteps.tracker()

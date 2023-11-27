@@ -33,7 +33,7 @@ import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.h2.util.Utils
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertTrue
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import java.sql.SQLException
@@ -53,7 +53,7 @@ class RetryFlowMockTest {
     private lateinit var nodeA: TestStartedNode
     private lateinit var nodeB: TestStartedNode
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = InternalMockNetwork(threadPerNode = true, cordappsForAllNodes = listOf(enclosedCordapp()))
         nodeA = mockNet.createNode()

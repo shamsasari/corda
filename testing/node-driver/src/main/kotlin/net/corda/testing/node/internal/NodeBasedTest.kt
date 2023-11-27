@@ -27,7 +27,7 @@ import net.corda.testing.node.User
 import org.apache.commons.lang3.SystemUtils
 import org.apache.logging.log4j.Level
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.rules.TemporaryFolder
 import rx.internal.schedulers.CachedThreadScheduler
@@ -63,7 +63,7 @@ abstract class NodeBasedTest @JvmOverloads constructor(
         System.setProperty("consoleLogLevel", Level.DEBUG.name().toLowerCase())
     }
 
-    @Before
+    @BeforeEach
     open fun setUp() {
         val notaryInfos = notaries.map { NotaryInfo(installNotary(it), true) } // todo only validating ones
         defaultNetworkParameters = NetworkParametersCopier(testNetworkParameters(notaries = notaryInfos))

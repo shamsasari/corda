@@ -21,7 +21,7 @@ import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
@@ -47,7 +47,7 @@ class AttachmentTrustCalculatorTest {
     }
     private val cacheFactory = TestingNamedCacheFactory()
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val dataSourceProperties = MockServices.makeTestDataSourceProperties()
         database = configureDatabase(dataSourceProperties, DatabaseConfig(), { null }, { null })

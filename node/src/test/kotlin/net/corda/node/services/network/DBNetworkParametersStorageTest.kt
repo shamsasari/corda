@@ -22,7 +22,7 @@ import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNull
@@ -44,7 +44,7 @@ class DBNetworkParametersStorageTest {
     private lateinit var hash2: SecureHash
     private lateinit var hash3: SecureHash
 
-    @Before
+    @BeforeEach
     fun setUp() {
         netParams1 = certKeyPair.sign(testNetworkParameters(minimumPlatformVersion = 1))
         netParams2 = certKeyPair.sign(testNetworkParameters(minimumPlatformVersion = 2))

@@ -42,7 +42,7 @@ import org.apache.activemq.artemis.api.core.RoutingType
 import org.assertj.core.api.Assertions.assertThat
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
@@ -85,7 +85,7 @@ abstract class AbstractServerRevocationTest {
         }
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Do not use Security.addProvider(BouncyCastleProvider()) to avoid EdDSA signature disruption in other tests.
         Crypto.findProvider(BouncyCastleProvider.PROVIDER_NAME)

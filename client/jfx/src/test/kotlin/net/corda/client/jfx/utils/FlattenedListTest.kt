@@ -3,7 +3,7 @@ package net.corda.client.jfx.utils
 import javafx.beans.property.SimpleObjectProperty
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -13,7 +13,7 @@ class FlattenedListTest {
     lateinit var flattenedList: ObservableList<Int>
     lateinit var replayedList: ObservableList<Int>
 
-    @Before
+    @BeforeEach
     fun setup() {
         sourceList = FXCollections.observableArrayList(SimpleObjectProperty(1234))
         @Suppress("UNCHECKED_CAST")

@@ -16,7 +16,7 @@ import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.contracts.DummyContract
 import net.corda.testing.core.*
 import net.corda.testing.node.MockServices
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.util.function.Predicate
@@ -44,7 +44,7 @@ class LedgerTransactionQueryTests {
     )
     private val identity: Party = services.myInfo.singleIdentity()
 
-    @Before
+    @BeforeEach
     fun setup() {
         services.addMockCordapp(DummyContract.PROGRAM_ID)
     }

@@ -2,7 +2,7 @@ package net.corda.client.jfx.utils
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.fail
@@ -13,7 +13,7 @@ class AggregatedListTest {
     private lateinit var aggregatedList: ObservableList<Pair<Int, ObservableList<Int>>>
     private lateinit var replayedList: ObservableList<Pair<Int, ObservableList<Int>>>
 
-    @Before
+    @BeforeEach
     fun setup() {
         sourceList = FXCollections.observableArrayList<Int>()
         aggregatedList = AggregatedList(sourceList, { it % 3 }) { mod3, group -> Pair(mod3, group) }

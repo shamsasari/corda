@@ -27,7 +27,7 @@ import net.corda.testing.node.MockNetworkNotarySpec
 import net.corda.testing.node.internal.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assume
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -57,7 +57,7 @@ class NotaryWhitelistTests(
     private lateinit var newNotary: Party
     private lateinit var alice: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP),

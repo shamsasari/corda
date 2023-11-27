@@ -88,7 +88,7 @@ class NodeVaultServiceTest {
     private val vaultService get() = services.vaultService as NodeVaultService
     private lateinit var database: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         LogHelper.setLevel(NodeVaultService::class)
         val parameters = testNetworkParameters(notaries = listOf(NotaryInfo(DUMMY_NOTARY, true)))

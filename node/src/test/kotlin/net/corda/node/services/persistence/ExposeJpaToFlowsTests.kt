@@ -16,7 +16,7 @@ import net.corda.testing.node.MockServices
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.makeTestIdentityService
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.Serializable
 import javax.persistence.Column
@@ -41,7 +41,7 @@ class ExposeJpaToFlowsTests {
     lateinit var services: MockServices
     lateinit var database: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         mockNet = MockNetwork(MockNetworkParameters(cordappsForAllNodes = listOf(enclosedCordapp())))
         val (db, mockServices) = MockServices.makeTestDatabaseAndMockServices(

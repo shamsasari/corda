@@ -15,7 +15,7 @@ import net.corda.testing.node.internal.*
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.AssertionsForClassTypes
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import rx.Observable
@@ -39,7 +39,7 @@ class FlowFrameworkTripartyTests {
         private val receivedSessionMessages = ArrayList<SessionTransfer>()
     }
 
-    @Before
+    @BeforeEach
     fun setUpGlobalMockNet() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP),

@@ -47,7 +47,7 @@ import net.corda.coretesting.internal.createNodeInfoAndSigned
 import net.corda.coretesting.internal.rigorousMock
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -89,7 +89,7 @@ class JacksonSupportTest(@Suppress("unused") private val name: String, factory: 
     private lateinit var services: ServiceHub
     private lateinit var cordappProvider: CordappProvider
 
-    @Before
+    @BeforeEach
     fun setup() {
         val unsignedAttachment = object : AbstractAttachment({ byteArrayOf() }, "test") {
             override val id: SecureHash get() = throw UnsupportedOperationException()

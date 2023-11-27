@@ -19,7 +19,7 @@ import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import rx.Observable
@@ -37,7 +37,7 @@ class FlowFrameworkPersistenceTests {
     private lateinit var aliceNode: TestStartedNode
     private lateinit var bobNode: TestStartedNode
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP),

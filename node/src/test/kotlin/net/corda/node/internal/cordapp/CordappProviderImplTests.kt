@@ -11,7 +11,7 @@ import net.corda.testing.internal.MockCordappConfigProvider
 import net.corda.testing.services.MockAttachmentStorage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.*
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.File
 import java.io.FileOutputStream
@@ -61,7 +61,7 @@ class CordappProviderImplTests {
 
     private lateinit var attachmentStore: AttachmentStorage
 
-    @Before
+    @BeforeEach
     fun setup() {
         attachmentStore = MockAttachmentStorage()
     }

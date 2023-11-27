@@ -22,7 +22,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.internal.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.*
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Instant
 import kotlin.reflect.jvm.jvmName
@@ -110,7 +110,7 @@ class ScheduledFlowTests {
         }
     }
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, enclosedCordapp()), threadPerNode = true)
         aliceNode = mockNet.createNode(InternalMockNodeParameters(legalName = ALICE_NAME))

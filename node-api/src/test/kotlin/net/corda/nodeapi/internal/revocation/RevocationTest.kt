@@ -11,7 +11,7 @@ import net.corda.nodeapi.internal.protonwrapper.netty.RevocationConfigImpl
 import net.corda.nodeapi.internal.protonwrapper.netty.trustManagerFactoryWithRevocation
 import net.corda.testing.core.createCRL
 import org.bouncycastle.asn1.x500.X500Name
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
@@ -61,7 +61,7 @@ class RevocationTest(private val revocationMode: RevocationConfig.Mode) {
     private val chain
         get() = arrayOf(tlsCert, nodeCACert, doormanCert, rootCert)
 
-    @Before
+    @BeforeEach
     fun before() {
         rootCRL = tempFolder.newFile("root.crl")
         doormanCRL = tempFolder.newFile("doorman.crl")

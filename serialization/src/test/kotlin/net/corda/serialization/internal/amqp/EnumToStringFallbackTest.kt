@@ -8,7 +8,7 @@ import net.corda.serialization.internal.SerializationContextImpl
 import net.corda.serialization.internal.amqp.testutils.TestSerializationOutput
 import net.corda.serialization.internal.amqp.testutils.testDefaultFactory
 import org.junit.Assert.assertEquals
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**
@@ -29,7 +29,7 @@ class EnumToStringFallbackTest {
         encoding = null
     )
 
-    @Before
+    @BeforeEach
     fun setup() {
         serializationOutput = TestSerializationOutput(verbose = false)
     }

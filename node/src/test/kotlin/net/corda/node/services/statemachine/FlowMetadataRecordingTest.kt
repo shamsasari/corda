@@ -44,7 +44,7 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.User
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -67,7 +67,7 @@ class FlowMetadataRecordingTest {
     private val string = "I must be delivered for 4.5"
     private val someObject = SomeObject("Store me in the database please", 1234)
 
-    @Before
+    @BeforeEach
     fun before() {
         MyFlow.hookAfterInitialCheckpoint = null
         MyFlow.hookAfterSuspend = null

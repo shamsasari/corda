@@ -25,7 +25,7 @@ import org.hamcrest.Matchers.`is`
 import org.hamcrest.number.OrderingComparison.greaterThan
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 /**
@@ -48,7 +48,7 @@ class IdentityServiceToStringShortMigrationTest {
     lateinit var liquibaseDB: H2Database
     lateinit var cordaDB: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val schemaService = rigorousMock<SchemaService>()
         doReturn(setOf(IdentityTestSchemaV1)).whenever(schemaService).schemas

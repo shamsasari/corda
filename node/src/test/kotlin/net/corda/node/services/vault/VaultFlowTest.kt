@@ -23,7 +23,7 @@ import net.corda.testing.node.MockNetworkNotarySpec
 import net.corda.testing.node.MockNodeParameters
 import net.corda.testing.node.StartedMockNode
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.TimeUnit
@@ -36,7 +36,7 @@ class VaultFlowTest {
     private lateinit var partyB: StartedMockNode
     private lateinit var notaryNode: MockNetworkNotarySpec
 
-    @Before
+    @BeforeEach
     fun setup() {
         notaryNode = MockNetworkNotarySpec(CordaX500Name("Notary", "London", "GB"))
         mockNetwork = MockNetwork(

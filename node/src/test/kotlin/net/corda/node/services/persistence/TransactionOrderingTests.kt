@@ -24,14 +24,14 @@ import net.corda.testing.node.internal.cordappWithPackages
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class TransactionOrderingTests {
     private lateinit var mockNet: InternalMockNetwork
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(cordappWithPackages("net.corda.node.testing"), enclosedCordapp()),

@@ -6,7 +6,7 @@ import net.corda.core.crypto.sign
 import net.corda.core.serialization.SerializedBytes
 import net.corda.core.serialization.serialize
 import net.corda.testing.core.SerializationEnvironmentRule
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.security.SignatureException
@@ -17,7 +17,7 @@ class SignedDataTest {
     @JvmField
     val testSerialization = SerializationEnvironmentRule()
 
-    @Before
+    @BeforeEach
     fun initialise() {
         serialized = data.serialize()
     }

@@ -17,7 +17,7 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.InProcess
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 import kotlin.test.assertEquals
@@ -36,7 +36,7 @@ class CordaServiceLifecycleTests {
 
     }
 
-    @Before
+    @BeforeEach
     fun setup() {
         numServiceCallbacks = 1
         eventsCaptured.clear()

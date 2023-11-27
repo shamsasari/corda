@@ -27,7 +27,7 @@ import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture
 import kotlin.test.assertEquals
@@ -53,7 +53,7 @@ class FlowOperatorTests {
     private lateinit var eugeneNode: TestStartedNode
     private lateinit var eugeneParty: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 threadPerNode = true,

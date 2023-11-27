@@ -13,7 +13,7 @@ import net.corda.serialization.internal.amqp.testutils.TestSerializationContext;
 import net.corda.serialization.internal.model.RemoteTypeInformation;
 import net.corda.serialization.internal.model.TypeIdentifier;
 import net.corda.testing.core.SerializationEnvironmentRule;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 
@@ -56,7 +56,7 @@ public class JavaCalculatedValuesToClassCarpenterTest extends AmqpCarpenterBase 
     public final SerializationEnvironmentRule serializationEnvironmentRule = new SerializationEnvironmentRule();
     private SerializationContext context;
 
-    @Before
+    @BeforeEach
     public void initSerialization() {
         SerializationFactory factory = serializationEnvironmentRule.getSerializationFactory();
         context = factory.getDefaultContext();

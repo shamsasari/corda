@@ -30,7 +30,7 @@ class NetworkBootstrapperRunnerTests {
     private val originalOut = System.out
     private val originalErr = System.err
 
-    @Before
+    @BeforeEach
     fun setUpStreams() {
         System.setOut(PrintStream(outContent))
         System.setErr(PrintStream(errContent))

@@ -27,7 +27,7 @@ import net.corda.testing.node.internal.startFlowWithClientId
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import rx.Observable
@@ -52,7 +52,7 @@ class FlowClientIdTests {
     private lateinit var mockNet: InternalMockNetwork
     private lateinit var aliceNode: TestStartedNode
 
-    @Before
+    @BeforeEach
     fun setUpMockNet() {
         mockNet = InternalMockNetwork(
             cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, FINANCE_CONTRACTS_CORDAPP),

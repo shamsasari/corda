@@ -17,7 +17,7 @@ import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.ClassRule
 import org.junit.jupiter.api.Test
 
@@ -41,7 +41,7 @@ class PersistentIdentityMigrationNewTableTest {
     lateinit var liquibaseDB: H2Database
     lateinit var cordaDB: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val schemaService = rigorousMock<SchemaService>()
         doReturn(setOf(IdentityTestSchemaV1)).whenever(schemaService).schemas

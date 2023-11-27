@@ -10,7 +10,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.ByteBuffer
 import java.security.GeneralSecurityException
@@ -21,7 +21,7 @@ class AesDbEncryptionServiceTest {
     private lateinit var database: CordaPersistence
     private lateinit var encryptionService: AesDbEncryptionService
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val dataSourceProps = MockServices.makeTestDataSourceProperties()
         database = configureDatabase(dataSourceProps, DatabaseConfig(), { null }, { null })

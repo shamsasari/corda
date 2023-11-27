@@ -46,7 +46,7 @@ import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
@@ -111,7 +111,7 @@ class AttachmentsClassLoaderTests {
         )
     }
 
-    @Before
+    @BeforeEach
     fun setup() {
         storage = MockAttachmentStorage()
         internalStorage = InternalMockAttachmentStorage(storage)

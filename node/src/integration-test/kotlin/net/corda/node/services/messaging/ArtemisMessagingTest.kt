@@ -30,7 +30,7 @@ import org.apache.activemq.artemis.api.core.ActiveMQConnectionTimedOutException
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
@@ -68,7 +68,7 @@ class ArtemisMessagingTest {
 
     private lateinit var networkMapCache: PersistentNetworkMapCache
 
-    @Before
+    @BeforeEach
     fun setUp() {
         abstract class AbstractNodeConfiguration : NodeConfiguration
 

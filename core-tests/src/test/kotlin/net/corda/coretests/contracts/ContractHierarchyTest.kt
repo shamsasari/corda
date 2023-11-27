@@ -17,7 +17,7 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 
@@ -25,7 +25,7 @@ import org.junit.jupiter.api.Test
 class ContractHierarchyTest {
     private lateinit var mockNet: InternalMockNetwork
 
-    @Before
+    @BeforeEach
     fun before() {
         // We run this in parallel threads to help catch any race conditions that may exist.
         mockNet = InternalMockNetwork(networkSendManuallyPumped = false, threadPerNode = true, cordappsForAllNodes = listOf(enclosedCordapp()))

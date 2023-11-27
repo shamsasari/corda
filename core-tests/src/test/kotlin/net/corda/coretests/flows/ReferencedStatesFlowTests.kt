@@ -17,7 +17,7 @@ import net.corda.node.VersionInfo
 import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.node.internal.*
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -30,7 +30,7 @@ class ReferencedStatesFlowTests {
     )
     lateinit var nodes: List<TestStartedNode>
 
-    @Before
+    @BeforeEach
     fun setup() {
         nodes = (0..2).map {
             mockNet.createNode(

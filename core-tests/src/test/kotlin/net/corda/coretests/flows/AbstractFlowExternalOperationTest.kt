@@ -23,7 +23,7 @@ import net.corda.core.utilities.contextLogger
 import net.corda.core.utilities.getOrThrow
 import net.corda.core.utilities.unwrap
 import net.corda.node.services.statemachine.StaffedFlowHospital
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import java.sql.SQLTransientConnectionException
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.Executors
@@ -40,7 +40,7 @@ abstract class AbstractFlowExternalOperationTest {
     var dischargeCounter = 0
     var observationCounter = 0
 
-    @Before
+    @BeforeEach
     fun before() {
         StaffedFlowHospital.onFlowDischarged.clear()
         StaffedFlowHospital.onFlowDischarged.add { _, _ -> ++dischargeCounter }

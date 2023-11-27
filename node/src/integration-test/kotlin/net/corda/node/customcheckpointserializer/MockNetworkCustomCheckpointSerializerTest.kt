@@ -5,13 +5,13 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class MockNetworkCustomCheckpointSerializerTest {
     private lateinit var mockNetwork: MockNetwork
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNetwork = MockNetwork(MockNetworkParameters(cordappsForAllNodes = listOf(TestCorDapp.getCorDapp())))
     }

@@ -22,7 +22,7 @@ import net.corda.testing.node.User
 import net.corda.testing.node.internal.waitForShutdown
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CountDownLatch
@@ -42,7 +42,7 @@ class P2PFlowsDrainingModeTest {
 
     private var executor: ScheduledExecutorService? = null
 
-    @Before
+    @BeforeEach
     fun setup() {
         executor = Executors.newSingleThreadScheduledExecutor()
     }

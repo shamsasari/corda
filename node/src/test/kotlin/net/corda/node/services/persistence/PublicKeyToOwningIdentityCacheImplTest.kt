@@ -14,7 +14,7 @@ import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.node.MockServices
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.security.PublicKey
@@ -34,7 +34,7 @@ class PublicKeyToOwningIdentityCacheImplTest {
     private val alice = TestIdentity(ALICE_NAME, 20)
     private lateinit var executor: ExecutorService
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val databaseAndServices = MockServices.makeTestDatabaseAndPersistentServices(
                 listOf(),

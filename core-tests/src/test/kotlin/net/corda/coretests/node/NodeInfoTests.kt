@@ -4,7 +4,7 @@ import net.corda.core.node.NodeInfo
 import net.corda.core.utilities.NetworkHostAndPort
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.core.getTestPartyAndCertificate
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
@@ -16,7 +16,7 @@ class NodeInfoTests {
 
     private lateinit var testNode: NodeInfo
 
-    @Before
+    @BeforeEach
     fun setup() {
         testNode = NodeInfo(
                 addresses = listOf(

@@ -22,7 +22,7 @@ import net.corda.testing.node.MockNodeParameters
 import net.corda.testing.node.StartedMockNode
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import kotlin.test.assertEquals
@@ -46,7 +46,7 @@ class OracleNodeTearOffTests {
     private lateinit var oracleNode: StartedMockNode
     private val oracle get() = oracleNode.services.myInfo.singleIdentity()
 
-    @Before
+    @BeforeEach
     // DOCSTART 1
     fun setUp() {
         mockNet = @Suppress("DEPRECATION") MockNetwork(cordappPackages = listOf("net.corda.finance.contracts", "net.corda.irs"))

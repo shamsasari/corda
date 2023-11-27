@@ -33,7 +33,7 @@ import net.corda.testing.internal.createDevIntermediateCaCertPath
 import net.corda.testing.node.MockServices.Companion.makeTestDataSourceProperties
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
@@ -65,7 +65,7 @@ class PersistentIdentityServiceTests {
     private lateinit var identityService: PersistentIdentityService
     private lateinit var networkMapCache: PersistentNetworkMapCache
 
-    @Before
+    @BeforeEach
     fun setup() {
         val cacheFactory = TestingNamedCacheFactory()
         identityService = PersistentIdentityService(cacheFactory = cacheFactory)

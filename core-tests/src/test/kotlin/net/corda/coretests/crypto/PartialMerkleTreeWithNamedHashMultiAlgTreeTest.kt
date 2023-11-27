@@ -45,7 +45,7 @@ import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
 import org.junit.Assert.assertTrue
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.Assertions.assertEquals
@@ -85,7 +85,7 @@ class PartialMerkleTreeWithNamedHashMultiAlgTreeTest {
     private lateinit var txs: List<WireTransaction>
     private lateinit var testTx: WireTransaction
 
-    @Before
+    @BeforeEach
     fun init() {
         hashed = nodes.map { it.serialize().sha2_384() }
         val zeroHash = SecureHash.zeroHashFor(SHA2_384)

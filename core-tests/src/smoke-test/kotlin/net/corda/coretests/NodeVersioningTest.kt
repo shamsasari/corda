@@ -12,7 +12,7 @@ import net.corda.smoketesting.NodeConfig
 import net.corda.smoketesting.NodeProcess
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
@@ -46,7 +46,7 @@ class NodeVersioningTest {
 
     private lateinit var notary: NodeProcess
 
-    @Before
+    @BeforeEach
     fun setUp() {
         notary = factory.create(notaryConfig)
     }

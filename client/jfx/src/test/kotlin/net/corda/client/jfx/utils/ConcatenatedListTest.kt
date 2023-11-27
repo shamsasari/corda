@@ -2,7 +2,7 @@ package net.corda.client.jfx.utils
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
@@ -13,7 +13,7 @@ class ConcatenatedListTest {
     lateinit var concatenatedList: ConcatenatedList<String>
     lateinit var replayedList: ObservableList<String>
 
-    @Before
+    @BeforeEach
     fun setup() {
         sourceList = FXCollections.observableArrayList<ObservableList<String>>(FXCollections.observableArrayList("hello"))
         concatenatedList = ConcatenatedList(sourceList)

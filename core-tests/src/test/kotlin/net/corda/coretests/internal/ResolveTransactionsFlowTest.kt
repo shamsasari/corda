@@ -32,7 +32,7 @@ import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.DUMMY_CONTRACTS_CORDAPP
 import net.corda.testing.node.internal.enclosedCordapp
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
@@ -57,7 +57,7 @@ class ResolveTransactionsFlowTest {
     private lateinit var notary: Party
     private lateinit var newNotary: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         val mockNetworkParameters = MockNetworkParameters(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, enclosedCordapp()),

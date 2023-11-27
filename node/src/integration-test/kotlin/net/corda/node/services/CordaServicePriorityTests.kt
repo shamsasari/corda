@@ -12,7 +12,7 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -50,7 +50,7 @@ open class CordaServicePriorityTests {
         }
     }
 
-    @Before
+    @BeforeEach
     fun startUp() {
         eventsCaptured.clear()
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()),

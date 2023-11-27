@@ -9,7 +9,7 @@ import net.corda.core.internal.div
 import net.corda.node.internal.Node
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import org.mockito.ArgumentMatchers.contains
@@ -23,7 +23,7 @@ import kotlin.test.assertFalse
 class ConfigHelperTests {
     private var baseDir: Path? = null
 
-    @Before
+    @BeforeEach
     fun setup() {
         baseDir = Files.createTempDirectory("corda_config")
     }

@@ -14,7 +14,7 @@ import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.MockNodeParameters
 import net.corda.testing.node.StartedMockNode
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
 
@@ -24,7 +24,7 @@ class FlowRegistrationTest {
     lateinit var initiator: StartedMockNode
     lateinit var responder: StartedMockNode
 
-    @Before
+    @BeforeEach
     fun setup() {
         // no cordapps scanned so it can be tested in isolation
         mockNetwork = MockNetwork(MockNetworkParameters())

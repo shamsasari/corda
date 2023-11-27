@@ -15,7 +15,7 @@ import net.corda.nodeapi.internal.serialization.kryo.kryoMagic
 import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
@@ -28,7 +28,7 @@ class SerializationTokenTest {
 
     private lateinit var context: CheckpointSerializationContext
 
-    @Before
+    @BeforeEach
     fun setup() {
         context = testCheckpointSerialization.checkpointSerializationContext.withWhitelisted(SingletonSerializationToken::class.java)
     }

@@ -13,7 +13,7 @@ import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
@@ -24,7 +24,7 @@ class CustomSerializationSchemeMockNetworkTest {
 
     val customSchemeCordapp: CustomCordapp = CustomSerializationSchemeDriverTest().enclosedCordapp()
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNetwork = InternalMockNetwork(cordappsForAllNodes = listOf(customSchemeCordapp))
     }

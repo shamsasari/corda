@@ -59,7 +59,7 @@ import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertArrayEquals
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import rx.Observable
 import java.io.ByteArrayOutputStream
@@ -94,7 +94,7 @@ class CordaRPCOpsImplTest {
     private lateinit var transactions: Observable<SignedTransaction>
     private lateinit var vaultTrackCash: Observable<Vault.Update<Cash.State>>
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = FINANCE_CORDAPPS)
         aliceNode = mockNet.createNode(InternalMockNodeParameters(legalName = ALICE_NAME))

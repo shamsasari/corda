@@ -5,7 +5,7 @@ import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import net.corda.coretesting.internal.rigorousMock
 import org.junit.Assert.assertEquals
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
@@ -15,7 +15,7 @@ class ZeroFilterTest {
     private lateinit var output: ByteArrayOutputStream
     private lateinit var filter: OutputStream
 
-    @Before
+    @BeforeEach
     fun setup() {
         output = ByteArrayOutputStream()
         val process = rigorousMock<Process>()

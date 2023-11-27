@@ -75,7 +75,7 @@ open class NodeSchedulerServiceTestBase {
 
     private val traces = Collections.synchronizedList(mutableListOf<ScheduledStateRef>())
 
-    @Before
+    @BeforeEach
     fun resetTraces() {
         traces.clear()
     }

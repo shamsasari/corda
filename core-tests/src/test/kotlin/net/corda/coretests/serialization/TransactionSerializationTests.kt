@@ -22,7 +22,7 @@ import net.corda.testing.core.TestIdentity
 import net.corda.coretesting.internal.TEST_TX_TIME
 import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.node.MockServices
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.security.SignatureException
@@ -83,7 +83,7 @@ class TransactionSerializationTests {
     val notaryServices = MockServices(listOf("net.corda.coretests.serialization"), DUMMY_NOTARY.name, key = DUMMY_NOTARY_KEY)
     lateinit var tx: TransactionBuilder
 
-    @Before
+    @BeforeEach
     fun setup() {
         //record fake transaction which created inputState
         val fakeTx = megaCorpServices.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).withItems(outputState, Command(TestCash.Commands.Issue(), arrayListOf(MEGA_CORP.owningKey))))

@@ -20,7 +20,7 @@ import net.corda.testing.node.createMockCordaService
 import net.corda.testing.node.makeTestIdentityService
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.*
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.math.BigDecimal
@@ -66,7 +66,7 @@ class NodeInterestRatesTest {
 
     private fun filterCmds(elem: Any): Boolean = elem is Command<*>
 
-    @Before
+    @BeforeEach
     fun setUp() {
         database = configureDatabase(makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null })
         database.transaction {

@@ -59,7 +59,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.hamcrest.collection.IsIterableContainingInAnyOrder
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import rx.schedulers.TestScheduler
@@ -98,7 +98,7 @@ class NetworkMapUpdaterTest {
     private lateinit var networkMapClient: NetworkMapClient
     private var updater: NetworkMapUpdater? = null
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Register providers before creating Jimfs filesystem. JimFs creates an SSHD instance which
         // register BouncyCastle and EdDSA provider separately, which wrecks havoc.

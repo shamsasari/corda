@@ -80,7 +80,7 @@ class ConstraintsPropagationTests {
 
     private lateinit var ledgerServices: MockServices
 
-    @Before
+    @BeforeEach
     fun setUp() {
         ledgerServices = object : MockServices(
                 cordappPackages = listOf("net.corda.finance.contracts.asset"),

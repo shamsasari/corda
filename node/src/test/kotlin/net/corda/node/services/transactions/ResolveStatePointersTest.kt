@@ -12,7 +12,7 @@ import net.corda.testing.core.SerializationEnvironmentRule
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.makeTestIdentityService
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -55,7 +55,7 @@ class ResolveStatePointersTest {
         }
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val databaseAndServices = MockServices.makeTestDatabaseAndMockServices(
                 cordappPackages = cordapps,

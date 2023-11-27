@@ -12,7 +12,7 @@ import net.corda.serialization.internal.CheckpointSerializationContextImpl
 import net.corda.serialization.internal.CordaSerializationEncoding
 import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
@@ -37,7 +37,7 @@ class ArrayListItrConcurrentModificationException(private val compression: Corda
     val serializationRule = CheckpointSerializationEnvironmentRule(inheritable = true)
     private lateinit var context: CheckpointSerializationContext
 
-    @Before
+    @BeforeEach
     fun setup() {
         context = CheckpointSerializationContextImpl(
                 deserializationClassLoader = javaClass.classLoader,

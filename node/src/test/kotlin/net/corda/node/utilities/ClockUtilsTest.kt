@@ -13,7 +13,7 @@ import net.corda.node.SimpleClock
 import net.corda.node.services.events.NodeSchedulerService
 import net.corda.testing.node.TestClock
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Duration
@@ -30,7 +30,7 @@ class ClockUtilsTest {
     lateinit var stoppedClock: CordaClock
     lateinit var executor: ExecutorService
 
-    @Before
+    @BeforeEach
     fun setup() {
         realClock = Clock.systemUTC()
         stoppedClock = SimpleClock(Clock.fixed(realClock.instant(), realClock.zone))

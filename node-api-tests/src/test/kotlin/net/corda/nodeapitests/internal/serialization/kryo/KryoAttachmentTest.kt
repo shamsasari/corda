@@ -14,7 +14,7 @@ import net.corda.serialization.internal.CheckpointSerializationContextImpl
 import net.corda.serialization.internal.CordaSerializationEncoding
 import net.corda.testing.core.internal.CheckpointSerializationEnvironmentRule
 import org.junit.Assert
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
@@ -34,7 +34,7 @@ class KryoAttachmentTest(private val compression: CordaSerializationEncoding?) {
     val serializationRule = CheckpointSerializationEnvironmentRule()
     private lateinit var context: CheckpointSerializationContext
 
-    @Before
+    @BeforeEach
     fun setup() {
         context = CheckpointSerializationContextImpl(
                 javaClass.classLoader,

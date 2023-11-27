@@ -15,7 +15,7 @@ import net.corda.testing.core.SerializationEnvironmentRule
 import net.corda.testing.core.getTestPartyAndCertificate
 import net.corda.coretesting.internal.DEV_ROOT_CA
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.math.BigInteger
@@ -26,7 +26,7 @@ class PartyAndCertificateTest {
     @JvmField
     val testSerialization = SerializationEnvironmentRule()
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Register providers before creating Jimfs filesystem. JimFs creates an SSHD instance which
         // register BouncyCastle and EdDSA provider separately, which wrecks havoc.

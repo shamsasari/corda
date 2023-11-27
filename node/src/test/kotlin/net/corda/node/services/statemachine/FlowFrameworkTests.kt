@@ -75,7 +75,7 @@ import org.junit.Assert.assertEquals
 import org.junit.Assert.assertNotEquals
 import org.junit.Assert.assertNotNull
 import org.junit.Assert.assertNull
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import rx.Notification
@@ -121,7 +121,7 @@ class FlowFrameworkTests {
         Clock.systemUTC()
     )
 
-    @Before
+    @BeforeEach
     fun setUpMockNet() {
         mockNet = InternalMockNetwork(
             cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, FINANCE_CONTRACTS_CORDAPP, CustomCordapp(setOf("net.corda.node.services.statemachine"))),

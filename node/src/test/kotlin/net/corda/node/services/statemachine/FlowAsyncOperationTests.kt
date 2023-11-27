@@ -14,7 +14,7 @@ import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture
 import java.util.concurrent.ConcurrentLinkedQueue
@@ -24,7 +24,7 @@ import kotlin.test.assertFailsWith
 class FlowAsyncOperationTests {
     private lateinit var mockNet: InternalMockNetwork
     private lateinit var aliceNode: TestStartedNode
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, enclosedCordapp()),

@@ -30,7 +30,7 @@ import net.corda.coretesting.internal.TEST_TX_TIME
 import net.corda.testing.internal.createWireTransaction
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.ledger
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
@@ -80,7 +80,7 @@ class PartialMerkleTreeTest(private var digestService: DigestService) {
     private lateinit var txs: List<WireTransaction>
     private lateinit var testTx: WireTransaction
 
-    @Before
+    @BeforeEach
     fun init() {
         digestService = DigestService.default
         hashed = nodes.map { digestService.hash(it.serialize().bytes) }

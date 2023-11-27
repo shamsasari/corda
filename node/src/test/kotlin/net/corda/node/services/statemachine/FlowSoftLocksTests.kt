@@ -32,7 +32,7 @@ import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertEquals
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.lang.IllegalStateException
 import java.sql.SQLTransientConnectionException
@@ -59,7 +59,7 @@ class FlowSoftLocksTests {
     private lateinit var aliceNode: TestStartedNode
     private lateinit var notaryIdentity: Party
 
-    @Before
+    @BeforeEach
     fun setUpMockNet() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, FINANCE_CONTRACTS_CORDAPP)

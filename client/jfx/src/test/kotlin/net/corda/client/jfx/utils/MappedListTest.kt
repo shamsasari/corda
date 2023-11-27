@@ -2,7 +2,7 @@ package net.corda.client.jfx.utils
 
 import javafx.collections.FXCollections
 import javafx.collections.ObservableList
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -12,7 +12,7 @@ class MappedListTest {
     lateinit var mappedList: ObservableList<Int>
     lateinit var replayedList: ObservableList<Int>
 
-    @Before
+    @BeforeEach
     fun setup() {
         sourceList = FXCollections.observableArrayList("Alice")
         mappedList = MappedList(sourceList) { it.length }

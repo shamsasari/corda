@@ -46,7 +46,7 @@ import net.corda.testing.node.TestClock
 import net.corda.testing.node.internal.MockEncryptionService
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -77,7 +77,7 @@ class DBTransactionStorageLedgerRecoveryTests {
 
     private val encryptionService = MockEncryptionService()
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val dataSourceProps = makeTestDataSourceProperties()
         database = configureDatabase(dataSourceProps, DatabaseConfig(), { null }, { null })

@@ -15,7 +15,7 @@ import net.corda.testing.node.User;
 import net.corda.testing.node.internal.NodeBasedTest;
 import net.corda.testing.node.internal.TestCordappInternal;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -63,7 +63,7 @@ public class CordaRPCJavaClientTest extends NodeBasedTest {
         rpcProxy = connection.getProxy();
     }
 
-    @Before
+    @BeforeEach
     @Override
     public void setUp() {
         super.setUp();

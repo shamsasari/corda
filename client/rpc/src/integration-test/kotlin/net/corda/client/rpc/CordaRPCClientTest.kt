@@ -49,7 +49,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import rx.subjects.PublishSubject
 import java.net.URLClassLoader
@@ -79,7 +79,7 @@ class CordaRPCClientTest : NodeBasedTest(FINANCE_CORDAPPS, notaries = listOf(DUM
         connection = client.start(username, password, externalTrace, impersonatedActor)
     }
 
-    @Before
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         node = startNode(ALICE_NAME, rpcUsers = listOf(rpcUser))

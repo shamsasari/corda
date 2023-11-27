@@ -13,7 +13,7 @@ import net.corda.nodeapi.internal.config.User;
 import net.corda.smoketesting.NodeConfig;
 import net.corda.smoketesting.NodeProcess;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
 import java.io.IOException;
@@ -73,7 +73,7 @@ public class StandaloneCordaRPCJavaClientTest {
             true
     );
 
-    @Before
+    @BeforeEach
     public void setUp() {
         NodeProcess.Factory factory = new NodeProcess.Factory();
         copyCordapps(factory, notaryConfig);

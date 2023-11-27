@@ -9,7 +9,7 @@ import net.corda.testing.node.MockNetwork;
 import net.corda.testing.node.MockNetworkParameters;
 import net.corda.testing.node.StartedMockNode;
 import org.junit.jupiter.api.AfterEach;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Ignore;
 import org.junit.jupiter.api.Test;
 
@@ -31,7 +31,7 @@ public class FlowsInJavaTest {
     private StartedMockNode bobNode;
     private Party bob;
 
-    @Before
+    @BeforeEach
     public void setUp() {
         aliceNode = mockNet.createPartyNode(TestConstants.ALICE_NAME);
         bobNode = mockNet.createPartyNode(TestConstants.BOB_NAME);

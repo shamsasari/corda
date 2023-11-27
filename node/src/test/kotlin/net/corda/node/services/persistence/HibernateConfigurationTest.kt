@@ -99,7 +99,7 @@ class HibernateConfigurationTest {
     // test States
     private lateinit var cashStates: List<StateAndRef<Cash.State>>
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val cordappPackages = listOf("net.corda.testing.internal.vault", "net.corda.finance.contracts.asset", "net.corda.finance.schemas")
         bankServices = MockServices(cordappPackages, BOC.name, mock(), BOC_KEY)

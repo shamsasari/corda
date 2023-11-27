@@ -42,7 +42,7 @@ import net.corda.testing.node.TestClock
 import net.corda.testing.node.internal.MockKeyManagementService
 import net.corda.testing.node.makeTestIdentityService
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
@@ -76,7 +76,7 @@ class UniquenessProviderTests(
     private lateinit var testClock: TestClock
     private lateinit var uniquenessProvider: UniquenessProvider
 
-    @Before
+    @BeforeEach
     fun setUp() {
         testClock = TestClock(Clock.systemUTC())
         uniquenessProvider = uniquenessProviderFactory.create(testClock)

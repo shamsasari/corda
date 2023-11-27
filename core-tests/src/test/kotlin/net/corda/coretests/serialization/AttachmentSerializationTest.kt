@@ -23,7 +23,7 @@ import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.startFlow
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
@@ -72,7 +72,7 @@ class AttachmentSerializationTest {
     private lateinit var client: TestStartedNode
     private lateinit var serverIdentity: Party
 
-    @Before
+    @BeforeEach
     fun setUp() {
         mockNet = InternalMockNetwork()
         server = mockNet.createNode(InternalMockNodeParameters(legalName = ALICE_NAME))

@@ -7,13 +7,13 @@ import net.corda.testing.node.internal.network.CrlServer
 import org.assertj.core.api.Assertions.assertThat
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 
 class CertDistPointCrlSourceTest {
     private lateinit var crlServer: CrlServer
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Do not use Security.addProvider(BouncyCastleProvider()) to avoid EdDSA signature disruption in other tests.
         Crypto.findProvider(BouncyCastleProvider.PROVIDER_NAME)

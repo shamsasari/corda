@@ -11,7 +11,7 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.util.*
@@ -33,7 +33,7 @@ class MissingSchemaMigrationTest {
     lateinit var hikariProperties: Properties
     lateinit var dataSource: DataSource
 
-    @Before
+    @BeforeEach
     fun setUp() {
         hikariProperties = MockServices.makeTestDataSourceProperties()
         dataSource = DataSourceFactory.createDataSource(hikariProperties)

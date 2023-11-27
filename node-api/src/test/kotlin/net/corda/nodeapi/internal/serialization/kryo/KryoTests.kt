@@ -44,7 +44,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.Assert.assertArrayEquals
 import org.junit.Assert.assertEquals
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
@@ -74,7 +74,7 @@ class KryoTests(private val compression: CordaSerializationEncoding?) {
     val serializationRule = CheckpointSerializationEnvironmentRule()
     private lateinit var context: CheckpointSerializationContext
 
-    @Before
+    @BeforeEach
     fun setup() {
         context = CheckpointSerializationContextImpl(
                 javaClass.classLoader,

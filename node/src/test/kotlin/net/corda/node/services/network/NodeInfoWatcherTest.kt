@@ -16,7 +16,7 @@ import net.corda.testing.core.SerializationEnvironmentRule
 import net.corda.testing.node.internal.MockKeyManagementService
 import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
@@ -48,7 +48,7 @@ class NodeInfoWatcherTest {
     // Object under test
     private lateinit var nodeInfoWatcher: NodeInfoWatcher
 
-    @Before
+    @BeforeEach
     fun start() {
         // Register providers before creating Jimfs filesystem. JimFs creates an SSHD instance which
         // register BouncyCastle and EdDSA provider separately, which wrecks havoc.

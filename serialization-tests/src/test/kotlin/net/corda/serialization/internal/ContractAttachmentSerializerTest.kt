@@ -14,7 +14,7 @@ import org.apache.commons.lang3.ArrayUtils.EMPTY_BYTE_ARRAY
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Assert.assertArrayEquals
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -28,7 +28,7 @@ class ContractAttachmentSerializerTest {
     private lateinit var contextWithToken: CheckpointSerializationContext
     private val mockServices = MockServices(emptyList(), CordaX500Name("MegaCorp", "London", "GB"), rigorousMock())
 
-    @Before
+    @BeforeEach
     fun setup() {
         contextWithToken = testCheckpointSerialization.checkpointSerializationContext.withTokenContext(
                 CheckpointSerializeAsTokenContextImpl(

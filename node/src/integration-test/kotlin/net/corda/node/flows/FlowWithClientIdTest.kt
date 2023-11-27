@@ -37,7 +37,7 @@ import net.corda.testing.node.User
 import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import rx.Observable
@@ -58,7 +58,7 @@ import kotlin.test.assertTrue
 @Ignore("TODO JDK17: Fixme")
 class FlowWithClientIdTest {
 
-    @Before
+    @BeforeEach
     fun reset() {
         ResultFlow.hook = null
     }

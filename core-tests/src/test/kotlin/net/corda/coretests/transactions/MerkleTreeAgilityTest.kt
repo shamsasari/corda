@@ -29,7 +29,7 @@ import net.corda.testing.core.DUMMY_NOTARY_NAME
 import net.corda.testing.core.SerializationEnvironmentRule
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.core.dummyCommand
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -87,7 +87,7 @@ class MerkleTreeAgilityTest {
     private val defaultDigestService = DigestService.sha2_256
     private val customDigestService = DigestService("SHA256-BLAKE2S256-TEST")
 
-    @Before
+    @BeforeEach
     fun before() {
         DigestAlgorithmFactory.registerClass(SHA256BLAKE2s256DigestAlgorithm::class.java.name)
     }

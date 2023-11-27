@@ -32,7 +32,7 @@ import net.corda.testing.node.ledger
 import net.corda.testing.node.makeTestIdentityService
 import net.corda.testing.node.transaction
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -77,7 +77,7 @@ class CashTests {
     private lateinit var cashStates: List<StateAndRef<Cash.State>>
 
     // TODO: Optimise this so that we don't throw away and rebuild state that can be shared across tests.
-    @Before
+    @BeforeEach
     fun setUp() {
         val cordapps = listOf("net.corda.finance.contracts.asset", "net.corda.finance.schemas")
         LogHelper.setLevel(NodeVaultService::class)

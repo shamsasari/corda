@@ -3,7 +3,7 @@ package net.corda.core.crypto
 import net.corda.core.crypto.internal.DigestAlgorithmFactory
 import net.corda.core.internal.BLAKE2s256DigestAlgorithm
 import org.junit.Assert.assertArrayEquals
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
@@ -11,7 +11,7 @@ class Blake2s256DigestServiceTest {
 
     private val service = DigestService("BLAKE_TEST")
 
-    @Before
+    @BeforeEach
     fun before() {
         DigestAlgorithmFactory.registerClass(BLAKE2s256DigestAlgorithm::class.java.name)
     }

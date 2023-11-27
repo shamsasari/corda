@@ -25,7 +25,7 @@ import net.corda.testing.node.*
 import net.corda.testing.node.internal.DUMMY_CONTRACTS_CORDAPP
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import java.time.Instant
@@ -45,7 +45,7 @@ class NotaryChangeTests {
     private lateinit var oldNotaryParty: Party
     private lateinit var clientA: Party
 
-    @Before
+    @BeforeEach
     fun setUp() {
         mockNet = MockNetwork(MockNetworkParameters(
                 notarySpecs = listOf(MockNetworkNotarySpec(oldNotaryName), MockNetworkNotarySpec(newNotaryName)),

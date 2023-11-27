@@ -36,7 +36,7 @@ import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.util.concurrent.Executors
@@ -73,7 +73,7 @@ class VaultWithCashTest {
     private lateinit var notaryServices: MockServices
     private lateinit var notary: Party
 
-    @Before
+    @BeforeEach
     fun setUp() {
         LogHelper.setLevel(VaultWithCashTest::class)
 

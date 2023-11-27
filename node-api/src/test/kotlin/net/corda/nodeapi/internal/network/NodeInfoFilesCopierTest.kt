@@ -6,7 +6,7 @@ import net.corda.core.internal.write
 import net.corda.core.internal.NODE_INFO_DIRECTORY
 import net.corda.testing.common.internal.eventually
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
@@ -43,7 +43,7 @@ class NodeInfoFilesCopierTest {
 
     private lateinit var nodeInfoFilesCopier: NodeInfoFilesCopier
 
-    @Before
+    @BeforeEach
     fun setUp() {
         nodeInfoFilesCopier = NodeInfoFilesCopier(scheduler)
     }

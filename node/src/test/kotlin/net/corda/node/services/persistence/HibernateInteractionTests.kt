@@ -28,7 +28,7 @@ import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
 import org.hibernate.annotations.Cascade
 import org.hibernate.annotations.CascadeType
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.lang.IllegalArgumentException
@@ -57,7 +57,7 @@ class HibernateInteractionTests {
     lateinit var services: MockServices
     lateinit var database: CordaPersistence
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val (db, mockServices) = MockServices.makeTestDatabaseAndPersistentServices(
                 cordappPackages = cordapps,

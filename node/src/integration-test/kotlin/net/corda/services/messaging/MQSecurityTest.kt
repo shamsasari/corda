@@ -33,7 +33,7 @@ import org.apache.activemq.artemis.api.core.RoutingType
 import org.apache.activemq.artemis.api.core.SimpleString
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
@@ -48,7 +48,7 @@ abstract class MQSecurityTest : NodeBasedTest() {
     lateinit var attacker: SimpleMQClient
     private val runOnStop = ArrayList<() -> Any?>()
 
-    @Before
+    @BeforeEach
     override fun setUp() {
         super.setUp()
         alice = startNode(ALICE_NAME, rpcUsers = extraRPCUsers + rpcUser)

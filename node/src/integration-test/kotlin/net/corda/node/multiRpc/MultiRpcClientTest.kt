@@ -23,7 +23,7 @@ import net.corda.testing.driver.driver
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.User
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import rx.Observer
 import kotlin.test.assertEquals
@@ -43,7 +43,7 @@ class MultiRpcClientTest {
 
     private var prevRpcClientSerializationEnv: SerializationEnvironment? = null
 
-    @Before
+    @BeforeEach
     fun setup() {
         prevRpcClientSerializationEnv = _rpcClientSerializationEnv.get()
         ensureSerialisationEnvNull()

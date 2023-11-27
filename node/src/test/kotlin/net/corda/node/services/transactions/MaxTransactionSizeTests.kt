@@ -24,7 +24,7 @@ import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.io.InputStream
 import kotlin.test.assertEquals
@@ -39,7 +39,7 @@ class MaxTransactionSizeTests {
     private lateinit var alice: Party
     private lateinit var bob: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = MockNetwork(MockNetworkParameters(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, enclosedCordapp()),

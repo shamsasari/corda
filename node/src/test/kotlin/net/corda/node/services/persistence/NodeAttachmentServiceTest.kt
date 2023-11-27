@@ -43,7 +43,7 @@ import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.*
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertTrue
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import java.io.ByteArrayInputStream
@@ -72,7 +72,7 @@ class NodeAttachmentServiceTest {
         doReturn(testNetworkParameters()).whenever(it).networkParameters
     }
 
-    @Before
+    @BeforeEach
     fun setUp() {
         // Register providers before creating Jimfs filesystem. JimFs creates an SSHD instance which
         // register BouncyCastle and EdDSA provider separately, which wrecks havoc.

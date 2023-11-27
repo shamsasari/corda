@@ -22,7 +22,7 @@ import net.corda.testing.internal.fakeAttachment
 import net.corda.coretesting.internal.rigorousMock
 import net.corda.testing.internal.TestingNamedCacheFactory
 import org.assertj.core.api.Assertions.fail
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
@@ -60,12 +60,12 @@ class TransactionTests(private val digestService : DigestService) {
     @JvmField
     val testSerialization = SerializationEnvironmentRule()
 
-    @Before
+    @BeforeEach
     fun before() {
         HashAgility.init(txHashAlgoName = digestService.hashAlgorithm)
     }
 
-    @Before
+    @BeforeEach
     fun after() {
         HashAgility.init()
     }

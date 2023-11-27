@@ -29,7 +29,7 @@ import net.corda.testing.node.MockServices.Companion.makeTestDataSourcePropertie
 import org.hamcrest.Matchers.instanceOf
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertThat
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.time.Clock
@@ -50,7 +50,7 @@ class RaftTransactionCommitLogTests {
 
     private lateinit var cluster: List<Member>
 
-    @Before
+    @BeforeEach
     fun setup() {
         LogHelper.setLevel("-org.apache.activemq")
         LogHelper.setLevel("+io.atomix")

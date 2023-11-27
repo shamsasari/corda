@@ -15,7 +15,7 @@ import net.corda.testing.core.TestIdentity
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.*
 import javax.persistence.Column
@@ -40,7 +40,7 @@ class MigrationSchemaSyncTest{
     lateinit var hikariProperties: Properties
     lateinit var dataSource: DataSource
 
-    @Before
+    @BeforeEach
     fun setUp() {
         hikariProperties = MockServices.makeTestDataSourceProperties()
         dataSource = DataSourceFactory.createDataSource(hikariProperties)

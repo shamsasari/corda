@@ -78,7 +78,7 @@ import net.corda.testing.node.internal.startFlow
 import net.corda.testing.node.ledger
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
@@ -120,7 +120,7 @@ class TwoPartyTradeFlowTests(private val anonymous: Boolean) {
 
     private lateinit var mockNet: InternalMockNetwork
 
-    @Before
+    @BeforeEach
     fun before() {
         LogHelper.setLevel("platform.trade", "core.contract.TransactionGroup", "recordingmap")
     }

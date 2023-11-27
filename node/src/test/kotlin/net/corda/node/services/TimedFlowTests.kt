@@ -40,7 +40,7 @@ import net.corda.testing.node.InMemoryMessagingNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.internal.*
 import org.junit.jupiter.api.AfterAll
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.security.PublicKey
@@ -144,7 +144,7 @@ class TimedFlowTests {
         }
     }
 
-    @Before
+    @BeforeEach
     fun resetCounter() {
         requestsReceived = AtomicInteger(0)
     }

@@ -36,7 +36,7 @@ import net.corda.testing.node.MockServices.Companion.makeTestDataSourcePropertie
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import rx.plugins.RxJavaHooks
@@ -63,7 +63,7 @@ class DBTransactionStorageTests {
 
     private lateinit var database: CordaPersistence
     private lateinit var transactionStorage: DBTransactionStorage
-    @Before
+    @BeforeEach
     fun setUp() {
         LogHelper.setLevel(PersistentUniquenessProvider::class)
         val dataSourceProps = makeTestDataSourceProperties()

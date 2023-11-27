@@ -29,7 +29,7 @@ import org.hamcrest.CoreMatchers.`is`
 import org.junit.jupiter.api.AfterEach
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertThat
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import java.net.URL
@@ -46,7 +46,7 @@ class NetworkMapTest {
     private lateinit var networkMapServer: NetworkMapServer
     private lateinit var compatibilityZone: CompatibilityZoneParams
 
-    @Before
+    @BeforeEach
     fun start() {
         networkMapServer = NetworkMapServer(cacheTimeout, portAllocation.nextHostAndPort())
         val address = networkMapServer.start()

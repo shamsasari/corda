@@ -29,7 +29,7 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.core.BOB_NAME
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -53,7 +53,7 @@ class KeyStoreHandlerTest {
 
     private lateinit var keyStoreHandler: KeyStoreHandler
 
-    @Before
+    @BeforeEach
     fun before() {
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificateDir)
         val p2pSslOptions = CertificateStoreStubs.P2P.withCertificatesDirectory(certificateDir)

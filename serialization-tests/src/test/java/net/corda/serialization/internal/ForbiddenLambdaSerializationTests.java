@@ -6,7 +6,7 @@ import net.corda.core.serialization.SerializationFactory;
 import net.corda.core.serialization.SerializedBytes;
 import net.corda.serialization.internal.amqp.SchemaKt;
 import net.corda.testing.core.SerializationEnvironmentRule;
-import org.junit.Before;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.Rule;
 import org.junit.jupiter.api.Test;
 
@@ -27,7 +27,7 @@ public final class ForbiddenLambdaSerializationTests {
     public final SerializationEnvironmentRule testSerialization = new SerializationEnvironmentRule();
     private SerializationFactory factory;
 
-    @Before
+    @BeforeEach
     public void setup() {
         factory = testSerialization.getSerializationFactory();
     }

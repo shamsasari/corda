@@ -43,7 +43,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Assert.assertFalse
 import org.junit.Assert.assertTrue
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -62,7 +62,7 @@ class TransactionBuilderTest {
     private val attachments = rigorousMock<AttachmentStorage>()
     private val networkParametersService = mock<NetworkParametersService>()
 
-    @Before
+    @BeforeEach
     fun setup() {
         val cordappProvider = rigorousMock<CordappProvider>()
         val networkParameters = testNetworkParameters(minimumPlatformVersion = PLATFORM_VERSION)

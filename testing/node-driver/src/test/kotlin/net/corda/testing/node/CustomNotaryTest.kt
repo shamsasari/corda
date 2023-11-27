@@ -15,7 +15,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.internal.DUMMY_CONTRACTS_CORDAPP
 import net.corda.testing.node.internal.enclosedCordapp
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.security.PublicKey
 import java.util.*
@@ -27,7 +27,7 @@ class CustomNotaryTest {
     private lateinit var notary: Party
     private lateinit var alice: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         // START 1
         mockNet = MockNetwork(MockNetworkParameters(

@@ -34,7 +34,7 @@ import net.corda.testing.node.User
 import net.corda.testing.node.internal.InternalDriverDSL
 import org.jboss.byteman.agent.submit.ScriptText
 import org.jboss.byteman.agent.submit.Submit
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import java.time.Duration
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
@@ -44,7 +44,7 @@ abstract class StateMachineErrorHandlingTest {
     val rpcUser = User("user1", "test", permissions = setOf(Permissions.all()))
     var counter = 0
 
-    @Before
+    @BeforeEach
     fun setup() {
         counter = 0
     }

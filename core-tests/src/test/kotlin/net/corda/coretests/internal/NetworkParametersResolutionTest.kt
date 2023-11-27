@@ -29,7 +29,7 @@ import net.corda.testing.node.internal.cordappForClasses
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -48,7 +48,7 @@ class NetworkParametersResolutionTest {
     private lateinit var miniCorpParty: Party
     private lateinit var notaryParty: Party
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNet = MockNetwork(MockNetworkParameters(
                 cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, cordappForClasses(ResolveTransactionsFlowTest.TestFlow::class.java, ResolveTransactionsFlowTest.TestResponseFlow::class.java))))

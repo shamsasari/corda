@@ -25,7 +25,7 @@ import net.corda.testing.core.BOB_NAME
 import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.internal.fixedCrlSource
 import org.junit.Assume.assumeFalse
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
@@ -74,7 +74,7 @@ class AMQPClientSslErrorsTest(@Suppress("unused") private val iteration: Int) {
 
     private lateinit var clientAmqpConfig: AMQPConfiguration
 
-    @Before
+    @BeforeEach
     fun setup() {
         setupServerCertificates()
         setupClientCertificates()

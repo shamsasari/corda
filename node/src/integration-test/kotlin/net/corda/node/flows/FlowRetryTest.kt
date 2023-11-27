@@ -30,7 +30,7 @@ import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.hibernate.exception.ConstraintViolationException
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.lang.management.ManagementFactory
 import java.sql.SQLException
@@ -52,7 +52,7 @@ class FlowRetryTest {
         val cordapps = listOf(enclosedCordapp())
     }
 
-    @Before
+    @BeforeEach
     fun resetCounters() {
         InitiatorFlow.seen.clear()
         InitiatedFlow.seen.clear()

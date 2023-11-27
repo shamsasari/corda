@@ -9,7 +9,7 @@ import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.BeforeAll
 import org.junit.jupiter.api.Test
 import java.util.concurrent.ExecutionException
@@ -38,7 +38,7 @@ class MockNetworkSerializationWhitelistTest {
 
     private lateinit var mockNetwork: MockNetwork
 
-    @Before
+    @BeforeEach
     fun setup() {
         mockNetwork = MockNetwork(
             MockNetworkParameters(

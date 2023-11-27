@@ -33,7 +33,7 @@ import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions
 import org.junit.jupiter.api.AfterEach
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.*
@@ -42,7 +42,7 @@ class CordaServiceTest {
     private lateinit var mockNet: MockNetwork
     private lateinit var nodeA: StartedMockNode
 
-    @Before
+    @BeforeEach
     fun start() {
         mockNet = MockNetwork(MockNetworkParameters(threadPerNode = true, cordappsForAllNodes = listOf(FINANCE_CONTRACTS_CORDAPP, enclosedCordapp())))
         nodeA = mockNet.createNode()

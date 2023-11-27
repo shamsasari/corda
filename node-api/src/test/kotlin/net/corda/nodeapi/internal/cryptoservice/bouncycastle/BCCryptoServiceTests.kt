@@ -18,7 +18,7 @@ import net.corda.nodeapi.internal.crypto.loadOrCreateKeyStore
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.junit.Before
+import org.junit.jupiter.api.BeforeEach
 import org.junit.Ignore
 import org.junit.Rule
 import org.junit.jupiter.api.Test
@@ -52,7 +52,7 @@ class BCCryptoServiceTests {
     lateinit var certificatesDirectory: Path
     lateinit var wrappingKeyStorePath: Path
 
-    @Before
+    @BeforeEach
     fun setUp() {
         val baseDirectory = temporaryFolder.root.toPath()
         certificatesDirectory = baseDirectory / "certificates"
