@@ -29,7 +29,7 @@ import org.apache.activemq.artemis.api.core.RoutingType
 import org.apache.activemq.artemis.api.core.SimpleString
 import org.junit.Assert.assertArrayEquals
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
 import java.util.*
 import kotlin.test.assertEquals

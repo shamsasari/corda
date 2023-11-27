@@ -8,7 +8,7 @@ import net.corda.core.transactions.WireTransaction
 import net.corda.testing.common.internal.checkNotOnClasspath
 import org.apache.commons.io.output.WriterOutputStream
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.PrintStream
 import java.io.StringWriter
 import java.nio.charset.StandardCharsets.UTF_8

@@ -2,7 +2,7 @@ package net.corda.nodeapi.internal.crypto
 
 import net.corda.core.crypto.Crypto
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.security.InvalidKeyException
 

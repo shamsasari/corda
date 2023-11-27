@@ -28,7 +28,7 @@ import net.corda.testing.node.internal.performance.startPublishingFixedRateInjec
 import net.corda.testing.node.internal.performance.startReporter
 import net.corda.testing.node.internal.performance.startTightLoopInjector
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.TimeUnit
 

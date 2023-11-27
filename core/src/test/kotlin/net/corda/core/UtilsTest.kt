@@ -2,7 +2,7 @@ package net.corda.core
 
 import net.corda.core.utilities.getOrThrow
 import org.assertj.core.api.Assertions.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import rx.subjects.PublishSubject
 import java.util.*
 import java.util.concurrent.CancellationException

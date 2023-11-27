@@ -6,7 +6,7 @@ import org.mockito.kotlin.whenever
 import net.corda.coretesting.internal.rigorousMock
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.OutputStream
 import java.nio.charset.StandardCharsets.UTF_8

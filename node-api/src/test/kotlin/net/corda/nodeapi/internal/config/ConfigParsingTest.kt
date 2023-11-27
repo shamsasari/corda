@@ -10,7 +10,7 @@ import net.corda.core.internal.div
 import net.corda.core.utilities.NetworkHostAndPort
 import org.assertj.core.api.Assertions.*
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.net.URL
 import java.nio.file.Path
 import java.time.Instant

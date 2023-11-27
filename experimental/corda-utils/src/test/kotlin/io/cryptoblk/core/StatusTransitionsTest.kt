@@ -9,7 +9,7 @@ import net.corda.core.transactions.LedgerTransaction
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.ledger
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 private val ALICE_ID = TestIdentity(CordaX500Name.parse("L=London,O=Alice Ltd,OU=Trade,C=GB"))
 private val BOB_ID = TestIdentity(CordaX500Name.parse("L=London,O=Bob Ltd,OU=Trade,C=GB"))

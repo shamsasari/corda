@@ -35,7 +35,7 @@ import org.junit.AfterClass
 import org.junit.Assert.assertThat
 import org.junit.BeforeClass
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 import java.time.Duration
 import java.time.Instant

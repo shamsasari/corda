@@ -6,7 +6,7 @@ import net.corda.serialization.internal.amqp.testutils.testDefaultFactory
 import net.corda.serialization.internal.amqp.testutils.testName
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.NotSerializableException
 
 class ErrorMessagesTests {

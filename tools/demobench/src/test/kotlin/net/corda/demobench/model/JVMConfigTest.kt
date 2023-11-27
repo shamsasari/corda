@@ -2,7 +2,7 @@ package net.corda.demobench.model
 
 import com.jediterm.terminal.ui.UIUtil
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.test.assertEquals

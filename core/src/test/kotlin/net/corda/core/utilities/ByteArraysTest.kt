@@ -6,7 +6,7 @@ import net.corda.core.internal.declaredField
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.Assert.assertSame
 import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.ByteBuffer
 import java.nio.ReadOnlyBufferException
 import kotlin.test.assertEquals

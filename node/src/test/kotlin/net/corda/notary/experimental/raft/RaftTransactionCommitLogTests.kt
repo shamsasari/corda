@@ -31,7 +31,7 @@ import org.junit.After
 import org.junit.Assert.assertThat
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Instant
 import java.util.concurrent.CompletableFuture

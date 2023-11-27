@@ -8,7 +8,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.bouncycastle.jce.provider.BouncyCastleProvider
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class CertDistPointCrlSourceTest {
     private lateinit var crlServer: CrlServer

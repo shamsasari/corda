@@ -9,7 +9,7 @@ import net.corda.serialization.internal.amqp.testutils.TestSerializationOutput
 import net.corda.serialization.internal.amqp.testutils.testDefaultFactory
 import org.junit.Assert.assertEquals
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * Corda 4.4 briefly serialised [Enum] values using [Enum.toString] rather

@@ -10,7 +10,7 @@ import net.corda.nodeapi.internal.DEV_CA_PRIVATE_KEY_PASS
 import net.corda.nodeapi.internal.config.CertificateStore
 import net.corda.nodeapi.internal.crypto.X509Utilities.CORDA_CLIENT_TLS
 import net.corda.testing.internal.fixedCrlSource
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.net.ssl.SNIHostName
 import kotlin.test.assertEquals
 

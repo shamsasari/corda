@@ -27,7 +27,7 @@ import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.cordappsForPackages
 import org.junit.AfterClass
 import org.junit.BeforeClass
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledOnJre
 import org.junit.jupiter.api.condition.JRE
 import javax.persistence.Column

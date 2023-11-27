@@ -22,7 +22,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.Semaphore
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

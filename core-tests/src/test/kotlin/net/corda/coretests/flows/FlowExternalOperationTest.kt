@@ -21,7 +21,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.cordappsForPackages
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.SQLTransientConnectionException
 import kotlin.test.assertFailsWith
 import kotlin.test.assertTrue

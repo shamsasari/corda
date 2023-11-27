@@ -26,7 +26,7 @@ import net.corda.testing.driver.driver
 import net.corda.testing.driver.internal.checkpoint.CheckpointRpcHelper.checkpointsRpc
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.util.concurrent.CountDownLatch
 import java.util.zip.ZipInputStream

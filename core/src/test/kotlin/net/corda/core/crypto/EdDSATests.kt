@@ -6,7 +6,7 @@ import net.i2p.crypto.eddsa.EdDSAPrivateKey
 import net.i2p.crypto.eddsa.EdDSASecurityProvider
 import net.i2p.crypto.eddsa.spec.EdDSANamedCurveSpec
 import net.i2p.crypto.eddsa.spec.EdDSAPrivateKeySpec
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.security.PrivateKey
 import java.security.Signature
 import kotlin.test.assertEquals

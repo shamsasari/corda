@@ -15,7 +15,7 @@ import net.corda.testing.core.dummyCommand
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.internal.MockTransactionStorage
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class TransactionGraphSearchTests {

@@ -3,7 +3,7 @@ package net.corda.nodeapi.internal.persistence
 import org.mockito.kotlin.mock
 import net.corda.core.internal.NamedCacheFactory
 import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class HibernateConfigurationFactoryLoadingTest {
     @Test

@@ -4,7 +4,7 @@ import org.mockito.kotlin.*
 import net.corda.core.internal.concurrent.openFuture
 import net.corda.core.utilities.getOrThrow
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.slf4j.Logger
 import java.io.EOFException
 import java.util.concurrent.CancellationException

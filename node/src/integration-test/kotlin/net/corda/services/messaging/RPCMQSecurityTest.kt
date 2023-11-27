@@ -8,7 +8,7 @@ import net.corda.nodeapi.internal.ArtemisMessagingComponent.Companion.P2P_PREFIX
 import net.corda.nodeapi.internal.ArtemisMessagingComponent.Companion.PEERS_PREFIX
 import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.singleIdentity
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * Runs a series of MQ-related attacks against a node. Subclasses need to call [startAttacker] to connect

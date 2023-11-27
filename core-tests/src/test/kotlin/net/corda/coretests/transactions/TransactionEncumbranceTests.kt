@@ -21,7 +21,7 @@ import net.corda.testing.node.MockServices
 import net.corda.testing.node.ledger
 import org.assertj.core.api.AssertionsForClassTypes.assertThatExceptionOfType
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.time.temporal.ChronoUnit
 import kotlin.test.assertFailsWith

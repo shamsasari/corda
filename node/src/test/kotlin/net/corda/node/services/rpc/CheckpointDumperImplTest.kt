@@ -39,7 +39,7 @@ import net.corda.testing.node.TestClock
 import org.junit.After
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import java.nio.file.Paths
 import java.time.Clock

@@ -15,7 +15,7 @@ import net.corda.serialization.internal.model.TypeIdentifier;
 import net.corda.testing.core.SerializationEnvironmentRule;
 import org.junit.Before;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static net.corda.serialization.internal.amqp.testutils.AMQPTestUtilsKt.testDefaultFactoryNoEvolution;
 import static org.junit.Assert.assertEquals;

@@ -28,7 +28,7 @@ import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.TestStartedNode
 import org.junit.AfterClass
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 @Ignore("TODO JDK17: class cast exception")
 class AttachmentTests : WithMockNet {

@@ -39,7 +39,7 @@ import net.corda.testing.node.internal.enclosedCordapp
 import org.hamcrest.CoreMatchers.`is`
 import org.junit.AfterClass
 import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.security.PublicKey
 
 class CollectSignaturesFlowTests : WithContracts {

@@ -14,7 +14,7 @@ import net.corda.node.services.config.FlowTimeoutConfiguration
 import net.corda.testing.node.internal.*
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.atomic.AtomicBoolean
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.assertEquals

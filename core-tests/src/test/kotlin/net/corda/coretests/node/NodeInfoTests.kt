@@ -5,7 +5,7 @@ import net.corda.core.utilities.NetworkHostAndPort
 import net.corda.testing.core.TestIdentity
 import net.corda.testing.core.getTestPartyAndCertificate
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertFalse
 import kotlin.test.assertTrue
 

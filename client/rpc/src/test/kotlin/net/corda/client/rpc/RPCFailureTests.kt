@@ -11,7 +11,7 @@ import net.corda.testing.node.internal.startRpcClient
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Ignore
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 @Ignore("TODO JDK17: Fixme")
 class RPCFailureTests {

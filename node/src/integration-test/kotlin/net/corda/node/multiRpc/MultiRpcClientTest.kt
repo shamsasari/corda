@@ -24,7 +24,7 @@ import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.User
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import rx.Observer
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull

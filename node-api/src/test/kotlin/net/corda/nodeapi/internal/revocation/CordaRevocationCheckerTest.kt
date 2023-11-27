@@ -7,7 +7,7 @@ import net.corda.nodeapi.internal.config.CertificateStore
 import net.corda.nodeapi.internal.crypto.X509Utilities
 import net.corda.testing.internal.fixedCrlSource
 import org.bouncycastle.jcajce.provider.asymmetric.x509.CertificateFactory
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.security.cert.X509CRL
 import java.security.cert.X509Certificate

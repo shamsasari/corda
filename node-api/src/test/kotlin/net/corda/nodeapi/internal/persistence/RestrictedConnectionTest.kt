@@ -6,7 +6,7 @@ import net.corda.core.cordapp.Cordapp
 import net.corda.core.cordapp.CordappContext
 import net.corda.core.internal.PLATFORM_VERSION
 import net.corda.core.node.ServiceHub
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.Connection
 import java.sql.Savepoint
 

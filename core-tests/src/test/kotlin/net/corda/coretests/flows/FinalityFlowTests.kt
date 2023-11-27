@@ -77,7 +77,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Assert.assertNotNull
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.SQLException
 import java.util.Random
 import kotlin.test.assertEquals

@@ -11,7 +11,7 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * Test based on the example given as an answer to this SO question:

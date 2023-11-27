@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.ObjectMapper
 import net.corda.client.jackson.internal.CordaModule
 import net.corda.core.flows.StateMachineRunId
 import org.junit.Assert.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 
 class StateMachineRunIdTest {

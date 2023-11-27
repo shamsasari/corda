@@ -12,7 +12,7 @@ import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.amqp.SerializationOutput
 import net.corda.serialization.internal.amqp.SerializerFactoryBuilder
 import org.apache.activemq.artemis.api.core.SimpleString
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import rx.Observable
 import java.time.Instant
 import java.util.concurrent.ConcurrentHashMap

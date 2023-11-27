@@ -9,7 +9,7 @@ import net.corda.node.services.config.FlowOverrideConfig
 import org.hamcrest.CoreMatchers.`is`
 import org.hamcrest.CoreMatchers.instanceOf
 import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import java.lang.IllegalStateException
 

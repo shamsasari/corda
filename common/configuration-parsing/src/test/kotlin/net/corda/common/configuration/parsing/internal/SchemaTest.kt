@@ -3,7 +3,7 @@ package net.corda.common.configuration.parsing.internal
 import com.typesafe.config.ConfigObject
 import com.typesafe.config.ConfigValueFactory
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class SchemaTest {
 

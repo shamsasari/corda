@@ -5,7 +5,7 @@ import net.corda.common.configuration.parsing.internal.Configuration
 import net.corda.common.configuration.parsing.internal.Valid
 import net.corda.common.configuration.parsing.internal.configObject
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class VersionExtractorTest {
 

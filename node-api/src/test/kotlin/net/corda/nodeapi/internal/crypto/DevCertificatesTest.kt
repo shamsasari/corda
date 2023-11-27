@@ -3,7 +3,7 @@ package net.corda.nodeapi.internal.crypto
 import net.corda.core.internal.validate
 import net.corda.nodeapi.internal.loadDevCaTrustStore
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
 import java.security.cert.TrustAnchor
 import java.security.cert.X509Certificate

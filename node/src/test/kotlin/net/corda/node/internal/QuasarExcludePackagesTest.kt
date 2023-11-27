@@ -8,7 +8,7 @@ import net.corda.node.services.config.ConfigHelper
 import net.corda.node.services.config.NodeConfiguration
 import net.corda.node.services.config.schema.v1.V1NodeConfigurationSpec
 import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class QuasarExcludePackagesTest {
 

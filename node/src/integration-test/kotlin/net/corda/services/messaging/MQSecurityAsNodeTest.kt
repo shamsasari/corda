@@ -34,7 +34,7 @@ import org.bouncycastle.asn1.x509.GeneralName
 import org.bouncycastle.asn1.x509.GeneralSubtree
 import org.bouncycastle.asn1.x509.NameConstraints
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import javax.jms.JMSSecurityException
 import javax.security.auth.x500.X500Principal

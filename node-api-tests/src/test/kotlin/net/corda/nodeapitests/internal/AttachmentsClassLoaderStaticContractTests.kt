@@ -32,7 +32,7 @@ import net.corda.testing.services.MockAttachmentStorage
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class AttachmentsClassLoaderStaticContractTests {
     private companion object {

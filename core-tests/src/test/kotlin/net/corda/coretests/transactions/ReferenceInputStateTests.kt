@@ -24,7 +24,7 @@ import net.corda.testing.node.MockServices
 import net.corda.testing.node.ledger
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 const val CONTRACT_ID = "net.corda.coretests.transactions.ReferenceStateTests\$ExampleContract"
 

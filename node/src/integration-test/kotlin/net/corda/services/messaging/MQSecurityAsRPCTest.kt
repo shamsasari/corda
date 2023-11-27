@@ -1,7 +1,7 @@
 package net.corda.services.messaging
 
 import net.corda.testing.node.User
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 /**
  * Runs the security tests with the attacker being a valid RPC user of Alice.

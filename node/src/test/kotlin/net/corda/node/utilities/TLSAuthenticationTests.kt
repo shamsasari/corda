@@ -7,7 +7,7 @@ import net.corda.core.identity.CordaX500Name
 import net.corda.core.internal.*
 import net.corda.nodeapi.internal.crypto.*
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
 import java.io.DataInputStream
 import java.io.DataOutputStream

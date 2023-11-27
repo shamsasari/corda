@@ -18,7 +18,7 @@ import net.corda.testing.common.internal.testNetworkParameters
 import net.corda.testing.node.internal.*
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class ReferencedStatesFlowTests {

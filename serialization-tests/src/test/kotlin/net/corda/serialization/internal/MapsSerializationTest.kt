@@ -14,7 +14,7 @@ import net.corda.testing.internal.kryoSpecific
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Assert.assertArrayEquals
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.util.*
 import kotlin.test.assertEquals

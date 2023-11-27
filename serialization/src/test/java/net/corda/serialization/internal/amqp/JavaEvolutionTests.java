@@ -4,7 +4,7 @@ import net.corda.core.serialization.SerializedBytes;
 import net.corda.serialization.internal.amqp.testutils.AMQPTestUtilsKt;
 import net.corda.serialization.internal.amqp.testutils.TestSerializationContext;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 import org.junit.rules.ExpectedException;
 
 import java.io.IOException;

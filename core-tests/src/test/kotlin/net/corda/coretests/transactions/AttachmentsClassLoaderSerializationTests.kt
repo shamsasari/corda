@@ -22,7 +22,7 @@ import net.corda.testing.services.MockAttachmentStorage
 import org.apache.commons.io.IOUtils
 import org.junit.Assert.assertEquals
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.NotSerializableException
 import java.net.URL
 import kotlin.test.assertFailsWith

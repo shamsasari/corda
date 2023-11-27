@@ -6,7 +6,7 @@ import net.corda.core.contracts.AmountTransfer
 import net.corda.core.contracts.SourceAndAmount
 import net.corda.core.contracts.TokenizableAssetInfo
 import net.corda.finance.*
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigDecimal
 import java.util.*
 import java.util.stream.Collectors

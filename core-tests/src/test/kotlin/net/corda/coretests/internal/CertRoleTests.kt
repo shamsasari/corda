@@ -5,7 +5,7 @@ import net.corda.core.internal.CertRole
 import net.corda.nodeapi.internal.crypto.CertificateType
 import net.corda.nodeapi.internal.crypto.X509Utilities
 import org.bouncycastle.asn1.ASN1Integer
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.security.auth.x500.X500Principal
 import kotlin.test.*
 

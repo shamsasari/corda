@@ -14,7 +14,7 @@ import net.corda.testing.driver.internal.incrementalPortAllocation
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.enclosedCordapp
 import org.h2.jdbc.JdbcSQLNonTransientException
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.DriverManager
 import kotlin.test.assertFailsWith
 import kotlin.test.assertNull

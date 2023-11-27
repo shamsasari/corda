@@ -21,7 +21,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
 import org.junit.After
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class PersistentNetworkMapCacheTest {
     internal companion object {

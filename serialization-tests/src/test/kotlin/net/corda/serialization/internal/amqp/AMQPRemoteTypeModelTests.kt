@@ -7,7 +7,7 @@ import net.corda.serialization.internal.model.RemoteTypeInformation
 import net.corda.testing.core.SerializationEnvironmentRule
 import org.junit.Assert.assertEquals
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 
 class AMQPRemoteTypeModelTests {

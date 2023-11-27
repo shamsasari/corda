@@ -12,7 +12,7 @@ import net.corda.testing.node.internal.FINANCE_WORKFLOWS_CORDAPP
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
 
 class SignatureConstraintGatingTests {

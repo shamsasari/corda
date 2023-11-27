@@ -1,7 +1,7 @@
 package net.corda.core.crypto
 
 import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class SHA2256DigestServiceTest {
     private val service: DigestService = DigestService.sha2_256

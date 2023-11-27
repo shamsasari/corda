@@ -39,7 +39,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Assert.fail
 import org.junit.Ignore
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import rx.Observable
 import rx.subjects.PublishSubject
 import rx.subjects.UnicastSubject

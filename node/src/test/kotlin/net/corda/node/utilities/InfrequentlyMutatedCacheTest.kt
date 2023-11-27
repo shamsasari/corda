@@ -7,7 +7,7 @@ import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
 import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.Phaser
 import kotlin.concurrent.thread
 import kotlin.test.assertEquals

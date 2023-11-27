@@ -19,7 +19,7 @@ import net.corda.nodeapi.internal.persistence.CouldNotCreateDataSourceException
 import net.corda.nodeapi.internal.persistence.DatabaseConfig
 import org.assertj.core.api.Assertions.assertThat
 import org.h2.tools.Server
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.net.InetAddress
 import java.sql.Connection
 import java.sql.DatabaseMetaData

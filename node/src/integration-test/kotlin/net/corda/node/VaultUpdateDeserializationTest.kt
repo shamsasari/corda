@@ -27,7 +27,7 @@ import net.corda.testing.flows.waitForAllFlowsToComplete
 import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.TestCordapp
 import net.corda.testing.node.internal.cordappWithPackages
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.TimeoutException
 import net.corda.contracts.incompatible.version1.AttachmentContract as AttachmentContractV1
 import net.corda.flows.incompatible.version1.AttachmentFlow as AttachmentFlowV1

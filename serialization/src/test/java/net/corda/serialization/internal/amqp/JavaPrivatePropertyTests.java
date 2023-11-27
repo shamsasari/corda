@@ -2,7 +2,7 @@ package net.corda.serialization.internal.amqp;
 
 import net.corda.serialization.internal.amqp.testutils.TestDescriptorBasedSerializerRegistry;
 import net.corda.serialization.internal.amqp.testutils.TestSerializationContext;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import java.io.NotSerializableException;
 

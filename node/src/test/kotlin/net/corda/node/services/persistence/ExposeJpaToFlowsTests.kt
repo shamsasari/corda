@@ -17,7 +17,7 @@ import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.makeTestIdentityService
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.Serializable
 import javax.persistence.Column
 import javax.persistence.Entity

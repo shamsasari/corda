@@ -1,6 +1,6 @@
 package net.corda.node.utilities.logging
 
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertTrue
 
 

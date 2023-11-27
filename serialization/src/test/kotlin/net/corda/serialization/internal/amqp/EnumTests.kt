@@ -13,7 +13,7 @@ import net.corda.serialization.internal.amqp.testutils.testName
 import net.corda.serialization.internal.carpenter.ClassCarpenterImpl
 import org.assertj.core.api.Assertions
 import org.junit.Assert.assertNotSame
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.NotSerializableException
 import java.time.DayOfWeek
 import kotlin.test.assertEquals

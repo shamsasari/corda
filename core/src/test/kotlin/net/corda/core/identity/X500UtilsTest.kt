@@ -1,7 +1,7 @@
 package net.corda.core.identity
 
 import net.corda.core.internal.isEquivalentTo
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.security.auth.x500.X500Principal
 import kotlin.test.assertTrue
 

@@ -4,7 +4,7 @@ import org.mockito.kotlin.mock
 import net.corda.core.internal.stream
 import net.corda.core.utilities.Try
 import net.corda.core.utilities.contextLogger
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import net.corda.nodeapi.internal.lifecycle.NodeLifecycleObserver.Companion.reportSuccess
 import java.util.concurrent.atomic.AtomicLong
 import kotlin.test.assertTrue

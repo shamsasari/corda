@@ -1,7 +1,7 @@
 package net.corda.errorUtilities.docsTable
 
 import junit.framework.TestCase.assertEquals
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.lang.IllegalArgumentException
 import java.nio.file.Paths
 import java.util.*

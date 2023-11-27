@@ -8,7 +8,7 @@ import net.corda.testing.common.internal.eventually
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
 import rx.schedulers.TestScheduler
 import java.nio.file.Path

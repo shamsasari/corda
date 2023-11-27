@@ -10,7 +10,7 @@ import net.corda.services.messaging.SimpleAMQPClient.Companion.sendAndVerify
 import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.singleIdentity
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.jms.JMSException
 
 /**

@@ -12,7 +12,7 @@ import net.corda.testing.core.BOB_NAME
 import net.corda.testing.core.singleIdentity
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class FlowExternalOperationStartFlowTest : AbstractFlowExternalOperationTest() {
 

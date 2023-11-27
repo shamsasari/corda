@@ -23,7 +23,7 @@ import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.NotSerializableException
 
 class RpcCustomSerializersTest {

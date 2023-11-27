@@ -13,7 +13,7 @@ import net.corda.smoketesting.NodeProcess
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 import java.util.concurrent.atomic.AtomicInteger
 import java.util.jar.JarFile

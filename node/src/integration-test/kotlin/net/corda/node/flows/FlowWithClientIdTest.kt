@@ -39,7 +39,7 @@ import org.assertj.core.api.Assertions
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.Before
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import rx.Observable
 import java.time.Duration
 import java.time.Instant

@@ -15,7 +15,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.internal.*
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.util.concurrent.CountDownLatch
 import java.util.concurrent.Executors

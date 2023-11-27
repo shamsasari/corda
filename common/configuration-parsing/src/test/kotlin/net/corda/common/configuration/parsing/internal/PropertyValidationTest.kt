@@ -3,7 +3,7 @@ package net.corda.common.configuration.parsing.internal
 import net.corda.common.validation.internal.Validated.Companion.invalid
 import net.corda.common.validation.internal.Validated.Companion.valid
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class PropertyValidationTest {
 

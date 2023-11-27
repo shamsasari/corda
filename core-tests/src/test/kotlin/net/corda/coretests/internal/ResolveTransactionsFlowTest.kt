@@ -34,7 +34,7 @@ import net.corda.testing.node.internal.enclosedCordapp
 import org.junit.After
 import org.junit.Before
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.ByteArrayOutputStream
 import java.io.InputStream
 import java.util.jar.JarEntry

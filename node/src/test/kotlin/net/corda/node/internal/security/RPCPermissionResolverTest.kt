@@ -2,7 +2,7 @@ package net.corda.node.internal.security
 
 import net.corda.core.messaging.RPCOps
 import net.corda.node.internal.rpc.proxies.RpcAuthHelper.methodFullName
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 import java.time.ZonedDateTime
 import kotlin.test.assertEquals

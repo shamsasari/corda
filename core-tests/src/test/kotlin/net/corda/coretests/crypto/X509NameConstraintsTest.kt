@@ -11,7 +11,7 @@ import org.bouncycastle.asn1.x509.GeneralName
 import org.bouncycastle.asn1.x509.GeneralSubtree
 import org.bouncycastle.asn1.x509.NameConstraints
 import org.bouncycastle.jce.provider.BouncyCastleProvider
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.security.UnrecoverableKeyException
 import java.security.cert.CertPathValidator
 import java.security.cert.CertPathValidatorException

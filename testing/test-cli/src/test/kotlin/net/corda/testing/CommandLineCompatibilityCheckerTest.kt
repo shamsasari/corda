@@ -2,7 +2,7 @@ package net.corda.testing
 
 import org.hamcrest.CoreMatchers.*
 import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import picocli.CommandLine
 import java.util.regex.Pattern
 

@@ -3,7 +3,7 @@ package net.corda.node.services.statemachine
 import net.corda.core.flows.FlowLogic
 import net.corda.core.flows.IllegalFlowLogicException
 import net.corda.core.flows.SchedulableFlow
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import kotlin.reflect.jvm.jvmName
 

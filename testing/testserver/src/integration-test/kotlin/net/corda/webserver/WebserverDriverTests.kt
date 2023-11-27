@@ -10,7 +10,7 @@ import net.corda.testing.driver.WebserverHandle
 import net.corda.testing.node.internal.addressMustBeBound
 import net.corda.testing.node.internal.addressMustNotBeBound
 import net.corda.testing.driver.driver
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.Executors
 import java.util.concurrent.ScheduledExecutorService
 

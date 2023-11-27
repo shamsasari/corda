@@ -3,7 +3,7 @@ package net.corda.serialization.internal.amqp
 import com.google.common.reflect.TypeToken
 import net.corda.serialization.internal.model.TypeIdentifier
 import org.apache.qpid.proton.amqp.UnsignedShort
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.NotSerializableException
 import java.lang.reflect.Type
 import java.time.LocalDateTime

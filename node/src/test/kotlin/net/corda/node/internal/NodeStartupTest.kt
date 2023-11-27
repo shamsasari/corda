@@ -1,7 +1,7 @@
 package net.corda.node.internal
 
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.channels.OverlappingFileLockException
 import java.nio.file.Files
 import java.util.concurrent.CountDownLatch

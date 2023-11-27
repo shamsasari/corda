@@ -9,7 +9,7 @@ import net.corda.node.internal.AbstractNode
 import net.corda.node.utilities.registration.CertificateRequestException
 import net.corda.testing.core.SerializationEnvironmentRule
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import kotlin.test.assertEquals

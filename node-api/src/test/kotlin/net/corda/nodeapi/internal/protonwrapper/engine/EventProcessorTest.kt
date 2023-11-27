@@ -16,7 +16,7 @@ import net.corda.testing.core.BOB_NAME
 import org.apache.qpid.proton.amqp.transport.Begin
 import org.apache.qpid.proton.amqp.transport.Open
 import org.apache.qpid.proton.engine.impl.TransportImpl
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.TimeUnit
 import kotlin.test.assertEquals
 

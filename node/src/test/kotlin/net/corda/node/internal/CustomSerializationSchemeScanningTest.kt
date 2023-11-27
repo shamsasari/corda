@@ -5,7 +5,7 @@ import net.corda.core.serialization.SerializationContext
 import net.corda.core.serialization.SerializationSchemeContext
 import net.corda.core.utilities.ByteSequence
 import net.corda.node.internal.classloading.scanForCustomSerializationScheme
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 import kotlin.test.assertFailsWith
 

@@ -7,7 +7,7 @@ import net.corda.serialization.internal.amqp.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Assert.assertEquals
 import org.junit.Assert.assertTrue
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.fail
 import java.lang.reflect.Type
 import java.util.*

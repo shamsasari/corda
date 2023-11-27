@@ -23,7 +23,7 @@ import net.corda.testing.node.internal.assertUncompletedCheckpoints
 import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import kotlin.test.assertFailsWith
 

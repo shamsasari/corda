@@ -16,7 +16,7 @@ import org.apache.activemq.artemis.core.server.ServerSession
 import org.apache.activemq.artemis.protocol.amqp.broker.AMQPMessage
 import org.apache.activemq.artemis.protocol.amqp.broker.AMQPStandardMessage
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class UserValidationPluginTest {
     private val plugin = UserValidationPlugin()

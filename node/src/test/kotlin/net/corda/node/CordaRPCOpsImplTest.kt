@@ -60,7 +60,7 @@ import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.After
 import org.junit.Assert.assertArrayEquals
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import rx.Observable
 import java.io.ByteArrayOutputStream
 import kotlin.test.assertEquals

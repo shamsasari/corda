@@ -25,7 +25,7 @@ import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.AfterClass
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.security.PublicKey
 
 class SwapIdentitiesFlowTests {

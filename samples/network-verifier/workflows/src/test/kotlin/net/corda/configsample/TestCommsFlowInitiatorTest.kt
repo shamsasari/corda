@@ -6,7 +6,7 @@ import net.corda.testing.core.DUMMY_NOTARY_NAME
 import net.corda.testing.core.TestIdentity
 import net.corda.verification.flows.TestCommsFlowInitiator
 import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class TestCommsFlowInitiatorTest {
 

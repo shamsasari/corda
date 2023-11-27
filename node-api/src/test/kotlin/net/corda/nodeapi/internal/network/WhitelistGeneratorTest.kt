@@ -6,7 +6,7 @@ import net.corda.core.node.services.AttachmentId
 import net.corda.testing.common.internal.testNetworkParameters
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatIllegalArgumentException
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class WhitelistGeneratorTest {
     @Test

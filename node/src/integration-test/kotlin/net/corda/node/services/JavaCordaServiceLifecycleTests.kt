@@ -8,7 +8,7 @@ import net.corda.node.services.JavaCordaServiceLifecycle.eventsCaptured
 import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class JavaCordaServiceLifecycleTests {

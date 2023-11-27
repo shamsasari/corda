@@ -17,7 +17,7 @@ import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startNode
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.assertj.core.api.AssertionsForInterfaceTypes.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.SQLException
 import kotlin.test.assertEquals
 

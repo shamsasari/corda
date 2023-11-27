@@ -21,7 +21,7 @@ import net.corda.testing.driver.driver
 import net.corda.testing.internal.IS_S390X
 import org.junit.Assume
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Duration
 import java.time.Instant
 import kotlin.test.assertTrue

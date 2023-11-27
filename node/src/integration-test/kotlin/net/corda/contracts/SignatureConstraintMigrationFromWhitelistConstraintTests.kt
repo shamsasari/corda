@@ -15,7 +15,7 @@ import net.corda.testing.driver.NodeParameters
 import net.corda.testing.node.internal.internalDriver
 import org.assertj.core.api.Assertions
 import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 import kotlin.test.assertNotNull
 import kotlin.test.assertTrue

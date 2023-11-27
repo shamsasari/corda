@@ -8,7 +8,7 @@ import net.corda.core.serialization.serialize
 import net.corda.testing.core.SerializationEnvironmentRule
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.security.SignatureException
 import kotlin.test.assertEquals
 

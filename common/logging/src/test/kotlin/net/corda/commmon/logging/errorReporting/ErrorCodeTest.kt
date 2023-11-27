@@ -5,7 +5,7 @@ import net.corda.common.logging.errorReporting.ErrorCode
 import net.corda.common.logging.errorReporting.ErrorCodes
 import net.corda.common.logging.errorReporting.ErrorResource
 import net.corda.common.logging.errorReporting.ResourceBundleProperties
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertTrue
 

@@ -4,7 +4,7 @@ import net.corda.core.serialization.SerializationDefaults;
 import net.corda.core.serialization.SerializationFactory;
 import net.corda.testing.core.SerializationEnvironmentRule;
 import org.junit.Rule;
-import org.junit.Test;
+import org.junit.jupiter.api.Test;
 
 import static net.corda.core.serialization.SerializationAPIKt.serialize;
 import static net.corda.core.serialization.internal.CheckpointSerializationAPIKt.checkpointSerialize;

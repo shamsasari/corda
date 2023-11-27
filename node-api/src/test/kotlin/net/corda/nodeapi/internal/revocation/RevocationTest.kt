@@ -13,7 +13,7 @@ import net.corda.testing.core.createCRL
 import org.bouncycastle.asn1.x500.X500Name
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized

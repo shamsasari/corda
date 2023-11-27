@@ -16,7 +16,7 @@ import net.corda.nodeapi.RPCApi
 import net.corda.nodeapi.internal.rpc.ObservableSubscription
 import net.corda.serialization.internal.amqp.*
 import org.apache.activemq.artemis.api.core.SimpleString
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import rx.Notification
 import rx.Observable
 import rx.subjects.UnicastSubject

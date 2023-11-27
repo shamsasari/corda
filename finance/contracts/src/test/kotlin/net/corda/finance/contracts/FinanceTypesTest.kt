@@ -1,7 +1,7 @@
 package net.corda.finance.contracts
 
 import net.corda.finance.workflows.utils.loadTestCalendar
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.LocalDate
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

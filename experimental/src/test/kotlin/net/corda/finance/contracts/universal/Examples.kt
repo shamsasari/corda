@@ -2,7 +2,7 @@ package net.corda.finance.contracts.universal
 
 import net.corda.finance.USD
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 // various example arrangements using basic syntax
 

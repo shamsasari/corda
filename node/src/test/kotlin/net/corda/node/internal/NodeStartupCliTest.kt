@@ -7,7 +7,7 @@ import net.corda.nodeapi.internal.config.UnknownConfigKeysPolicy
 import org.assertj.core.api.Assertions
 import org.junit.BeforeClass
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.slf4j.LoggerFactory
 import org.slf4j.event.Level
 import picocli.CommandLine

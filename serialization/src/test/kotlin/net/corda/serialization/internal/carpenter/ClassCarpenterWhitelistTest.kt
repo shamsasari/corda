@@ -4,7 +4,7 @@ import net.corda.core.serialization.ClassWhitelist
 import net.corda.core.serialization.CordaSerializable
 import org.assertj.core.api.Assertions
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.NotSerializableException
 
 class ClassCarpenterWhitelistTest {

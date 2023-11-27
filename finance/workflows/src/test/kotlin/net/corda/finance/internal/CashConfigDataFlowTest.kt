@@ -9,7 +9,7 @@ import net.corda.testing.node.MockNodeParameters
 import net.corda.testing.node.internal.FINANCE_WORKFLOWS_CORDAPP
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class CashConfigDataFlowTest {
     private val mockNet = MockNetwork(MockNetworkParameters(threadPerNode = true))

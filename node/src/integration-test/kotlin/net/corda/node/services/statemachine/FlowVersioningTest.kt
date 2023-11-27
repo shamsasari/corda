@@ -14,7 +14,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.internal.NodeBasedTest
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class FlowVersioningTest : NodeBasedTest() {
     @Test

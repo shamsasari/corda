@@ -2,7 +2,7 @@ package net.corda.core.internal
 
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
 import java.net.URI
 import java.nio.file.FileSystems

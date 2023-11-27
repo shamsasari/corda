@@ -13,7 +13,7 @@ import net.corda.testing.driver.logFile
 import net.corda.testing.node.internal.enclosedCordapp
 import org.assertj.core.api.Assertions
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Duration
 
 @Ignore("TODO JDK17: Fixme")

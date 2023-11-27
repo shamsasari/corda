@@ -18,7 +18,7 @@ import net.corda.testing.core.SerializationEnvironmentRule
 import net.corda.testing.core.TestIdentity
 import org.junit.Assert
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito
 
 class NetworkParametersHotloaderTest {

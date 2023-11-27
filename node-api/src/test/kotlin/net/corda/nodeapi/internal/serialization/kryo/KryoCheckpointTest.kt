@@ -1,7 +1,7 @@
 package net.corda.nodeapi.internal.serialization.kryo
 
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import java.util.LinkedList
 import kotlin.test.assertEquals

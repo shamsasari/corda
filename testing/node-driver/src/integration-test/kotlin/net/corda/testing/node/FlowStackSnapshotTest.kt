@@ -13,7 +13,7 @@ import net.corda.node.services.Permissions.Companion.startFlow
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.time.LocalDate
 import kotlin.test.assertEquals

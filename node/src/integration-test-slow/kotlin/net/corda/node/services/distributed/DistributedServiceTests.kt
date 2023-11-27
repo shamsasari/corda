@@ -26,7 +26,7 @@ import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import net.corda.testing.node.internal.cordappWithPackages
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import rx.Observable
 import java.util.*
 import kotlin.test.assertEquals

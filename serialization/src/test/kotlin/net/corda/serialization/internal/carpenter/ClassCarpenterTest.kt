@@ -3,7 +3,7 @@ package net.corda.serialization.internal.carpenter
 import net.corda.core.internal.uncheckedCast
 import net.corda.serialization.internal.AllWhitelist
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.beans.Introspector
 import java.lang.reflect.Field
 import java.lang.reflect.Method

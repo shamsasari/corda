@@ -8,7 +8,7 @@ import net.corda.testing.internal.chooseIdentity
 import net.corda.testing.node.User
 import org.assertj.core.api.Assertions
 import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class FlowsExecutionModeRpcTest {
 

@@ -1,7 +1,7 @@
 package net.corda.core.contracts
 
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class PrivacySaltTest {
     @Test

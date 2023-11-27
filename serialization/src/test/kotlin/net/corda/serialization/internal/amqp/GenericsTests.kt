@@ -13,7 +13,7 @@ import net.corda.serialization.internal.amqp.testutils.*
 import net.corda.serialization.internal.AllWhitelist
 import net.corda.serialization.internal.amqp.testutils.ProjectStructure.projectRootDir
 import net.corda.serialization.internal.carpenter.ClassCarpenterImpl
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.net.URI
 import java.util.*

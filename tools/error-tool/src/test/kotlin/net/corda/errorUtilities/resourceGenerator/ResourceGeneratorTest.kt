@@ -2,7 +2,7 @@ package net.corda.errorUtilities.resourceGenerator
 
 import junit.framework.TestCase.assertEquals
 import net.corda.common.logging.errorReporting.ResourceBundleProperties
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 
 class ResourceGeneratorTest {

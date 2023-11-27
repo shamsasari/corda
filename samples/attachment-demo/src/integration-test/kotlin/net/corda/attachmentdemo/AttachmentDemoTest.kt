@@ -13,7 +13,7 @@ import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.DummyClusterSpec
 import net.corda.testing.node.internal.findCordapp
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.CompletableFuture.supplyAsync
 
 class AttachmentDemoTest {

@@ -25,7 +25,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.InputStream
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

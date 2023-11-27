@@ -4,7 +4,7 @@ import net.corda.core.utilities.getOrThrow
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import org.assertj.core.api.Assertions.assertThatCode
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class NodeHandleTests {
     @Test

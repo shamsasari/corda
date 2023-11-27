@@ -18,7 +18,7 @@ import net.corda.testing.core.*
 import net.corda.testing.node.MockServices
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.function.Predicate
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

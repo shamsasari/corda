@@ -7,7 +7,7 @@ import com.typesafe.config.ConfigRenderOptions
 import net.corda.core.internal.div
 import net.corda.core.internal.writeText
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Paths
 
 class CordappConfigFileProviderTests {

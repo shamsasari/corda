@@ -1,7 +1,7 @@
 package net.corda.node.services.diagnostics
 
 import net.corda.common.logging.CordaVersion
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class NodeDiagnosticsServiceTest {

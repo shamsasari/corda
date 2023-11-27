@@ -24,7 +24,7 @@ import net.corda.testing.internal.TestingNamedCacheFactory
 import org.assertj.core.api.Assertions.fail
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.math.BigInteger

@@ -3,7 +3,7 @@ package net.corda.testing.node.internal
 import net.corda.core.internal.readText
 import net.corda.core.internal.writeText
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.rules.TemporaryFolder
 import java.nio.file.Paths
 import java.util.concurrent.TimeUnit

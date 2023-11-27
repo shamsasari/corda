@@ -5,7 +5,7 @@ import net.corda.core.identity.AbstractParty
 import net.corda.core.identity.AnonymousParty
 import net.corda.core.identity.Party
 import net.corda.testing.core.ALICE_NAME
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals

@@ -3,7 +3,7 @@ package net.corda.notary.experimental.bftsmart
 import net.corda.core.utilities.NetworkHostAndPort
 import net.corda.notary.experimental.bftsmart.BFTSmartConfigInternal.Companion.portIsClaimedFormat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class BFTSmartConfigTests {

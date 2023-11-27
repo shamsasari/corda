@@ -14,7 +14,7 @@ import net.corda.node.services.events.NodeSchedulerService
 import net.corda.testing.node.TestClock
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Clock
 import java.time.Duration
 import java.util.concurrent.CompletableFuture

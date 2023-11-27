@@ -18,7 +18,7 @@ import net.corda.testing.core.TestIdentity
 import net.corda.testing.node.MockServices
 import net.corda.testing.node.ledger
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class PackageOwnershipVerificationTests {
 

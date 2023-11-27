@@ -33,7 +33,7 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
 import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.security.PublicKey
 import java.util.*
 import java.util.concurrent.atomic.AtomicBoolean

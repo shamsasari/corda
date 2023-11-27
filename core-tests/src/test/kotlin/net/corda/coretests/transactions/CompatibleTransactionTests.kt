@@ -14,7 +14,7 @@ import net.corda.testing.contracts.DummyContract
 import net.corda.testing.contracts.DummyState
 import net.corda.testing.core.*
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.util.function.Predicate
 import kotlin.test.*

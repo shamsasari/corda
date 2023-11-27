@@ -8,7 +8,7 @@ import net.corda.node.services.config.parseAsNodeConfiguration
 import net.corda.nodeapi.internal.config.User
 import net.corda.nodeapi.internal.config.toProperties
 import net.corda.webserver.WebServerConfig
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Path
 import java.nio.file.Paths
 import kotlin.test.assertEquals

@@ -2,7 +2,7 @@ package net.corda.core.crypto
 
 import net.corda.core.crypto.SecureHash.Companion.SHA2_256
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import java.lang.IllegalArgumentException
 import kotlin.test.assertEquals

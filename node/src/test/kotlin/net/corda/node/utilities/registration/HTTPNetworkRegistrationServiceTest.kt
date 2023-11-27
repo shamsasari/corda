@@ -8,7 +8,7 @@ import net.corda.node.VersionInfo
 import net.corda.node.services.config.NetworkServicesConfig
 import net.corda.coretesting.internal.rigorousMock
 import org.bouncycastle.pkcs.PKCS10CertificationRequest
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.InputStream
 import java.io.OutputStream
 import java.net.HttpURLConnection

@@ -33,7 +33,7 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import org.hibernate.exception.ConstraintViolationException
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.lang.RuntimeException
 import java.sql.Connection
 import java.util.concurrent.ExecutorService

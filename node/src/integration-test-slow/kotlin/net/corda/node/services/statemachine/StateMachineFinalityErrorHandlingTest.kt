@@ -16,7 +16,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.NotarySpec
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.TimeoutException
 import kotlin.test.assertEquals
 import kotlin.test.assertFailsWith

@@ -11,7 +11,7 @@ import net.corda.testing.node.internal.startRpcClient
 import org.assertj.core.api.Assertions
 import org.junit.Assert.*
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import rx.Observable
 
 class RPCMultipleInterfacesTests {

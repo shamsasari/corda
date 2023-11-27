@@ -23,7 +23,7 @@ import net.corda.coretesting.internal.matchers.rpc.willThrow
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.*
 import org.junit.AfterClass
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class ContractUpgradeFlowRPCTest : WithContracts, WithFinality {
     companion object {

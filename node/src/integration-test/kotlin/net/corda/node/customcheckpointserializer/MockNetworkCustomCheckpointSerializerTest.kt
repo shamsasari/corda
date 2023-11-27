@@ -6,7 +6,7 @@ import net.corda.testing.node.MockNetworkParameters
 import org.assertj.core.api.Assertions
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class MockNetworkCustomCheckpointSerializerTest {
     private lateinit var mockNetwork: MockNetwork

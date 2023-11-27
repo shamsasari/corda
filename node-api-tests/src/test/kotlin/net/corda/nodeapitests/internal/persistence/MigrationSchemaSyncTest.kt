@@ -16,7 +16,7 @@ import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import javax.persistence.Column
 import javax.persistence.Entity

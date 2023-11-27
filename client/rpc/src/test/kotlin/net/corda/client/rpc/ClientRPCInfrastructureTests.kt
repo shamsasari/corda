@@ -13,7 +13,7 @@ import net.corda.testing.node.internal.rpcDriver
 import net.corda.testing.node.internal.rpcTestUser
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import rx.Observable

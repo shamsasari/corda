@@ -30,7 +30,7 @@ import org.hibernate.annotations.Cascade
 import org.hibernate.annotations.CascadeType
 import org.junit.Before
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.lang.IllegalArgumentException
 import javax.persistence.Entity
 import javax.persistence.Id

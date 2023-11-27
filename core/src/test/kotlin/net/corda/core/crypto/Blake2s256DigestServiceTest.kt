@@ -4,7 +4,7 @@ import net.corda.core.crypto.internal.DigestAlgorithmFactory
 import net.corda.core.internal.BLAKE2s256DigestAlgorithm
 import org.junit.Assert.assertArrayEquals
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class Blake2s256DigestServiceTest {

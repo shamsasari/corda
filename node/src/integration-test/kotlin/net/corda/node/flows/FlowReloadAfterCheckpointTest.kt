@@ -32,7 +32,7 @@ import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.internal.FINANCE_CORDAPPS
 import net.corda.testing.node.internal.enclosedCordapp
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.SQLTransientConnectionException
 import java.time.Duration
 import java.util.concurrent.ConcurrentLinkedQueue

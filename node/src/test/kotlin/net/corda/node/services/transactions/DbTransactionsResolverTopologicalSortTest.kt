@@ -3,7 +3,7 @@ package net.corda.node.services.transactions
 import net.corda.core.crypto.SecureHash
 import net.corda.node.services.DbTransactionsResolver
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class DbTransactionsResolverTopologicalSortTest {
     private val topologicalSort = DbTransactionsResolver.TopologicalSort()

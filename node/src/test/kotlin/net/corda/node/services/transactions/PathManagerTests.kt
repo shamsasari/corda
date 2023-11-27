@@ -1,7 +1,7 @@
 package net.corda.node.services.transactions
 
 import net.corda.core.internal.exists
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.nio.file.Files
 import kotlin.test.assertFailsWith
 import kotlin.test.assertFalse

@@ -3,7 +3,7 @@ package net.corda.coretests.crypto
 import net.corda.core.crypto.*
 import net.corda.testing.core.SerializationEnvironmentRule
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.security.KeyPair
 import java.security.SignatureException

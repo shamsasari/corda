@@ -5,7 +5,7 @@ import net.corda.nodeapi.internal.crypto.AesEncryption.IV_SIZE_BYTES
 import net.corda.nodeapi.internal.crypto.AesEncryption.KEY_SIZE_BYTES
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.security.GeneralSecurityException
 
 class AesEncryptionTest {

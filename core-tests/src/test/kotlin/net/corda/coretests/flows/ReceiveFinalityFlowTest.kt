@@ -22,7 +22,7 @@ import net.corda.testing.node.MockNetworkNotarySpec
 import net.corda.testing.node.internal.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import rx.Observable
 
 class ReceiveFinalityFlowTest {

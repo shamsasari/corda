@@ -13,7 +13,7 @@ import net.corda.testing.node.internal.RPCDriverDSL
 import net.corda.testing.node.internal.rpcDriver
 import org.apache.activemq.artemis.utils.collections.ConcurrentHashSet
 import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import rx.Observable

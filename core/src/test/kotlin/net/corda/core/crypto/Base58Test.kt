@@ -1,7 +1,7 @@
 package net.corda.core.crypto
 
 import org.apache.commons.lang3.ArrayUtils.EMPTY_BYTE_ARRAY
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.math.BigInteger
 import java.util.*
 import kotlin.test.assertEquals

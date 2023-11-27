@@ -4,7 +4,7 @@ import net.corda.core.messaging.RPCOps
 import net.corda.core.utilities.millis
 import net.corda.testing.node.internal.RPCDriverDSL
 import net.corda.testing.node.internal.rpcDriver
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import rx.Observable

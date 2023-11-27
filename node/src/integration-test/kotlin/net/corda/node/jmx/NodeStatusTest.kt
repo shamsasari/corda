@@ -5,7 +5,7 @@ import net.corda.nodeapi.internal.NodeStatus
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.JmxPolicy
 import net.corda.testing.driver.driver
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.net.HttpURLConnection
 import java.net.HttpURLConnection.HTTP_OK
 import java.net.URL

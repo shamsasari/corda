@@ -30,7 +30,7 @@ import net.corda.testing.node.internal.cordappWithPackages
 import net.corda.testing.node.internal.enclosedCordapp
 import org.junit.Ignore
 import org.junit.Assume
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.util.*
 import kotlin.test.assertEquals

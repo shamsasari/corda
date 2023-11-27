@@ -6,7 +6,7 @@ import net.corda.node.services.messaging.Message
 import net.corda.coretesting.internal.rigorousMock
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

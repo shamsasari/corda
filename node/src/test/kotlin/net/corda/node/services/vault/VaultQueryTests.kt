@@ -44,7 +44,7 @@ import org.assertj.core.api.Assertions.assertThatCode
 import org.junit.ClassRule
 import org.junit.Ignore
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.rules.ExpectedException
 import org.junit.rules.ExternalResource
 import java.time.Duration

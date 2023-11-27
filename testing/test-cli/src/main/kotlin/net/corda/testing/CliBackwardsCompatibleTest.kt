@@ -1,7 +1,7 @@
 package net.corda.testing
 
 import junit.framework.AssertionFailedError
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 open class CliBackwardsCompatibleTest(val clazz: Class<*>) {
 

@@ -34,7 +34,7 @@ import net.corda.testing.node.makeTestIdentityService
 import org.assertj.core.api.Assertions
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.concurrent.atomic.AtomicInteger
 import kotlin.test.*
 

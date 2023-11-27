@@ -8,7 +8,7 @@ import net.corda.testing.core.SerializationEnvironmentRule
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 
 class SerDeserCarpentryTest {
     @Rule

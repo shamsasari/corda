@@ -15,7 +15,7 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import net.corda.testing.node.User
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertNotNull
 import net.corda.core.internal.messaging.FlowManagerRPCOps as InternalFlowManagerRPCOps
 

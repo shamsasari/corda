@@ -2,7 +2,7 @@ package net.corda.client.jackson
 
 import net.corda.core.crypto.SecureHash
 import org.junit.Assert.assertArrayEquals
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

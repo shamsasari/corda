@@ -14,7 +14,7 @@ import net.corda.core.utilities.getOrThrow
 import org.assertj.core.api.Assertions.catchThrowable
 import org.hamcrest.Matchers.lessThanOrEqualTo
 import org.junit.Assert.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.ExecutorService
 import java.util.concurrent.Executors

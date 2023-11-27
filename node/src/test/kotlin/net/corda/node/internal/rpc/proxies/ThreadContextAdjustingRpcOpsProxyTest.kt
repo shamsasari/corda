@@ -5,7 +5,7 @@ import org.mockito.kotlin.mock
 import net.corda.core.flows.StateMachineRunId
 import net.corda.core.messaging.CordaRPCOps
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.mockito.Mockito.`when`
 
 class ThreadContextAdjustingRpcOpsProxyTest {

@@ -46,7 +46,7 @@ import org.junit.Assert.assertTrue
 import org.junit.Before
 import org.junit.Ignore
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.security.PublicKey
 import java.time.Instant
 import kotlin.test.assertFailsWith

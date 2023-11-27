@@ -20,7 +20,7 @@ import net.corda.testing.node.internal.enclosedCordapp
 import org.hibernate.annotations.Cascade
 import org.hibernate.annotations.CascadeType
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.persistence.*
 import kotlin.test.assertEquals
 import kotlin.test.assertTrue

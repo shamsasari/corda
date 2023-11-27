@@ -3,7 +3,7 @@ package net.corda.testing.node.internal
 import net.corda.core.internal.div
 import net.corda.testing.common.internal.ProjectStructure.projectRootDir
 import net.corda.testing.node.internal.ProcessUtilities.startJavaProcess
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class InternalMockNetworkIntegrationTests {

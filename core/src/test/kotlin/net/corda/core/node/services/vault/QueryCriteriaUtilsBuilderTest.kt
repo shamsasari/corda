@@ -22,7 +22,7 @@ import net.corda.core.node.services.vault.ColumnPredicate.NullExpression
 import net.corda.core.node.services.vault.CriteriaExpression.ColumnPredicateExpression
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.ObjectAssert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.persistence.Entity
 
 class QueryCriteriaUtilsBuilderTest {

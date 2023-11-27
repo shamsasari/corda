@@ -2,7 +2,7 @@ package net.corda.core.internal.utilities
 
 import net.corda.core.obfuscator.XorInputStream
 import org.junit.Assert
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 

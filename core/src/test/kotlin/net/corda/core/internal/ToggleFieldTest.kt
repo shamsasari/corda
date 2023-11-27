@@ -8,7 +8,7 @@ import net.corda.core.internal.concurrent.fork
 import net.corda.core.utilities.getOrThrow
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.rules.TestRule
 import org.junit.runners.model.Statement
 import org.slf4j.Logger

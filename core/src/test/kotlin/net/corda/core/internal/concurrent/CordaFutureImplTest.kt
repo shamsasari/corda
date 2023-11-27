@@ -5,7 +5,7 @@ import net.corda.core.concurrent.CordaFuture
 import net.corda.core.internal.join
 import net.corda.core.utilities.getOrThrow
 import org.assertj.core.api.Assertions
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.slf4j.Logger
 import java.util.concurrent.Executors
 import java.util.concurrent.atomic.AtomicBoolean

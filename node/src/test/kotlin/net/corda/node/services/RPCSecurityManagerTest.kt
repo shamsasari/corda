@@ -14,7 +14,7 @@ import net.corda.nodeapi.internal.config.User
 import net.corda.testing.internal.TestingNamedCacheFactory
 import net.corda.testing.internal.fromUserList
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.security.auth.login.FailedLoginException
 import kotlin.reflect.KFunction
 import kotlin.test.assertFails

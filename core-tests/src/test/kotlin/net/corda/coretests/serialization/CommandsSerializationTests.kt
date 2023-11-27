@@ -6,7 +6,7 @@ import net.corda.finance.contracts.CommercialPaper
 import net.corda.finance.contracts.asset.Cash
 import net.corda.testing.core.SerializationEnvironmentRule
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class CommandsSerializationTests {

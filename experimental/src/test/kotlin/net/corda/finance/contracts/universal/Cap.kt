@@ -19,7 +19,7 @@ import net.corda.testing.node.MockServices
 import net.corda.testing.node.transaction
 import org.junit.Ignore
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Instant
 import java.time.LocalDate
 

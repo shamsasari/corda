@@ -4,7 +4,7 @@ import net.corda.core.internal.declaredField
 import net.corda.serialization.internal.ByteBufferOutputStream
 import org.assertj.core.api.Assertions.catchThrowable
 import org.junit.Assert.assertArrayEquals
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.io.*
 import java.nio.BufferOverflowException
 import java.util.*

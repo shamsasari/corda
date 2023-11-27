@@ -3,7 +3,7 @@ package net.corda.node.jmx
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.JmxPolicy
 import net.corda.testing.driver.driver
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.net.HttpURLConnection
 import java.net.URL
 import kotlin.test.assertTrue

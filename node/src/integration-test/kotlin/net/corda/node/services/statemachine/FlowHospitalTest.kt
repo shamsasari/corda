@@ -57,7 +57,7 @@ import net.corda.testing.node.testContext
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.sql.SQLException
 import java.util.Random
 import java.util.concurrent.CountDownLatch

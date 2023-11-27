@@ -23,7 +23,7 @@ import org.apache.shiro.authc.credential.DefaultPasswordService
 import org.junit.After
 import org.junit.Assume
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.junit.runner.RunWith
 import org.junit.runners.Parameterized
 import java.sql.Connection

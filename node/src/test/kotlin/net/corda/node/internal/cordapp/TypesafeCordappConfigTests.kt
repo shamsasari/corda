@@ -2,7 +2,7 @@ package net.corda.node.internal.cordapp
 
 import com.typesafe.config.ConfigFactory
 import net.corda.core.cordapp.CordappConfigException
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import org.assertj.core.api.Assertions.assertThat
 
 class TypesafeCordappConfigTests {

@@ -31,7 +31,7 @@ import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.hibernate.exception.ConstraintViolationException
 import org.junit.After
 import org.junit.Before
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.lang.management.ManagementFactory
 import java.sql.SQLException
 import java.sql.SQLTransientConnectionException

@@ -38,7 +38,7 @@ import net.corda.testing.node.internal.rpcDriver
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.lang.IllegalStateException
 import java.lang.RuntimeException
 import java.lang.Thread.sleep

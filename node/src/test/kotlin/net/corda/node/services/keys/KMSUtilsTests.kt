@@ -10,7 +10,7 @@ import net.corda.testing.node.MockServices
 import net.corda.testing.node.makeTestIdentityService
 import org.bouncycastle.asn1.DEROctetString
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
 
 class KMSUtilsTests {

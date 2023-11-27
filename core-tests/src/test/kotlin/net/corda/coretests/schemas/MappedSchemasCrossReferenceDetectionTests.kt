@@ -6,7 +6,7 @@ import net.corda.core.schemas.MappedSchemaValidator.methodsFromOtherMappedSchema
 import net.corda.core.schemas.PersistentState
 import net.corda.finance.schemas.CashSchema
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.persistence.*
 
 class MappedSchemasCrossReferenceDetectionTests {

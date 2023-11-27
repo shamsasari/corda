@@ -3,7 +3,7 @@ package net.corda.node
 import com.google.common.base.Stopwatch
 import net.corda.testing.driver.driver
 import org.junit.Ignore
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.util.*
 import java.util.concurrent.TimeUnit
 

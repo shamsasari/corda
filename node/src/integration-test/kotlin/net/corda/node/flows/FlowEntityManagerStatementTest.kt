@@ -12,7 +12,7 @@ import net.corda.testing.core.ALICE_NAME
 import net.corda.testing.driver.DriverParameters
 import net.corda.testing.driver.driver
 import org.hibernate.exception.ConstraintViolationException
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.persistence.PersistenceException
 import kotlin.test.assertEquals
 

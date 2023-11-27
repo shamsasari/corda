@@ -10,7 +10,7 @@ import net.corda.testing.internal.configureDatabase
 import net.corda.testing.node.MockServices
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import javax.persistence.Column
 import javax.persistence.Entity
 import javax.persistence.Id

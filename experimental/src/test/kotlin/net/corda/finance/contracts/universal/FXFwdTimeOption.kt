@@ -3,7 +3,7 @@ package net.corda.finance.contracts.universal
 import net.corda.testing.core.SerializationEnvironmentRule
 import org.junit.Ignore
 import org.junit.Rule
-import org.junit.Test
+import org.junit.jupiter.api.Test
 import java.time.Instant
 
 class FXFwdTimeOption {
