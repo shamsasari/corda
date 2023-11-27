@@ -31,7 +31,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.testing.node.TestClock
 import net.corda.testing.node.internal.*
 import org.hamcrest.Matchers.instanceOf
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.Assert.assertThat
 import org.junit.BeforeClass
 import org.junit.Ignore
@@ -64,7 +64,7 @@ class BFTNotaryServiceTests {
             node = started.second
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun stopNodes() {
             mockNet.stopNodes()

@@ -25,7 +25,7 @@ import net.corda.testing.node.MockNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.StartedMockNode
 import net.corda.testing.node.internal.cordappsForPackages
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.BeforeClass
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.condition.DisabledOnJre
@@ -69,7 +69,7 @@ class VaultQueryJoinTest {
             System.setProperty("net.corda.vault.query.disable.corda3879", "false");
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun teardown() {
             mockNetwork?.stopNodes()

@@ -37,7 +37,7 @@ import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.enclosedCordapp
 import org.hamcrest.CoreMatchers.`is`
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.Assert
 import org.junit.jupiter.api.Test
 import java.security.PublicKey
@@ -51,7 +51,7 @@ class CollectSignaturesFlowTests : WithContracts {
         private const val MAGIC_NUMBER = 1337
 
         @JvmStatic
-        @AfterClass
+        @AfterAll
         fun tearDown() = classMockNet.stopNodes()
     }
 

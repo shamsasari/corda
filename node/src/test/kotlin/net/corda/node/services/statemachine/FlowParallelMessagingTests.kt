@@ -22,7 +22,7 @@ import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.BeforeClass
 import org.junit.jupiter.api.Test
 import kotlin.test.assertEquals
@@ -57,7 +57,7 @@ class FlowParallelMessagingTests {
             recipientParty2 = recipientNode2.info.singleIdentity()
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun cleanUp() {
             mockNet.stopNodes()

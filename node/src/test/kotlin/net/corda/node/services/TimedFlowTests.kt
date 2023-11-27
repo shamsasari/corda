@@ -39,7 +39,7 @@ import net.corda.testing.internal.LogHelper
 import net.corda.testing.node.InMemoryMessagingNetwork
 import net.corda.testing.node.MockNetworkParameters
 import net.corda.testing.node.internal.*
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.Before
 import org.junit.BeforeClass
 import org.junit.jupiter.api.Test
@@ -87,7 +87,7 @@ class TimedFlowTests {
             patientNode = started.third
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun stopNodes() {
             mockNet.stopNodes()

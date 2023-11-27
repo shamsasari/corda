@@ -71,7 +71,7 @@ class ConstraintsPropagationTests {
             hashToSignatureConstraintsKey = keyStoreDir.path.generateKey("testAlias", "testPassword", ALICE_NAME.toString())
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun cleanUpAfterClass() {
             keyStoreDir.close()

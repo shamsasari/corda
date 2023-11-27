@@ -22,7 +22,7 @@ import net.corda.coretesting.internal.matchers.rpc.willReturn
 import net.corda.coretesting.internal.matchers.rpc.willThrow
 import net.corda.testing.node.User
 import net.corda.testing.node.internal.*
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.jupiter.api.Test
 
 class ContractUpgradeFlowRPCTest : WithContracts, WithFinality {
@@ -30,7 +30,7 @@ class ContractUpgradeFlowRPCTest : WithContracts, WithFinality {
         private val classMockNet = InternalMockNetwork(cordappsForAllNodes = listOf(DUMMY_CONTRACTS_CORDAPP, enclosedCordapp()))
 
         @JvmStatic
-        @AfterClass
+        @AfterAll
         fun tearDown() = classMockNet.stopNodes()
     }
 

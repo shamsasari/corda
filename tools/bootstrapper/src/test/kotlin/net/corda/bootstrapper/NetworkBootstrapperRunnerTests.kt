@@ -75,7 +75,7 @@ class NetworkBootstrapperRunnerTests {
             alicePublicKeyDSA = dirAliceDSA.getPublicKey(ALICE, ALICE_PASS)
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun afterClass() {
             dirAlice.deleteRecursively()

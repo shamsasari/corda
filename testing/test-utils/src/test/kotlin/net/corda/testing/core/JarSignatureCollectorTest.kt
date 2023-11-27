@@ -10,7 +10,7 @@ import net.corda.core.identity.Party
 import net.corda.core.internal.*
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.After
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.BeforeClass
 import org.junit.jupiter.api.Test
 import java.nio.file.Files
@@ -43,7 +43,7 @@ class JarSignatureCollectorTest {
             (dir / "_signable3").writeLines(listOf("signable3"))
         }
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun afterClass() {
             dir.deleteRecursively()

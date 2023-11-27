@@ -23,7 +23,7 @@ import net.corda.testing.core.singleIdentity
 import net.corda.coretesting.internal.matchers.flow.willReturn
 import net.corda.coretesting.internal.matchers.flow.willThrow
 import net.corda.testing.node.internal.*
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import java.util.*
@@ -35,7 +35,7 @@ class ContractUpgradeFlowTest : WithContracts, WithFinality {
         private val classMockNet = InternalMockNetwork(cordappsForAllNodes = listOf(FINANCE_CONTRACTS_CORDAPP, FINANCE_WORKFLOWS_CORDAPP, DUMMY_CONTRACTS_CORDAPP, enclosedCordapp()))
 
         @JvmStatic
-        @AfterClass
+        @AfterAll
         fun tearDown() = classMockNet.stopNodes()
     }
 

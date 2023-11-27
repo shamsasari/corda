@@ -23,7 +23,7 @@ import net.corda.testing.node.internal.TestStartedNode
 import net.corda.testing.node.internal.enclosedCordapp
 import net.corda.testing.node.internal.startFlow
 import org.assertj.core.api.Assertions.assertThatThrownBy
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import java.security.PublicKey
@@ -36,7 +36,7 @@ class SwapIdentitiesFlowTests {
                 cordappsForAllNodes = listOf(enclosedCordapp())
         )
 
-        @AfterClass
+        @AfterAll
         @JvmStatic
         fun tearDown() = mockNet.stopNodes()
     }

@@ -14,7 +14,7 @@ import net.corda.testing.flows.registerCordappFlowFactory
 import net.corda.coretesting.internal.matchers.flow.willReturn
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.TestStartedNode
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 import kotlin.reflect.KClass
@@ -26,7 +26,7 @@ class ReceiveMultipleFlowTests : WithMockNet {
         private val classMockNet = InternalMockNetwork()
 
         @JvmStatic
-        @AfterClass
+        @AfterAll
         fun stopNodes() = classMockNet.stopNodes()
     }
 

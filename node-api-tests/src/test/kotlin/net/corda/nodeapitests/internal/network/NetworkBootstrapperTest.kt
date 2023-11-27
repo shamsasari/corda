@@ -35,7 +35,7 @@ import net.corda.nodeapi.internal.network.verifiedNetworkParametersCert
 import org.assertj.core.api.Assertions.assertThat
 import org.assertj.core.api.Assertions.assertThatThrownBy
 import org.junit.After
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.Rule
 import org.junit.jupiter.api.Test
 import org.junit.rules.ExpectedException
@@ -69,7 +69,7 @@ class NetworkBootstrapperTest {
         }
 
         @JvmStatic
-        @AfterClass
+        @AfterAll
         fun cleanUp() {
             Files.delete(fakeEmbeddedCordaJar)
         }

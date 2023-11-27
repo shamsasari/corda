@@ -26,7 +26,7 @@ import net.corda.coretesting.internal.matchers.flow.willThrow
 import net.corda.testing.node.internal.InternalMockNetwork
 import net.corda.testing.node.internal.InternalMockNodeParameters
 import net.corda.testing.node.internal.TestStartedNode
-import org.junit.AfterClass
+import org.junit.jupiter.api.AfterAll
 import org.junit.Ignore
 import org.junit.jupiter.api.Test
 
@@ -36,7 +36,7 @@ class AttachmentTests : WithMockNet {
         val classMockNet = InternalMockNetwork()
 
         @JvmStatic
-        @AfterClass
+        @AfterAll
         fun cleanUp() = classMockNet.stopNodes()
     }
 
