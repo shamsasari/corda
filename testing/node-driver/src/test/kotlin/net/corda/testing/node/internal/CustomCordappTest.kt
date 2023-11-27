@@ -15,7 +15,7 @@ class CustomCordappTest {
     @JvmField
     val tempFolder = TemporaryFolder()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `packageAsJar writes out the CorDapp info into the manifest`() {
         val cordapp = cordappWithPackages("net.corda.testing.node.internal").copy(targetPlatformVersion = 123, name = "CustomCordappTest")
         val jarFile = packageAsJar(cordapp)
@@ -26,7 +26,7 @@ class CustomCordappTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `packageAsJar on leaf package`() {
         val entries = packageAsJarThenReadBack(cordappWithPackages("net.corda.testing.node.internal"))
 
@@ -41,7 +41,7 @@ class CustomCordappTest {
         assertThat(javaClass.classLoader.getResource("net/corda/testing/node/MockNetworkTest.class")).isNotNull()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `packageAsJar on package with sub-packages`() {
         val entries = packageAsJarThenReadBack(cordappWithPackages("net.corda.testing.node"))
 
@@ -52,7 +52,7 @@ class CustomCordappTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `packageAsJar on single class`() {
         val entries = packageAsJarThenReadBack(cordappForClasses(InternalMockNetwork::class.java))
 

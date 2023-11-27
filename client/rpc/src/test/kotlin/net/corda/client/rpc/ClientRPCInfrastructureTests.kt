@@ -72,7 +72,7 @@ class ClientRPCInfrastructureTests : AbstractRPCTest() {
         override fun captureUser(): String = rpcContext().invocation.principal().name
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `simple RPCs`() {
         rpcDriver {
             val proxy = testProxy()
@@ -88,7 +88,7 @@ class ClientRPCInfrastructureTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `simple observable`() {
         rpcDriver {
             val proxy = testProxy()
@@ -98,7 +98,7 @@ class ClientRPCInfrastructureTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `complex observables`() {
         rpcDriver {
             val proxy = testProxy()
@@ -143,7 +143,7 @@ class ClientRPCInfrastructureTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `simple ListenableFuture`() {
         rpcDriver {
             val proxy = testProxy()
@@ -152,7 +152,7 @@ class ClientRPCInfrastructureTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `complex ListenableFuture`() {
         rpcDriver {
             val proxy = testProxy()
@@ -180,7 +180,7 @@ class ClientRPCInfrastructureTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun versioning() {
         rpcDriver {
             val proxy = testProxy()
@@ -188,7 +188,7 @@ class ClientRPCInfrastructureTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `authenticated user is available to RPC`() {
         rpcDriver {
             val proxy = testProxy()

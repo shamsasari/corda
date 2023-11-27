@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions.assertThatExceptionOfType
 import org.junit.Test
 
 class PrivacySaltTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `all-zero PrivacySalt not allowed`() {
         assertThatExceptionOfType(IllegalArgumentException::class.java).isThrownBy {
             PrivacySalt(ByteArray(32))

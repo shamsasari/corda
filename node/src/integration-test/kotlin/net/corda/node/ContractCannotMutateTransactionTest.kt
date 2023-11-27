@@ -33,7 +33,7 @@ class ContractCannotMutateTransactionTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun testContractCannotModifyTransaction() {
         driver(driverParameters()) {
             val alice = startNode(providedName = ALICE_NAME, rpcUsers = listOf(user)).getOrThrow()

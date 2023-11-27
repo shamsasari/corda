@@ -92,7 +92,7 @@ class MerkleTreeAgilityTest {
         DigestAlgorithmFactory.registerClass(SHA256BLAKE2s256DigestAlgorithm::class.java.name)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `component nonces are correct for custom preimage resistant hash algo`() {
         val wireTransaction = WireTransaction(componentGroups = componentGroupsFourInputs, privacySalt = privacySalt, digestService = customDigestService)
         val expected = componentGroupsFourInputs.associate {
@@ -104,7 +104,7 @@ class MerkleTreeAgilityTest {
         assertEquals(expected, wireTransaction.accessAvailableComponentNonces())
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `component nonces are correct for default SHA256 hash algo`() {
         val wireTransaction = WireTransaction(componentGroups = componentGroupsFourInputs, privacySalt = privacySalt)
         val expected = componentGroupsFourInputs.associate {
@@ -116,7 +116,7 @@ class MerkleTreeAgilityTest {
         assertEquals(expected, wireTransaction.accessAvailableComponentNonces())
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `custom algorithm transaction pads leaf in single component component group`() {
         val wtx = WireTransaction(componentGroups = componentGroupsSingle, privacySalt = privacySalt, digestService = customDigestService)
 
@@ -126,7 +126,7 @@ class MerkleTreeAgilityTest {
         assertEquals(expected, wtx.accessGroupMerkleRoots()[INPUTS_GROUP.ordinal]!!)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `default algorithm transaction does not pad leaf in single component component group`() {
         val wtx = WireTransaction(componentGroups = componentGroupsSingle, privacySalt = privacySalt, digestService = defaultDigestService)
 
@@ -136,7 +136,7 @@ class MerkleTreeAgilityTest {
         assertEquals(expected, wtx.accessGroupMerkleRoots()[INPUTS_GROUP.ordinal]!!)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `custom algorithm transaction has expected root for four components component group tree`() {
         val wtx = WireTransaction(componentGroups = componentGroupsFourInputs, privacySalt = privacySalt, digestService = customDigestService)
 
@@ -148,7 +148,7 @@ class MerkleTreeAgilityTest {
         assertEquals(expected, wtx.accessGroupMerkleRoots()[INPUTS_GROUP.ordinal]!!)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `default algorithm transaction has expected root for four components component group tree`() {
         val wtx = WireTransaction(componentGroups = componentGroupsFourInputs, privacySalt = privacySalt, digestService = defaultDigestService)
 
@@ -160,7 +160,7 @@ class MerkleTreeAgilityTest {
         assertEquals(expected, wtx.accessGroupMerkleRoots()[INPUTS_GROUP.ordinal]!!)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `custom algorithm transaction has expected root for three components component group tree`() {
         val wtx = WireTransaction(componentGroups = componentGroupsThreeInputs, privacySalt = privacySalt, digestService = customDigestService)
 
@@ -172,7 +172,7 @@ class MerkleTreeAgilityTest {
         assertEquals(expected, wtx.accessGroupMerkleRoots()[INPUTS_GROUP.ordinal]!!)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `default algorithm transaction has expected root for three components component group tree`() {
         val wtx = WireTransaction(componentGroups = componentGroupsThreeInputs, privacySalt = privacySalt, digestService = defaultDigestService)
 

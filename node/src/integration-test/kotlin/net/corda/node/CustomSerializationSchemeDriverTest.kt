@@ -79,7 +79,7 @@ class CustomSerializationSchemeDriverTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow can send wire transaction serialized with custom kryo serializer`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val (alice, bob) = listOf(
@@ -92,7 +92,7 @@ class CustomSerializationSchemeDriverTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow can write a wire transaction serialized with custom kryo serializer to the ledger`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val (alice, bob) = listOf(
@@ -113,7 +113,7 @@ class CustomSerializationSchemeDriverTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Component groups are lazily serialized by the CustomSerializationScheme`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val alice = startNode(NodeParameters(providedName = ALICE_NAME)).getOrThrow()
@@ -123,7 +123,7 @@ class CustomSerializationSchemeDriverTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Map in the serialization context can be used by lazily component group serialization`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val alice = startNode(NodeParameters(providedName = ALICE_NAME)).getOrThrow()

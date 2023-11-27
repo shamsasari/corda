@@ -23,7 +23,7 @@ class XorStreamTest(private val size : Int) {
         }
     }
 
-    @Test(timeout = 5000)
+    @Test
     fun test() {
         val baos = ByteArrayOutputStream(size)
         val md = MessageDigest.getInstance("MD5")

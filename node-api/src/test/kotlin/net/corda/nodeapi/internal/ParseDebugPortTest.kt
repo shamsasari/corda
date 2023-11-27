@@ -24,7 +24,7 @@ class ParseDebugPortTest(private val args: Iterable<String>,
         )
     }
 
-    @Test(timeout = 10_000)
+    @Test
     fun test() {
         val port = JVMAgentUtilities.parseDebugPort(args)
         Assert.assertEquals(expectedPort, port)

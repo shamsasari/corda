@@ -18,7 +18,7 @@ class DeserializeAndReturnEnvelopeTests {
 
     val factory = testDefaultFactoryNoEvolution()
 
-    @Test(timeout=300_000)
+    @Test
 	fun oneType() {
         data class A(val a: Int, val b: String)
 
@@ -32,7 +32,7 @@ class DeserializeAndReturnEnvelopeTests {
         assertEquals(classTestName("A"), obj.envelope.schema.types.first().name)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun twoTypes() {
         data class A(val a: Int, val b: String)
         data class B(val a: A, val b: Float)
@@ -48,7 +48,7 @@ class DeserializeAndReturnEnvelopeTests {
         assertNotEquals(null, obj.envelope.schema.types.find { it.name == classTestName("B") })
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun unannotatedInterfaceIsNotInSchema() {
         @CordaSerializable
         data class Foo(val bar: Int) : Comparable<Foo> {

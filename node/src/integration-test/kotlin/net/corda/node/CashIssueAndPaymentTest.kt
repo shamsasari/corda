@@ -53,7 +53,7 @@ class CashIssueAndPaymentTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test can issue cash`() {
         driver(parametersFor()) {
             val alice = startNode(providedName = ALICE_NAME, customOverrides = configOverrides).getOrThrow()
@@ -74,7 +74,7 @@ class CashIssueAndPaymentTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test can issue cash and see consumming transaction id in rpc client`() {
         driver(parametersFor()) {
             val alice = startNode(providedName = ALICE_NAME, customOverrides = configOverrides).getOrThrow()

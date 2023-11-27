@@ -19,7 +19,7 @@ class ErrorMessagesTests {
 
     // Java allows this to be set at the class level yet Kotlin doesn't for some reason
     @Ignore("Current behaviour allows for the serialization of objects with private members, this will be disallowed at some point in the future")
-    @Test(timeout=300_000)
+    @Test
 	fun privateProperty() {
         data class C(private val a: Int)
 
@@ -34,7 +34,7 @@ class ErrorMessagesTests {
 
     // Java allows this to be set at the class level yet Kotlin doesn't for some reason
     @Ignore("Current behaviour allows for the serialization of objects with private members, this will be disallowed at some point in the future")
-    @Test(timeout=300_000)
+    @Test
 	fun privateProperty2() {
         data class C(val a: Int, private val b: Int)
 
@@ -49,7 +49,7 @@ class ErrorMessagesTests {
 
     // Java allows this to be set at the class level yet Kotlin doesn't for some reason
     @Ignore("Current behaviour allows for the serialization of objects with private members, this will be disallowed at some point in the future")
-    @Test(timeout=300_000)
+    @Test
 	fun privateProperty3() {
         // despite b being private, the getter we've added is public and thus allows for the serialisation
         // of the object
@@ -66,7 +66,7 @@ class ErrorMessagesTests {
 
     // Java allows this to be set at the class level yet Kotlin doesn't for some reason
     @Ignore("Current behaviour allows for the serialization of objects with private members, this will be disallowed at some point in the future")
-    @Test(timeout=300_000)
+    @Test
 	fun protectedProperty() {
         open class C(@Suppress("unused") protected val a: Int)
 

@@ -34,7 +34,7 @@ class CustomSerializationSchemeMockNetworkTest {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `transactions network parameter hash is correct`() {
         val alice = mockNetwork.createNode(InternalMockNodeParameters(legalName = ALICE_NAME))
         val bob = mockNetwork.createNode(InternalMockNodeParameters(legalName = BOB_NAME))
@@ -47,7 +47,7 @@ class CustomSerializationSchemeMockNetworkTest {
         assertEquals(alice.internals.networkParametersStorage.defaultHash, serializedHash.deserialize())
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `transaction can be written to the ledger`() {
         val alice = mockNetwork.createNode(InternalMockNodeParameters(legalName = ALICE_NAME))
         val bob = mockNetwork.createNode(InternalMockNodeParameters(legalName = BOB_NAME))

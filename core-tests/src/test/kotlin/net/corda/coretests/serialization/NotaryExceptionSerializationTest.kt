@@ -19,7 +19,7 @@ class NotaryExceptionSerializationTest {
     @JvmField
     val testSerialization = SerializationEnvironmentRule()
 
-    @Test(timeout=300_000)
+    @Test
 	fun testSerializationRoundTrip() {
         val txhash = SecureHash.randomSHA256()
         val stateHistory: Map<StateRef, StateConsumptionDetails> = mapOf(

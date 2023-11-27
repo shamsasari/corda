@@ -23,7 +23,7 @@ class ExchangeRateModelTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `perform fx testing`() {
         val tenSwissies = Amount(10, BigDecimal.ONE, CHF)
         assertEquals(instance.exchangeAmount(tenSwissies, CHF), tenSwissies)

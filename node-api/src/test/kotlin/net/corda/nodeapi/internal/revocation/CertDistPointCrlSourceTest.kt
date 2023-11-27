@@ -28,7 +28,7 @@ class CertDistPointCrlSourceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `happy path`() {
         val crlSource = CertDistPointCrlSource()
 

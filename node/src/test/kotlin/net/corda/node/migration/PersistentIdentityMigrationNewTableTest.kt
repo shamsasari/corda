@@ -65,7 +65,7 @@ class PersistentIdentityMigrationNewTableTest {
         cordaDB.close()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `migrate identities to new table`() {
         val identities = listOf(BOB_IDENTITY, ALICE_IDENTITY, BOC_IDENTITY, dummyNotary.identity, BOB2_IDENTITY)
         saveAllIdentities(identities)

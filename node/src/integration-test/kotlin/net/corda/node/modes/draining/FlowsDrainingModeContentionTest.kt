@@ -51,7 +51,7 @@ class FlowsDrainingModeContentionTest {
         executor!!.shutdown()
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17:Fixme - timed out")
 	fun `draining mode does not deadlock with acks between 2 nodes`() {
         val message = "Ground control to Major Tom"

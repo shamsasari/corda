@@ -29,7 +29,7 @@ abstract class ErrorCodeTest<T>(private val clazz: Class<T>,
     private class TestError<T>(override val code: T,
                                override val parameters: List<Any>) : ErrorCode<T> where T: Enum<T>, T: ErrorCodes
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test error codes`() {
         for ((code, params) in dataForCodes) {
             val error = TestError(code, params)
@@ -51,7 +51,7 @@ abstract class ErrorCodeTest<T>(private val clazz: Class<T>,
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ensure all error codes tested`() {
         val expected = clazz.enumConstants.toSet()
         val actual = dataForCodes.keys.toSet()

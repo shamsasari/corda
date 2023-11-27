@@ -15,7 +15,7 @@ class SerDeserCarpentryTest {
     @JvmField
     val testSerialization = SerializationEnvironmentRule()
 
-    @Test(timeout=300_000)
+    @Test
 	fun implementingGenericInterface() {
         // Original class that was serialised
 //        data class GenericData(val a: Int) : GenericInterface<String>
@@ -25,7 +25,7 @@ class SerDeserCarpentryTest {
         assertThat(data.javaClass.getMethod("getA").invoke(data)).isEqualTo(123)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun lenientCarpenter() {
         // Original class that was serialised
 //        data class Data(val b: Int) : AInterface {

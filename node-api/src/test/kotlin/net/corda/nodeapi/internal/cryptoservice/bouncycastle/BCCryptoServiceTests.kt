@@ -60,7 +60,7 @@ class BCCryptoServiceTests {
         wrappingKeyStorePath = certificatesDirectory / "wrappingkeystore.pkcs12"
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17: Fixme")
 	fun `BCCryptoService generate key pair and sign both data and cert`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
@@ -94,7 +94,7 @@ class BCCryptoServiceTests {
         certificate.verify(pubKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17: Fixme")
 	fun `BCCryptoService generate key pair and sign with existing schemes`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
@@ -109,7 +109,7 @@ class BCCryptoServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17: Fixme")
 	fun `BCCryptoService generate key pair and sign with passed signing algorithm`() {
 
@@ -172,7 +172,7 @@ class BCCryptoServiceTests {
                 certificateStoreFileName = keyStoreFilename)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `When key does not exist getPublicKey, sign and getSigner should throw`() {
         val nonExistingAlias = "nonExistingAlias"
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
@@ -182,7 +182,7 @@ class BCCryptoServiceTests {
         assertFailsWith<CryptoServiceException> { cryptoService.getSigner(nonExistingAlias) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService supports degraded mode of wrapping`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
         val supportedMode = cryptoService.getWrappingMode()
@@ -190,7 +190,7 @@ class BCCryptoServiceTests {
         assertThat(supportedMode).isEqualTo(WrappingMode.DEGRADED_WRAPPED)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService does not fail when requested to create same wrapping key twice with failIfExists is false`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 
@@ -199,7 +199,7 @@ class BCCryptoServiceTests {
         cryptoService.createWrappingKey(keyAlias, failIfExists = false)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService does fail when requested to create same wrapping key twice with failIfExists is true`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 
@@ -211,7 +211,7 @@ class BCCryptoServiceTests {
                 .hasMessage("There is an existing key with the alias: $keyAlias")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService fails when asked to generate wrapped key pair or sign, but the master key specified does not exist`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 
@@ -228,7 +228,7 @@ class BCCryptoServiceTests {
                 .hasMessage("There is no master key under the alias: $wrappingKeyAlias")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService can generate wrapped key pair and sign with the private key successfully, using default algorithm`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 
@@ -237,7 +237,7 @@ class BCCryptoServiceTests {
         generateWrappedKeyPairSignAndVerify(cryptoService, wrappingKeyAlias)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cryptoService can generate wrapped key pair and sign with the private key successfully`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 
@@ -262,7 +262,7 @@ class BCCryptoServiceTests {
         Crypto.doVerify(publicKey, signature, data)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `cryptoService can sign with previously encoded version of wrapped key`() {
         val cryptoService = BCCryptoService(ALICE_NAME.x500Principal, signingCertificateStore, wrappingKeyStorePath)
 

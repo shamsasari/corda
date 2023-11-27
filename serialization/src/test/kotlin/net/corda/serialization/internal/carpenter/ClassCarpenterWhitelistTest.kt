@@ -11,7 +11,7 @@ class ClassCarpenterWhitelistTest {
 
     // whitelisting a class on the class path will mean we will carpente up a class that
     // contains it as a member
-    @Test(timeout=300_000)
+    @Test
 	fun whitelisted() {
         data class A(val a: Int)
 
@@ -31,7 +31,7 @@ class ClassCarpenterWhitelistTest {
         cc.build(ClassSchema("thing", mapOf("a" to NonNullableField(A::class.java))))
     }
 
-    @Test(timeout=300_000)
+    @Test
 @Ignore("Currently the carpenter doesn't inspect it's whitelist so will carpent anything" +
             "it's asked relying on the serializer factory to not ask for anything")
     fun notWhitelisted() {
@@ -51,7 +51,7 @@ class ClassCarpenterWhitelistTest {
 
     // despite now being whitelisted and on the class path, we will carpent this because
     // it's marked as CordaSerializable
-    @Test(timeout=300_000)
+    @Test
 	fun notWhitelistedButAnnotated() {
         @CordaSerializable
         data class A(val a: Int)
@@ -68,7 +68,7 @@ class ClassCarpenterWhitelistTest {
         cc.build(ClassSchema("thing", mapOf("a" to NonNullableField(A::class.java))))
     }
 
-    @Test(timeout=300_000)
+    @Test
 @Ignore("Currently the carpenter doesn't inspect it's whitelist so will carpent anything" +
             "it's asked relying on the serializer factory to not ask for anything")
     fun notWhitelistedButCarpented() {

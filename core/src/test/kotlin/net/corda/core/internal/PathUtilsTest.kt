@@ -13,28 +13,28 @@ class PathUtilsTest {
     @JvmField
     val tempFolder = TemporaryFolder()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `deleteRecursively - non-existent path`() {
         val path = tempFolder.root.toPath() / "non-existent"
         path.deleteRecursively()
         assertThat(path).doesNotExist()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `deleteRecursively - file`() {
         val file = (tempFolder.root.toPath() / "file").createFile()
         file.deleteRecursively()
         assertThat(file).doesNotExist()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `deleteRecursively - empty folder`() {
         val emptyDir = (tempFolder.root.toPath() / "empty").createDirectories()
         emptyDir.deleteRecursively()
         assertThat(emptyDir).doesNotExist()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `deleteRecursively - dir with single file`() {
         val dir = (tempFolder.root.toPath() / "dir").createDirectories()
         (dir / "file").createFile()
@@ -42,7 +42,7 @@ class PathUtilsTest {
         assertThat(dir).doesNotExist()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `deleteRecursively - nested single file`() {
         val dir = (tempFolder.root.toPath() / "dir").createDirectories()
         val dir2 = (dir / "dir2").createDirectories()
@@ -51,7 +51,7 @@ class PathUtilsTest {
         assertThat(dir).doesNotExist()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `deleteRecursively - complex`() {
         val dir = (tempFolder.root.toPath() / "dir").createDirectories()
         (dir / "file1").createFile()
@@ -63,7 +63,7 @@ class PathUtilsTest {
         assertThat(dir).doesNotExist()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `copyToDirectory - copy into zip directory`() {
         val source: Path = tempFolder.newFile("source.txt").let {
             it.writeText("Example Text")

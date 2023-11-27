@@ -16,7 +16,7 @@ import java.nio.charset.StandardCharsets.UTF_8
 class BlobInspectorTest {
     private val blobInspector = BlobInspector()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `network-parameters file`() {
         val output = run("network-parameters")
         assertThat(output)
@@ -25,7 +25,7 @@ class BlobInspectorTest {
                 .contains(CordaX500Name("Notary Service", "Zurich", "CH").toString()) // Name of the notary in the network parameters
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `node-info file`() {
         checkNotOnClassPath("net.corda.nodeapi.internal.SignedNodeInfo")
         val output = run("node-info")
@@ -34,7 +34,7 @@ class BlobInspectorTest {
                 .contains(CordaX500Name("BankOfCorda", "New York", "US").toString())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `WireTransaction with Cash state`() {
         checkNotOnClassPath("net.corda.finance.contracts.asset.Cash\$State")
         val output = run("cash-wtx.blob")
@@ -43,7 +43,7 @@ class BlobInspectorTest {
                 .contains("net.corda.finance.contracts.asset.Cash\$State")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `SignedTransaction with Cash state taken from node db`() {
         checkNotOnClassPath("net.corda.finance.contracts.asset.Cash\$State")
         val output = run("cash-stx-db.blob")

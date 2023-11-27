@@ -29,14 +29,14 @@ class SignedNodeInfoTest {
 
     private val nodeInfoBuilder = TestNodeInfoBuilder()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verifying single identity`() {
         nodeInfoBuilder.addLegalIdentity(ALICE_NAME)
         val (nodeInfo, signedNodeInfo) = nodeInfoBuilder.buildWithSigned()
         assertThat(signedNodeInfo.verified()).isEqualTo(nodeInfo)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verifying multiple identities`() {
         nodeInfoBuilder.addLegalIdentity(ALICE_NAME)
         nodeInfoBuilder.addLegalIdentity(BOB_NAME)
@@ -44,7 +44,7 @@ class SignedNodeInfoTest {
         assertThat(signedNodeInfo.verified()).isEqualTo(nodeInfo)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verifying missing signature`() {
         val (_, aliceKey) = nodeInfoBuilder.addLegalIdentity(ALICE_NAME)
         nodeInfoBuilder.addLegalIdentity(BOB_NAME)
@@ -55,7 +55,7 @@ class SignedNodeInfoTest {
                 .hasMessageContaining("Missing signatures")
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17: Fixme")
 	fun `verifying composite keys only`() {
         val aliceKeyPair = generateKeyPair()
@@ -69,7 +69,7 @@ class SignedNodeInfoTest {
                 .hasMessageContaining("At least one identity with a non-composite key needs to be specified.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verifying extra signature`() {
         val (_, aliceKey) = nodeInfoBuilder.addLegalIdentity(ALICE_NAME)
         val nodeInfo = nodeInfoBuilder.build()
@@ -79,7 +79,7 @@ class SignedNodeInfoTest {
                 .hasMessageContaining("Extra signatures")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verifying incorrect signature`() {
         nodeInfoBuilder.addLegalIdentity(ALICE_NAME)
         val nodeInfo = nodeInfoBuilder.build()
@@ -89,7 +89,7 @@ class SignedNodeInfoTest {
                 .hasMessageContaining(ALICE_NAME.toString())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verifying with signatures in wrong order`() {
         val (_, aliceKey) = nodeInfoBuilder.addLegalIdentity(ALICE_NAME)
         val (_, bobKey) = nodeInfoBuilder.addLegalIdentity(BOB_NAME)

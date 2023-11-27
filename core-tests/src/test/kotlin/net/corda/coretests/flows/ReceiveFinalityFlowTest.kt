@@ -33,7 +33,7 @@ class ReceiveFinalityFlowTest {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `sent to flow hospital on error and retry on node restart`() {
         val alice = mockNet.createNode(InternalMockNodeParameters(legalName = ALICE_NAME, additionalCordapps = FINANCE_CORDAPPS))
         // Bob initially does not have the finance contracts CorDapp so that it can throw an exception in ReceiveFinalityFlow when receiving

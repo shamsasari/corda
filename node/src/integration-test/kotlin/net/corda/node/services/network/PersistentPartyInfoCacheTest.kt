@@ -28,7 +28,7 @@ class PersistentPartyInfoCacheTest {
     private val database = configureDatabase(makeTestDataSourceProperties(), DatabaseConfig(), { null }, { null })
     private val charlieNetMapCache = PersistentNetworkMapCache(TestingNamedCacheFactory(), database, InMemoryIdentityService(trustRoot = DEV_ROOT_CA.certificate))
 
-    @Test(timeout=300_000)
+    @Test
 	fun `get party id from CordaX500Name sourced from NetworkMapCache`() {
         charlieNetMapCache.addOrUpdateNodes(listOf(
                 createNodeInfo(listOf(ALICE)),
@@ -41,7 +41,7 @@ class PersistentPartyInfoCacheTest {
         assertThat(partyInfoCache.getPartyIdByCordaX500Name(CHARLIE.name)).isEqualTo(SecureHash.sha256(CHARLIE.name.toString()))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `get party id from CordaX500Name sourced from backing database`() {
         charlieNetMapCache.addOrUpdateNodes(listOf(
                 createNodeInfo(listOf(ALICE)),
@@ -56,7 +56,7 @@ class PersistentPartyInfoCacheTest {
         assertThat(partyInfoCache.getPartyIdByCordaX500Name(CHARLIE.name)).isEqualTo(SecureHash.sha256(CHARLIE.name.toString()))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `get party CordaX500Name from id sourced from NetworkMapCache`() {
         charlieNetMapCache.addOrUpdateNodes(listOf(
                 createNodeInfo(listOf(ALICE)),
@@ -69,7 +69,7 @@ class PersistentPartyInfoCacheTest {
         assertThat(partyInfoCache.getCordaX500NameByPartyId(SecureHash.sha256(CHARLIE.name.toString()))).isEqualTo(CHARLIE.name)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `get party CordaX500Name from id sourced from backing database`() {
         charlieNetMapCache.addOrUpdateNodes(listOf(
                 createNodeInfo(listOf(ALICE)),

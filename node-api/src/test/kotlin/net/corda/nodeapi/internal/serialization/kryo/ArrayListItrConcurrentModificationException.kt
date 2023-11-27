@@ -50,32 +50,32 @@ class ArrayListItrConcurrentModificationException(private val compression: Corda
                 })
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `ArrayList iterator can checkpoint without error`() {
         runTestWithCollection(ArrayList())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `HashSet iterator can checkpoint without error`() {
         runTestWithCollection(HashSet())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `LinkedHashSet iterator can checkpoint without error`() {
         runTestWithCollection(LinkedHashSet())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `HashMap iterator can checkpoint without error`() {
         runTestWithCollection(HashMap())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `LinkedHashMap iterator can checkpoint without error`() {
         runTestWithCollection(LinkedHashMap())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `LinkedList iterator can checkpoint without error`() {
         runTestWithCollection(LinkedList())
     }

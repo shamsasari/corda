@@ -43,7 +43,7 @@ class GenericsTests {
 
     private fun <T : Any> BytesAndSchemas<T>.printSchema() = if (VERBOSE) println("${this.schema}\n") else Unit
 
-    @Test(timeout=300_000)
+    @Test
 	fun twoDifferentTypesSameParameterizedOuter() {
         data class G<A>(val a: A)
 
@@ -59,7 +59,7 @@ class GenericsTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun doWeIgnoreMultipleParams() {
         data class G1<out T>(val a: T)
         data class G2<out T>(val a: T)
@@ -73,7 +73,7 @@ class GenericsTests {
         DeserializationInput(factory2).deserialize(bytes.obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedSerializationOfGenerics() {
         data class G<out T>(val a: T)
         data class Wrapper<out T>(val a: Int, val b: G<T>)
@@ -102,7 +102,7 @@ class GenericsTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedGenericsReferencesByteArrayViaSerializedBytes() {
         data class G(val a: Int)
         data class Wrapper<T : Any>(val a: Int, val b: SerializedBytes<T>)
@@ -128,7 +128,7 @@ class GenericsTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedSerializationInMultipleContextsDoesntColideGenericTypes() {
         data class InnerA(val a_a: Int)
         data class InnerB(val a_b: Int)
@@ -163,7 +163,7 @@ class GenericsTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedSerializationWhereGenericDoesntImpactFingerprint() {
         data class Inner(val a: Int)
         data class Container<T : Any>(val b: Inner)
@@ -231,13 +231,13 @@ class GenericsTests {
         DeserializationInput(factory).deserialize(bytes as SerializedBytes<ForceWildcard<*>>)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun forceWildcard() {
         forceWildcardDeserializeString(forceWildcardSerialize(ForceWildcard("hello")))
         forceWildcardDeserializeDouble(forceWildcardSerialize(ForceWildcard(3.0)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun forceWildcardSharedFactory() {
         val f = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -246,14 +246,14 @@ class GenericsTests {
         forceWildcardDeserializeDouble(forceWildcardSerialize(ForceWildcard(3.0), f), f)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun forceWildcardDeserialize() {
         forceWildcardDeserialize(forceWildcardSerialize(ForceWildcard("hello")))
         forceWildcardDeserialize(forceWildcardSerialize(ForceWildcard(10)))
         forceWildcardDeserialize(forceWildcardSerialize(ForceWildcard(20.0)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun forceWildcardDeserializeSharedFactory() {
         val f = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -263,7 +263,7 @@ class GenericsTests {
         forceWildcardDeserialize(forceWildcardSerialize(ForceWildcard(20.0), f), f)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun loadGenericFromFile() {
         val resource = "${javaClass.simpleName}.${testName()}"
         val sf = testDefaultFactory()
@@ -313,7 +313,7 @@ class GenericsTests {
         DeserializationInput(factory4).deserializeAndReturnEnvelope(ser2.obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun fingerprintingDiffers() {
         val state = TransactionState(
                 TestContractState(listOf(MINI_CORP_PARTY)),
@@ -326,7 +326,7 @@ class GenericsTests {
         fingerprintingDiffersStrip(sas)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun fingerprintingDiffersList() {
         val state = TransactionState(
                 TestContractState(listOf(MINI_CORP_PARTY)),
@@ -343,7 +343,7 @@ class GenericsTests {
     //
     // Force object to be serialised as Example<T> and deserialized as Example<?>
     //
-    @Test(timeout=300_000)
+    @Test
 	fun fingerprintingDiffersListLoaded() {
         //
         // using this wrapper class we force the object to be serialised as
@@ -373,7 +373,7 @@ class GenericsTests {
         assertEquals(sas.ref, des1.obj.o.firstOrNull()?.ref ?: "WILL NOT MATCH")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedGenericsWithBound() {
         open class BaseState(val a : Int)
         class DState(a: Int) : BaseState(a)
@@ -394,7 +394,7 @@ class GenericsTests {
         assertEquals(state.data.a, des1.obj.state.data.a)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedMultiGenericsWithBound() {
         open class BaseState(val a : Int)
         class DState(a: Int) : BaseState(a)
@@ -418,7 +418,7 @@ class GenericsTests {
         assertEquals(state.context.a,  des1.obj.state.context.a)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedMultiGenericsNoBound() {
         open class BaseState(val a : Int)
         class DState(a: Int) : BaseState(a)
@@ -443,7 +443,7 @@ class GenericsTests {
         assertEquals(state.context.msg, des1.obj.state.context.msg)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun baseClassInheritedButNotOverriden() {
         val factory1 = testDefaultFactoryNoEvolution()
         val factory2 = testDefaultFactory()
@@ -469,7 +469,7 @@ class GenericsTests {
         assertEquals(state2.c, des2.obj.c)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun baseClassInheritedButNotOverridenBounded() {
         val factory1 = testDefaultFactoryNoEvolution()
         val factory2 = testDefaultFactory()
@@ -486,7 +486,7 @@ class GenericsTests {
         assertEquals(state.a.a, des1.obj.a.a)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedMultiGenericsAtBottomWithBound() {
         open class BaseState<T1, T2>(val a : T1, val b: T2)
         class DState<T1, T2>(a: T1, b: T2) : BaseState<T1, T2>(a, b)
@@ -525,7 +525,7 @@ class GenericsTests {
         val a: T
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun implemntsGenericInterface() {
         class D(override val a: String) : implementsGenericInterfaceI<String>
 

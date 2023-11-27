@@ -56,7 +56,7 @@ class ContractWithCordappFixupTest {
     /*
      * Test that we can still build a transaction for a CorDapp with an implicit dependency.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `flow with missing cordapp dependency with fixup`() {
         val dependentContractId = dependentContractCorDapp.jarFile.hash
         val standaloneContractId = standaloneContractCorDapp.jarFile.hash
@@ -81,7 +81,7 @@ class ContractWithCordappFixupTest {
     /**
      * Test that our dependency is indeed missing and so requires fixing up.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `flow with missing cordapp dependency without fixup`() {
         driver(driverParameters(listOf(flowCorDapp, dependentContractCorDapp, standaloneContractCorDapp))) {
             val alice = startNode(providedName = ALICE_NAME, rpcUsers = listOf(user)).getOrThrow()

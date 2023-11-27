@@ -82,7 +82,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `states must be bi-directionally encumbered`() {
         // Basic encumbrance example for encumbrance index links 0 -> 1 and 1 -> 0
         ledgerServices.ledger(DUMMY_NOTARY) {
@@ -145,7 +145,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non bi-directional encumbrance will fail`() {
         // Single encumbrance with no back link.
         assertFailsWith<TransactionVerificationException.TransactionNonMatchingEncumbranceException> {
@@ -214,7 +214,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `state can transition if encumbrance rules are met`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             unverifiedTransaction {
@@ -235,7 +235,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `state cannot transition if the encumbrance contract fails to verify`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             unverifiedTransaction {
@@ -256,7 +256,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `state must be consumed along with its encumbrance`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             unverifiedTransaction {
@@ -275,7 +275,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `state cannot be encumbered by itself`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             transaction {
@@ -288,7 +288,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `encumbrance state index must be valid`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             transaction {
@@ -302,7 +302,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `correct encumbrance state must be provided`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             unverifiedTransaction {
@@ -323,7 +323,7 @@ class TransactionEncumbranceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `encumbered states cannot be assigned to different notaries`() {
         // Single encumbrance with different notaries.
         assertFailsWith<TransactionVerificationException.TransactionNotaryMismatchEncumbranceException> {

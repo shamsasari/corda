@@ -36,7 +36,7 @@ class KotlinUtilsTest {
             true,
             null)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transient property which is null`() {
         val test = NullTransientProperty()
         test.transientValue
@@ -44,7 +44,7 @@ class KotlinUtilsTest {
         assertThat(test.evalCount).isEqualTo(1)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `checkpointing a transient property with non-capturing lambda`() {
         val original = NonCapturingTransientProperty()
         val originalVal = original.transientVal
@@ -54,7 +54,7 @@ class KotlinUtilsTest {
         assertThat(copy.transientVal).isEqualTo(copyVal)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `deserialise transient property with non-capturing lambda`() {
         expectedEx.expect(KryoException::class.java)
         expectedEx.expectMessage("is not annotated or on the whitelist, so cannot be used in serialization")
@@ -62,7 +62,7 @@ class KotlinUtilsTest {
         original.checkpointSerialize(context = KRYO_CHECKPOINT_CONTEXT).checkpointDeserialize(context = KRYO_CHECKPOINT_NOWHITELIST_CONTEXT)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `checkpointing a transient property with capturing lambda`() {
         val original = CapturingTransientProperty("Hello")
         val originalVal = original.transientVal
@@ -73,7 +73,7 @@ class KotlinUtilsTest {
         assertThat(copy.transientVal).startsWith("Hello")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `deserialise transient property with capturing lambda`() {
         expectedEx.expect(KryoException::class.java)
         expectedEx.expectMessage("is not annotated or on the whitelist, so cannot be used in serialization")

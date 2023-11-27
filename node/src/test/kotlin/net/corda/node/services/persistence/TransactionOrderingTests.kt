@@ -45,7 +45,7 @@ class TransactionOrderingTests {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Out of order transactions are recorded in vault correctly`() {
         val alice = mockNet.createPartyNode(ALICE_NAME)
         val aliceID = alice.info.identityFromX500Name(ALICE_NAME)

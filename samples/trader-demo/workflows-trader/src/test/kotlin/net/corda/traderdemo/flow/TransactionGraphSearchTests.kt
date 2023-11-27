@@ -63,7 +63,7 @@ class TransactionGraphSearchTests {
         return GraphTransactionStorage(originTx, inputTx)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `return empty from empty`() {
         val storage = buildTransactions(DummyContract.Commands.Create())
         val search = TransactionGraphSearch(storage, emptyList(), TransactionGraphSearch.Query())
@@ -73,7 +73,7 @@ class TransactionGraphSearchTests {
         assertEquals(expected, actual)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `return empty from no match`() {
         val storage = buildTransactions(DummyContract.Commands.Create())
         val search = TransactionGraphSearch(storage, listOf(storage.inputTx.tx), TransactionGraphSearch.Query())
@@ -83,7 +83,7 @@ class TransactionGraphSearchTests {
         assertEquals(expected, actual)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `return origin on match`() {
         val storage = buildTransactions(DummyContract.Commands.Create())
         val search = TransactionGraphSearch(storage, listOf(storage.inputTx.tx), TransactionGraphSearch.Query(DummyContract.Commands.Create::class.java))

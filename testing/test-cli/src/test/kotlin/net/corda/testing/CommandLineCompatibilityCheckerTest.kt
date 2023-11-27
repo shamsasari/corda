@@ -17,7 +17,7 @@ class CommandLineCompatibilityCheckerTest {
     }
 
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should detect missing parameter`() {
         val value1 = object {
             @CommandLine.Option(names = arrayOf("-d", "--directory"), description = arrayOf("the directory to run in"))
@@ -33,7 +33,7 @@ class CommandLineCompatibilityCheckerTest {
     }
 
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should detect changes in positional parameters`() {
         val value1 = object {
             @CommandLine.Parameters(index = "0")
@@ -52,7 +52,7 @@ class CommandLineCompatibilityCheckerTest {
         Assert.assertThat(breaks.first(), `is`(instanceOf(PositionalArgumentsChangedError::class.java)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should detect removal of a subcommand`() {
         @CommandLine.Command(subcommands = [ListCommand::class, StatusCommand::class])
         class Dummy
@@ -65,7 +65,7 @@ class CommandLineCompatibilityCheckerTest {
         Assert.assertThat(breaks.first(), `is`(instanceOf(CommandsChangedError::class.java)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should detect change of parameter type`() {
         val value1 = object {
             @CommandLine.Option(names = ["--directory"], description = ["the directory to run in"])
@@ -81,7 +81,7 @@ class CommandLineCompatibilityCheckerTest {
         Assert.assertThat(breaks.first(), `is`(instanceOf(TypesChangedError::class.java)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should detect change of enum options`() {
         val value1 = object {
             @CommandLine.Option(names = ["--directory"], description = ["the directory to run in"])

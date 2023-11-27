@@ -31,7 +31,7 @@ class P2PMessagingTest {
         val DISTRIBUTED_SERVICE_NAME = CordaX500Name("DistributedService", "London", "GB")
     }
 
-    @Test(timeout=300_000)
+    @Test
 @Ignore
     fun `communicating with a distributed service which we're part of`() {
         startDriverWithDistributedService { distributedService ->

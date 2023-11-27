@@ -50,7 +50,7 @@ class TrustRootTest {
         mockNet.stopNodes()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can start flow between nodes with different roots`() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = FINANCE_CORDAPPS, notarySpecs = listOf())
         val (rootCa1, intermediateCa1) = createDevIntermediateCaCertPath(X500Principal("CN=Root1"))
@@ -84,7 +84,7 @@ class TrustRootTest {
         assertEquals(1000.DOLLARS, bob.services.getCashBalance(USD))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `fail to start flow when missing acceptor's root on the initiator side`() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = FINANCE_CORDAPPS, notarySpecs = listOf())
         val (rootCa1, intermediateCa1) = createDevIntermediateCaCertPath(X500Principal("CN=Root1"))
@@ -116,7 +116,7 @@ class TrustRootTest {
         assertEquals(0.DOLLARS, bob.services.getCashBalance(USD))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `fail to notarise when missing initiator's root on the notary side`() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = FINANCE_CORDAPPS, notarySpecs = listOf())
         val (rootCa1, intermediateCa1) = createDevIntermediateCaCertPath(X500Principal("CN=Root1"))
@@ -148,7 +148,7 @@ class TrustRootTest {
         assertEquals(0.DOLLARS, bob.services.getCashBalance(USD))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can notarise when missing acceptor's root on the notary side`() {
         mockNet = InternalMockNetwork(cordappsForAllNodes = FINANCE_CORDAPPS, notarySpecs = listOf())
         val (rootCa1, intermediateCa1) = createDevIntermediateCaCertPath(X500Principal("CN=Root1"))

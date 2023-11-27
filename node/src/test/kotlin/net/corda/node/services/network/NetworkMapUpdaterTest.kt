@@ -140,7 +140,7 @@ class NetworkMapUpdaterTest {
                 NetworkParameterAcceptanceSettings(autoAcceptNetworkParameters, excludedAutoAcceptNetworkParameters), null)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `process add node updates from network map, with additional node infos from dir`() {
         setUpdater()
         val (_, signedNodeInfo1) = createNodeInfoAndSigned("Info 1")
@@ -182,7 +182,7 @@ class NetworkMapUpdaterTest {
         ))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `process remove node updates from network map, with additional node infos from dir`() {
         setUpdater()
         val (nodeInfo1, signedNodeInfo1) = createNodeInfoAndSigned("Info 1")
@@ -228,7 +228,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsOnly(fileNodeInfoAndSigned.nodeInfo.serialize().hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `process remove, add, and update node from network map`() {
         setUpdater()
         val (nodeInfo1, signedNodeInfo1) = createNodeInfoAndSigned("Info 1")
@@ -271,7 +271,7 @@ class NetworkMapUpdaterTest {
         ))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `receive node infos from directory, without a network map`() {
         setUpdater(netMapClient = null)
         val fileNodeInfoAndSigned = createNodeInfoAndSigned("Info from file")
@@ -292,7 +292,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsOnly(fileNodeInfoAndSigned.nodeInfo.serialize().hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `receive node infos from directory after an error due to missing additional-node-infos directory`() {
         setUpdater(netMapClient = null)
         val fileNodeInfoAndSigned = createNodeInfoAndSigned("Info from file")
@@ -326,7 +326,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsOnly(fileNodeInfoAndSigned.nodeInfo.serialize().hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `emit new parameters update info on parameters update from network map`() {
         setUpdater()
         val paramsFeed = updater!!.trackParametersUpdate()
@@ -349,7 +349,7 @@ class NetworkMapUpdaterTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ack network parameters update`() {
         setUpdater()
         val newParameters = testNetworkParameters(epoch = 314, maxMessageSize = 10485761)
@@ -368,7 +368,7 @@ class NetworkMapUpdaterTest {
         assertEquals(newHash, server.latestParametersAccepted(ourKeyPair.public))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `network parameters auto-accepted when update only changes whitelist`() {
         setUpdater()
         val newParameters = testNetworkParameters(
@@ -386,7 +386,7 @@ class NetworkMapUpdaterTest {
         assertEquals(newHash, server.latestParametersAccepted(ourKeyPair.public))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `network parameters not auto-accepted when update only changes whitelist but parameter included in exclusion`() {
         setUpdater()
         val newParameters = testNetworkParameters(
@@ -400,7 +400,7 @@ class NetworkMapUpdaterTest {
         assert(!updateFile.exists()) { "network parameters should not be auto accepted" }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `network parameters not auto-accepted when update only changes whitelist but auto accept configured to be false`() {
         setUpdater()
         val newParameters = testNetworkParameters(
@@ -414,7 +414,7 @@ class NetworkMapUpdaterTest {
         assert(!updateFile.exists()) { "network parameters should not be auto accepted" }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `fetch nodes from private network`() {
         setUpdater(extraNetworkMapKeys = listOf(privateNetUUID))
         server.addNodesToPrivateNetwork(privateNetUUID, listOf(ALICE_NAME))
@@ -431,7 +431,7 @@ class NetworkMapUpdaterTest {
         assertEquals(aliceInfo, networkMapClient.getNodeInfo(aliceHash))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `update nodes is successful for network map supporting bulk operations but with only a few nodes requested`() {
         server.version = "2"
         setUpdater()
@@ -463,7 +463,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsExactlyInAnyOrder(nodeInfoHash1, nodeInfoHash2, nodeInfoHash3, nodeInfoHash4)
     }
 
-    @Test(timeout=300_000)
+    @Test
     @SuppressWarnings("SpreadOperator")
     fun `update nodes is successful for network map supporting bulk operations when high number of nodes is requested`() {
         server.version = "2"
@@ -481,7 +481,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsExactlyInAnyOrder(*(nodeInfoHashes.toTypedArray()))
     }
 
-    @Test(timeout=300_000)
+    @Test
     @SuppressWarnings("SpreadOperator")
     fun `update nodes is successful for network map not supporting bulk operations`() {
         setUpdater()
@@ -500,7 +500,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsExactlyInAnyOrder(*(nodeInfoHashes.toTypedArray()))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `remove node from filesystem deletes it from network map cache`() {
         setUpdater(netMapClient = null)
         val fileNodeInfoAndSigned1 = createNodeInfoAndSigned("Info from file 1")
@@ -523,7 +523,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsOnly(fileNodeInfoAndSigned2.signed.raw.hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `remove node info file, but node in network map server`() {
         setUpdater()
         val nodeInfoBuilder = TestNodeInfoBuilder()
@@ -557,7 +557,7 @@ class NetworkMapUpdaterTest {
     //Test fix for ENT-1882
     //This scenario can happen when signing of network map server is performed much longer after the node joined the network.
     //Network map will advertise hashes without that node.
-    @Test(timeout=300_000)
+    @Test
 	fun `not remove own node info when it is not in network map yet`() {
         val (myInfo, signedMyInfo) = createNodeInfoAndSigned("My node info")
         val (_, signedOtherInfo) = createNodeInfoAndSigned("Other info")
@@ -571,7 +571,7 @@ class NetworkMapUpdaterTest {
         assertThat(networkMapCache.allNodeHashes).containsExactlyInAnyOrder(signedMyInfo.raw.hash, signedOtherInfo.raw.hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `network map updater removes the correct node info after node info changes`() {
         setUpdater()
 
@@ -603,7 +603,7 @@ class NetworkMapUpdaterTest {
         assert(networkMapCache.allNodeHashes.first() == signedNodeInfo2.raw.hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `auto acceptance checks are correct`() {
         val packageOwnership = mapOf(
                 "com.example1" to generateKeyPair().public,

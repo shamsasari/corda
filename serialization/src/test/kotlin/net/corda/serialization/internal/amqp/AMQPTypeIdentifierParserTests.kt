@@ -14,7 +14,7 @@ import net.corda.serialization.internal.MAX_TYPE_PARAM_DEPTH
 
 class AMQPTypeIdentifierParserTests {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `primitives and arrays`() {
         assertParseResult<Int>("int")
         assertParseResult<IntArray>("int[p]")
@@ -34,7 +34,7 @@ class AMQPTypeIdentifierParserTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unparameterised types`() {
         assertParseResult<LocalDateTime>("java.time.LocalDateTime")
         assertParseResult<Array<LocalDateTime>>("java.time.LocalDateTime[]")
@@ -50,7 +50,7 @@ class AMQPTypeIdentifierParserTests {
         val q: WithParameter<Array<Q>>
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `parameterised types, nested, with arrays`() {
         assertParsesTo<WithParameters<IntArray, WithParameter<Array<WithParameters<Array<Array<Date>>, UUID>>>>>(
                 "WithParameters<int[], WithParameter<WithParameters<Date[][], UUID>[]>>"
@@ -62,7 +62,7 @@ class AMQPTypeIdentifierParserTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `compatibility test`() {
         assertParsesCompatibly<Int>()
         assertParsesCompatibly<IntArray>()
@@ -75,87 +75,87 @@ class AMQPTypeIdentifierParserTests {
     }
 
     // Old tests for DeserializedParameterizedType
-    @Test(timeout=300_000)
+    @Test
 	fun `test nested`() {
         verify(" java.util.Map < java.util.Map< java.lang.String, java.lang.Integer >, java.util.Map < java.lang.Long , java.lang.String > >")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test simple`() {
         verify("java.util.List<java.lang.String>")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test multiple args`() {
         verify("java.util.Map<java.lang.String,java.lang.Integer>")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test trailing whitespace`() {
         verify("java.util.Map<java.lang.String, java.lang.Integer> ")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test list of commands`() {
         verify("java.util.List<net.corda.core.contracts.Command<net.corda.core.contracts.Command<net.corda.core.contracts.CommandData>>>")
     }
 
-    @Test(expected = NotSerializableException::class, timeout = 300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test trailing text`() {
         verify("java.util.Map<java.lang.String, java.lang.Integer>foo")
     }
 
-    @Test(expected = NotSerializableException::class, timeout = 300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test trailing comma`() {
         verify("java.util.Map<java.lang.String, java.lang.Integer,>")
     }
 
-    @Test(expected = NotSerializableException::class, timeout = 300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test leading comma`() {
         verify("java.util.Map<,java.lang.String, java.lang.Integer>")
     }
 
-    @Test(expected = NotSerializableException::class, timeout = 300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test middle comma`() {
         verify("java.util.Map<,java.lang.String,, java.lang.Integer>")
     }
 
-    @Test(expected = NotSerializableException::class, timeout = 300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test trailing close`() {
         verify("java.util.Map<java.lang.String, java.lang.Integer>>")
     }
 
-    @Test(expected = NotSerializableException::class, timeout = 300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test empty params`() {
         verify("java.util.Map<>")
     }
 
-    @Test(expected = NotSerializableException::class, timeout = 300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test mid whitespace`() {
         verify("java.u til.List<java.lang.String>")
     }
 
-    @Test(expected = NotSerializableException::class, timeout = 300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test mid whitespace2`() {
         verify("java.util.List<java.l ng.String>")
     }
 
-    @Test(expected = NotSerializableException::class, timeout = 300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test wrong number of parameters`() {
         verify("java.util.List<java.lang.String, java.lang.Integer>")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test no parameters`() {
         verify("java.lang.String")
     }
 
-    @Test(expected = NotSerializableException::class, timeout = 300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test parameters on non-generic type`() {
         verify("java.lang.String<java.lang.Integer>")
     }
 
-    @Test(expected = NotSerializableException::class, timeout = 300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test excessive nesting`() {
         var nested = "java.lang.Integer"
         for (i in 1..MAX_TYPE_PARAM_DEPTH) {

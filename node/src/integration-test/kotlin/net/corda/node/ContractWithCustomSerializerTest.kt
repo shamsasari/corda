@@ -40,7 +40,7 @@ class ContractWithCustomSerializerTest(private val runInProcess: Boolean) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flow with custom serializer by rpc`() {
         val user = User("u", "p", setOf(Permissions.all()))
         driver(DriverParameters(

@@ -8,7 +8,7 @@ import java.util.*
 import java.util.concurrent.CancellationException
 
 class UtilsTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `toFuture - single item observable`() {
         val subject = PublishSubject.create<String>()
         val future = subject.toFuture()
@@ -16,7 +16,7 @@ class UtilsTest {
         assertThat(future.getOrThrow()).isEqualTo("Hello")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `toFuture - empty obserable`() {
         val subject = PublishSubject.create<String>()
         val future = subject.toFuture()
@@ -26,7 +26,7 @@ class UtilsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `toFuture - more than one item observable`() {
         val subject = PublishSubject.create<String>()
         val future = subject.toFuture()
@@ -36,7 +36,7 @@ class UtilsTest {
         assertThat(future.getOrThrow()).isEqualTo("Hello")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `toFuture - erroring observable`() {
         val subject = PublishSubject.create<String>()
         val future = subject.toFuture()
@@ -47,7 +47,7 @@ class UtilsTest {
         }.isSameAs(exception)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `toFuture - cancel`() {
         val subject = PublishSubject.create<String>()
         val future = subject.toFuture()

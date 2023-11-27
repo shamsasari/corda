@@ -30,7 +30,7 @@ private interface MySpectator {
 }
 
 class RigorousMockTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `toString has a reliable default answer in all cases`() {
         Stream.of<(Class<out Any>) -> Any>(::spectator, ::rigorousMock, ::participant).forEach { profile ->
             Stream.of(MyInterface::class, MyAbstract::class, MyImpl::class).forEach { type ->
@@ -40,7 +40,7 @@ class RigorousMockTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17: Issue with private classes in Kotlin 1.8")
 	fun `callRealMethod is preferred by rigorousMock`() {
         rigorousMock<MyInterface>().let { m ->
@@ -59,7 +59,7 @@ class RigorousMockTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `throw exception is preferred by participant`() {
         participant<MyInterface>().let { m ->
             assertSame<Any>(UndefinedMockBehaviorException::class.java, catchThrowable { m.abstractFun() }.javaClass)
@@ -77,7 +77,7 @@ class RigorousMockTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `doing nothing is preferred by spectator`() {
         val mock: MySpectator = spectator()
         mock.sideEffect()
@@ -98,7 +98,7 @@ class RigorousMockTest {
     private open class CD<out C, out D> : AB<D, C>()
     private class CDImpl : CD<Runnable, String>()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `method return type resolution works`() {
         val m = spectator<CDImpl>()
         assertThat(m.b, isA(Runnable::class.java))
@@ -111,7 +111,7 @@ class RigorousMockTest {
         fun <U : Closeable> u(): U = throw UnsupportedOperationException()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `method return type erasure cases`() {
         val m = spectator<TU<RS>>()
         m.t().let { t: Any ->

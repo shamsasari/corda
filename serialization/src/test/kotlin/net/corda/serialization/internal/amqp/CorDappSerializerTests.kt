@@ -46,7 +46,7 @@ class CorDappSerializerTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `type uses proxy`() {
         val internalProxyFactory = testDefaultFactory()
         val proxyFactory = testDefaultFactory()
@@ -72,7 +72,7 @@ class CorDappSerializerTests {
         assertEquals(msg, objFromProxy.obj.a)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun proxiedTypeIsNested() {
         data class A(val a: Int, val b: NeedsProxy)
 
@@ -89,7 +89,7 @@ class CorDappSerializerTests {
         assertEquals(tv2, objFromDefault.obj.b.a)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testWithWhitelistNotAllowed() {
         data class A(val a: Int, val b: NeedsProxy)
 
@@ -112,7 +112,7 @@ class CorDappSerializerTests {
         }.isInstanceOf(NotSerializableException::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testWithWhitelistAllowed() {
         data class A(val a: Int, val b: NeedsProxy)
 
@@ -141,7 +141,7 @@ class CorDappSerializerTests {
 
     // The custom type not being whitelisted won't matter here because the act of adding a
     // custom serializer bypasses the whitelist
-    @Test(timeout=300_000)
+    @Test
 	fun testWithWhitelistAllowedOuterOnly() {
         data class A(val a: Int, val b: NeedsProxy)
 
@@ -178,7 +178,7 @@ class CorDappSerializerTests {
     }
 
     // Tests CORDA-1747
-    @Test(timeout=300_000)
+    @Test
 	fun proxiedGeneric() {
         val proxyFactory = proxyFactory(listOf(NeedsProxyGenProxySerializer()))
 
@@ -227,7 +227,7 @@ class CorDappSerializerTests {
     }
 
     // Tests CORDA-1747 - Finally the actual bound generics test, on failure it will throw
-    @Test(timeout=300_000)
+    @Test
 	fun proxiedBoundedGeneric() {
         val proxyFactory = proxyFactory(listOf(NeedsProxyGenBoundedProxySerializer(), HasWibbleProxy()))
 
@@ -249,7 +249,7 @@ class CorDappSerializerTests {
     }
 
     // Tests CORDA-1747
-    @Test(timeout=300_000)
+    @Test
 	fun proxiedGenericContainer() {
         val proxyFactory = proxyFactory(listOf(NeedsProxyGenContainerProxySerializer()))
 
@@ -289,7 +289,7 @@ class CorDappSerializerTests {
     }
 
     // Tests CORDA-1747
-    @Test(timeout=300_000)
+    @Test
 	fun proxiedInheritableGenerics() {
         val proxyFactory = proxyFactory(listOf(BaseProxy(), DerivedProxy()))
 

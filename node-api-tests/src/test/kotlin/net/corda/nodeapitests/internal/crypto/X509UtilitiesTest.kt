@@ -134,7 +134,7 @@ class X509UtilitiesTest {
     @JvmField
     val tempFolder = TemporaryFolder()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create valid self-signed CA certificate`() {
         Crypto.supportedSignatureSchemes().filter { it != COMPOSITE_KEY
                 && ( it != SPHINCS256_SHA256)}.forEach { validSelfSignedCertificate(it) }
@@ -156,7 +156,7 @@ class X509UtilitiesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `load and save a PEM file certificate`() {
         Crypto.supportedSignatureSchemes().filter { it != COMPOSITE_KEY }.forEach { loadSavePEMCert(it) }
     }
@@ -170,7 +170,7 @@ class X509UtilitiesTest {
         assertEquals(caCert, readCertificate)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create valid server certificate chain`() {
         certChainSchemeCombinations.filter{ it.first != SPHINCS256_SHA256 }
                                    .forEach { createValidServerCertChain(it.first, it.second) }
@@ -209,7 +209,7 @@ class X509UtilitiesTest {
         return CaAndChildKeysCertsAndSubjects(caKeyPair, caCert, childKeyPair, childCert, rootSubject, childSubject)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create valid server certificate chain includes CRL info`() {
         certChainSchemeCombinations.forEach { createValidServerCertIncludeCRL(it.first, it.second) }
     }
@@ -235,7 +235,7 @@ class X509UtilitiesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `storing all supported key types in java keystore`() {
         Crypto.supportedSignatureSchemes().filter { it != COMPOSITE_KEY }.forEach { storeKeyToKeystore(it) }
     }
@@ -265,7 +265,7 @@ class X509UtilitiesTest {
         assertEquals(keyPair.private, reloadedPrivateKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create server certificate in keystore for SSL`() {
         val certificatesDirectory = tempFolder.root.toPath()
         val signingCertStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory, "serverstorepass")
@@ -300,7 +300,7 @@ class X509UtilitiesTest {
         assertTrue { Crypto.isValid(X509Utilities.DEFAULT_TLS_SIGNATURE_SCHEME, serverCert.publicKey, signature, testData) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create server cert and use in SSL socket`() {
         val sslConfig = CertificateStoreStubs.P2P.withCertificatesDirectory(tempFolder.root.toPath(), keyStorePassword = "serverstorepass")
 
@@ -387,7 +387,7 @@ class X509UtilitiesTest {
         assertTrue(done)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create server cert and use in OpenSSL channel`() {
         val sslConfig = CertificateStoreStubs.P2P.withCertificatesDirectory(tempFolder.root.toPath(), keyStorePassword = "serverstorepass")
 
@@ -446,7 +446,7 @@ class X509UtilitiesTest {
         trustStore[X509Utilities.CORDA_ROOT_CA] = rootCert
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `get correct private key type from Keystore`() {
         schemeToKeyTypes.forEach { getCorrectKeyFromKeystore(it.first, it.second, it.third) }
     }
@@ -471,7 +471,7 @@ class X509UtilitiesTest {
         return Pair(keyFromKeystore, keyFromKeystoreCasted)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `serialize - deserialize X509Certificate`() {
         Crypto.supportedSignatureSchemes().filter { it != COMPOSITE_KEY }.forEach { serializeDeserializeX509Cert(it) }
     }
@@ -491,7 +491,7 @@ class X509UtilitiesTest {
         assertEquals(expected, actual)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `serialize - deserialize X509CertPath`() {
         Crypto.supportedSignatureSchemes().filter { it != COMPOSITE_KEY }.forEach { serializeDeserializeX509CertPath(it) }
     }
@@ -516,7 +516,7 @@ class X509UtilitiesTest {
         assertEquals(expected, actual)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `signing a key type with another key type certificate then store and reload correctly from keystore`() {
         certChainSchemeCombinations.forEach { signCertWithOtherKeyTypeAndTestKeystoreReload(it.first, it.second) }
     }
@@ -545,7 +545,7 @@ class X509UtilitiesTest {
         assertEquals(childKeyPair.private, reloadedPrivateKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check certificate validity or print warning if expiry is within 30 days`() {
         val keyPair = generateKeyPair(DEFAULT_TLS_SIGNATURE_SCHEME)
         val testName = X500Principal("CN=Test,O=R3 Ltd,L=London,C=GB")
@@ -575,7 +575,7 @@ class X509UtilitiesTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `check certificate serial number`() {
         val keyPair = generateKeyPair()
         val subject = X500Principal("CN=Test,O=R3 Ltd,L=London,C=GB")

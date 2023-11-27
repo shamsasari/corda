@@ -48,7 +48,7 @@ class NodeInfoFilesCopierTest {
         nodeInfoFilesCopier = NodeInfoFilesCopier(scheduler)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `files created before a node is started are copied to that node`() {
         // Configure the first node.
         nodeInfoFilesCopier.addConfig(node1RootPath)
@@ -69,7 +69,7 @@ class NodeInfoFilesCopierTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `polling of running nodes`() {
         // Configure 2 nodes.
         nodeInfoFilesCopier.addConfig(node1RootPath)
@@ -87,7 +87,7 @@ class NodeInfoFilesCopierTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `remove nodes`() {
         // Configure 2 nodes.
         nodeInfoFilesCopier.addConfig(node1RootPath)
@@ -111,7 +111,7 @@ class NodeInfoFilesCopierTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun clear() {
         // Configure 2 nodes.
         nodeInfoFilesCopier.addConfig(node1RootPath)

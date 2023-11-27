@@ -60,7 +60,7 @@ class HardRestartTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun restartShortPingPongFlowRandomly() {
         val demoUser = User("demo", "demo", setOf(Permissions.startFlow<Ping>(), Permissions.all()))
         driver(DriverParameters(
@@ -99,7 +99,7 @@ class HardRestartTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun restartLongPingPongFlowRandomly() {
         val demoUser = User("demo", "demo", setOf(Permissions.startFlow<Ping>(), Permissions.all()))
         driver(DriverParameters(
@@ -138,7 +138,7 @@ class HardRestartTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun softRestartLongPingPongFlowRandomly() {
         val demoUser = User("demo", "demo", setOf(Permissions.startFlow<Ping>(), Permissions.all()))
         driver(DriverParameters(
@@ -221,7 +221,7 @@ class HardRestartTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun restartRecursiveFlowRandomly() {
         val demoUser = User("demo", "demo", setOf(Permissions.startFlow<RecursiveA>(), Permissions.all()))
         driver(DriverParameters(

@@ -14,7 +14,7 @@ class TestCommsFlowInitiatorTest {
     val NOTARY = TestIdentity(DUMMY_NOTARY_NAME, 12)
     val DUMMY_BANK_A = TestIdentity(DUMMY_BANK_A_NAME, 3)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should allow all node infos through if no x500 is passed`() {
         val testCommsFlowInitiator = TestCommsFlowInitiator()
 
@@ -23,7 +23,7 @@ class TestCommsFlowInitiatorTest {
         Assert.assertTrue(testCommsFlowInitiator.matchesX500(DUMMY_BANK_A.party))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should allow only specified x500 if no x500 is passed`() {
         val testCommsFlowInitiator = TestCommsFlowInitiator(ALICE_NAME)
 

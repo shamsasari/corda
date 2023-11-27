@@ -14,7 +14,7 @@ import java.util.Optional
 
 class OptionalSerializationTests {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `java optionals should serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())

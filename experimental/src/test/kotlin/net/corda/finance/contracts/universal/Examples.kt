@@ -117,7 +117,7 @@ class Examples {
         }
     }
 
-    @Test(timeout=300_000) @Ignore
+    @Test @Ignore
     fun `pretty print`() {
         println ( prettyPrint(cds_contract) )
 

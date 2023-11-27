@@ -53,7 +53,7 @@ class MockNetworkSerializationWhitelistTest {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test serialization whitelist with mock network`() {
         val node = mockNetwork.createPartyNode()
         val ex = assertFailsWith<ExecutionException> {

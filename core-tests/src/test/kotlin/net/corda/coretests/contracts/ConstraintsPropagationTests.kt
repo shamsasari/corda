@@ -99,7 +99,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Happy path with the HashConstraint`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             ledgerServices.recordTransaction(transaction {
@@ -118,7 +118,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 @Ignore    // TODO(mike): rework
     fun `Happy path for Hash to Signature Constraint migration`() {
         val cordapps = (ledgerServices.cordappProvider as MockCordappProvider).cordapps
@@ -159,7 +159,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Fail early in the TransactionBuilder when attempting to change the hash of the HashConstraint on the spending transaction`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             transaction {
@@ -180,7 +180,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Transaction validation fails, when constraints do not propagate correctly`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             ledgerServices.recordTransaction(transaction {
@@ -213,7 +213,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `When the constraint of the output state is a valid transition from the input state, transaction validation works`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             ledgerServices.recordTransaction(transaction {
@@ -232,7 +232,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Switching from the WhitelistConstraint to the Signature Constraint is possible if the attachment satisfies both constraints, and the signature constraint inherits all jar signatures`() {
 
         ledgerServices.ledger(DUMMY_NOTARY) {
@@ -254,7 +254,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Switching from the WhitelistConstraint to the Signature Constraint fails if the signature constraint does not inherit all jar signatures`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             ledgerServices.recordTransaction(transaction {
@@ -275,7 +275,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `On contract annotated with NoConstraintPropagation there is no platform check for propagation, but the transaction builder can't use the AutomaticPlaceholderConstraint`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             ledgerServices.recordTransaction(transaction {
@@ -303,7 +303,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Signature Constraints canBeTransitionedFrom Hash Constraints behaves as expected`() {
 
         // unsigned attachment (for hash constraint)
@@ -329,7 +329,7 @@ class ConstraintsPropagationTests {
         assertFalse(SignatureAttachmentConstraint(ALICE_PUBKEY).canBeTransitionedFrom(HashAttachmentConstraint(allOnesHash), attachmentSigned))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Attachment canBeTransitionedFrom behaves as expected`() {
 
         // signed attachment (for signature constraint)
@@ -383,7 +383,7 @@ class ConstraintsPropagationTests {
         recordTransactions(SignedTransaction(wireTransaction, sigs))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Input state contract version may be incompatible with lower version`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             ledgerServices.recordTransaction(transaction {
@@ -402,7 +402,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Input state contract version is compatible with the same version`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             ledgerServices.recordTransaction(transaction {
@@ -421,7 +421,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Input state contract version is compatible with higher version`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             ledgerServices.recordTransaction(transaction {
@@ -440,7 +440,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Input states contract version may be lower that current contract version`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             ledgerServices.recordTransaction(transaction {
@@ -465,7 +465,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Input state with contract version can be downgraded to no version`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             ledgerServices.recordTransaction(transaction {
@@ -484,7 +484,7 @@ class ConstraintsPropagationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Input state without contract version is compatible with any version`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             ledgerServices.recordTransaction(transaction {

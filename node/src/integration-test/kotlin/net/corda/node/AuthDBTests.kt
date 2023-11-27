@@ -105,12 +105,12 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `login with correct credentials`() {
         client.start("user", "foo").close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `login with wrong credentials`() {
         client.start("user", "foo").close()
         assertFailsWith(
@@ -125,7 +125,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check flow permissions are respected`() {
         client.start("user", "foo").use {
             val proxy = it.proxy
@@ -145,7 +145,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `check permissions on RPC calls are respected`() {
         client.start("user", "foo").use {
             val proxy = it.proxy
@@ -158,7 +158,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Add new users dynamically`() {
         assertFailsWith(
                 ActiveMQSecurityException::class,
@@ -174,7 +174,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         client.start("user2", "bar").close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Modify user permissions during RPC session`() {
         Assume.assumeFalse(IS_S390X)
         db.insert(UserAndRoles(
@@ -195,7 +195,7 @@ class AuthDBTests : NodeBasedTest(cordappPackages = CORDAPPS) {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Revoke user permissions during RPC session`() {
         db.insert(UserAndRoles(
                 username = "user4",

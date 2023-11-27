@@ -54,7 +54,7 @@ class PackageOwnershipVerificationTests {
             )
     )
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Happy path - Transaction validates when package signed by owner`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             transaction {
@@ -66,7 +66,7 @@ class PackageOwnershipVerificationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Transaction validation fails when the selected attachment is not signed by the owner`() {
         ledgerServices.ledger(DUMMY_NOTARY) {
             transaction {
@@ -78,7 +78,7 @@ class PackageOwnershipVerificationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `packages that do not have contracts in are still ownable`() {
         // The first version of this feature was incorrectly concerned with contract classes and only contract
         // classes, but for the feature to work it must apply to any package. This tests that by using a package

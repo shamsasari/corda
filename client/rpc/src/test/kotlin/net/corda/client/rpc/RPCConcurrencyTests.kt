@@ -104,7 +104,7 @@ class RPCConcurrencyTests : AbstractRPCTest() {
         pool.shutdown()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `call multiple RPCs in parallel`() {
         rpcDriver {
             val proxy = testProxy()
@@ -140,7 +140,7 @@ class RPCConcurrencyTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `nested immediate observables sequence correctly`() {
         rpcDriver {
             // We construct a rose tree of immediate Observables and check that parent observations arrive before children.
@@ -164,7 +164,7 @@ class RPCConcurrencyTests : AbstractRPCTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `parallel nested observables`() {
         rpcDriver {
             val proxy = testProxy()

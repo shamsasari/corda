@@ -45,7 +45,7 @@ class NetworkParametersTest {
     }
 
     // Minimum Platform Version tests
-    @Test(timeout=300_000)
+    @Test
 	fun `node shutdowns when on lower platform version than network`() {
         val alice = mockNet.createUnstartedNode(InternalMockNodeParameters(legalName = ALICE_NAME, forcedID = 100, version = MOCK_VERSION_INFO.copy(platformVersion = 1)))
         val aliceDirectory = mockNet.baseDirectory(100)
@@ -56,7 +56,7 @@ class NetworkParametersTest {
         assertThatThrownBy { alice.start() }.hasMessageContaining("platform version")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `node works fine when on higher platform version`() {
         val alice = mockNet.createUnstartedNode(InternalMockNodeParameters(legalName = ALICE_NAME, forcedID = 100, version = MOCK_VERSION_INFO.copy(platformVersion = 2)))
         val aliceDirectory = mockNet.baseDirectory(100)
@@ -67,7 +67,7 @@ class NetworkParametersTest {
         alice.start()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `that we can copy while preserving the event horizon`() {
         // this is defensive tests in response to CORDA-2769
         val aliceNotaryParty = TestIdentity(ALICE_NAME).party
@@ -95,7 +95,7 @@ class NetworkParametersTest {
         assertEquals(twoDays, nm2.eventHorizon)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `that transactionRecoveryPeriod and confidentialIdentityPreGenerationPeriod aren't required`() {
         // this is defensive tests in response to CORDA-2769
         val aliceNotaryParty = TestIdentity(ALICE_NAME).party
@@ -122,7 +122,7 @@ class NetworkParametersTest {
     }
 
     // Notaries tests
-    @Test(timeout=300_000)
+    @Test
 	fun `choosing notary not specified in network parameters will fail`() {
         val fakeNotary = mockNet.createNode(
                 InternalMockNodeParameters(
@@ -140,7 +140,7 @@ class NetworkParametersTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `package ownership checks are correct`() {
         val key1 = generateKeyPair().public
         val key2 = generateKeyPair().public

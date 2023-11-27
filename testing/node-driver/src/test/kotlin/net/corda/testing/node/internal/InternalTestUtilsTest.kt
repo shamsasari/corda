@@ -4,7 +4,7 @@ import org.assertj.core.api.Assertions.assertThat
 import org.junit.Test
 
 class InternalTestUtilsTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `test simplifyScanPackages`() {
         assertThat(simplifyScanPackages(emptyList())).isEmpty()
         assertThat(simplifyScanPackages(listOf("com.foo.bar"))).containsExactlyInAnyOrder("com.foo.bar")

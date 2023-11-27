@@ -113,7 +113,7 @@ class NetworkParametersResolutionTest {
         return Pair(dummy1, dummy2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `parameters all null`() {
         val (stx1, stx2) = makeTransactions(null, null)
         assertThat(stx1.networkParametersHash).isNull()
@@ -128,7 +128,7 @@ class NetworkParametersResolutionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transaction chain out of order parameters`() {
         val hash2 = params2.serialize().hash
         val hash3 = params3.serialize().hash
@@ -153,7 +153,7 @@ class NetworkParametersResolutionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `request parameters that are not in the storage`() {
         val hash1 = defaultParams.serialize().hash
         val hash2 = params2.serialize().hash
@@ -177,7 +177,7 @@ class NetworkParametersResolutionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transaction chain out of order parameters with default`() {
         val hash3 = params3.serialize().hash
         // stx1 with epoch 3 -> stx2 with default epoch, which is 1
@@ -198,7 +198,7 @@ class NetworkParametersResolutionTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `incorrect triangle of transactions`() {
         // stx1 with epoch 2, stx2 with epoch 1, stx3 with epoch 3
         // stx1 -> stx2, stx1 -> stx3, stx2 -> stx3

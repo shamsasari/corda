@@ -21,7 +21,7 @@ import kotlin.test.assertEquals
 
 class MessagingSendAllTest {
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow can exchange messages with multiple sessions to the same party in parallel`() {
         driver(DriverParameters(startNodesInProcess = true)) {
             val (alice, bob) = listOf(

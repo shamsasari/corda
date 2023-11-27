@@ -43,7 +43,7 @@ class CordaServiceLifecycleTests {
         eventsToBeCaptured = setOf(BEFORE_STATE_MACHINE_START, STATE_MACHINE_STARTED).toMutableSet()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `corda service receives events`() {
         val result = driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()),
                 notarySpecs = emptyList())) {
@@ -56,7 +56,7 @@ class CordaServiceLifecycleTests {
         assertEquals(expectedEventsAndTheOrderTheyOccurIn, eventsCaptured)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `corda service receives BEFORE_STATE_MACHINE_START before the state machine is started`() {
         testStateMachineManagerStatusWhenServiceEventOccurs(
                 event = BEFORE_STATE_MACHINE_START,
@@ -64,7 +64,7 @@ class CordaServiceLifecycleTests {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `corda service receives STATE_MACHINE_STARTED after the state machine is started`() {
         testStateMachineManagerStatusWhenServiceEventOccurs(
                 event = STATE_MACHINE_STARTED,

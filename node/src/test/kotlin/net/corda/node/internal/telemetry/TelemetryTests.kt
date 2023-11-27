@@ -51,7 +51,7 @@ class TelemetryTests {
     data class TestTelemetryItem(val name: String, val randomUUID: UUID): TelemetryDataItem
 
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test passing a block with suspend to span func`() {
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList(), cordappsForAllNodes = cordapps)) {
             val alice = startNode().getOrThrow()
@@ -61,7 +61,7 @@ class TelemetryTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `run flow with a suspend then check thread locals for fibre are the same`() {
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList(), cordappsForAllNodes = cordapps)) {
             val alice = startNode().getOrThrow()
@@ -71,7 +71,7 @@ class TelemetryTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can find 2 distinct telemetry components on node`() {
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList(), cordappsForAllNodes = cordapps)) {
             val alice = startNode().getOrThrow()
@@ -82,7 +82,7 @@ class TelemetryTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `telemetryId is restored after flow is reloaded from its checkpoint after suspending when reloadCheckpointAfterSuspend is true`() {
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList(), cordappsForAllNodes = cordapps)) {
             val alice = startNode(
@@ -98,7 +98,7 @@ class TelemetryTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `run flow and check telemetry components invoked`() {
         val user = User("mark", "dadada", setOf(Permissions.all()))
         driver(DriverParameters(cordappsForAllNodes = FINANCE_CORDAPPS + cordapps, startNodesInProcess = true)) {
@@ -135,7 +135,7 @@ class TelemetryTests {
         assertEquals(flowName, telemetryComponent.startSpanForFlowName)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `telemetry data is sent from nodeA to nodeB as part of a flow`() {
         val user = User("mark", "dadada", setOf(Permissions.all()))
         driver(DriverParameters(cordappsForAllNodes = FINANCE_CORDAPPS + cordapps, startNodesInProcess = true)) {

@@ -20,7 +20,7 @@ class AssociatedListTest {
         replayedMap = ReplayedMap(associatedList)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addWorks() {
         assertEquals(replayedMap.size, 1)
         assertEquals(replayedMap[0], 0)
@@ -37,7 +37,7 @@ class AssociatedListTest {
         assertEquals(replayedMap[1], 4)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun removeWorks() {
         sourceList.addAll(2, 4)
         assertEquals(replayedMap.size, 3)
@@ -57,7 +57,7 @@ class AssociatedListTest {
         assertEquals(replayedMap.size, 0)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun updateWorks() {
         sourceList.addAll(2, 4)
         assertEquals(replayedMap.size, 3)

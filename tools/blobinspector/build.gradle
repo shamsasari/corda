@@ -29,6 +29,8 @@ dependencies {
     testImplementation "commons-io:commons-io:$commons_io_version"
     testImplementation "org.assertj:assertj-core:${assertj_version}"
     testImplementation "junit:junit:$junit_version"
+
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junit_jupiter_version"
 }
 
 configurations.implementation.canBeResolved = true
@@ -39,7 +41,7 @@ jar {
         exclude "META-INF/*.DSA"
         exclude "META-INF/*.RSA"
     }
-    baseName = "blob-inspector"
+    archiveBaseName = "blob-inspector"
     manifest {
         attributes(
                 'Main-Class': 'net.corda.blobinspector.BlobInspectorKt'

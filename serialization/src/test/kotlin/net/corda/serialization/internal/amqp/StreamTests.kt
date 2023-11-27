@@ -13,7 +13,7 @@ class StreamTests {
 
     private class WrapperStream(input: InputStream) : FilterInputStream(input)
 
-    @Test(timeout=300_000)
+    @Test
 	fun inputStream() {
         val attachment = InputStreamAndHash.createInMemoryTestZip(2116, 1)
         val id : InputStream = WrapperStream(attachment.inputStream)
@@ -32,7 +32,7 @@ class StreamTests {
         DeserializationInput(deserializerFactory).deserialize(bytes)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun listInputStream() {
         val attachment = InputStreamAndHash.createInMemoryTestZip(2116, 1)
         val id /* : List<InputStream> */= listOf(WrapperStream(attachment.inputStream))

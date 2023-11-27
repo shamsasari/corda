@@ -54,7 +54,7 @@ class CordaServiceTest {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Can find distinct services on node`() {
         val service = nodeA.services.cordaService(TestCordaService::class.java)
         val service2 = nodeA.services.cordaService(TestCordaService2::class.java)
@@ -65,26 +65,26 @@ class CordaServiceTest {
         assertEquals(LegacyCordaService::class.java, legacyService.javaClass)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Can start StartableByService flows`() {
         val service = nodeA.services.cordaService(TestCordaService::class.java)
         service.startServiceFlow()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Can't start StartableByRPC flows`() {
         val service = nodeA.services.cordaService(TestCordaService2::class.java)
         assertFailsWith<IllegalArgumentException> { service.startInvalidRPCFlow() }
     }
 
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Test flow with progress tracking`() {
         val service = nodeA.services.cordaService(TestCordaService::class.java)
         service.startServiceFlowAndTrack()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Corda service can access a non-null thread context classloader`() {
         val service = nodeA.services.cordaService(CordaServiceThatRequiresThreadContextClassLoader::class.java)
         service.thatWeCanAccessClassLoader()
@@ -95,22 +95,22 @@ class CordaServiceTest {
      * Querying the vault from a services constructor failed because the criteriaBuilder
      * had not been initialized.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `Can query vault service in constructor`() {
         nodeA.services.cordaService(VaultQueryService::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Can query using jdbc session in constructor`() {
         nodeA.services.cordaService(JdbcSessionQueryService::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Can use entity manager in constructor`() {
         nodeA.services.cordaService(EntityManagerService::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `MockServices when initialized with package name not on classpath throws ClassNotFoundException`() {
         val cordappPackages = listOf(
                 "com.r3.corda.sdk.tokens.money",

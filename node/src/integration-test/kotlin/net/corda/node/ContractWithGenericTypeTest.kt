@@ -44,7 +44,7 @@ class ContractWithGenericTypeTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
 	fun `flow with value of generic type`() {
         driver(parameters()) {
             val alice = startNode(providedName = ALICE_NAME, rpcUsers = listOf(user)).getOrThrow()
@@ -59,7 +59,7 @@ class ContractWithGenericTypeTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow without value of generic type`() {
         driver(parameters()) {
             val alice = startNode(providedName = ALICE_NAME, rpcUsers = listOf(user)).getOrThrow()

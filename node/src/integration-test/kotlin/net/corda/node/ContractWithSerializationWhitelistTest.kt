@@ -59,7 +59,7 @@ class ContractWithSerializationWhitelistTest(private val runInProcess: Boolean) 
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test serialization whitelist`() {
         logger.info("RUN-IN-PROCESS=$runInProcess")
 

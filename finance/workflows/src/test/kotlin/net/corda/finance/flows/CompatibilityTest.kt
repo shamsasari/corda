@@ -30,7 +30,7 @@ class CompatibilityTest {
         register(PublicKeySerializer)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun issueCashTansactionReadTest() {
         val inputStream = javaClass.classLoader.getResourceAsStream("compatibilityData/v3/node_transaction.dat")
         assertNotNull(inputStream)
@@ -57,7 +57,7 @@ class CompatibilityTest {
         assertTrue(inByteArray.contentEquals(serializedBytes.bytes))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun performanceTest() {
         val inputStream = javaClass.classLoader.getResourceAsStream("compatibilityData/v3/node_transaction.dat")
         assertNotNull(inputStream)

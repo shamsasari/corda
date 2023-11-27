@@ -66,7 +66,7 @@ class IdenityServiceKeyRotationMigrationTest {
 
     private fun TestIdentity.dbName() = IdentityTestSchemaV1.NodeNamedIdentities(name.toString(), publicKey.toStringShort())
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test migration`() {
         val alice = TestIdentity(ALICE_NAME, 70)
         val bob = TestIdentity(BOB_NAME, 80)

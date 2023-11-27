@@ -51,7 +51,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         super.before()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `entities can be saved using entity manager without a flush`() {
         var counter = 0
         StaffedFlowHospital.onFlowDischarged.add { _, _ -> ++counter }
@@ -67,7 +67,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `entities can be saved using entity manager with a flush`() {
         var counter = 0
         StaffedFlowHospital.onFlowDischarged.add { _, _ -> ++counter }
@@ -83,7 +83,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `entities saved inside an entity manager are only committed when a flow suspends`() {
         var counter = 0
         StaffedFlowHospital.onFlowDischarged.add { _, _ -> ++counter }
@@ -110,7 +110,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation without a flush breaks`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
 
@@ -130,7 +130,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation with a flush breaks`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
 
@@ -150,7 +150,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation with a flush that is caught inside an entity manager block saves none of the data inside of it`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
 
@@ -172,7 +172,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation with a flush that is caught outside the entity manager block saves none of the data inside of it`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
 
@@ -194,7 +194,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation within a single entity manager block throws an exception and saves no data`() {
         var dischargeCounter = 0
         StaffedFlowHospital.onFlowDischarged.add { _, _ -> ++dischargeCounter }
@@ -212,7 +212,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation on a single entity when saving multiple entities throws an exception and does not save any data within the entity manager block`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
 
@@ -232,7 +232,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation on a single entity when saving multiple entities and catching the error does not save any data within the entity manager block`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
 
@@ -254,7 +254,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation that is caught inside an entity manager and more data is saved afterwards inside a new entity manager should save the extra data`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
 
@@ -274,7 +274,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation that is caught inside an entity manager and more data is saved afterwards inside the same entity manager should not save the extra data`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
 
@@ -294,7 +294,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation that is caught outside an entity manager and more data is saved afterwards inside a new entity manager should save the extra data`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
 
@@ -314,7 +314,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `constraint violation that is caught inside an entity manager should allow a flow to continue processing as normal`() {
         var counter = 0
         StaffedFlowHospital.onFlowDischarged.add { _, _ -> ++counter }
@@ -336,7 +336,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `data saved from an entity manager vault update should be visible within an entity manager block inside the same database transaction`() {
         MyService.includeRawUpdates = true
         MyService.insertionType = MyService.InsertionType.ENTITY_MANAGER
@@ -353,7 +353,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `data saved from a jdbc connection vault update should be visible within an entity manager block inside the same database transaction`() {
         MyService.includeRawUpdates = true
         MyService.insertionType = MyService.InsertionType.CONNECTION
@@ -370,7 +370,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `non database error caught outside entity manager does not save entities`() {
         var counter = 0
         StaffedFlowHospital.onFlowDischarged.add { _, _ -> ++counter }
@@ -387,7 +387,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `non database error caught outside entity manager after flush occurs does save entities`() {
         var counter = 0
         StaffedFlowHospital.onFlowDischarged.add { _, _ -> ++counter }
@@ -403,7 +403,7 @@ class FlowEntityManagerTest : AbstractFlowEntityManagerTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `database error caught inside entity manager non database exception thrown and caught outside entity manager should not save entities`() {
         var counter = 0
         StaffedFlowHospital.onFlowDischarged.add { _, _ -> ++counter }

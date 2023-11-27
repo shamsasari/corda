@@ -27,7 +27,7 @@ class WebserverDriverTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `starting a node and independent web server works`() {
         val addr = driver(DriverParameters(notarySpecs = emptyList())) {
             val node = startNode(providedName = DUMMY_BANK_A_NAME).getOrThrow()

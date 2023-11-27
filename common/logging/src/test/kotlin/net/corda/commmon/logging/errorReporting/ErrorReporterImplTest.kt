@@ -77,7 +77,7 @@ class ErrorReporterImplTest {
         logs.clear()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `error codes logged correctly`() {
         val error = TEST_ERROR_1
         val testReporter = createReporterImpl("en-US")
@@ -85,7 +85,7 @@ class ErrorReporterImplTest {
         assertEquals(listOf("This is a test message [Code: test-case1 URL: $TEST_URL/en-US]"), logs)
     }
 
-    @Test(timeout = 300_00)
+    @Test
     fun `error code with parameters correctly reported`() {
         val currentDate = Date.from(Instant.now())
         val error = TestError2(currentDate)
@@ -95,7 +95,7 @@ class ErrorReporterImplTest {
         assertEquals(listOf("This is the second case with string foo, number 1, date ${format.format(currentDate)} [Code: test-case2 URL: $TEST_URL/en-US]"), logs)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `locale used with no corresponding resource falls back to default`() {
         val error = TEST_ERROR_1
         val testReporter = createReporterImpl("fr-FR")
@@ -103,7 +103,7 @@ class ErrorReporterImplTest {
         assertEquals(listOf("This is a test message [Code: test-case1 URL: $TEST_URL/fr-FR]"), logs)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `locale with corresponding resource causes correct error to be printed`() {
         val error = TEST_ERROR_1
         val testReporter = createReporterImpl("ga-IE")
@@ -111,7 +111,7 @@ class ErrorReporterImplTest {
         assertEquals(listOf("Is teachtaireacht earráide é seo [Code: test-case1 URL: $TEST_URL/ga-IE]"), logs)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `locale with missing properties falls back to default properties`() {
         val error = TEST_ERROR_1
         val testReporter = createReporterImpl("es-ES")
@@ -119,7 +119,7 @@ class ErrorReporterImplTest {
         assertEquals(listOf("This is a test message [Code: test-case1 URL: $TEST_URL/es-ES]"), logs)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `error code with underscore in translated to resource file successfully`() {
         val error = TEST_ERROR_3
         val testReporter = createReporterImpl("en-US")
@@ -127,7 +127,7 @@ class ErrorReporterImplTest {
         assertEquals(listOf("This is the third test message [Code: test-case-3 URL: $TEST_URL/en-US]"), logs)
     }
 
-    @Test(timeout = 3_000)
+    @Test
     fun `exception based error code logs the stack trace`() {
         val error = TestError4(Exception("A test exception"))
         val testReporter = createReporterImpl("en-US")

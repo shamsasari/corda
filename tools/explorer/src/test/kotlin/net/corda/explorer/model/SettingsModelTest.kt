@@ -14,7 +14,7 @@ class SettingsModelTest {
     @JvmField
     val tempFolder: TemporaryFolder = TemporaryFolder()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test save config and rollback`() {
         val path = tempFolder.root.toPath() / "conf"
         val config = path / "CordaExplorer.properties"

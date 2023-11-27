@@ -36,7 +36,7 @@ class FlowSessionCloseTest {
 
     private val user = User("user", "pwd", setOf(Permissions.all()))
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow cannot close uninitialised session`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()), notarySpecs = emptyList())) {
             val (nodeAHandle, nodeBHandle) = listOf(
@@ -53,7 +53,7 @@ class FlowSessionCloseTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow cannot access closed session, unless it's a duplicate close which is handled gracefully`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()), notarySpecs = emptyList())) {
             val (nodeAHandle, nodeBHandle) = listOf(
@@ -80,7 +80,7 @@ class FlowSessionCloseTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow can close initialised session successfully`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()), notarySpecs = emptyList())) {
             val (nodeAHandle, nodeBHandle) = listOf(
@@ -94,7 +94,7 @@ class FlowSessionCloseTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow can close initialised session successfully even in case of failures and replays`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()), notarySpecs = emptyList())) {
             val (nodeAHandle, nodeBHandle) = listOf(
@@ -108,7 +108,7 @@ class FlowSessionCloseTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow can close multiple sessions successfully`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()), notarySpecs = emptyList())) {
             val (nodeAHandle, nodeBHandle) = listOf(
@@ -127,7 +127,7 @@ class FlowSessionCloseTest {
      * If sessions are not closed, then the node will crash with an out-of-memory error.
      * This can be confirmed by commenting out [FlowSession.close] operation in the invoked flow and re-run the test.
      */
-    @Test(timeout=300_000)
+    @Test
     fun `flow looping over sessions can close them to release resources and avoid out-of-memory failures, when the other side does not finish early`() {
         driver(DriverParameters(startNodesInProcess = false, cordappsForAllNodes = listOf(enclosedCordapp()), notarySpecs = emptyList())) {
             val (nodeAHandle, nodeBHandle) = listOf(
@@ -141,7 +141,7 @@ class FlowSessionCloseTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow looping over sessions will close sessions automatically, when the other side finishes early`() {
         driver(DriverParameters(startNodesInProcess = false, cordappsForAllNodes = listOf(enclosedCordapp()), notarySpecs = emptyList())) {
             val (nodeAHandle, nodeBHandle) = listOf(

@@ -42,7 +42,7 @@ class ConcatenatedListTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addWorks() {
         concatenatedList.checkInvariants()
         assertEquals(replayedList.size, 1)
@@ -85,7 +85,7 @@ class ConcatenatedListTest {
         assertEquals(replayedList[6], "b")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun removeWorks() {
         sourceList.add(FXCollections.observableArrayList("a", "b"))
         sourceList.add(1, FXCollections.observableArrayList("c"))
@@ -113,7 +113,7 @@ class ConcatenatedListTest {
         assertEquals(replayedList[0], "b")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun permutationWorks() {
         sourceList.addAll(FXCollections.observableArrayList("a", "b"), FXCollections.observableArrayList("c"))
         concatenatedList.checkInvariants()

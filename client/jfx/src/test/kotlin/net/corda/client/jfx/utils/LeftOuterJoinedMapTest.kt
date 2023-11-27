@@ -26,7 +26,7 @@ class LeftOuterJoinedMapTest {
     }
 
     // TODO perhaps these are too brittle because they test indices that are not stable. Use Expect dsl?
-    @Test(timeout=300_000)
+    @Test
 	fun addWorks() {
         assertEquals(replayedList.size, 1)
         assertEquals(replayedList[0].first.name, "Alice")
@@ -73,7 +73,7 @@ class LeftOuterJoinedMapTest {
 
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun removeWorks() {
         dogs.add(Dog("Scooby", owner = "Alice"))
         people.add(Person("Bob", 34))

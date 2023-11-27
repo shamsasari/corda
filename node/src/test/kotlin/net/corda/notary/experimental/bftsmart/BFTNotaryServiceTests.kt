@@ -105,7 +105,7 @@ class BFTNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `detect double spend`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {
@@ -147,7 +147,7 @@ class BFTNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions outside their time window are rejected`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {
@@ -168,7 +168,7 @@ class BFTNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `notarise issue tx with time-window`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {
@@ -183,7 +183,7 @@ class BFTNotaryServiceTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions can be re-notarised outside their time window`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {

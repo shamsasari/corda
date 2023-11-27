@@ -21,11 +21,11 @@ dependencies {
     testImplementation group: "org.jetbrains.kotlin", name: "kotlin-test", version: kotlin_version
     testImplementation "org.mockito:mockito-core:$mockito_version"
     testImplementation "com.natpryce:hamkrest:$hamkrest_version"
+
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junit_jupiter_version"
 }
 
-
-
-task generateSource(type: Copy) {
+tasks.register('generateSource', Copy) {
     from 'src/main/template'
     filter(ReplaceTokens, tokens: [corda_release_version: corda_release_version])
     into 'src/main'

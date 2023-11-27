@@ -67,30 +67,30 @@ abstract class MQSecurityTest : NodeBasedTest() {
         runOnStop.forEach { it() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create queue for valid RPC user`() {
         val user1Queue = "${RPCApi.RPC_CLIENT_QUEUE_NAME_PREFIX}.${rpcUser.username}.${random63BitValue()}"
         assertTempQueueCreationAttackFails(user1Queue)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create queue for invalid RPC user`() {
         val invalidRPCQueue = "${RPCApi.RPC_CLIENT_QUEUE_NAME_PREFIX}.${random63BitValue()}.${random63BitValue()}"
         assertTempQueueCreationAttackFails(invalidRPCQueue)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	open fun `send message to notifications address`() {
         assertSendAttackFails(NOTIFICATIONS_ADDRESS)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create random internal queue`() {
         val randomQueue = "$INTERNAL_PREFIX${random63BitValue()}"
         assertAllQueueCreationAttacksFail(randomQueue)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create random queue`() {
         val randomQueue = random63BitValue().toString()
         assertAllQueueCreationAttacksFail(randomQueue)

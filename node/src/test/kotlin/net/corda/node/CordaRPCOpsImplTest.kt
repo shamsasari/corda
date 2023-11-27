@@ -115,7 +115,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cash issue accepted`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(
@@ -172,7 +172,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Suppress("DEPRECATION")
     fun `issue and move`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
@@ -267,7 +267,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cash command by user not permissioned for cash`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withoutAnyPermissions {
@@ -277,7 +277,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can upload an attachment`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(invokeRpc(CordaRPCOps::uploadAttachment), invokeRpc(CordaRPCOps::attachmentExists)) {
@@ -287,7 +287,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cannot upload the same attachment`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(invokeRpc(CordaRPCOps::uploadAttachment), invokeRpc(CordaRPCOps::attachmentExists)) {
@@ -300,7 +300,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can download an uploaded attachment`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(invokeRpc(CordaRPCOps::uploadAttachment), invokeRpc(CordaRPCOps::openAttachment)) {
@@ -316,7 +316,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can upload attachment with metadata`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(invokeRpc(CordaRPCOps::uploadAttachmentWithMetadata), invokeRpc(CordaRPCOps::attachmentExists)) {
@@ -326,7 +326,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `attachment uploaded with metadata has specified filename`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(invokeRpc(CordaRPCOps::uploadAttachmentWithMetadata), invokeRpc(CordaRPCOps::queryAttachments)) {
@@ -345,7 +345,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `attachment uploaded with metadata can be from a privileged user`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(invokeRpc(CordaRPCOps::uploadAttachmentWithMetadata), invokeRpc(CordaRPCOps::attachmentExists)) {
@@ -355,7 +355,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `trying to open attachment which doesnt exist throws error`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(invokeRpc(CordaRPCOps::openAttachment)) {
@@ -366,7 +366,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `attachment uploaded with metadata has specified uploader`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(invokeRpc(CordaRPCOps::uploadAttachmentWithMetadata), invokeRpc(CordaRPCOps::queryAttachments)) {
@@ -385,7 +385,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `attempt to start non-RPC flow`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(startFlow<NonRPCFlow>()) {
@@ -395,7 +395,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `kill a nonexistent flow through RPC`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(invokeRpc(CordaRPCOps::killFlow)) {
@@ -405,7 +405,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non-ContractState class for the contractStateType param in vault queries`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         val nonContractStateClass = uncheckedCast(Cash::class.java) as Class<ContractState>
@@ -415,7 +415,7 @@ class CordaRPCOpsImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `attempt to start RPC flow with void return`() {
         CURRENT_RPC_CONTEXT.set(RpcAuthContext(InvocationContext.rpc(testActor()), buildSubject("TEST_USER", emptySet())))
         withPermissions(startFlow<VoidRPCFlow>()) {

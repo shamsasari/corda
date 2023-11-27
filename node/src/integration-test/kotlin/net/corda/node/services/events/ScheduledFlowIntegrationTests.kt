@@ -102,7 +102,7 @@ class ScheduledFlowIntegrationTests {
     }
 
     @Ignore("ENT-5891: Unstable test we're not addressing in Corda 4.x")
-    @Test(timeout=300_000)
+    @Test
 	fun `test that when states are being spent at the same time that schedules trigger everything is processed`() {
         Assume.assumeFalse(IS_S390X)
         driver(DriverParameters(

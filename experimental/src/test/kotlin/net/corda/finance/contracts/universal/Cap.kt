@@ -187,7 +187,7 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun issue() {
         transaction {
             output(UNIVERSAL_PROGRAM_ID, stateInitial)
@@ -202,7 +202,7 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `first fixing`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateInitial)
@@ -241,7 +241,7 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `first execute`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateAfterFixingFirst)
@@ -258,7 +258,7 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `final execute`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateAfterFixingFinal)
@@ -274,7 +274,7 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `second fixing`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateAfterExecutionFirst)
@@ -313,7 +313,7 @@ class Cap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 @Ignore
     fun `pretty print`() {
         println(prettyPrint(contractInitial))

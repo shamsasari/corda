@@ -23,11 +23,9 @@ dependencies {
     compileOnly project(':opentelemetry')
 
     testImplementation sourceSets.obfuscator.output
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
     testImplementation "junit:junit:$junit_version"
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junit_vintage_version}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_jupiter_version}"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junit_platform_version}"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junit_jupiter_version"
 
     testImplementation "commons-fileupload:commons-fileupload:$fileupload_version"
 
@@ -93,10 +91,10 @@ dependencies {
 }
 
 // TODO Consider moving it to quasar-utils in the future (introduced with PR-1388)
-task copyQuasarJar(type: Copy) {
+tasks.register('copyQuasarJar', Copy) {
     from configurations.quasar
     into "$project.rootProject.projectDir/lib"
-    rename { filename -> "quasar.jar"}
+    rename { filename -> "quasar.jar" }
 }
 
 jar {
@@ -126,7 +124,8 @@ test {
     maxParallelForks = (System.env.CORDA_CORE_TESTING_FORKS == null) ? 1 :  "$System.env.CORDA_CORE_TESTING_FORKS".toInteger()
 }
 
-task testJar(type: Jar, dependsOn: testClasses) {
+tasks.register('testJar', Jar) {
+    dependsOn testClasses
     classifier "tests"
     from sourceSets.test.output
 }

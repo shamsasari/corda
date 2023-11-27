@@ -12,7 +12,7 @@ import org.junit.Test
 
 class FlowsExecutionModeRpcTest {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `persistent state survives node restart`() {
         // Temporary disable this test when executed on Windows. It is known to be sporadically failing.
         // More investigation is needed to establish why.

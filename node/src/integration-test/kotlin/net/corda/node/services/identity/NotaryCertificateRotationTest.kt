@@ -51,7 +51,7 @@ class NotaryCertificateRotationTest(private val validating: Boolean) {
         mockNet.stopNodes()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `rotate notary identity`() {
         mockNet = InternalMockNetwork(
                 cordappsForAllNodes = FINANCE_CORDAPPS,

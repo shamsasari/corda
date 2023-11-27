@@ -65,7 +65,7 @@ class CollectSignaturesFlowTests : WithContracts {
     private val bob = bobNode.info.singleIdentity()
     private val charlie = charlieNode.info.singleIdentity()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `successfully collects three signatures`() {
         val bConfidentialIdentity = bobNode.createConfidentialIdentity(bob)
         aliceNode.verifyAndRegister(bConfidentialIdentity)
@@ -76,7 +76,7 @@ class CollectSignaturesFlowTests : WithContracts {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `successfully collects signatures when sessions are initiated with AnonymousParty`() {
         val aConfidentialIdentity1 = aliceNode.createConfidentialIdentity(alice)
         val bConfidentialIdentity1 = bobNode.createConfidentialIdentity(bob)
@@ -95,7 +95,7 @@ class CollectSignaturesFlowTests : WithContracts {
         Assert.assertThat(missingSigners, `is`(emptySet()))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `successfully collects signatures when sessions are initiated with both AnonymousParty and WellKnownParty`() {
         val aConfidentialIdentity1 = aliceNode.createConfidentialIdentity(alice)
         val bConfidentialIdentity1 = bobNode.createConfidentialIdentity(bob)
@@ -125,7 +125,7 @@ class CollectSignaturesFlowTests : WithContracts {
         Assert.assertThat(missingSigners, `is`(emptySet()))
     }
 
-    @Test(expected = IllegalArgumentException::class, timeout=300_000)
+    @Test(expected = IllegalArgumentException::class)
     fun `throws exception when extra sessions are initiated`() {
         bobNode.registerInitiatedFlow(ExtraSessionsFlowResponder::class.java)
         charlieNode.registerInitiatedFlow(ExtraSessionsFlowResponder::class.java)
@@ -140,7 +140,7 @@ class CollectSignaturesFlowTests : WithContracts {
         future.getOrThrow()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `it is possible to collect from multiple well known sessions`() {
         bobNode.registerInitiatedFlow(ExtraSessionsFlowResponder::class.java)
         charlieNode.registerInitiatedFlow(ExtraSessionsFlowResponder::class.java)
@@ -155,7 +155,7 @@ class CollectSignaturesFlowTests : WithContracts {
         Assert.assertThat(signedTx.getMissingSigners(), `is`(emptySet()))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `no need to collect any signatures`() {
         val ptx = aliceNode.signDummyContract(alice.ref(1))
 
@@ -165,7 +165,7 @@ class CollectSignaturesFlowTests : WithContracts {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `fails when not signed by initiator`() {
         val ptx = miniCorpServices.signDummyContract(alice.ref(1))
 
@@ -174,7 +174,7 @@ class CollectSignaturesFlowTests : WithContracts {
                 willThrow(errorMessage("The Initiator of CollectSignaturesFlow must have signed the transaction.")))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `passes with multiple initial signatures`() {
         val signedByA = aliceNode.signDummyContract(
                 alice.ref(1),

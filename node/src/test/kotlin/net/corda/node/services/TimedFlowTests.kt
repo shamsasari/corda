@@ -149,7 +149,7 @@ class TimedFlowTests {
         requestsReceived = AtomicInteger(0)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `timed flows are restarted`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {
@@ -167,7 +167,7 @@ class TimedFlowTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `timed sub-flows are restarted`() {
         node.run {
             val issueTx = signInitialTransaction(notary) {
@@ -185,7 +185,7 @@ class TimedFlowTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `timed flow can update its ETA`() {
         try {
             waitETA = 10.minutes
@@ -217,7 +217,7 @@ class TimedFlowTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `timed flow cannot update its ETA to less than default`() {
         try {
             waitETA = 1.seconds

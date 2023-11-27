@@ -15,7 +15,7 @@ class FilterMyKeysTests {
     @JvmField
     val testSerialization = SerializationEnvironmentRule()
 
-    @Test(timeout=300_000)
+    @Test
 	fun test() {
         val name = CordaX500Name("Roger", "Office", "GB")
         val (_, services) = MockServices.makeTestDatabaseAndPersistentServices(

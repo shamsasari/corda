@@ -71,7 +71,7 @@ class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) 
         override fun stringTestMethod(): String = testPhrase
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `basic listener scenario`() {
         rpcDriver {
             val server = startRpcServer(listOps = listOf(StringRPCOpsImpl)).get()
@@ -103,7 +103,7 @@ class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) 
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `wrong credentials`() {
         rpcDriver {
             val server = startRpcServer(listOps = listOf(StringRPCOpsImpl)).get()
@@ -132,7 +132,7 @@ class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) 
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `failover listener scenario`() {
         rpcDriver {
             val primary = startRpcServer(listOps = listOf(StringRPCOpsImpl)).get()
@@ -182,7 +182,7 @@ class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) 
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `exceed number of retries scenario`() {
         rpcDriver {
             val primary = startRpcServer(listOps = listOf(StringRPCOpsImpl)).get()
@@ -268,7 +268,7 @@ class RPCConnectionListenerTest(@Suppress("unused") private val iteration: Int) 
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `multi-threaded scenario`() {
         rpcDriver {
             val server = startRpcServer(listOps = listOf(StringRPCOpsImpl)).get()

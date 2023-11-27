@@ -63,7 +63,7 @@ class FlowWithClientIdTest {
         ResultFlow.hook = null
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `start flow with client id`() {
         val clientId = UUID.randomUUID().toString()
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
@@ -75,7 +75,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `start flow with client id permissions - StartFlow`() {
         val user = User("TonyStark", "I AM IRONMAN", setOf("StartFlow.net.corda.node.flows.FlowWithClientIdTest\$ResultFlow"))
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
@@ -89,7 +89,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `start flow with client id permissions - InvokeRpc-startFlowWithClientId`() {
         val user = User("TonyStark", "I AM IRONMAN", setOf("InvokeRpc.startFlowWithClientId"))
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
@@ -103,7 +103,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `start flow with client id permissions - InvokeRpc-startFlowDynamicWithClientId`() {
         val user = User("TonyStark", "I AM IRONMAN", setOf("InvokeRpc.startFlowDynamicWithClientId"))
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
@@ -117,7 +117,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `start flow with client id without permissions`() {
         val user = User("TonyStark", "I AM IRONMAN", setOf("InvokeRpc.startFlow"))
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
@@ -135,7 +135,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `remove client id`() {
         val clientId = UUID.randomUUID().toString()
         var counter = 0
@@ -158,7 +158,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `on flow unserializable result a 'CordaRuntimeException' is thrown containing in its message the unserializable type`() {
         val clientId = UUID.randomUUID().toString()
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
@@ -173,7 +173,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `If flow has an unserializable exception result then it gets converted into a 'CordaRuntimeException'`() {
         ResultFlow.hook = {
             throw UnserializableException()
@@ -201,7 +201,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattachFlowWithClientId can retrieve results from existing flow future`() {
         val clientId = UUID.randomUUID().toString()
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
@@ -215,7 +215,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattachFlowWithClientId can retrieve exception from existing flow future`() {
         ResultFlow.hook = { throw IllegalStateException("Bla bla bla") }
         val clientId = UUID.randomUUID().toString()
@@ -235,7 +235,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `finishedFlowsWithClientIds returns completed flows with client ids`() {
         val clientId = UUID.randomUUID().toString()
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
@@ -246,7 +246,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `a client id flow can be re-attached when flows draining mode is on`() {
         val clientId = UUID.randomUUID().toString()
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
@@ -260,7 +260,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `if client id flow does not exist and flows draining mode is on, a RejectedCommandException gets thrown`() {
         val clientId = UUID.randomUUID().toString()
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptySet())) {
@@ -273,7 +273,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `a killed flow's exception can be retrieved after restarting the node`() {
         val clientId = UUID.randomUUID().toString()
 
@@ -325,7 +325,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattaching to existing running flow using startFlowWithClientId for flow started by another user throws a permission exception`() {
         val user = User("TonyStark", "I AM IRONMAN", setOf(Permissions.all()))
         val spy = User("spy", "l33t h4ck4r", setOf(Permissions.all()))
@@ -352,7 +352,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattaching to existing completed flow using startFlowWithClientId for flow started by another user throws a permission exception`() {
         val user = User("TonyStark", "I AM IRONMAN", setOf(Permissions.all()))
         val spy = User("spy", "l33t h4ck4r", setOf(Permissions.all()))
@@ -369,7 +369,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattaching to existing completed flow using startFlowWithClientId for flow started by another user throws a permission exception (after node restart)`() {
         val user = User("TonyStark", "I AM IRONMAN", setOf(Permissions.all()))
         val spy = User("spy", "l33t h4ck4r", setOf(Permissions.all()))
@@ -389,7 +389,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattaching to existing flow using reattachFlowWithClientId for flow started by another user returns null`() {
         val user = User("dan", "this is my password", setOf(Permissions.all()))
         val spy = User("spy", "l33t h4ck4r", setOf(Permissions.all()))
@@ -409,7 +409,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `removeClientId does not remove mapping for flows started by another user`() {
         val user = User("dan", "this is my password", setOf(Permissions.all()))
         val spy = User("spy", "l33t h4ck4r", setOf(Permissions.all()))
@@ -433,7 +433,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `removeClientIdAsAdmin does remove mapping for flows started by another user`() {
         val user = User("dan", "this is my password", setOf(Permissions.all()))
         val spy = User("spy", "l33t h4ck4r", setOf(Permissions.all()))
@@ -457,7 +457,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `finishedFlowsWithClientIds does not return flows started by other users`() {
         val user = User("CaptainAmerica", "That really is America's ass", setOf(Permissions.all()))
         val spy = User("nsa", "EternalBlue", setOf(Permissions.all()))
@@ -486,7 +486,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `finishedFlowsWithClientIdsAsAdmin does return flows started by other users`() {
         val user = User("CaptainAmerica", "That really is America's ass", setOf(Permissions.all()))
         val spy = User("nsa", "EternalBlue", setOf(Permissions.all()))
@@ -513,7 +513,7 @@ class FlowWithClientIdTest {
     }
 
     // This test is not very realistic because the scenario it happens under is also not very realistic.
-    @Test(timeout = 300_000)
+    @Test
     fun `flow started with client id that fails before its first checkpoint that contains an unserializable argument will be persited as FAILED`() {
         val clientId = UUID.randomUUID().toString()
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
@@ -537,7 +537,7 @@ class FlowWithClientIdTest {
     }
 
     // This test has been added to replicate the exact scenario a user experienced.
-    @Test(timeout = 300_000)
+    @Test
     fun `flow started with client id that fails before its first checkpoint with subflow'd flow will be persited as FAILED`() {
         val clientId = UUID.randomUUID().toString()
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
@@ -561,7 +561,7 @@ class FlowWithClientIdTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow started with client id that fails can use doOnError to process the exception`() {
         val clientId = UUID.randomUUID().toString()
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {

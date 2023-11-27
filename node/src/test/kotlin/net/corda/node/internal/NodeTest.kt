@@ -63,7 +63,7 @@ class NodeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `generateAndSaveNodeInfo works`() {
         val configuration = createConfig(ALICE_NAME)
         val info = VersionInfo(789, "3.0", "SNAPSHOT", "R3")
@@ -73,7 +73,7 @@ class NodeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `check node service availability`() {
         val configuration = createConfig(ALICE_NAME)
         val info = VersionInfo(789, "3.0", "SNAPSHOT", "R3")
@@ -82,7 +82,7 @@ class NodeTest {
         assertNull(node.services.notaryService)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `clear network map cache works`() {
         val configuration = createConfig(ALICE_NAME)
         val (nodeInfo, _) = createNodeInfoAndSigned(ALICE_NAME)
@@ -109,7 +109,7 @@ class NodeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Node can start with multiple keypairs for its identity`() {
         val configuration = createConfig(ALICE_NAME)
         val (nodeInfo1, _) = createNodeInfoAndSigned(ALICE_NAME)
@@ -158,14 +158,14 @@ class NodeTest {
     }
 
     // JDK 11 check
-    @Test(timeout=300_000)
+    @Test
 	fun `test getJavaRuntimeVersion`() {
         assertTrue(SystemUtils.IS_JAVA_1_8 || SystemUtils.isJavaVersionAtLeast(JavaVersion.JAVA_11))
     }
 
     // JDK11: revisit (JDK 9+ uses different numbering scheme: see https://docs.oracle.com/javase/9/docs/api/java/lang/Runtime.Version.html)
     @Ignore
-    @Test(timeout=300_000)
+    @Test
 	fun `test getJavaUpdateVersion`() {
         assertThat(getJavaUpdateVersion("1.8.0_202-ea")).isEqualTo(202)
         assertThat(getJavaUpdateVersion("1.8.0_202")).isEqualTo(202)

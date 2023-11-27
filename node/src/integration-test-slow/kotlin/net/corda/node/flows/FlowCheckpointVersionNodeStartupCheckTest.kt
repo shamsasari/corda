@@ -34,7 +34,7 @@ class FlowCheckpointVersionNodeStartupCheckTest {
         val defaultCordapp = enclosedCordapp()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `restart node with mismatch between suspended flow and installed CorDapps`() {
         driver(DriverParameters(
                 startNodesInProcess = false,
@@ -49,7 +49,7 @@ class FlowCheckpointVersionNodeStartupCheckTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `restart node with mismatch between suspended paused flow and installed CorDapps`() {
         driver(DriverParameters(
                 startNodesInProcess = false,

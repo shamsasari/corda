@@ -42,7 +42,7 @@ class EvilContractCannotModifyStatesTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun testContractThatTriesToModifyStates() {
         val evilData = MutableDataObject(5000)
         driver(driverParameters(runInProcess = false)) {

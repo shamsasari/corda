@@ -60,7 +60,7 @@ class ExposeJpaToFlowsTests {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can persist and query custom entities`() {
         val foo = FooSchemaV1.PersistentFoo(UniqueIdentifier().id.toString(), "Bar")
 
@@ -80,7 +80,7 @@ class ExposeJpaToFlowsTests {
         assertEquals("Bar", result.single().fooData)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can't perform suspendable operations inside withEntityManager`() {
         val mockNode = mockNet.createNode()
         assertFailsWith(KryoException::class) {

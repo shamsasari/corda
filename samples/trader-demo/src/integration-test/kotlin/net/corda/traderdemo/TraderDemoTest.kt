@@ -28,7 +28,7 @@ import org.junit.Test
 import java.util.concurrent.Executors
 
 class TraderDemoTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `runs trader demo`() {
         val demoUser = User("demo", "demo", setOf(startFlow<SellerFlow>(), all()))
         val bankUser = User("user1", "test", permissions = setOf(
@@ -84,7 +84,7 @@ class TraderDemoTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Test restart node during flow works properly`() {
         driver(DriverParameters(
                 startNodesInProcess = false,

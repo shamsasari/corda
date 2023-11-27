@@ -16,7 +16,7 @@ interface I_ {
 
 class CompositeMembers : AmqpCarpenterBase(AllWhitelist) {
 
-    @Test(timeout=300_000)
+    @Test
 	fun parentIsUnknown() {
         @CordaSerializable
         data class A(val a: Int)
@@ -30,7 +30,7 @@ class CompositeMembers : AmqpCarpenterBase(AllWhitelist) {
         assertCanLoadAll(testSerializationContext, envelope.getMangled<B>())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun bothAreUnknown() {
         @CordaSerializable
         data class A(override val a: Int) : I_
@@ -46,7 +46,7 @@ class CompositeMembers : AmqpCarpenterBase(AllWhitelist) {
                 envelope.getMangled<B>().mangle<A>(), envelope.getMangled<A>())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun oneIsUnknown() {
         @CordaSerializable
         data class A(override val a: Int) : I_
@@ -63,7 +63,7 @@ class CompositeMembers : AmqpCarpenterBase(AllWhitelist) {
     }
 
     // See https://github.com/corda/corda/issues/4107
-    @Test(timeout=300_000)
+    @Test
 	fun withUUID() {
         @CordaSerializable
         data class IOUStateData(
@@ -79,7 +79,7 @@ class CompositeMembers : AmqpCarpenterBase(AllWhitelist) {
         assertEquals(uuid, instance.get("ref"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun mapWithUnknown() {
         data class C(val a: Int)
         data class D(val m: Map<String, C>)
@@ -96,7 +96,7 @@ class CompositeMembers : AmqpCarpenterBase(AllWhitelist) {
         assertCanLoadAll(testSerializationContext, infoForD, mangledMap, mangledC)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun parameterisedNonCollectionWithUnknown() {
         data class C(val a: Int)
         data class NotAMap<K, V>(val key: K, val value: V)

@@ -27,7 +27,7 @@ class BlacklistKotlinClosureTest {
     @CordaSerializable
     data class Packet(val x: () -> Long)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `closure sent via RPC`() {
         driver(DriverParameters(startNodesInProcess = true, notarySpecs = emptyList(), cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val rpc = startNode(providedName = ALICE_NAME).getOrThrow().rpc

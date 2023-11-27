@@ -47,7 +47,7 @@ class AttachmentTests : WithMockNet {
     private val bobNode = makeNode(BOB_NAME)
     private val alice = aliceNode.info.singleIdentity()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `download and store`() {
         // Insert an attachment into node zero's store directly.
         val id = aliceNode.importAttachment(fakeAttachment("file1.txt", "Some useful content"))
@@ -69,7 +69,7 @@ class AttachmentTests : WithMockNet {
                 willReturn(soleAttachment(attachment)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun missing() {
         val hash: SecureHash = SecureHash.randomSHA256()
 
@@ -84,7 +84,7 @@ class AttachmentTests : WithMockNet {
             FetchDataFlow.HashNotFound::requested,
             equalTo(expected))
 
-    @Test(timeout=300_000)
+    @Test
 	fun maliciousResponse() {
         // Make a node that doesn't do sanity checking at load time.
         val badAliceNode = makeBadNode(ALICE_NAME)

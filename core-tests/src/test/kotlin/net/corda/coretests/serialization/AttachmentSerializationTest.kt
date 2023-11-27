@@ -171,14 +171,14 @@ class AttachmentSerializationTest {
         return (client.smm.allStateMachines[0].stateMachine.resultFuture.apply { mockNet.runNetwork() }.getOrThrow() as ClientResult).attachmentContent
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `custom (and non-persisted) attachment should be saved in checkpoint`() {
         val attachmentId = SecureHash.sha256("any old data")
         launchFlow(CustomAttachmentLogic(serverIdentity, attachmentId, "custom"), 1)
         assertEquals("custom", rebootClientAndGetAttachmentContent())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `custom attachment should be saved in checkpoint even if its data was persisted`() {
         val attachmentId = client.saveAttachment("genuine")
         launchFlow(CustomAttachmentLogic(serverIdentity, attachmentId, "custom"), 1)
@@ -186,7 +186,7 @@ class AttachmentSerializationTest {
         assertEquals("custom", rebootClientAndGetAttachmentContent())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `only the hash of a regular attachment should be saved in checkpoint`() {
         val attachmentId = client.saveAttachment("genuine")
         client.attachments.checkAttachmentsOnLoad = false // Cached by AttachmentImpl.
@@ -195,7 +195,7 @@ class AttachmentSerializationTest {
         assertEquals("hacked", rebootClientAndGetAttachmentContent(false)) // Pass in false to allow non-genuine data to be loaded.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `only the hash of a FetchAttachmentsFlow attachment should be saved in checkpoint`() {
         val attachmentId = server.saveAttachment("genuine")
         launchFlow(FetchAttachmentLogic(serverIdentity, attachmentId), 2, sendData = true)

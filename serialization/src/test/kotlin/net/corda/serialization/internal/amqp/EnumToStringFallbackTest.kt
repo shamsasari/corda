@@ -34,7 +34,7 @@ class EnumToStringFallbackTest {
         serializationOutput = TestSerializationOutput(verbose = false)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun deserializeEnumWithToString() {
         val broken = BrokenContainer(Broken.Twice)
         val brokenData = serializationOutput.serialize(broken, createTestContext())

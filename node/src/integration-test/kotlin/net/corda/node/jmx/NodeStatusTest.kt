@@ -15,7 +15,7 @@ import kotlin.test.assertTrue
 
 class NodeStatusTest {
 
-    @Test(timeout=300_000)
+    @Test
     fun `node status is published via JMX`() {
         driver(DriverParameters(notarySpecs = emptyList(), jmxPolicy = JmxPolicy.defaultEnabled())) {
             val jmxAddress = startNode().get().jmxAddress.toString()

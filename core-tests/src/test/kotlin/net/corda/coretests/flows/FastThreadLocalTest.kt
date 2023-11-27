@@ -31,7 +31,7 @@ class FastThreadLocalTest {
 
     private val expensiveObjCount = AtomicInteger()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ThreadLocal with plain old Thread is fiber-local`() = scheduled(3, ::Thread) {
         val threadLocal = object : ThreadLocal<ExpensiveObj>() {
             override fun initialValue() = ExpensiveObj()
@@ -40,7 +40,7 @@ class FastThreadLocalTest {
         assertEquals(100, expensiveObjCount.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ThreadLocal with FastThreadLocalThread is fiber-local`() = scheduled(3, ::FastThreadLocalThread) {
         val threadLocal = object : ThreadLocal<ExpensiveObj>() {
             override fun initialValue() = ExpensiveObj()
@@ -49,7 +49,7 @@ class FastThreadLocalTest {
         assertEquals(100, expensiveObjCount.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FastThreadLocal with plain old Thread is fiber-local`() = scheduled(3, ::Thread) {
         val threadLocal = object : FastThreadLocal<ExpensiveObj>() {
             override fun initialValue() = ExpensiveObj()
@@ -58,7 +58,7 @@ class FastThreadLocalTest {
         assertEquals(100, expensiveObjCount.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FastThreadLocal with FastThreadLocalThread is not fiber-local`() =
             scheduled(3, ::FastThreadLocalThread) {
                 val threadLocal = object : FastThreadLocal<ExpensiveObj>() {
@@ -89,14 +89,14 @@ class FastThreadLocalTest {
         private val fail: Nothing by lazy { throw UnsupportedOperationException("Nice try.") }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ThreadLocal content is not serialized`() {
         contentIsNotSerialized(object : ThreadLocal<UnserializableObj>() {
             override fun initialValue() = UnserializableObj()
         }::get)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FastThreadLocal content is not serialized`() {
         contentIsNotSerialized(object : FastThreadLocal<UnserializableObj>() {
             override fun initialValue() = UnserializableObj()

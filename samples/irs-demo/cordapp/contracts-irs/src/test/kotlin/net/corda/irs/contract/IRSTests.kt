@@ -242,12 +242,12 @@ class IRSTests {
             networkParameters
     )
 
-    @Test(timeout=300_000)
+    @Test
 	fun ok() {
         trade().verifies()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ok with groups`() {
         tradegroups().verifies()
     }
@@ -276,7 +276,7 @@ class IRSTests {
     /**
      * Just make sure it's sane.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun pprintIRS() {
         val irs = singleIRS()
         println(irs.prettyPrint())
@@ -292,7 +292,7 @@ class IRSTests {
     /**
      * Test the generate. No explicit exception as if something goes wrong, we'll find out anyway.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun generateIRS() {
         // Tests aren't allowed to return things
         generateIRSTxn(1)
@@ -301,7 +301,7 @@ class IRSTests {
     /**
      * Testing a simple IRS, add a few fixings and then display as CSV.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `IRS Export test`() {
         // No transactions etc required - we're just checking simple maths and export functionallity
         val irs = singleIRS(2)
@@ -325,7 +325,7 @@ class IRSTests {
     /**
      * Make sure it has a schedule and the schedule has some unfixed rates.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `next fixing date`() {
         val irs = singleIRS(1)
         println(irs.calculation.nextFixingDate())
@@ -334,7 +334,7 @@ class IRSTests {
     /**
      * Iterate through all the fix dates and add something.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun generateIRSandFixSome() {
         val services = MockServices(listOf("net.corda.irs.contract"), MEGA_CORP.name,
                 mock<IdentityService>().also {
@@ -366,13 +366,13 @@ class IRSTests {
     }
 
     // Move these later as they aren't IRS specific.
-    @Test(timeout=300_000)
+    @Test
 	fun `test some rate objects 100 * FixedRate(5%)`() {
         val r1 = FixedRate(PercentageRatioUnit("5"))
         assertEquals(5, 100 * r1)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `expression calculation testing`() {
         val dummyIRS = singleIRS()
         val stuffToPrint: ArrayList<String> = arrayListOf(
@@ -442,7 +442,7 @@ class IRSTests {
         ledgerServices.transaction(DUMMY_NOTARY, script)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ensure failure occurs when there are inbound states for an agreement command`() {
         val irs = singleIRS()
         transaction {
@@ -455,7 +455,7 @@ class IRSTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ensure failure occurs when no events in fix schedule`() {
         val irs = singleIRS()
         val emptySchedule = mutableMapOf<LocalDate, FixedRatePaymentEvent>()
@@ -468,7 +468,7 @@ class IRSTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ensure failure occurs when no events in floating schedule`() {
         val irs = singleIRS()
         val emptySchedule = mutableMapOf<LocalDate, FloatingRatePaymentEvent>()
@@ -481,7 +481,7 @@ class IRSTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ensure notionals are non zero`() {
         val irs = singleIRS()
         transaction {
@@ -501,7 +501,7 @@ class IRSTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ensure positive rate on fixed leg`() {
         val irs = singleIRS()
         val modifiedIRS = irs.copy(fixedLeg = irs.fixedLeg.copy(fixedRate = FixedRate(PercentageRatioUnit("-0.1"))))
@@ -517,7 +517,7 @@ class IRSTests {
     /**
      * This will be modified once we adapt the IRS to be cross currency.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `ensure same currency notionals`() {
         val irs = singleIRS()
         val modifiedIRS = irs.copy(fixedLeg = irs.fixedLeg.copy(notional = Amount(irs.fixedLeg.notional.quantity, Currency.getInstance("JPY"))))
@@ -530,7 +530,7 @@ class IRSTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ensure notional amounts are equal`() {
         val irs = singleIRS()
         val modifiedIRS = irs.copy(fixedLeg = irs.fixedLeg.copy(notional = Amount(irs.floatingLeg.notional.quantity + 1, irs.floatingLeg.notional.token)))
@@ -543,7 +543,7 @@ class IRSTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ensure trade date and termination date checks are done pt1`() {
         val irs = singleIRS()
         val modifiedIRS1 = irs.copy(fixedLeg = irs.fixedLeg.copy(terminationDate = irs.fixedLeg.effectiveDate.minusDays(1)))
@@ -565,7 +565,7 @@ class IRSTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ensure trade date and termination date checks are done pt2`() {
         val irs = singleIRS()
 
@@ -588,7 +588,7 @@ class IRSTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `various fixing tests`() {
         val ld = LocalDate.of(2016, 3, 8)
         val bd = BigDecimal("0.0063518")

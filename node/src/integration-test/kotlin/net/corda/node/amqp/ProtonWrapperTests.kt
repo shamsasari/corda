@@ -75,7 +75,7 @@ class ProtonWrapperTests {
 
     private abstract class AbstractNodeConfiguration : NodeConfiguration
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Simple AMPQ Client to Server`() {
         val amqpServer = createServer(serverPort)
         amqpServer.use {
@@ -108,7 +108,7 @@ class ProtonWrapperTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `AMPQ Client fails to connect when crl soft fail check is disabled`() {
         val amqpServer = createServer(serverPort, maxMessageSize = MAX_MESSAGE_SIZE, crlCheckSoftFail = false)
         amqpServer.use {
@@ -123,7 +123,7 @@ class ProtonWrapperTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `AMPQ Client refuses to connect to unexpected server`() {
         val amqpServer = createServer(serverPort, CordaX500Name("Rogue 1", "London", "GB"))
         amqpServer.use {
@@ -143,7 +143,7 @@ class ProtonWrapperTests {
         trustStore.get(true)[X509Utilities.CORDA_ROOT_CA] = rootCert
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Test AMQP Client with invalid root certificate`() {
         val certificatesDirectory = temporaryFolder.root.toPath()
         val signingCertificateStore = CertificateStoreStubs.Signing.withCertificatesDirectory(certificatesDirectory, "serverstorepass")
@@ -214,7 +214,7 @@ class ProtonWrapperTests {
     }
 
     @Suppress("TooGenericExceptionCaught") // Too generic exception thrown!
-    @Test(timeout=300_000)
+    @Test
     fun `AMPQClient that fails to handshake with a server will retry the server`() {
         /*
             This test has been modelled on `Test AMQP Client with invalid root certificate`, above.
@@ -311,7 +311,7 @@ class ProtonWrapperTests {
     }
 
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Client Failover for multiple IP`() {
         val amqpServer = createServer(serverPort)
         val amqpServer2 = createServer(serverPort2)
@@ -365,7 +365,7 @@ class ProtonWrapperTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Send a message from AMQP to Artemis inbox`() {
         val (server, artemisClient) = createArtemisServerAndClient()
         val amqpClient = createClient()
@@ -392,7 +392,7 @@ class ProtonWrapperTests {
         server.stop()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Send a message larger then maxMessageSize from AMQP to Artemis inbox`() {
         val maxUserPayloadSize = 100_000
         val maxMessageSizeWithHeaders = maxUserPayloadSize + 512 // Adding a small "shim" to account for headers
@@ -441,7 +441,7 @@ class ProtonWrapperTests {
         server.stop()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `shared AMQPClient threadpool tests`() {
         val amqpServer = createServer(serverPort)
         amqpServer.use {
@@ -499,7 +499,7 @@ class ProtonWrapperTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Message sent from AMQP to non-existent Artemis inbox is marked as acknowledged to avoid infinite retries`() {
         val (server, artemisClient) = createArtemisServerAndClient()
         val amqpClient = createClient()

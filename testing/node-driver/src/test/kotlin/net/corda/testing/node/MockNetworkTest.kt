@@ -37,7 +37,7 @@ class MockNetworkTest {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `with a started node`() {
         val unstarted = mockNetwork.createUnstartedNode(DUMMY_BANK_A_NAME, forcedID = NODE_ID)
         assertFalse(unstarted.isStarted)
@@ -51,14 +51,14 @@ class MockNetworkTest {
         assertFailsWith<IllegalArgumentException> { started.info.identityFromX500Name(DUMMY_BANK_B_NAME) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `with an unstarted node`() {
         val unstarted = mockNetwork.createUnstartedNode(DUMMY_BANK_A_NAME, forcedID = NODE_ID)
         val ex = assertFailsWith<IllegalStateException> { unstarted.started }
         assertThat(ex).hasMessage("Node ID=$NODE_ID is not running")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun installCordaService() {
         val unstarted = mockNetwork.createUnstartedNode()
         assertThat(unstarted.installCordaService(TestService::class.java)).isNotNull()

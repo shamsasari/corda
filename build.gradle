@@ -78,9 +78,7 @@ buildscript {
     ext.kryo_version = constants.getProperty("kryoVersion")
     ext.kryo_serializer_version = constants.getProperty("kryoSerializerVersion")
     ext.junit_version = constants.getProperty("junitVersion")
-    ext.junit_vintage_version = constants.getProperty("junitVintageVersion")
     ext.junit_jupiter_version = constants.getProperty("junitJupiterVersion")
-    ext.junit_platform_version = constants.getProperty("junitPlatformVersion")
     ext.mockito_version = constants.getProperty("mockitoVersion")
     ext.mockito_kotlin_version = constants.getProperty("mockitoKotlinVersion")
     ext.hamkrest_version = constants.getProperty("hamkrestVersion")
@@ -361,6 +359,11 @@ allprojects {
     }
 
     tasks.withType(Test).configureEach {
+        useJUnitPlatform()
+        testLogging {
+            events "passed", "skipped", "failed"
+        }
+        systemProperty "junit.jupiter.execution.timeout.default", "5 s"
         if (name.contains("integrationTest")) {
             maxParallelForks = (System.env.CORDA_INT_TESTING_FORKS == null) ? 1 : "$System.env.CORDA_INT_TESTING_FORKS".toInteger()
         }
@@ -369,7 +372,7 @@ allprojects {
     if (jdkClassifier) {
         jar {
             // JDK11 built and published artifacts to include classifier
-            archiveClassifier = jdkClassifier
+            archiveClassifier = jdkClassifier.toString()
         }
     }
 

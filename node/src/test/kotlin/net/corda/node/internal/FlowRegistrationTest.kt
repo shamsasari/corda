@@ -38,14 +38,14 @@ class FlowRegistrationTest {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `succeeds when a subclass of a flow initiated by the same flow is registered`() {
         // register the same flow twice to invoke the error without causing errors in other tests
         responder.registerInitiatedFlow(Responder1::class.java)
         responder.registerInitiatedFlow(Responder1Subclassed::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `a single initiated flow can be registered without error`() {
         responder.registerInitiatedFlow(Responder1::class.java)
         val result = initiator.startFlow(Initiator(responder.info.singleIdentity()))

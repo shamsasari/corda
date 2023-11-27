@@ -47,7 +47,7 @@ class KryoAttachmentTest(private val compression: CordaSerializationEncoding?) {
                 })
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `HashCheckingStream (de)serialize`() {
         val rubbish = ByteArray(12345) { (it * it * 0.12345).toInt().toByte() }
         val readRubbishStream: InputStream = NodeAttachmentService.HashCheckingStream(

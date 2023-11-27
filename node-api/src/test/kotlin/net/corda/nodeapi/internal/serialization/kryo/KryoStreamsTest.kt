@@ -24,7 +24,7 @@ class KryoStreamsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `substitute output works`() {
         assertArrayEquals(byteArrayOf(100, -101), kryoOutput {
             write(100)
@@ -33,7 +33,7 @@ class KryoStreamsTest {
         })
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `substitute input works`() {
         kryoInput(byteArrayOf(100, 101).inputStream()) {
             assertEquals(100, read())
@@ -43,7 +43,7 @@ class KryoStreamsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `zip round-trip`() {
         val data = ByteArray(12345).also { Random(0).nextBytes(it) }
         val encoded = kryoOutput {
@@ -63,7 +63,7 @@ class KryoStreamsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ByteBufferOutputStream works`() {
         val stream = ByteBufferOutputStream(3)
         stream.write("abc".toByteArray())
@@ -85,7 +85,7 @@ class KryoStreamsTest {
         assertArrayEquals("abc0123456789def".toByteArray(), stream.toByteArray())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ByteBufferOutputStream discards data after final position`() {
         val stream = ByteBufferOutputStream(0)
         stream.alsoAsByteBuffer(10) {

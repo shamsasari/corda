@@ -18,7 +18,7 @@ import java.time.Duration
 
 @Ignore("TODO JDK17: Fixme")
 class DuplicateSerializerLogWithSameSerializerTest {
-    @Test(timeout=300_000)
+    @Test
     fun `check duplicate serialisers are logged not logged for the same class`() {
 
         // Duplicate the cordapp in this node

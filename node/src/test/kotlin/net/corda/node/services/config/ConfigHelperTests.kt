@@ -33,7 +33,7 @@ class ConfigHelperTests {
         baseDir?.delete()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `config is overridden by underscore variable`() {
         val sshPort: Long = 9000
 
@@ -45,14 +45,14 @@ class ConfigHelperTests {
         Assert.assertEquals(sshPort, config?.getLong("sshd.port"))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `config is overridden by case insensitive underscore variable`() {
         val sshPort: Long = 10000
         val config = loadConfig("CORDA_sshd_port" to sshPort)
         Assert.assertEquals(sshPort, config?.getLong("sshd.port"))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `config is overridden by case insensitive dot variable`() {
         val sshPort: Long = 11000
         val config = loadConfig("CORDA.sshd.port" to sshPort,
@@ -60,14 +60,14 @@ class ConfigHelperTests {
         Assert.assertEquals(sshPort, config?.getLong("sshd.port"))
     }
 
-    @Test(timeout = 300_000, expected = ShadowingException::class)
+    @Test(expected = ShadowingException::class)
     fun `shadowing is forbidden`() {
         val sshPort: Long = 12000
         loadConfig("CORDA_sshd_port" to sshPort.toString(),
                 "corda.sshd.port" to sshPort.toString())
     }
 
-    @Test(timeout = 300_000)
+    @Test
     @Ignore("TODO JDK17: Modifiers no longer supported")
     fun `bad keys are ignored and warned for`() {
         val loggerField = Node::class.java.getDeclaredField("staticLog")

@@ -47,7 +47,7 @@ class SwapIdentitiesFlowTests {
     private val alice = aliceNode.info.singleIdentity()
     private val bob = bobNode.info.singleIdentity()
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17: Class cast exception")
 	fun `issue key`() {
         assertThat(
@@ -74,7 +74,7 @@ class SwapIdentitiesFlowTests {
     /**
      * Check that flow is actually validating the name on the certificate presented by the counterparty.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `verifies identity name`() {
         val notBob = charlieNode.issueFreshKeyAndCert()
         val signature = charlieNode.signSwapIdentitiesFlowData(notBob, notBob.owningKey)
@@ -86,7 +86,7 @@ class SwapIdentitiesFlowTests {
     /**
      * Check that flow is actually validating its the signature presented by the counterparty.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `verification rejects signature if name is right but key is wrong`() {
         val evilBobNode = mockNet.createPartyNode(bobNode.info.singleIdentity().name)
         val evilBob = evilBobNode.info.singleIdentityAndCert()
@@ -98,7 +98,7 @@ class SwapIdentitiesFlowTests {
                 .hasMessage("Signature does not match the expected identity ownership assertion.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verification rejects signature if key is right but name is wrong`() {
         val anonymousAlice = aliceNode.issueFreshKeyAndCert()
         val anonymousBob = bobNode.issueFreshKeyAndCert()

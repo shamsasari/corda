@@ -80,7 +80,7 @@ class TransactionTests(private val digestService : DigestService) {
         return SignedTransaction(wtx, sigs)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `signed transaction missing signatures - CompositeKey`() {
         val ak = generateKeyPair()
         val bk = generateKeyPair()
@@ -114,7 +114,7 @@ class TransactionTests(private val digestService : DigestService) {
         makeSigned(wtx, DUMMY_KEY_1, ak).verifySignaturesExcept(compKey, DUMMY_KEY_2.public) // Mixed allowed to be missing.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `signed transaction missing signatures`() {
         val wtx = createWireTransaction(
                 inputs = listOf(StateRef(SecureHash.randomSHA256(), 0)),
@@ -145,7 +145,7 @@ class TransactionTests(private val digestService : DigestService) {
         makeSigned(wtx, DUMMY_KEY_1, DUMMY_KEY_2).verifyRequiredSignatures()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions with no inputs can have any notary`() {
         val baseOutState = TransactionState(DummyContract.SingleOwnerState(0, ALICE), DummyContract.PROGRAM_ID, DUMMY_NOTARY, constraint = AlwaysAcceptAttachmentConstraint)
         val inputs = emptyList<StateAndRef<*>>()
@@ -178,7 +178,7 @@ class TransactionTests(private val digestService : DigestService) {
         transaction.verify()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transaction cannot have duplicate inputs`() {
         val stateRef = StateRef(SecureHash.randomSHA256(), 0)
         fun buildTransaction() = createWireTransaction(
@@ -193,7 +193,7 @@ class TransactionTests(private val digestService : DigestService) {
         assertFailsWith<IllegalStateException> { buildTransaction() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `general transactions cannot change notary`() {
         val notary: Party = DUMMY_NOTARY
         val inState = TransactionState(DummyContract.SingleOwnerState(0, ALICE), DummyContract.PROGRAM_ID, notary)
@@ -235,7 +235,7 @@ class TransactionTests(private val digestService : DigestService) {
         assertFailsWith<TransactionVerificationException.NotaryChangeInWrongTransactionType> { buildTransaction().verify() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions with identical contents must have different ids`() {
         val outputState = TransactionState(DummyContract.SingleOwnerState(0, ALICE), DummyContract.PROGRAM_ID, DUMMY_NOTARY)
         fun buildTransaction() = createWireTransaction(

@@ -50,7 +50,7 @@ class MigrationSchemaSyncTest{
             TestIdentity(ALICE_NAME, 70).name)
 
 
-    @Test(timeout=300_000)
+    @Test
     fun testSchemaScript(){
         schemaMigration().runMigration(false, setOf(GoodSchema), true)
         val persistence = CordaPersistence(
@@ -67,7 +67,7 @@ class MigrationSchemaSyncTest{
     }
 
 
-    @Test(timeout=300_000)
+    @Test
     fun checkThatSchemaSyncFixesLiquibaseException(){
         // Schema is missing if no migration is run and hibernate not allowed to create
         val persistenceBlank = CordaPersistence(

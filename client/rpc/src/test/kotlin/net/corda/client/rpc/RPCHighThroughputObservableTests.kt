@@ -29,7 +29,7 @@ class RPCHighThroughputObservableTests : AbstractRPCTest() {
         override fun makeObservable(): Observable<Int> = Observable.interval(0, TimeUnit.MICROSECONDS).map { it.toInt() + 1 }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `simple observable`() {
         rpcDriver {
             val proxy = testProxy()

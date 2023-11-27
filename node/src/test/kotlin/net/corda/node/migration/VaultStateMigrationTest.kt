@@ -357,7 +357,7 @@ class VaultStateMigrationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check a simple migration works`() {
         addCashStates(10, BOB)
         addCashStates(10, ALICE)
@@ -370,7 +370,7 @@ class VaultStateMigrationTest {
         assertEquals(10, getVaultStateCount(Vault.RelevancyStatus.RELEVANT))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check state paging works`() {
         addCashStates(1010, BOB)
 
@@ -382,7 +382,7 @@ class VaultStateMigrationTest {
         assertEquals(0, getVaultStateCount(Vault.RelevancyStatus.NOT_RELEVANT))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check state fields are correct`() {
         val tx = createCashTransaction(Cash(), 100.DOLLARS, ALICE)
         storeTransaction(tx)
@@ -412,7 +412,7 @@ class VaultStateMigrationTest {
         assertEquals(expectedPersistentParty.compositeKey, persistentStateParty.compositeKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Check the connection is open post migration`() {
         // Liquibase automatically closes the database connection when doing an actual migration. This test ensures the custom migration
         // leaves it open.
@@ -423,7 +423,7 @@ class VaultStateMigrationTest {
         assertFalse(cordaDB.dataSource.connection.isClosed)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `All parties added to state party table`() {
         val stx = createLinearStateTransaction("test", parties = listOf(ALICE, BOB, CHARLIE))
         storeTransaction(stx)
@@ -436,7 +436,7 @@ class VaultStateMigrationTest {
         assertEquals(0, getVaultStateCount(Vault.RelevancyStatus.NOT_RELEVANT))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `State with corresponding transaction missing fails migration`() {
         val cash = Cash()
         val unknownTx = createCashTransaction(cash, 100.DOLLARS, BOB)
@@ -453,7 +453,7 @@ class VaultStateMigrationTest {
         assertEquals(11, getStatePartyCount())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `State with unknown ID is handled correctly`() {
         addCashStates(1, CHARLIE)
         addCashStates(10, BOB)
@@ -471,7 +471,7 @@ class VaultStateMigrationTest {
         migration.execute(null)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `State with non-owning key for our name marked as relevant`() {
         val tx = createCashTransaction(Cash(), 100.DOLLARS, BOB2)
         storeTransaction(tx)
@@ -493,7 +493,7 @@ class VaultStateMigrationTest {
         checkStatesEqual(expectedPersistentState, persistentState)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `State already in state party table is excluded`() {
         val tx = createCashTransaction(Cash(), 100.DOLLARS, BOB)
         storeTransaction(tx)
@@ -506,7 +506,7 @@ class VaultStateMigrationTest {
         assertEquals(6, getStatePartyCount())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Consumed states are not migrated`() {
         addCashStates(1010, BOB, Vault.StateStatus.CONSUMED)
         assertEquals(0, getStatePartyCount())
@@ -515,7 +515,7 @@ class VaultStateMigrationTest {
         assertEquals(0, getStatePartyCount())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `State created with notary change transaction can be migrated`() {
         // This test is a little bit of a hack - it checks that these states are migrated correctly by looking at params in the database,
         // but these will not be there for V3 nodes. Handling for this must be tested manually.
@@ -534,7 +534,7 @@ class VaultStateMigrationTest {
     }
 
     // Used to test migration performance
-    @Test(timeout=300_000)
+    @Test
 @Ignore
     fun `Migrate large database`() {
         val statesAtOnce = 500L
@@ -559,7 +559,7 @@ class VaultStateMigrationTest {
     }
 
     // Used to generate a persistent database for further testing.
-    @Test(timeout=300_000)
+    @Test
 @Ignore
     fun `Create persistent DB`() {
         val cashStatesToAdd = 1000
@@ -586,7 +586,7 @@ class VaultStateMigrationTest {
         cordaDB.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 @Ignore
     fun `Run on persistent DB`() {
         cordaDB = configureDatabase(makePersistentDataSourceProperties(), DatabaseConfig(), notaryServices.identityService::wellKnownPartyFromX500Name, notaryServices.identityService::wellKnownPartyFromAnonymous)

@@ -37,7 +37,7 @@ class CashIssueFlowTests {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue some cash`() {
         val expected = 500.DOLLARS
         val ref = OpaqueBytes.of(0x01)
@@ -48,7 +48,7 @@ class CashIssueFlowTests {
         assertEquals(expected.`issued by`(bankOfCorda.ref(ref)), output.amount)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue zero cash`() {
         val expected = 0.DOLLARS
         val ref = OpaqueBytes.of(0x01)

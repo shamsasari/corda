@@ -33,40 +33,40 @@ class NetworkParametersHotloaderTest {
     private val networkParametersWithNotary = originalNetworkParameters.addNotary(notary)
     private val networkParametersStorage = Mockito.mock(NetworkParametersStorage::class.java)
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can hotload if notary changes`() {
         `can hotload`(networkParametersWithNotary)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can not hotload if notary changes but another non-hotloadable property also changes`() {
 
         val newnetParamsWithNewNotaryAndMaxMsgSize = networkParametersWithNotary.copy(maxMessageSize = networkParametersWithNotary.maxMessageSize + 1)
         `can not hotload`(newnetParamsWithNewNotaryAndMaxMsgSize)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can hotload if only always hotloadable properties change`() {
 
         val newParametersWithAlwaysHotloadableProperties = originalNetworkParameters.copy(epoch = originalNetworkParameters.epoch + 1, modifiedTime = originalNetworkParameters.modifiedTime.plusSeconds(60))
         `can hotload`(newParametersWithAlwaysHotloadableProperties)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can not hotload if maxMessageSize changes`() {
 
         val parametersWithNewMaxMessageSize = originalNetworkParameters.copy(maxMessageSize = originalNetworkParameters.maxMessageSize + 1)
         `can not hotload`(parametersWithNewMaxMessageSize)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can not hotload if maxTransactionSize changes`() {
 
         val parametersWithNewMaxTransactionSize = originalNetworkParameters.copy(maxTransactionSize = originalNetworkParameters.maxMessageSize + 1)
         `can not hotload`(parametersWithNewMaxTransactionSize)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can not hotload if minimumPlatformVersion changes`() {
 
         val parametersWithNewMinimumPlatformVersion = originalNetworkParameters.copy(minimumPlatformVersion = originalNetworkParameters.minimumPlatformVersion + 1)

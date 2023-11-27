@@ -38,7 +38,7 @@ class FlowAsyncOperationTests {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `operation errors are propagated correctly`() {
         val flow = object : FlowLogic<Unit>() {
             @Suspendable
@@ -56,7 +56,7 @@ class FlowAsyncOperationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `operation result errors are propagated correctly`() {
         val flow = object : FlowLogic<Unit>() {
             @Suspendable
@@ -68,7 +68,7 @@ class FlowAsyncOperationTests {
         assertFailsWith<SpecialException> { aliceNode.services.startFlow(flow).resultFuture.getOrThrow() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `operation result errors are propagated correctly, and can be caught by the flow`() {
         val flow = object : FlowLogic<Unit>() {
             @Suspendable
@@ -94,7 +94,7 @@ class FlowAsyncOperationTests {
 
     private class SpecialException : Exception()
 
-    @Test(timeout = 30_000)
+    @Test
     fun `flows waiting on an async operation do not block the thread`() {
         // Kick off 10 flows that submit a task to the service and wait until completion
         val numFlows = 10

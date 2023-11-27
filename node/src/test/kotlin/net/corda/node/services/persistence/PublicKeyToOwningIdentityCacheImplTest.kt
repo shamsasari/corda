@@ -75,12 +75,12 @@ class PublicKeyToOwningIdentityCacheImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cache returns right key for each UUID`() {
         performTestRun()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `querying for key twice does not go to database the second time`() {
         performTestRun()
 
@@ -89,14 +89,14 @@ class PublicKeyToOwningIdentityCacheImplTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `entries can be fetched if cache invalidated`() {
         testCache = PublicKeyToOwningIdentityCacheImpl(database, TestingNamedCacheFactory(sizeOverride = 0))
 
         performTestRun()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `cache access is thread safe`() {
         val executor = Executors.newFixedThreadPool(2)
         val f1 = executor.submit { performTestRun() }
@@ -109,7 +109,7 @@ class PublicKeyToOwningIdentityCacheImplTest {
         keyManagementService.freshKey(UUID.randomUUID())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can set multiple keys across threads`() {
         val executor = Executors.newFixedThreadPool(2)
         val f1 = executor.submit { repeat(5) { createAndAddKeys() } }
@@ -118,13 +118,13 @@ class PublicKeyToOwningIdentityCacheImplTest {
         f1.getOrThrow()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `requesting a key unknown to the node returns unmapped identity`() {
         val keys = generateKeyPair()
         assertEquals(KeyOwningIdentity.UnmappedIdentity, testCache[keys.public])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can request initial identity key`() {
         val key = alice.publicKey
         assertEquals(KeyOwningIdentity.UnmappedIdentity, testCache[key])

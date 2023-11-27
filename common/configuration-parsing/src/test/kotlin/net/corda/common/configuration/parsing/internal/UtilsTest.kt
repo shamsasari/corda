@@ -6,7 +6,7 @@ import org.junit.Test
 
 class UtilsTest {
 
-    @Test(timeout=300_000)
+    @Test
 	fun serialize_deserialize_configuration() {
 
         var rawConfiguration = ConfigFactory.empty()

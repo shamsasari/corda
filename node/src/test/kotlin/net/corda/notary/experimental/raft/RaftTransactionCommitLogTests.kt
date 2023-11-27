@@ -65,7 +65,7 @@ class RaftTransactionCommitLogTests {
         databases.forEach { it.close() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `stores entries correctly`() {
         val client = cluster.last().client
 
@@ -85,7 +85,7 @@ class RaftTransactionCommitLogTests {
         assertEquals(value2.getOrThrow(), txId)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `returns conflict for duplicate entries`() {
         val client = cluster.last().client
 
@@ -105,7 +105,7 @@ class RaftTransactionCommitLogTests {
         assertEquals(states.toSet(), conflict.consumedStates.keys)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions outside their time window are rejected`() {
         val client = cluster.last().client
 
@@ -122,7 +122,7 @@ class RaftTransactionCommitLogTests {
         assertThat(commitError, instanceOf(NotaryError.TimeWindowInvalid::class.java))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `transactions can be re-notarised outside their time window`() {
         val client = cluster.last().client
 

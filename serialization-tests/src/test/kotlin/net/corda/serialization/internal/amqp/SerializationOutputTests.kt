@@ -307,7 +307,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         return desObj
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun isPrimitive() {
         assertTrue(AMQPTypeIdentifiers.isPrimitive(Character::class.java))
         assertTrue(AMQPTypeIdentifiers.isPrimitive(Boolean::class.java))
@@ -332,91 +332,91 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         assertTrue(AMQPTypeIdentifiers.isPrimitive(Symbol::class.java))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test foo`() {
         val obj = Foo("Hello World!", 123)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test float`() {
         val obj = testFloat(10.0F)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test double`() {
         val obj = testDouble(10.0)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test short`() {
         val obj = testShort(1)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test bool`() {
         val obj = testBoolean(true)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test foo implements`() {
         val obj = FooImplements("Hello World!", 123)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test foo implements and list`() {
         val obj = FooImplementsAndList("Hello World!", 123, listOf("Fred", "Ginger"))
         serdes(obj)
     }
 
-    @Test(expected = IllegalArgumentException::class, timeout=300_000)
+    @Test(expected = IllegalArgumentException::class)
     fun `test dislike of HashMap`() {
         val obj = WrapHashMap(HashMap())
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test string array`() {
         val obj = arrayOf("Fred", "Ginger")
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test foo array`() {
         val obj = arrayOf(Foo("Fred", 1), Foo("Ginger", 2))
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test top level list array`() {
         val obj = arrayOf(listOf("Fred", "Ginger"), listOf("Rogers", "Hammerstein"))
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test foo list array`() {
         val obj = WrapFooListArray(arrayOf(listOf(Foo("Fred", 1), Foo("Ginger", 2)), listOf(Foo("Rogers", 3), Foo("Hammerstein", 4))))
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test not all properties in constructor`() {
         val obj = Woo(2)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test annotated constructor`() {
         val obj = Woo2(3)
         serdes(obj)
     }
 
-    @Test(expected = NotSerializableException::class, timeout=300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test whitelist`() {
         val obj = Woo2(4)
         serdes(obj, SerializerFactoryBuilder.build(EmptyWhitelist,
@@ -424,7 +424,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         ))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test annotation whitelisting`() {
         val obj = AnnotatedWoo(5)
         serdes(obj, SerializerFactoryBuilder.build(EmptyWhitelist,
@@ -432,25 +432,25 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         ))
     }
 
-    @Test(expected = NotSerializableException::class, timeout=300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test generic list subclass is not supported`() {
         val obj = FooList()
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test generic foo`() {
         val obj = GenericFoo("Fred", "Ginger")
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test generic foo as property`() {
         val obj = ContainsGenericFoo(GenericFoo("Fred", "Ginger"))
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test nested generic foo as property`() {
         val obj = ContainsNestedGenericFoo(NestedGenericFoo(GenericFoo("Fred", "Ginger")))
         serdes(obj)
@@ -458,71 +458,71 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
 
     // TODO: Generic interfaces / superclasses
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test extends generic`() {
         val obj = ExtendsGeneric(1, "Ginger")
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test implements generic`() {
         val obj = ImplementsGenericString(1, "Ginger")
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test implements generic captured`() {
         val obj = CapturesGenericX(ImplementsGenericX(1, "Ginger"))
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test inherits generic captured`() {
         val obj = CapturesGenericX(InheritGenericX(1.0, "Ginger"))
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test TreeMap`() {
         val obj = TreeMap<Int, Foo>()
         obj[456] = Foo("Fred", 123)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test TreeMap property`() {
         val obj = TreeMapWrapper(TreeMap())
         obj.tree[456] = Foo("Fred", 123)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test NavigableMap property`() {
         val obj = NavigableMapWrapper(TreeMap<Int, Foo>())
         obj.tree[456] = Foo("Fred", 123)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test SortedSet property`() {
         val obj = SortedSetWrapper(TreeSet<Int>())
         obj.set += 456
         serdes(obj)
     }
 
-    @Test(expected = NotSerializableException::class, timeout=300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test mismatched property and constructor naming`() {
         val obj = Mismatch(456)
         serdes(obj)
     }
 
-    @Test(expected = NotSerializableException::class, timeout=300_000)
+    @Test(expected = NotSerializableException::class)
     fun `test mismatched property and constructor type`() {
         val obj = MismatchType(456)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `class constructor is invoked on deserialisation`() {
         compression == null || return // Manipulation of serialized bytes is invalid if they're compressed.
         val serializerFactory = SerializerFactoryBuilder.build(AllWhitelist,
@@ -551,7 +551,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         }.withStackTraceContaining("Zero not allowed")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test custom serializers on public key`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -565,7 +565,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test annotation is inherited`() {
         val obj = InheritAnnotation("blah")
         serdes(obj, SerializerFactoryBuilder.build(EmptyWhitelist,
@@ -573,7 +573,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         ))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `generics from java are supported`() {
         val obj = DummyOptional<String>("YES")
         serdes(obj, SerializerFactoryBuilder.build(EmptyWhitelist,
@@ -581,7 +581,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         ))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test throwables serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -604,7 +604,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         return SerializationFactory.defaultFactory.asCurrent { withCurrentContext(newContext) { serdes(t, factory, factory2, expectedEqual) } }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test complex throwables serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -638,7 +638,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test suppressed throwables serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -664,7 +664,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test flow corda exception subclasses serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -680,7 +680,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdesThrowableWithInternalInfo(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test RPC corda exception subclasses serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -696,19 +696,19 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdesThrowableWithInternalInfo(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test polymorphic property`() {
         val obj = PolymorphicProperty(FooImplements("Ginger", 12))
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test null polymorphic property`() {
         val obj = PolymorphicProperty(null)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test kotlin object`() {
         serdes(KotlinObject)
     }
@@ -718,12 +718,12 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test custom object`() {
         serdes(FooContract)
     }
 
-    @Test(timeout=300_000)
+    @Test
 @Ignore("Cannot serialize due to known Kotlin/serialization limitation")
     fun `test custom anonymous object`() {
         val anonymous: Contract = object : Contract {
@@ -739,7 +739,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         override val participants: List<AbstractParty> = emptyList()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test transaction state`() {
         val state = TransactionState(FooState(), FOO_PROGRAM_ID, MEGA_CORP)
 
@@ -766,7 +766,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         assertTrue(desState.encumbrance == state.encumbrance)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test currencies serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -782,7 +782,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test big decimals serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -798,7 +798,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test instants serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -814,7 +814,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test durations serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -830,7 +830,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test local date serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -846,7 +846,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test local time serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -862,7 +862,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test local date time serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -878,7 +878,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test zoned date time serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -894,7 +894,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test offset time serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -910,7 +910,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test offset date time serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -926,7 +926,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test year serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -942,7 +942,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test year month serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -958,7 +958,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test month day serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -974,7 +974,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test period serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -990,25 +990,25 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test month serialize`() {
         val obj = Month.APRIL
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test day of week serialize`() {
         val obj = DayOfWeek.FRIDAY
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test privacy salt serialize`() {
         serdes(PrivacySalt())
         serdes(PrivacySalt(secureRandomBytes(32)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test X509 certificate serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1024,7 +1024,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test cert path serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1049,13 +1049,13 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         override fun hashCode(): Int = javaClass.hashCode()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test generic in constructor serialize`() {
         val obj = GenericSubclass(OtherGeneric())
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test StateRef serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1075,7 +1075,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
 
     data class ParentContainer(val left: SimpleContainer, val right: Container)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test object referenced multiple times`() {
         val simple = SimpleContainer("Fred", "Ginger")
         val parentContainer = ParentContainer(simple, simple)
@@ -1087,7 +1087,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
 
     data class TestNode(val content: String, val children: MutableCollection<TestNode> = ArrayList())
 
-    @Test(timeout=300_000)
+    @Test
 @Ignore("Ignored due to cyclic graphs not currently supported by AMQP serialization")
     fun `test serialization of cyclic graph`() {
         val nodeA = TestNode("A")
@@ -1103,7 +1103,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
 
     data class Bob(val byteArrays: List<ByteArray>)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test list of byte arrays`() {
         val a = ByteArray(1)
         val b = ByteArray(2)
@@ -1122,7 +1122,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
 
     data class Vic(val a: List<String>, val b: List<String>)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test generics ignored from graph logic`() {
         val a = listOf("a", "b")
         val obj = Vic(a, a)
@@ -1144,7 +1144,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         override fun hashCode(): Int = a.hashCode()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test private constructor`() {
         val obj = Spike()
 
@@ -1159,7 +1159,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
 
     data class BigDecimals(val a: BigDecimal, val b: BigDecimal)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test toString custom serializer`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1178,7 +1178,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
 
     data class BigIntegers(val a: BigInteger, val b: BigInteger)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test BigInteger custom serializer`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1202,7 +1202,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         return JcaX509CRLConverter().setProvider(provider).getCRL(crlHolder)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test X509CRL custom serializer`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1220,7 +1220,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
 
     class ByteArrays(val a: ByteArray, val b: ByteArray)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test byte arrays not reference counted`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1238,7 +1238,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         assertNotSame(objCopy.a, objCopy.b)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test StringBuffer serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1255,7 +1255,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         assertEquals(obj.toString(), obj2.toString())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test SimpleString serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1271,19 +1271,19 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test kotlin Unit serialize`() {
         val obj = Unit
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test kotlin Pair serialize`() {
         val obj = Pair("a", 3)
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test InputStream serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1302,7 +1302,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         assertEquals(obj3.read(), obj2.read())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test EnumSet serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1318,7 +1318,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test BitSet serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1334,7 +1334,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj, factory, factory2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test EnumMap serialize`() {
         val obj = EnumMap<Month, Int>(Month::class.java)
         obj[Month.APRIL] = Month.APRIL.value
@@ -1342,7 +1342,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         serdes(obj)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test contract attachment serialize`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1362,7 +1362,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         assertArrayEquals(obj.open().readBytes(), obj2.open().readBytes())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test contract attachment throws if missing attachment`() {
         val factory = SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())
@@ -1399,7 +1399,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
     // properties, just taking the first one it found with with the most applicable type, and the reflection
     // ordering of the methods was random, thus occasionally we select the wrong one
     //
-    @Test(timeout=300_000)
+    @Test
 	fun reproduceWrongNumberOfArguments() {
         data class C(val a: Amount<Currency>)
 
@@ -1413,7 +1413,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         SerializationOutput(factory).serialize(c, compression)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `compression has the desired effect`() {
         compression ?: return
         val factory = defaultFactory()
@@ -1423,7 +1423,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         assertArrayEquals(data, DeserializationInput(factory).deserialize(compressed, testSerializationContext.withEncodingWhitelist(encodingWhitelist)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `a particular encoding can be banned for deserialization`() {
         compression ?: return
         val factory = defaultFactory()
@@ -1436,19 +1436,19 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedObjects() {
         // The "test" is that this doesn't throw, anything else is a success
         AckWrapper.serialize()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun privateNestedObjects() {
         // The "test" is that this doesn't throw, anything else is a success
         PrivateAckWrapper.serialize()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun throwable() {
         class TestException(message: String?, cause: Throwable?) : CordaException(message, cause)
 
@@ -1457,7 +1457,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         SerializationOutput(factory).serialize(testExcp)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedInner() {
         class C(val a: Int) {
             inner class D(val b: Int)
@@ -1475,7 +1475,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         }.withMessageContaining("has synthetic fields and is likely a nested inner class")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nestedNestedInner() {
         class C(val a: Int) {
             inner class D(val b: Int) {
@@ -1508,7 +1508,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         }.withMessageContaining("has synthetic fields and is likely a nested inner class")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun multiNestedInner() {
         class C(val a: Int) {
             inner class D(val b: Int)
@@ -1540,7 +1540,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         val v: V
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun dataClassBy() {
         data class C(val s: String) : DataClassByInterface<String> {
             override val v: String = "-- $s"
@@ -1561,7 +1561,7 @@ class SerializationOutputTests(private val compression: CordaSerializationEncodi
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `compression reduces number of bytes significantly`() {
         val ser = SerializationOutput(SerializerFactoryBuilder.build(AllWhitelist,
                 ClassCarpenterImpl(AllWhitelist, ClassLoader.getSystemClassLoader())

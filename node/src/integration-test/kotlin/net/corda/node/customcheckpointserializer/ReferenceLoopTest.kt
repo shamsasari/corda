@@ -41,7 +41,7 @@ class ReferenceLoopTest(private val compression: CordaSerializationEncoding?) {
             },
             checkpointCustomSerializers = listOf(PersonSerializer()))
 
-    @Test(timeout=300_000)
+    @Test
     fun `custom checkpoint serialization with reference loop`() {
         val person = Person("Test name")
 

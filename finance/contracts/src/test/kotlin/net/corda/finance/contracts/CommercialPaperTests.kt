@@ -117,7 +117,7 @@ class CommercialPaperTestsGeneric {
         override fun loadState(stateRef: StateRef): TransactionState<*> = TransactionState(thisTest.getPaper(), thisTest.getContract(), dummyNotary.party) // Simulates the state is recorded in the node service
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `trade lifecycle test`() {
         val someProfits = 1200.DOLLARS `issued by` megaCorpRef
         ledgerServices.ledger(dummyNotary.party) {
@@ -190,7 +190,7 @@ class CommercialPaperTestsGeneric {
         ledgerServices.transaction(dummyNotary.party, script)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `key mismatch at issue`() {
         transaction {
             attachment(CP_PROGRAM_ID)
@@ -202,7 +202,7 @@ class CommercialPaperTestsGeneric {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `face value is not zero`() {
         transaction {
             attachment(CP_PROGRAM_ID)
@@ -214,7 +214,7 @@ class CommercialPaperTestsGeneric {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `maturity date not in the past`() {
         transaction {
             attachment(CP_PROGRAM_ID)
@@ -226,7 +226,7 @@ class CommercialPaperTestsGeneric {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue cannot replace an existing state`() {
         transaction {
             attachment(CP_PROGRAM_ID)
@@ -239,7 +239,7 @@ class CommercialPaperTestsGeneric {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issue move and then redeem`() {
         // Set up a test environment with 4 parties:
         // 1. The notary

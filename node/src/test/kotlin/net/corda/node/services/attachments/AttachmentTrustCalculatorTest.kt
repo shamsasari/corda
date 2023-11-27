@@ -65,7 +65,7 @@ class AttachmentTrustCalculatorTest {
         database.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Jar uploaded by trusted uploader is trusted`() {
         tempFolder.root.toPath().let { path ->
             val (jar, _) = ContractJarTestUtils.makeTestSignedContractJar(
@@ -85,7 +85,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar trusted if signed by same key and has same contract as existing jar uploaded by a trusted uploader`() {
         tempFolder.root.toPath().let { path ->
             val alias = "testAlias"
@@ -110,7 +110,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar trusted if same key but different contract`() {
         tempFolder.root.toPath().let { path ->
             val alias = "testAlias"
@@ -135,7 +135,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar trusted if the signing keys are a subset of an existing trusted jar's signers`() {
         tempFolder.root.toPath().let { path ->
             val alias = "testAlias"
@@ -163,7 +163,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar trusted if the signing keys are an intersection of an existing trusted jar's signers`() {
         tempFolder.root.toPath().let { path ->
             val alias = "testAlias"
@@ -194,7 +194,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar trusted if the signing keys are a superset of an existing trusted jar's signers`() {
         tempFolder.root.toPath().let { path ->
             val alias = "testAlias"
@@ -222,7 +222,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar with inherited trust does not grant trust to other jars (no chain of trust)`() {
         tempFolder.root.toPath().let { path ->
             val aliasA = "Daredevil"
@@ -263,7 +263,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar not trusted if different key but same contract`() {
         tempFolder.root.toPath().let { path ->
             val alias = "testAlias"
@@ -291,7 +291,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `neither jar trusted if same contract and signer but not uploaded by a trusted uploader`() {
         tempFolder.root.toPath().let { path ->
             val alias = "testAlias"
@@ -316,7 +316,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non-contract jar trusted if trusted jar with same key present`() {
         tempFolder.root.toPath().let { path ->
             val alias = "testAlias"
@@ -346,7 +346,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non-contract jars not trusted if uploaded by non trusted uploaders`() {
         tempFolder.root.toPath().let { path ->
             val alias = "testAlias"
@@ -376,7 +376,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `non-contract jars not trusted if unsigned`() {
         SelfCleaningDir().use {
             val (jarV1, _) = makeTestJar()
@@ -390,7 +390,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar not trusted if signed by a blacklisted key and not uploaded by trusted uploader`() {
         tempFolder.root.toPath().let { path ->
 
@@ -423,7 +423,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jar uploaded by trusted uploader is still trusted even if it is signed by a blacklisted key`() {
         tempFolder.root.toPath().let { path ->
 
@@ -446,7 +446,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `calculateAllTrustInfo returns all attachment trust roots`() {
         tempFolder.root.toPath().let { path ->
             val aliasA = "dan"
@@ -514,7 +514,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `calculateAllTrustInfo only returns signed attachments or attachments manually installed on the node`() {
         tempFolder.root.toPath().let { path ->
             val aliasA = "dan"
@@ -566,7 +566,7 @@ class AttachmentTrustCalculatorTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `calculateAllTrustInfo attachments signed by blacklisted keys output without trust root fields filled in`() {
         tempFolder.root.toPath().let { path ->
 

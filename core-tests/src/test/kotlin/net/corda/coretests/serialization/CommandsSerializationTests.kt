@@ -14,7 +14,7 @@ class CommandsSerializationTests {
     @JvmField
     val testSerialization = SerializationEnvironmentRule()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test cash move serialization`() {
         val command = Cash.Commands.Move(CommercialPaper::class.java)
         val copiedCommand = command.serialize().deserialize()

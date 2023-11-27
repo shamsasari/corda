@@ -66,7 +66,7 @@ class CordappProviderImplTests {
         attachmentStore = MockAttachmentStorage()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `isolated jar is loaded into the attachment store`() {
         val provider = newCordappProvider(isolatedJAR)
         val maybeAttachmentId = provider.getCordappAttachmentId(provider.cordapps.first())
@@ -75,13 +75,13 @@ class CordappProviderImplTests {
         assertNotNull(attachmentStore.openAttachment(maybeAttachmentId!!))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty jar is not loaded into the attachment store`() {
         val provider = newCordappProvider(emptyJAR)
         assertNull(provider.getCordappAttachmentId(provider.cordapps.first()))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that we find a cordapp class that is loaded into the store`() {
         val provider = newCordappProvider(isolatedJAR)
         val className = "net.corda.isolated.contracts.AnotherDummyContract"
@@ -93,7 +93,7 @@ class CordappProviderImplTests {
         assertEquals(expected, actual)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that we find an attachment for a cordapp contract class`() {
         val provider = newCordappProvider(isolatedJAR)
         val className = "net.corda.isolated.contracts.AnotherDummyContract"
@@ -104,7 +104,7 @@ class CordappProviderImplTests {
         assertEquals(actual!!, expected)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test cordapp configuration`() {
         val configProvider = MockCordappConfigProvider()
         configProvider.cordappConfigs[isolatedCordappName] = validConfig
@@ -116,7 +116,7 @@ class CordappProviderImplTests {
         assertThat(expected.getString("key")).isEqualTo("value")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test fixup rule that adds attachment`() {
         val fixupJar = File.createTempFile("fixup", ".jar")
             .writeFixupRules("$ID1 => $ID2, $ID3")
@@ -127,7 +127,7 @@ class CordappProviderImplTests {
         assertThat(fixedIDs).containsExactly(ID2, ID3)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test fixup rule that deletes attachment`() {
         val fixupJar = File.createTempFile("fixup", ".jar")
             .writeFixupRules("$ID1 =>")
@@ -138,7 +138,7 @@ class CordappProviderImplTests {
         assertThat(fixedIDs).isEmpty()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test fixup rule with blank LHS`() {
         val fixupJar = File.createTempFile("fixup", ".jar")
             .writeFixupRules(" => $ID2")
@@ -150,7 +150,7 @@ class CordappProviderImplTests {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test fixup rule without arrows`() {
         val rule = " $ID1 "
         val fixupJar = File.createTempFile("fixup", ".jar")
@@ -163,7 +163,7 @@ class CordappProviderImplTests {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test fixup rule with too many arrows`() {
         val rule = " $ID1 => $ID2 => $ID3 "
         val fixupJar = File.createTempFile("fixup", ".jar")
@@ -176,7 +176,7 @@ class CordappProviderImplTests {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test fixup file containing multiple rules and comments`() {
         val fixupJar = File.createTempFile("fixup", ".jar").writeFixupRules(
             "# Whole line comment",
@@ -192,7 +192,7 @@ class CordappProviderImplTests {
         assertThat(fixedIDs).containsExactlyInAnyOrder(ID2, ID4)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test an exception is raised when we have two jars with the same hash`() {
 
         SelfCleaningDir().use { file ->
@@ -210,7 +210,7 @@ class CordappProviderImplTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test an exception is raised when two jars share a contract`() {
 
         SelfCleaningDir().use { file ->

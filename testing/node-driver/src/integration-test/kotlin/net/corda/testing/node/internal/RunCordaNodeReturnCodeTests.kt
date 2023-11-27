@@ -21,7 +21,7 @@ class RunCordaNodeReturnCodeTests(val argument: String, val exitCode: Int){
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun runCordaWithArgumentAndAssertExitCode() {
 
         val process = ProcessUtilities.startJavaProcess(

@@ -19,7 +19,7 @@ import java.io.File
 
 class IssueCashLoggingTests {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `issuing and sending cash as payment do not result in duplicate insertion warnings`() {
         val user = User("mark", "dadada", setOf(all()))
         driver(DriverParameters(cordappsForAllNodes = FINANCE_CORDAPPS)) {

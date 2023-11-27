@@ -46,7 +46,7 @@ class SerializationTokenTest {
     }
 
     private fun serializeAsTokenContext(toBeTokenized: Any) = CheckpointSerializeAsTokenContextImpl(toBeTokenized, testCheckpointSerialization.checkpointSerializer, context, rigorousMock())
-    @Test(timeout=300_000)
+    @Test
 	fun `write token and read tokenizable`() {
         val tokenizableBefore = LargeTokenizable()
         val context = serializeAsTokenContext(tokenizableBefore)
@@ -60,7 +60,7 @@ class SerializationTokenTest {
 
     private class UnitSerializeAsToken : SingletonSerializeAsToken()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `write and read singleton`() {
         val tokenizableBefore = UnitSerializeAsToken()
         val context = serializeAsTokenContext(tokenizableBefore)
@@ -70,7 +70,7 @@ class SerializationTokenTest {
         assertThat(tokenizableAfter).isSameAs(tokenizableBefore)
     }
 
-    @Test(expected = UnsupportedOperationException::class, timeout=300_000)
+    @Test(expected = UnsupportedOperationException::class)
     fun `new token encountered after context init`() {
         val tokenizableBefore = UnitSerializeAsToken()
         val context = serializeAsTokenContext(emptyList<Any>())
@@ -78,7 +78,7 @@ class SerializationTokenTest {
         tokenizableBefore.checkpointSerialize(testContext)
     }
 
-    @Test(expected = UnsupportedOperationException::class, timeout=300_000)
+    @Test(expected = UnsupportedOperationException::class)
     fun `deserialize unregistered token`() {
         val tokenizableBefore = UnitSerializeAsToken()
         val context = serializeAsTokenContext(emptyList<Any>())
@@ -87,13 +87,13 @@ class SerializationTokenTest {
         serializedBytes.checkpointDeserialize(testContext)
     }
 
-    @Test(expected = KryoException::class, timeout=300_000)
+    @Test(expected = KryoException::class)
     fun `no context set`() {
         val tokenizableBefore = UnitSerializeAsToken()
         tokenizableBefore.checkpointSerialize(context)
     }
 
-    @Test(expected = KryoException::class, timeout=300_000)
+    @Test(expected = KryoException::class)
     fun `deserialize non-token`() {
         val tokenizableBefore = UnitSerializeAsToken()
         val context = serializeAsTokenContext(tokenizableBefore)
@@ -119,7 +119,7 @@ class SerializationTokenTest {
         override fun toToken(context: SerializeAsTokenContext): SerializationToken = UnitSerializationToken
     }
 
-    @Test(expected = KryoException::class, timeout=300_000)
+    @Test(expected = KryoException::class)
     fun `token returns unexpected type`() {
         val tokenizableBefore = WrongTypeSerializeAsToken()
         val context = serializeAsTokenContext(tokenizableBefore)

@@ -80,7 +80,7 @@ class NodeInterestRatesTest {
         database.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `query successfully`() {
         database.transaction {
             val q = NodeInterestRates.parseFixOf("LIBOR 2016-03-16 1M")
@@ -91,7 +91,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `query with one success and one missing`() {
         database.transaction {
             val q1 = NodeInterestRates.parseFixOf("LIBOR 2016-03-16 1M")
@@ -101,7 +101,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `query successfully with interpolated rate`() {
         database.transaction {
             val q = NodeInterestRates.parseFixOf("LIBOR 2016-03-16 5M")
@@ -112,7 +112,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `rate missing and unable to interpolate`() {
         database.transaction {
             val q = NodeInterestRates.parseFixOf("EURIBOR 2016-03-15 3M")
@@ -120,14 +120,14 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty query`() {
         database.transaction {
             assertFailsWith<IllegalArgumentException> { oracle.query(emptyList()) }
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `refuse to sign with no relevant commands`() {
         database.transaction {
             val tx = makeFullTx()
@@ -149,7 +149,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `sign successfully`() {
         database.transaction {
             val tx = makePartialTX()
@@ -163,7 +163,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `do not sign with unknown fix`() {
         database.transaction {
             val tx = makePartialTX()
@@ -177,7 +177,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `do not sign too many leaves`() {
         database.transaction {
             val tx = makePartialTX()
@@ -196,7 +196,7 @@ class NodeInterestRatesTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty partial transaction to sign`() {
         val tx = makeFullTx()
         val wtx = tx.toWireTransaction(services)

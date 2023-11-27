@@ -18,7 +18,7 @@ class ThreadContextAdjustingRpcOpsProxyTest {
         fun getThreadContextClassLoader(): ClassLoader = Thread.currentThread().contextClassLoader
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun verifyThreadContextIsAdjustedTemporarily() {
         `when`(coreOps.killFlow(any())).thenAnswer {
             assertThat(Thread.currentThread().contextClassLoader).isEqualTo(mockClassloader)

@@ -25,6 +25,8 @@ dependencies {
     testImplementation "junit:junit:$junit_version"
     testImplementation "org.mockito.kotlin:mockito-kotlin:$mockito_kotlin_version"
     testImplementation "org.mockito:mockito-core:$mockito_version"
+
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junit_jupiter_version"
 }
 
 processResources {
@@ -40,7 +42,7 @@ jar {
     from(project(':node:capsule').tasks['buildCordaJAR']) {
         rename 'corda-(.*)', 'corda.jar'
     }
-    baseName = "network-bootstrapper"
+    archiveBaseName = "network-bootstrapper"
     manifest {
         attributes(
                 'Main-Class': 'net.corda.bootstrapper.MainKt'

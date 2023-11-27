@@ -31,7 +31,7 @@ class NetworkMapCacheTest {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `unknown Party object gets recorded as null entry in node_named_identities table`() {
         val bobNode = mockNet.createPartyNode(BOB_NAME)
         assertEquals(null, bobNode.services.identityService.wellKnownPartyFromX500Name(CHARLIE_NAME))
@@ -49,7 +49,7 @@ class NetworkMapCacheTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `check Party object can still be retrieved when not in node_named_identities table`() {
         val aliceNode = mockNet.createPartyNode(ALICE_NAME)
         val bobNode = mockNet.createPartyNode(BOB_NAME)
@@ -89,7 +89,7 @@ class NetworkMapCacheTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `check removed node is inserted into node_name_identities table and then its Party object can be retrieved`() {
         val aliceNode = mockNet.createPartyNode(ALICE_NAME)
         val bobNode = mockNet.createPartyNode(BOB_NAME)
@@ -107,7 +107,7 @@ class NetworkMapCacheTest {
         assertEquals(aliceNode.party, bobNode.services.identityService.wellKnownPartyFromX500Name(ALICE_NAME))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `check two removed nodes are both archived and then both Party objects are retrievable`() {
         val aliceNode = mockNet.createPartyNode(ALICE_NAME)
         val bobNode = mockNet.createPartyNode(BOB_NAME)
@@ -127,7 +127,7 @@ class NetworkMapCacheTest {
         assertEquals(charlieNode.party, bobNode.services.identityService.wellKnownPartyFromX500Name(CHARLIE_NAME))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `check latest identity returned according to certificate after identity mock rotatated`() {
         val aliceNode1 = mockNet.createPartyNode(ALICE_NAME)
         val bobNode = mockNet.createPartyNode(BOB_NAME)
@@ -148,7 +148,7 @@ class NetworkMapCacheTest {
         assertTrue(aliceNode2.party == retrievedParty || aliceNode1.party == retrievedParty)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `latest identity is archived after identity rotated`() {
         var aliceNode = mockNet.createPartyNode(ALICE_NAME)
         val bobNode = mockNet.createPartyNode(BOB_NAME)
@@ -178,7 +178,7 @@ class NetworkMapCacheTest {
         checkArchivedIdentity(bobNode, aliceNode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `key collision`() {
         val entropy = BigInteger.valueOf(24012017L)
         val aliceNode = mockNet.createNode(InternalMockNodeParameters(legalName = ALICE_NAME, entropyRoot = entropy))
@@ -195,7 +195,7 @@ class NetworkMapCacheTest {
         assertEquals(aliceNode.services.networkMapCache.getNodesByLegalIdentityKey(alice.owningKey).singleOrNull(), bobNode.info)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun getNodeByLegalIdentity() {
         val aliceNode = mockNet.createPartyNode(ALICE_NAME)
         val alice = aliceNode.info.singleIdentity()
@@ -209,7 +209,7 @@ class NetworkMapCacheTest {
         // TODO: Should have a test case with anonymous lookup
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun getPeerByLegalName() {
         val aliceNode = mockNet.createPartyNode(ALICE_NAME)
         val bobNode = mockNet.createPartyNode(BOB_NAME)
@@ -220,7 +220,7 @@ class NetworkMapCacheTest {
         assertEquals(expected, actual)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `caches get cleared on modification`() {
         val aliceNode = mockNet.createPartyNode(ALICE_NAME)
         val bobNode = mockNet.createPartyNode(BOB_NAME)
@@ -245,7 +245,7 @@ class NetworkMapCacheTest {
         assertEquals(aliceNode.info, bobCache.getNodesByLegalIdentityKey(aliceNode.info.singleIdentity().owningKey).single())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `remove node from cache`() {
         val aliceNode = mockNet.createPartyNode(ALICE_NAME)
         val bobNode = mockNet.createPartyNode(BOB_NAME)
@@ -261,7 +261,7 @@ class NetworkMapCacheTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `replace node with the same key but different certificate`() {
         val bobCache = mockNet.createPartyNode(BOB_NAME).services.networkMapCache
 
@@ -299,7 +299,7 @@ class NetworkMapCacheTest {
         assertThat(bobCache.getNodeByHash(aliceInfo.serialize().hash)).isNull()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `replace node with the same name but different key and certificate`() {
         val bobCache = mockNet.createPartyNode(BOB_NAME).services.networkMapCache
 

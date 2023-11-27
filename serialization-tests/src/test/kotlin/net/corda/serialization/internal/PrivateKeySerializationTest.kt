@@ -32,13 +32,13 @@ class PrivateKeySerializationTest(private val privateKey: PrivateKey, private va
     @JvmField
     val testSerialization = SerializationEnvironmentRule()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `passed with expected UseCases`() {
         assertTrue { privateKey.serialize(context = SerializationDefaults.STORAGE_CONTEXT).bytes.isNotEmpty() }
         assertTrue { privateKey.checkpointSerialize(context = CheckpointSerializationDefaults.CHECKPOINT_CONTEXT).bytes.isNotEmpty() }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `failed with wrong UseCase`() {
         assertThatThrownBy { privateKey.serialize(context = SerializationDefaults.P2P_CONTEXT) }
                 .isInstanceOf(IllegalStateException::class.java)

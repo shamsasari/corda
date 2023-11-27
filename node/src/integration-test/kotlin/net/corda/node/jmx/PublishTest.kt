@@ -10,7 +10,7 @@ import kotlin.test.assertTrue
 
 class PublishTest {
 
-    @Test(timeout=300_000)
+    @Test
     fun `node publishes node information via JMX when configured to do so`() {
         driver(DriverParameters(notarySpecs = emptyList(), jmxPolicy = JmxPolicy.defaultEnabled())) {
             val jmxAddress = startNode().get().jmxAddress.toString()

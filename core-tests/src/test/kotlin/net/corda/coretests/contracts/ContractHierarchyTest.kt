@@ -36,7 +36,7 @@ class ContractHierarchyTest {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `hierarchical contracts work with mock network`() {
         // Set up values we'll need
         val aliceNode = mockNet.createPartyNode(ALICE_NAME)

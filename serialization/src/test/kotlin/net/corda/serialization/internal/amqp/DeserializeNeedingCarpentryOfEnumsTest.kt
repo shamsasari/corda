@@ -14,7 +14,7 @@ class DeserializeNeedingCarpentryOfEnumsTest : AmqpCarpenterBase(AllWhitelist) {
         private const val VERBOSE = false
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun singleEnum() {
         //
         // Setup the test
@@ -53,7 +53,7 @@ class DeserializeNeedingCarpentryOfEnumsTest : AmqpCarpenterBase(AllWhitelist) {
                 (deserializedObj::class.java.getMethod("getA").invoke(deserializedObj) as Enum<*>).name)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun compositeIncludingEnums() {
         //
         // Setup the test

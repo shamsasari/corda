@@ -32,7 +32,7 @@ class EvolutionSerializerFactoryTests {
     // Version of the class as it's used in the test
     data class C(val a: Int)
 
-    @Test(timeout=300_000)
+    @Test
 	fun preservesDataWhenFlagSet() {
         val resource = "${javaClass.simpleName}.${testName()}"
 

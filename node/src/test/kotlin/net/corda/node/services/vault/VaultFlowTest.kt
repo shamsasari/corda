@@ -58,7 +58,7 @@ class VaultFlowTest {
         StaffedFlowHospital.onFlowKeptForOvernightObservation.clear()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Unique column constraint failing causes states to not persist to vaults`() {
         partyA.startFlow(Initiator(listOf(partyA.info.singleIdentity(), partyB.info.singleIdentity()))).get()
         val hospitalLatch = CountDownLatch(1)

@@ -15,7 +15,7 @@ class TypeModellingFingerPrinterTests {
     val fingerprinter = TypeModellingFingerPrinter(customRegistry, ClassLoader.getSystemClassLoader(), true)
 
     // See https://r3-cev.atlassian.net/browse/CORDA-2266
-    @Test(timeout=300_000)
+    @Test
 	fun `Object and wildcard are fingerprinted differently`() {
         val objectType = LocalTypeInformation.Top
         val anyType = LocalTypeInformation.Unknown
@@ -30,7 +30,7 @@ class TypeModellingFingerPrinterTests {
     data class SuppliesTypeParameter(val value: HasTypeParameter<NonSerializable>)
 
     // See https://r3-cev.atlassian.net/browse/CORDA-2848
-    @Test(timeout=300_000)
+    @Test
 	fun `can fingerprint type with non-serializable type parameter`() {
         val typeModel = ConfigurableLocalTypeModel(WhitelistBasedTypeModelConfiguration(AllWhitelist, customRegistry))
         val typeInfo = typeModel.inspect(SuppliesTypeParameter::class.java)

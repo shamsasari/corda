@@ -30,7 +30,7 @@ class FinalityHandlerTest {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `sent to flow hospital on error and attempted retry on node restart`() {
         // Setup a network where only Alice has the finance CorDapp and it sends a cash tx to Bob who doesn't have the
         // CorDapp. Bob's FinalityHandler will error when validating the tx.

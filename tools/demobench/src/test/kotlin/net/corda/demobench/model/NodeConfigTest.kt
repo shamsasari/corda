@@ -22,7 +22,7 @@ class NodeConfigTest {
         private val myLegalName = CordaX500Name(organisation = "My Name", locality = "New York", country = "US")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `reading node configuration`() {
         val config = createConfig(
                 legalName = myLegalName,
@@ -53,7 +53,7 @@ class NodeConfigTest {
         assertFalse(fullConfig.detectPublicIp)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `reading node configuration allows systemProperties and custom`() {
         val config = createConfig(
                 legalName = myLegalName,
@@ -86,7 +86,7 @@ class NodeConfigTest {
         assertFalse(fullConfig.detectPublicIp)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `reading node configuration with currencies`() {
         val config = createConfig(
                 legalName = myLegalName,
@@ -102,7 +102,7 @@ class NodeConfigTest {
         assertEquals(listOf("GBP"), config.financeConf().getStringList("issuableCurrencies"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `reading webserver configuration`() {
         val config = createConfig(
                 legalName = myLegalName,

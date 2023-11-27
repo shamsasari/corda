@@ -52,7 +52,7 @@ class ArtemisRpcTests {
 
     private val testName = X500Principal("CN=Test,O=R3 Ltd,L=London,C=GB")
 
-    @Test(timeout=300_000)
+    @Test
 	fun rpc_with_ssl_enabled() {
         val (rpcKeyPair, selfSignCert) = createKeyPairAndSelfSignedTLSCertificate(testName)
         val keyStorePath = saveToKeyStore(tempFile("rpcKeystore.jks"), rpcKeyPair, selfSignCert)
@@ -62,12 +62,12 @@ class ArtemisRpcTests {
         testSslCommunication(p2pSslOptions(tempFolder.root.toPath()), brokerSslOptions, true, clientSslOptions)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rpc_with_ssl_disabled() {
         testSslCommunication(p2pSslOptions(tempFolder.root.toPath()), null, false, null)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rpc_with_no_ssl_on_client_side_and_ssl_on_server_side() {
         val (rpcKeyPair, selfSignCert) = createKeyPairAndSelfSignedTLSCertificate(testName)
         val keyStorePath = saveToKeyStore(tempFile("rpcKeystore.jks"), rpcKeyPair, selfSignCert)
@@ -78,7 +78,7 @@ class ArtemisRpcTests {
         }.isInstanceOf(ActiveMQConnectionTimedOutException::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun rpc_client_certificate_untrusted_to_server() {
         val (rpcKeyPair, selfSignCert) = createKeyPairAndSelfSignedTLSCertificate(testName)
         val keyStorePath = saveToKeyStore(tempFile("rpcKeystore.jks"), rpcKeyPair, selfSignCert)

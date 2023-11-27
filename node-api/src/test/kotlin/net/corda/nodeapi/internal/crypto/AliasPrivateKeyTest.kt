@@ -14,7 +14,7 @@ class AliasPrivateKeyTest {
     @JvmField
     val tempFolder = TemporaryFolder()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `store AliasPrivateKey entry and cert to keystore`() {
         val alias = "01234567890"
         val aliasPrivateKey = AliasPrivateKey(alias)

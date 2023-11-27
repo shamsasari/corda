@@ -34,7 +34,7 @@ class StateMachineFinalityErrorHandlingTest : StateMachineErrorHandlingTest() {
      * Only the responding node keeps a checkpoint. The initiating flow has completed successfully as it has complete its
      * send to the responding node and the responding node successfully received it.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `error recording a transaction inside of ReceiveFinalityFlow will keep the flow in for observation`() {
         startDriver(notarySpec = NotarySpec(DUMMY_NOTARY_NAME, validating = false)) {
             val (alice, charlie, port) = createNodeAndBytemanNode(ALICE_NAME, CHARLIE_NAME, FINANCE_CORDAPPS)
@@ -95,7 +95,7 @@ class StateMachineFinalityErrorHandlingTest : StateMachineErrorHandlingTest() {
      * Only the responding node keeps a checkpoint. The initiating flow has completed successfully as it has complete its
      * send to the responding node and the responding node successfully received it.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `error resolving a transaction's dependencies inside of ReceiveFinalityFlow will keep the flow in for observation`() {
         startDriver(notarySpec = NotarySpec(DUMMY_NOTARY_NAME, validating = false)) {
             val (alice, charlie, port) = createNodeAndBytemanNode(ALICE_NAME, CHARLIE_NAME, FINANCE_CORDAPPS)
@@ -158,7 +158,7 @@ class StateMachineFinalityErrorHandlingTest : StateMachineErrorHandlingTest() {
      * The [StaffedFlowHospital.TransitionErrorGeneralPractitioner] catches these errors instead of the [StaffedFlowHospital.FinalityDoctor]. Due to this, the
      * flow is retried instead of moving straight to observation.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `error during transition with CommitTransaction action while receiving a transaction inside of ReceiveFinalityFlow will be retried and complete successfully`() {
         startDriver(notarySpec = NotarySpec(DUMMY_NOTARY_NAME, validating = false)) {
             val (alice, charlie, port) = createNodeAndBytemanNode(ALICE_NAME, CHARLIE_NAME, FINANCE_CORDAPPS)
@@ -225,7 +225,7 @@ class StateMachineFinalityErrorHandlingTest : StateMachineErrorHandlingTest() {
      * The [StaffedFlowHospital.TransitionErrorGeneralPractitioner] catches these errors instead of the [StaffedFlowHospital.FinalityDoctor]. Due to this, the
      * flow is retried instead of moving straight to observation.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `error during transition with CommitTransaction action while receiving a transaction inside of ReceiveFinalityFlow will be retried and be kept for observation is error persists`() {
         startDriver(notarySpec = NotarySpec(DUMMY_NOTARY_NAME, validating = false)) {
             val (alice, charlie, port) = createNodeAndBytemanNode(ALICE_NAME, CHARLIE_NAME, FINANCE_CORDAPPS)

@@ -63,7 +63,7 @@ class NetworkParametersReaderTest {
         fs.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `read correct set of parameters from file`() {
         val networkParamsPath = fs.getPath("/node").createDirectories()
         val oldParameters = testNetworkParameters(epoch = 1)
@@ -79,7 +79,7 @@ class NetworkParametersReaderTest {
         assertEquals(server.networkParameters, parametersFromFile)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `read correct set of parameters from specified network parameters path`() {
         val networkParamsPath = fs.getPath("/node/network").createDirectories()
         val oldParameters = testNetworkParameters(epoch = 1)
@@ -95,7 +95,7 @@ class NetworkParametersReaderTest {
         assertEquals(server.networkParameters, parametersFromFile)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `read network parameters from file when network map server is down`() {
         server.close()
         val networkParamsPath = fs.getPath("/node").createDirectories()
@@ -105,7 +105,7 @@ class NetworkParametersReaderTest {
         assertThat(parameters).isEqualTo(fileParameters)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `serialized parameters compatibility`() {
         // Network parameters file from before eventHorizon extension
         val inputStream = javaClass.classLoader.getResourceAsStream("network-compatibility/network-parameters")
@@ -115,7 +115,7 @@ class NetworkParametersReaderTest {
         assertThat(parameters.verified().eventHorizon).isEqualTo(Int.MAX_VALUE.days)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `verifying works with NETWORK_PARAMETERS role and NETWORK_MAP role, but fails for NODE_CA role`() {
         val netParameters = testNetworkParameters(epoch = 1)
         val certKeyPairNetworkParameters: CertificateAndKeyPair = createDevNetworkParametersCa()

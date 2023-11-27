@@ -39,7 +39,7 @@ class StateMachineSubFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      * if an error transition moves into another error transition. The flow still recovers from this state. 5 exceptions were thrown to verify
      * that 3 retries are attempted before recovering.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `initiating subflow - error during transition with CommitTransaction action that occurs during the first send will retry and complete successfully`() {
         startDriver {
             val (charlie, alice, port) = createNodeAndBytemanNode(CHARLIE_NAME, ALICE_NAME)
@@ -117,7 +117,7 @@ class StateMachineSubFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      * if an error transition moves into another error transition. The flow still recovers from this state. 5 exceptions were thrown to verify
      * that 3 retries are attempted before recovering.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `initiating subflow - error during transition with CommitTransaction action that occurs after the first receive will retry and complete successfully`() {
         startDriver {
             val (charlie, alice, port) = createNodeAndBytemanNode(CHARLIE_NAME, ALICE_NAME)
@@ -187,7 +187,7 @@ class StateMachineSubFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      * if an error transition moves into another error transition. The flow still recovers from this state. 5 exceptions were thrown to verify
      * that 3 retries are attempted before recovering.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `inline subflow - error during transition with CommitTransaction action that occurs during the first send will retry and complete successfully`() {
         startDriver {
             val (charlie, alice, port) = createNodeAndBytemanNode(CHARLIE_NAME, ALICE_NAME)
@@ -249,7 +249,7 @@ class StateMachineSubFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      * if an error transition moves into another error transition. The flow still recovers from this state. 5 exceptions were thrown to verify
      * that 3 retries are attempted before recovering.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `inline subflow - error during transition with CommitTransaction action that occurs during the first receive will retry and complete successfully`() {
         startDriver {
             val (charlie, alice, port) = createNodeAndBytemanNode(CHARLIE_NAME, ALICE_NAME)

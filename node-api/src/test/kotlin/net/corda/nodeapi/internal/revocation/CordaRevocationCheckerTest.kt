@@ -19,7 +19,7 @@ import kotlin.test.assertTrue
 
 class CordaRevocationCheckerTest {
 
-    @Test(timeout=300_000)
+    @Test
 	fun checkRevoked() {
         val checkResult = performCheckOnDate(LocalDate.of(2019, 9, 27))
         val failedChecks = checkResult.filterNot { it.second.isSuccess }
@@ -27,7 +27,7 @@ class CordaRevocationCheckerTest {
         assertEquals(BigInteger.valueOf(8310484079152632582), failedChecks.first().first.serialNumber)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun checkTooEarly() {
         val checkResult = performCheckOnDate(LocalDate.of(2019, 8, 27))
         assertTrue(checkResult.all { it.second.isSuccess })

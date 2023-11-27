@@ -99,7 +99,7 @@ class VaultQueryJoinTest {
     private val queryToCheckStateRef =
             QueryCriteria.VaultQueryCriteria(Vault.StateStatus.UNCONSUMED, stateRefs = listOf(createdStateRefs[numObjectsInLedger-1]))
 
-    @Test(timeout = 300_000)
+    @Test
     fun `filter query with OR operator`() {
         val results = serviceHubHandle.vaultService.queryBy<DummyState>(
                 queryToCheckId.or(queryToCheckStateRef)
@@ -108,7 +108,7 @@ class VaultQueryJoinTest {
         assertEquals(2, results.statesMetadata.size)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `filter query with sorting`() {
         val sorting = Sort(listOf(Sort.SortColumn(SortAttribute.Custom(DummySchema.DummyState::class.java, "stateRef"), Sort.Direction.DESC)))
 
@@ -120,7 +120,7 @@ class VaultQueryJoinTest {
         assertEquals(1, results.statesMetadata.size)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `filter query with OR operator and sorting`() {
         val sorting = Sort(listOf(Sort.SortColumn(SortAttribute.Custom(DummySchema.DummyState::class.java, "stateRef"), Sort.Direction.DESC)))
 

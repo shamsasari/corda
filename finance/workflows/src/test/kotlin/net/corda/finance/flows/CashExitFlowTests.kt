@@ -42,7 +42,7 @@ class CashExitFlowTests {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `exit some cash`() {
         val exitAmount = 500.DOLLARS
         val future = bankOfCordaNode.startFlow(CashExitFlow(exitAmount, ref))
@@ -55,7 +55,7 @@ class CashExitFlowTests {
         assertEquals(expected, output.amount)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `exit zero cash`() {
         val expected = 0.DOLLARS
         val future = bankOfCordaNode.startFlow(CashExitFlow(expected, ref))

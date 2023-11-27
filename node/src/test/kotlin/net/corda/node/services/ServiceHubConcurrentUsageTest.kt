@@ -32,7 +32,7 @@ class ServiceHubConcurrentUsageTest {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `operations requiring a transaction work from another thread`() {
         val latch = CountDownLatch(1)
         var successful = false

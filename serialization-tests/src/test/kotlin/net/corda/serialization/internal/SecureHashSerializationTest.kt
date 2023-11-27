@@ -20,7 +20,7 @@ class SecureHashSerializationTest {
     @JvmField
     val testSerialization = SerializationEnvironmentRule()
 
-    @Test(timeout = 300_000)
+    @Test
     fun `serialize and deserialize SHA-256`() {
         val before = SecureHash.randomSHA256()
         val bytes = before.serialize(context = SerializationDefaults.P2P_CONTEXT.withoutReferences()).bytes
@@ -33,7 +33,7 @@ class SecureHashSerializationTest {
         assertSame(before, after)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `serialize and deserialize SHA-512`() {
         val before = SecureHash.random(SHA2_512)
         val bytes = before.serialize(context = SerializationDefaults.P2P_CONTEXT.withoutReferences()).bytes

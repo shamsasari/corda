@@ -29,7 +29,7 @@ import kotlin.test.assertTrue
 @Ignore("TODO JDK17: Fixme - flaky test")
 class FlowSleepTest {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow can sleep`() {
         Assume.assumeFalse(IS_S390X)
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
@@ -41,7 +41,7 @@ class FlowSleepTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow can sleep multiple times`() {
         Assume.assumeFalse(IS_S390X)
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
@@ -56,7 +56,7 @@ class FlowSleepTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow can sleep and perform other suspending functions`() {
         Assume.assumeFalse(IS_S390X)
         // ensures that events received while the flow is sleeping are not processed

@@ -29,7 +29,7 @@ class CordaCliWrapperErrorHandlingTests(val arguments: List<String>, val outputR
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Run CordaCliWrapper sample app with arguments and check error output matches regExp`() {
         val process = ProcessUtilities.startJavaProcess(
                 className = className,

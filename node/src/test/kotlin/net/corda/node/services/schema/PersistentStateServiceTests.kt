@@ -46,7 +46,7 @@ class PersistentStateServiceTests {
             get() = throw UnsupportedOperationException()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test child objects are persisted`() {
         val testSchema = TestSchema
         val schemaService = object : SchemaService {

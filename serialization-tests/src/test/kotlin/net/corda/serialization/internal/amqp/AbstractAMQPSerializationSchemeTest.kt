@@ -22,7 +22,7 @@ class AbstractAMQPSerializationSchemeTest {
 
     private val serializationEnvironment = createTestSerializationEnv()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `number of cached factories must be bounded by maxFactories`() {
         val genesisContext = SerializationContextImpl(
                 ByteSequence.of(byteArrayOf('c'.toByte(), 'o'.toByte(), 'r'.toByte(), 'd'.toByte(), 'a'.toByte(), 0.toByte(), 0.toByte(), 1.toByte())),

@@ -22,7 +22,7 @@ class DocsTableGeneratorTest {
         /| test-error | foo, bar | Teachtaireacht tástála | Roinnt gníomhartha |
     """.trimMargin("/")
 
-    @Test(timeout = 1000)
+    @Test
     fun `check error table is produced as expected`() {
         val generator = DocsTableGenerator(RESOURCE_LOCATION, Locale.forLanguageTag("en-US"))
         val table = generator.generateMarkdown()
@@ -30,14 +30,14 @@ class DocsTableGeneratorTest {
         assertEquals(englishTable.split("\n").joinToString(System.lineSeparator()), table)
     }
 
-    @Test(timeout = 1000)
+    @Test
     fun `check table in other locales is produced as expected`() {
         val generator = DocsTableGenerator(RESOURCE_LOCATION, Locale.forLanguageTag("ga-IE"))
         val table = generator.generateMarkdown()
         assertEquals(irishTable.split("\n").joinToString(System.lineSeparator()), table)
     }
 
-    @Test(expected = IllegalArgumentException::class, timeout = 1000)
+    @Test(expected = IllegalArgumentException::class)
     fun `error thrown if unknown directory passed to generator`() {
         val generator = DocsTableGenerator(Paths.get("not/a/directory"), Locale.getDefault())
         generator.generateMarkdown()

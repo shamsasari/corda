@@ -80,7 +80,7 @@ class ObserverNodeTransactionTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Broadcasting an old transaction does not cause 2 unconsumed states`() {
         val node = mockNet.createPartyNode(ALICE_NAME)
         val regulator = mockNet.createPartyNode(BOB_NAME)
@@ -96,7 +96,7 @@ class ObserverNodeTransactionTests {
         checkObserverTransactions(outputMessage, regulator)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Non relevant states are recorded if transaction is re-received with new states to record`() {
         val node = mockNet.createPartyNode(ALICE_NAME)
         val regulator = mockNet.createPartyNode(BOB_NAME)
@@ -112,7 +112,7 @@ class ObserverNodeTransactionTests {
         checkObserverTransactions(outputMessage, regulator)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Re-recording a transaction adds non-relevant states`() {
         val alice = mockNet.createPartyNode(ALICE_NAME)
         val bob = mockNet.createPartyNode(BOB_NAME)
@@ -127,7 +127,7 @@ class ObserverNodeTransactionTests {
         checkObserverTransactions(message, bob, 2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Re-recording a transaction at only relevant does not cause failures`() {
         val alice = mockNet.createPartyNode(ALICE_NAME)
         val bob = mockNet.createPartyNode(BOB_NAME)
@@ -142,7 +142,7 @@ class ObserverNodeTransactionTests {
         checkObserverTransactions(message, bob, 1)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Recording a transaction twice at all visible works`() {
         val alice = mockNet.createPartyNode(ALICE_NAME)
         val bob = mockNet.createPartyNode(BOB_NAME)

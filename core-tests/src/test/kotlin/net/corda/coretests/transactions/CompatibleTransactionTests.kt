@@ -69,7 +69,7 @@ class CompatibleTransactionTests {
     }
     private val wireTransactionA by lazy { WireTransaction(componentGroups = componentGroupsA, privacySalt = privacySalt) }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Merkle root computations`() {
         // Merkle tree computation is deterministic if the same salt and ordering are used.
         val wireTransactionB = WireTransaction(componentGroups = componentGroupsA, privacySalt = privacySalt)
@@ -129,7 +129,7 @@ class CompatibleTransactionTests {
         assertEquals(wireTransactionA, WireTransaction(componentGroups = shuffledComponentGroupsA, privacySalt = privacySalt))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `WireTransaction constructors and compatibility`() {
         val groups = createComponentGroups(inputs, outputs, commands, attachments, notary, timeWindow, emptyList(), null)
         val wireTransactionOldConstructor = WireTransaction(groups, privacySalt)
@@ -198,7 +198,7 @@ class CompatibleTransactionTests {
         assertFails { WireTransaction(componentGroupsCompatibleEmptyNew, privacySalt) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FilteredTransaction constructors and compatibility`() {
         // Filter out all of the components.
         val ftxNothing = wireTransactionA.buildFilteredTransaction(Predicate { false }) // Nothing filtered.
@@ -295,7 +295,7 @@ class CompatibleTransactionTests {
         assertEquals(wireTransactionCompatibleA.componentGroups.map { it.groupIndex }.max()!!, ftxCompatibleNoInputs.groupHashes.size - 1)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Command visibility tests`() {
         // 1st and 3rd commands require a signature from KEY_1.
         val twoCommandsforKey1 = listOf(dummyCommand(DUMMY_KEY_1.public, DUMMY_KEY_2.public), dummyCommand(DUMMY_KEY_2.public), dummyCommand(DUMMY_KEY_1.public))
@@ -414,7 +414,7 @@ class CompatibleTransactionTests {
         allCommandsNoKey1Ftx.checkCommandVisibility(DUMMY_KEY_1.public) // This will pass, because there are indeed no commands to sign in the original transaction.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FilteredTransaction signer manipulation tests`() {
         // Required to call the private constructor.
         val ftxConstructor = FilteredTransaction::class.constructors.last()
@@ -557,7 +557,7 @@ class CompatibleTransactionTests {
         assertFailsWith<ComponentVisibilityException> { ftxAlterSignerB.checkCommandVisibility(DUMMY_KEY_1.public) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `parameters hash visibility`() {
         fun paramsFilter(elem: Any): Boolean = elem is NetworkParametersHash && elem.hash == paramsHash
         fun attachmentFilter(elem: Any): Boolean = elem is SecureHash && elem == paramsHash

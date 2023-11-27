@@ -46,7 +46,7 @@ class ObservablesTests {
         toBeClosed.clear()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `bufferUntilDatabaseCommit delays until transaction closed`() {
         val database = createDatabase()
 
@@ -75,7 +75,7 @@ class ObservablesTests {
 
     class TestException : Exception("Synthetic exception for tests")
 
-    @Test(timeout=300_000)
+    @Test
     fun `bufferUntilDatabaseCommit swallows if transaction rolled back`() {
         val database = createDatabase()
 
@@ -105,7 +105,7 @@ class ObservablesTests {
         assertThat(firstEvent.get()).isEqualTo(1 to true)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `bufferUntilDatabaseCommit propagates error if transaction rolled back`() {
         val database = createDatabase()
 
@@ -137,7 +137,7 @@ class ObservablesTests {
         assertThat(secondEvent.get()).isEqualTo(2 to false)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `bufferUntilDatabaseCommit delays until transaction closed repeatable`() {
         val database = createDatabase()
 
@@ -171,7 +171,7 @@ class ObservablesTests {
         assertThat(secondEvent.get()).isEqualTo(1 to false)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `tee correctly copies observations to multiple observers`() {
 
         val source1 = PublishSubject.create<Int>()
@@ -208,7 +208,7 @@ class ObservablesTests {
      * SafeSubscriber wrapping that PublishSubject and will call [PublishSubject.PublishSubjectState.onError], which will
      * eventually shut down all of the subscribers under that PublishSubject.
      */
-    @Test(timeout=300_000)
+    @Test
     fun `error in unsafe subscriber won't shutdown subscribers under same publish subject, after tee`() {
         val source1 = PublishSubject.create<Int>()
         val source2 = PublishSubject.create<Int>()
@@ -226,7 +226,7 @@ class ObservablesTests {
         assertEquals(2, count)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `continueOnError subscribes ResilientSubscribers, wrapped Observers will survive errors from onNext`() {
         var heartBeat1 = 0
         var heartBeat2 = 0
@@ -258,7 +258,7 @@ class ObservablesTests {
         assertEquals(2, heartBeat2)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `PublishSubject unsubscribes ResilientSubscribers only upon explicitly calling onError`() {
         var heartBeat = 0
         val source = PublishSubject.create<Int>()
@@ -273,7 +273,7 @@ class ObservablesTests {
         assertEquals(2, heartBeat)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `PublishSubject wrapped with a SafeSubscriber shuts down the whole structure, if one of them is unsafe and it throws`() {
         var heartBeat = 0
         val source = PublishSubject.create<Int>()
@@ -300,7 +300,7 @@ class ObservablesTests {
      * The reason why it should not call its onError is: if it wraps a [PublishSubject], calling [ResilientSubscriber.onError]
      * will then call [PublishSubject.onError] which will shut down all the subscribers under the [PublishSubject].
      */
-    @Test(timeout=300_000)
+    @Test
     fun `PublishSubject wrapped with a ResilientSubscriber will preserve the structure, if one of its children subscribers is unsafe and it throws`() {
         var heartBeat = 0
         val source = PublishSubject.create<Int>()
@@ -320,7 +320,7 @@ class ObservablesTests {
         assertEquals(3, heartBeat)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `throwing inside onNext of a ResilientSubscriber leaf subscriber will call onError`() {
         var heartBeatOnNext = 0
         var heartBeatOnError = 0
@@ -343,7 +343,7 @@ class ObservablesTests {
      * In this test ResilientSubscriber throws an OnNextFailedException which is a OnErrorNotImplementedException.
      * Because its underlying subscriber is not an ActionSubscriber, it will not be considered as a leaf ResilientSubscriber.
      */
-    @Test(timeout=300_000)
+    @Test
     fun `throwing ResilientSubscriber at onNext will wrap with a Rx OnErrorNotImplementedException`() {
         val resilientSubscriber = ResilientSubscriber<Int>(Subscribers.create { throw IllegalStateException() })
         assertFailsWith<OnErrorNotImplementedException> { // actually fails with an OnNextFailedException
@@ -351,7 +351,7 @@ class ObservablesTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `throwing inside ResilientSubscriber onError will wrap with a Rx OnErrorFailedException`() {
         val resilientSubscriber = ResilientSubscriber<Int>(
             ActionSubscriber(
@@ -373,7 +373,7 @@ class ObservablesTests {
      * it will throw a OnErrorNotImplementedException. Then it will be propagated back until ResilientSubscriber_X.
      * ResilientSubscriber_X will identify it is a not leaf subscriber and therefore will rethrow it as OnNextFailedException.
      */
-    @Test(timeout=300_000)
+    @Test
     fun `propagated Rx exception will be rethrown at ResilientSubscriber onError`() {
         val source = PublishSubject.create<Int>()
         source.continueOnError().subscribe { throw IllegalStateException("123") } // will give a leaf ResilientSubscriber
@@ -386,7 +386,7 @@ class ObservablesTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test OnResilientSubscribe strictMode = true replaces SafeSubscriber subclass`() {
         var heartBeat = 0
         val customSafeSubscriber = CustomSafeSubscriber(
@@ -403,7 +403,7 @@ class ObservablesTests {
         assertEquals(2, heartBeat)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test OnResilientSubscribe strictMode = false will not replace SafeSubscriber subclass`() {
         var heartBeat = 0
         val customSafeSubscriber = CustomSafeSubscriber(
@@ -420,7 +420,7 @@ class ObservablesTests {
         assertEquals(1, heartBeat)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `combine tee and bufferUntilDatabaseCommit`() {
         val database = createDatabase()
 
@@ -449,7 +449,7 @@ class ObservablesTests {
         assertThat(teedEvent.get()).isEqualTo(0 to true)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `new transaction open in observer when wrapped`() {
         val database = createDatabase()
 
@@ -489,7 +489,7 @@ class ObservablesTests {
         assertThat(delayedEventFromSecondObserver.get().second).isEqualTo(delayedEventFromThirdObserver.get().second)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `check wrapping in db tx doesn't eagerly subscribe`() {
         val database = createDatabase()
 
@@ -512,7 +512,7 @@ class ObservablesTests {
         assertThat(event.get()).isEqualTo(0)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `check wrapping in db tx unsubscribes`() {
         val database = createDatabase()
 
@@ -534,7 +534,7 @@ class ObservablesTests {
         assertThat(unsubscribed).isTrue()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `check wrapping in db tx restarts if we pass through zero subscribers`() {
         val database = createDatabase()
 

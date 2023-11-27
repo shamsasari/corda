@@ -50,7 +50,7 @@ class MockNetworkCustomSerializerTest {
         mockNetwork.stopNodes()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow with custom serializer mock network`() {
         val a = mockNetwork.createPartyNode()
         val ex = assertFailsWith<ExecutionException> {

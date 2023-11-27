@@ -28,7 +28,7 @@ import java.io.NotSerializableException
 
 class RpcCustomSerializersTest {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `when custom serializers are not provided, the classpath is scanned to identify any existing ones`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val server = startNode(providedName = ALICE_NAME).get()
@@ -43,7 +43,7 @@ class RpcCustomSerializersTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `when an empty set of custom serializers is provided, no scanning is performed and this empty set is used instead`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val server = startNode(providedName = ALICE_NAME).get()
@@ -57,7 +57,7 @@ class RpcCustomSerializersTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `when a set of custom serializers is explicitly provided, these are used instead of scanning the classpath`() {
         driver(DriverParameters(startNodesInProcess = true, cordappsForAllNodes = emptyList())) {
             val server = startNode(providedName = ALICE_NAME).get()
@@ -72,7 +72,7 @@ class RpcCustomSerializersTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `when a custom serializer is missing from the rpc client the resulting exception progagtes and client does not reconnect`() {
         driver(DriverParameters(startNodesInProcess = false, cordappsForAllNodes = listOf(enclosedCordapp()))) {
             val server = startNode(providedName = ALICE_NAME).get()

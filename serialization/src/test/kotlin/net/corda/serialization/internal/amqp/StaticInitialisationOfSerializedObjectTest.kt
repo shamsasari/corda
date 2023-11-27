@@ -40,13 +40,13 @@ class C2(var b: Int) {
 }
 
 class StaticInitialisationOfSerializedObjectTest {
-    @Test(expected = java.lang.ExceptionInInitializerError::class, timeout=300_000)
+    @Test(expected = java.lang.ExceptionInInitializerError::class)
     fun itBlowsUp() {
         C()
     }
 
     @Ignore("Suppressing this, as it depends on obtaining internal access to serialiser cache")
-    @Test(timeout=300_000)
+    @Test
 	fun kotlinObjectWithCompanionObject() {
         data class D(val c: C)
 
@@ -72,7 +72,7 @@ class StaticInitialisationOfSerializedObjectTest {
         assertEquals(2, serialisersByType.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun deserializeTest() {
         data class D(val c: C2)
 
@@ -108,7 +108,7 @@ class StaticInitialisationOfSerializedObjectTest {
             SerializerFactoryBuilder.build(wl1, ClassCarpenterImpl(wl2, ClassLoader.getSystemClassLoader()))
 
     // This time have the serialization factory and the carpenter use different whitelists
-    @Test(timeout=300_000)
+    @Test
 	fun deserializeTest2() {
         data class D(val c: C2)
 

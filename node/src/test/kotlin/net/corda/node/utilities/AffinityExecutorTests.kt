@@ -17,7 +17,7 @@ class AffinityExecutorTests {
         _executor = null
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flush handles nested executes`() {
         _executor = AffinityExecutor.ServiceAffinityExecutor("test4", 1)
         var nestedRan = false
@@ -31,7 +31,7 @@ class AffinityExecutorTests {
         assertTrue(nestedRan)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `single threaded affinity executor runs on correct thread`() {
         val thisThread = Thread.currentThread()
         _executor = AffinityExecutor.ServiceAffinityExecutor("test thread", 1)
@@ -53,7 +53,7 @@ class AffinityExecutorTests {
         assertEquals(thread2.get(), thread.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `pooled executor`() {
         _executor = AffinityExecutor.ServiceAffinityExecutor("test2", 3)
         assertFalse(executor.isOnThread)

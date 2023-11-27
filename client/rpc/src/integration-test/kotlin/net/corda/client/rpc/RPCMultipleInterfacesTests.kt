@@ -64,7 +64,7 @@ class RPCMultipleInterfacesTests {
 
     interface ImaginaryFriend : RPCOps
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can talk multiple interfaces`() {
         rpcDriver {
             val server = startRpcServer(listOps = listOf(IntRPCOpsImpl(), StringRPCOpsImpl, MyCordaRpcOpsImpl)).get()

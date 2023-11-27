@@ -12,7 +12,7 @@ import org.junit.Test
 
 class QuasarExcludePackagesTest {
 
-    @Test(timeout=300_000)
+    @Test
     fun `quasarExcludePackages default is empty list`() {
 
         // Arrange
@@ -26,7 +26,7 @@ class QuasarExcludePackagesTest {
     }
 
 
-    @Test(timeout=300_000)
+    @Test
     fun `quasarExcludePackages is read from configuration`() {
 
         // Arrange
@@ -39,7 +39,7 @@ class QuasarExcludePackagesTest {
         Assert.assertEquals(listOf("net.corda.node.internal.QuasarExcludePackagesTest**"), nodeConfiguration.quasarExcludePackages)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `quasarExcludePackages is passed through to QuasarInstrumentor`() {
 
         // Arrange

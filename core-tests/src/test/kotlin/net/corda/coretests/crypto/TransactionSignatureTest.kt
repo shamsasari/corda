@@ -21,7 +21,7 @@ class TransactionSignatureTest {
     private val testBytes = "12345678901234567890123456789012".toByteArray()
 
     /** Valid sign and verify. */
-    @Test(timeout=300_000)
+    @Test
 	fun `Signature metadata full sign and verify`() {
         val keyPair = Crypto.generateKeyPair("ECDSA_SECP256K1_SHA256")
 
@@ -39,7 +39,7 @@ class TransactionSignatureTest {
     }
 
     /** Verification should fail; corrupted metadata - clearData (Merkle root) has changed. */
-    @Test(expected = SignatureException::class,timeout=300_000)
+    @Test(expected = SignatureException::class)
     fun `Signature metadata full failure clearData has changed`() {
         val keyPair = Crypto.generateKeyPair("ECDSA_SECP256K1_SHA256")
         val signableData = SignableData(testBytes.sha256(), SignatureMetadata(1, Crypto.findSignatureScheme(keyPair.public).schemeNumberID))
@@ -47,7 +47,7 @@ class TransactionSignatureTest {
         Crypto.doVerify((testBytes + testBytes).sha256(), transactionSignature)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Verify multi-tx signature`() {
         val keyPair = Crypto.deriveKeyPairFromEntropy(Crypto.EDDSA_ED25519_SHA512, BigInteger.valueOf(1234567890L))
 
@@ -95,7 +95,7 @@ class TransactionSignatureTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Verify one-tx signature`() {
         val keyPair = Crypto.deriveKeyPairFromEntropy(Crypto.EDDSA_ED25519_SHA512, BigInteger.valueOf(1234567890L))
         val txId = "aTransaction".toByteArray().sha256()

@@ -22,7 +22,7 @@ class ExceptionsErrorCodeFunctionsTest {
         }
     }
 
-    @Test(timeout=5_000)
+    @Test
     fun `error code for message prints out message and full stack trace`() {
         val originalMessage = SimpleMessage(TEST_MESSAGE)
         val exception = makeChain(null, 10)

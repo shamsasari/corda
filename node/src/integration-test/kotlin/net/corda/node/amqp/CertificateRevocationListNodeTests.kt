@@ -102,7 +102,7 @@ abstract class AbstractServerRevocationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection succeeds when soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -110,7 +110,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection succeeds when soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -118,7 +118,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection fails when client's certificate is revoked and soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -127,7 +127,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection fails when client's certificate is revoked and soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -136,7 +136,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection fails when server's certificate is revoked and soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -145,7 +145,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection fails when server's certificate is revoked and soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -154,7 +154,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection succeeds when CRL cannot be obtained and soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -163,7 +163,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection fails when CRL cannot be obtained and soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -172,7 +172,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection succeeds when CRL is not defined for node CA cert and soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -181,7 +181,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `connection fails when CRL is not defined for node CA cert and soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -190,7 +190,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection succeeds when CRL is not defined for TLS cert and soft fail is enabled`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -199,7 +199,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection fails when CRL is not defined for TLS cert and soft fail is disabled`() {
         verifyConnection(
                 crlCheckSoftFail = false,
@@ -208,7 +208,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection succeeds when CRL endpoint is unreachable, soft fail is enabled and CRL timeouts are within SSL handshake timeout`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -218,7 +218,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `connection fails when CRL endpoint is unreachable, despite soft fail enabled, when CRL timeouts are not within SSL handshake timeout`() {
         verifyConnection(
                 crlCheckSoftFail = true,
@@ -228,7 +228,7 @@ abstract class AbstractServerRevocationTest {
         )
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `influx of new clients during CRL endpoint downtime does not cause existing connections to drop`() {
         val serverCrlSource = CertDistPointCrlSource()
         // Start the server and verify the first client has connected
@@ -456,7 +456,7 @@ class ArtemisServerRevocationTest : AbstractServerRevocationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `connection succeeds with disabled CRL check on revoked node certificate`() {
         crlCheckArtemisServer = false
         verifyConnection(

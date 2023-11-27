@@ -95,7 +95,7 @@ class AttachmentsClassLoaderStaticContractTests {
         doReturn(mock<IdentityService>()).whenever(it).identityService
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test serialization of WireTransaction with statically loaded contract`() {
         val tx = AttachmentDummyContract()
                 .generateInitial(MEGA_CORP.ref(0), 42, DUMMY_NOTARY)
@@ -107,7 +107,7 @@ class AttachmentsClassLoaderStaticContractTests {
         assertEquals(42, (copiedWireTransaction.outputs[0].data as AttachmentDummyContract.State).magicNumber)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verify that contract DummyContract is in classPath`() {
         val contractClass = Class.forName(ATTACHMENT_PROGRAM_ID)
         assertThat(contractClass.getDeclaredConstructor().newInstance()).isInstanceOf(Contract::class.java)

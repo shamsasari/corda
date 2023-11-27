@@ -20,27 +20,27 @@ import javax.security.auth.x500.X500Principal
 import kotlin.reflect.full.primaryConstructor
 
 class ConfigParsingTest {
-    @Test(timeout=300_000)
+    @Test
 	fun String() {
         testPropertyType<StringData, StringListData, String>("hello world!", "bye")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun Int() {
         testPropertyType<IntData, IntListData, Int>(1, 2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun Long() {
         testPropertyType<LongData, LongListData, Long>(Long.MAX_VALUE, Long.MIN_VALUE)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun Double() {
         testPropertyType<DoubleData, DoubleListData, Double>(1.2, 3.4)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun Boolean() {
         testPropertyType<BooleanData, BooleanListData, Boolean>(true, false)
         assertThat(config(Pair("value", "false")).parseAs<BooleanData>().value).isEqualTo(false)
@@ -53,12 +53,12 @@ class ConfigParsingTest {
                 .isInstanceOf(ConfigException.WrongType::class.java)
                 .hasMessageContaining("hardcoded value: value has type STRING rather than BOOLEAN")
     }
-    @Test(timeout=300_000)
+    @Test
 	fun Enum() {
         testPropertyType<EnumData, EnumListData, TestEnum>(TestEnum.Value2, TestEnum.Value1, valuesToString = true)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unknown Enum`() {
         val config = config("value" to "UnknownValue")
         assertThatThrownBy { config.parseAs<EnumData>() }
@@ -66,17 +66,17 @@ class ConfigParsingTest {
                 .hasMessageContaining(TestEnum.Value2.name)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun LocalDate() {
         testPropertyType<LocalDateData, LocalDateListData, LocalDate>(LocalDate.now(), LocalDate.now().plusDays(1), valuesToString = true)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun Instant() {
         testPropertyType<InstantData, InstantListData, Instant>(Instant.now(), Instant.now().plusMillis(100), valuesToString = true)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun NetworkHostAndPort() {
         testPropertyType<NetworkHostAndPortData, NetworkHostAndPortListData, NetworkHostAndPort>(
                 NetworkHostAndPort("localhost", 2223),
@@ -84,28 +84,28 @@ class ConfigParsingTest {
                 valuesToString = true)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun Path() {
         val path = "tmp" / "test"
         testPropertyType<PathData, PathListData, Path>(path, path / "file", valuesToString = true)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun URL() {
         testPropertyType<URLData, URLListData, URL>(URL("http://localhost:1234"), URL("http://localhost:1235"), valuesToString = true)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun X500Principal() {
         testPropertyType<X500PrincipalData, X500PrincipalListData, X500Principal>(X500Principal("C=US, L=New York, CN=Corda Root CA, OU=Corda, O=R3 HoldCo LLC"), X500Principal("O=Bank A,L=London,C=GB"), valuesToString = true)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun UUID() {
         testPropertyType<UUIDData, UUIDListData, UUID>(UUID.randomUUID(), UUID.randomUUID(), valuesToString = true)
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17: Fixme")
 	fun `test CordaX500Name`() {
         val name1 = CordaX500Name(organisation = "Mock Party", locality = "London", country = "GB")
@@ -119,7 +119,7 @@ class ConfigParsingTest {
         assertThat(config.parseAs<CordaX500NameData>().value).isEqualTo(name1)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flat Properties`() {
         val config = config("value" to mapOf("key" to "prop"))
         val data = PropertiesData(Properties().apply { this["key"] = "prop" })
@@ -127,14 +127,14 @@ class ConfigParsingTest {
         assertThat(data.toConfig()).isEqualTo(config)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Properties key with dot`() {
         val config = config("value" to mapOf("key.key2" to "prop"))
         val data = PropertiesData(Properties().apply { this["key.key2"] = "prop" })
         assertThat(config.parseAs<PropertiesData>().value).isEqualTo(data.value)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `nested Properties`() {
         val config = config("value" to mapOf("first" to mapOf("second" to "prop")))
         val data = PropertiesData(Properties().apply { this["first.second"] = "prop" })
@@ -142,7 +142,7 @@ class ConfigParsingTest {
         assertThat(data.toConfig()).isEqualTo(config)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `List of Properties`() {
         val config = config("values" to listOf(emptyMap(), mapOf("key" to "prop")))
         val data = PropertiesListData(listOf(
@@ -152,7 +152,7 @@ class ConfigParsingTest {
         assertThat(data.toConfig()).isEqualTo(config)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun Set() {
         val data = StringSetData(setOf("a", "b"))
         assertThat(config("values" to listOf("a", "a", "b")).parseAs<StringSetData>()).isEqualTo(data)
@@ -160,7 +160,7 @@ class ConfigParsingTest {
         assertThat(empty().parseAs<StringSetData>().values).isEmpty()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `multi property data class`() {
         val config = config(
                 "b" to true,
@@ -173,7 +173,7 @@ class ConfigParsingTest {
         assertThat(data.toConfig()).isEqualTo(config)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `nested data classes`() {
         val config = config(
                 "first" to mapOf(
@@ -183,7 +183,7 @@ class ConfigParsingTest {
         assertThat(data.toConfig()).isEqualTo(config)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `List of data classes`() {
         val config = config(
                 "list" to listOf(
@@ -194,14 +194,14 @@ class ConfigParsingTest {
         assertThat(data.toConfig()).isEqualTo(config)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `default value property`() {
         assertThat(config("a" to 3).parseAs<DefaultData>()).isEqualTo(DefaultData(3, 2))
         assertThat(config("a" to 3, "defaultOfTwo" to 3).parseAs<DefaultData>()).isEqualTo(DefaultData(3, 3))
         assertThat(DefaultData(3).toConfig()).isEqualTo(config("a" to 3, "defaultOfTwo" to 2))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `nullable property`() {
         assertThat(empty().parseAs<NullableData>().nullable).isNull()
         assertThat(config("nullable" to null).parseAs<NullableData>().nullable).isNull()
@@ -209,7 +209,7 @@ class ConfigParsingTest {
         assertThat(NullableData(null).toConfig()).isEqualTo(empty())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `data class with checks`() {
         val config = config("positive" to -1)
         assertThatExceptionOfType(IllegalArgumentException::class.java)
@@ -217,19 +217,19 @@ class ConfigParsingTest {
                 .withMessageContaining("-1")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `old config property`() {
         assertThat(config("oldValue" to "old").parseAs<OldData>().newValue).isEqualTo("old")
         assertThat(config("newValue" to "new").parseAs<OldData>().newValue).isEqualTo("new")
         assertThat(OldData("old").toConfig()).isEqualTo(config("newValue" to "old"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `static field`() {
         assertThat(DataWithCompanion(3).toConfig()).isEqualTo(config("value" to 3))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unknown configuration keys raise exception`() {
 
         // intentional typo here, parsing should throw rather than sneakily return default value
@@ -244,7 +244,7 @@ class ConfigParsingTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `parse with provided parser`() {
         val type1Config = mapOf("type" to "1", "value" to "type 1 value")
         val type2Config = mapOf("type" to "2", "value" to "type 2 value")

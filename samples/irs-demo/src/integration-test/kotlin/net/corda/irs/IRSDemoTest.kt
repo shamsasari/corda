@@ -52,7 +52,7 @@ class IRSDemoTest {
     private val futureDate: LocalDate = currentDate.plusMonths(6)
     private val maxWaitTime: Duration = 150.seconds
 
-    @Test(timeout=300_000)
+    @Test
     fun `runs IRS demo`() {
         springDriver(DriverParameters(
                 useTestClock = true,

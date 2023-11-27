@@ -32,7 +32,7 @@ class StringToMethodCallParserTest {
             "overload a: A, b: B" to "AB"
     )
 
-    @Test(timeout=300_000)
+    @Test
 	fun calls() {
         val parser = StringToMethodCallParser(Target::class)
         val target = Target()
@@ -45,7 +45,7 @@ class StringToMethodCallParserTest {
      * It would be unreasonable to expect "[ A, B, C ]" to deserialise as "Deque<Char>" by default.
      * Deque is chosen as we still expect it to preserve the order of its elements.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun complexNestedGenericMethod() {
         val parser = StringToMethodCallParser(Target::class)
         val result = parser.parse(Target(), "complexNestedObject pairs: { first: 101, second: [ A, B, C ] }").invoke()
@@ -66,7 +66,7 @@ class StringToMethodCallParserTest {
         constructor(numbers: List<Long>) : this(numbers.map(Long::toString).joinToString("+"), numbers.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun ctor1() {
         val clazz = ConstructorTarget::class.java
         val parser = StringToMethodCallParser(clazz)
@@ -77,7 +77,7 @@ class StringToMethodCallParserTest {
         assertArrayEquals(arrayOf("Blah blah blah", 12), args)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun ctor2() {
         val clazz = ConstructorTarget::class.java
         val parser = StringToMethodCallParser(clazz)
@@ -88,7 +88,7 @@ class StringToMethodCallParserTest {
         assertArrayEquals(arrayOf("Foo bar!"), args)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun constructorWithGenericArgs() {
         val clazz = ConstructorTarget::class.java
         val ctor = clazz.getDeclaredConstructor(List::class.java)

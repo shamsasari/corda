@@ -65,7 +65,7 @@ class OracleNodeTearOffTests {
     }
 
     // DOCSTART 2
-    @Test(timeout=300_000)
+    @Test
 	fun `verify that the oracle signs the transaction if the interest rate within allowed limit`() {
         // Create a partial transaction
         val tx = TransactionBuilder(DUMMY_NOTARY)
@@ -91,7 +91,7 @@ class OracleNodeTearOffTests {
     }
     // DOCEND 2
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verify that the oracle rejects the transaction if the interest rate is outside the allowed limit`() {
         val tx = makePartialTX()
         val fixOf = NodeInterestRates.parseFixOf("LIBOR 2016-03-16 1M")
@@ -106,7 +106,7 @@ class OracleNodeTearOffTests {
         }.isInstanceOf(RatesFixFlow.FixOutOfRange::class.java).hasMessage("Fix out of range by 0.017")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `verify that the oracle rejects the transaction if there is a privacy leak`() {
         val tx = makePartialTX()
         val fixOf = NodeInterestRates.parseFixOf("LIBOR 2016-03-16 1M")

@@ -32,7 +32,7 @@ class NodeStartupCliTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `no command line arguments`() {
         CommandLine.populateCommand(startup)
         Assertions.assertThat(startup.cmdLineOptions.baseDirectory).isEqualTo(workingDirectory)
@@ -50,7 +50,7 @@ class NodeStartupCliTest {
         Assertions.assertThat(startup.cmdLineOptions.networkRootTrustStorePathParameter).isEqualTo(null)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `--base-directory`() {
         CommandLine.populateCommand(startup, CommonCliConstants.BASE_DIR, (workingDirectory / "another-base-dir").toString())
         Assertions.assertThat(startup.cmdLineOptions.baseDirectory).isEqualTo(workingDirectory / "another-base-dir")
@@ -58,19 +58,19 @@ class NodeStartupCliTest {
         Assertions.assertThat(startup.cmdLineOptions.networkRootTrustStorePathParameter).isEqualTo(null)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `--nodeconf using relative path will be changed to absolute path`() {
         CommandLine.populateCommand(startup, CommonCliConstants.CONFIG_FILE, customNodeConf)
         Assertions.assertThat(startup.cmdLineOptions.configFile).isEqualTo(workingDirectory / customNodeConf)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `--nodeconf using absolute path will not be changed`() {
         CommandLine.populateCommand(startup, CommonCliConstants.CONFIG_FILE, (rootDirectory / customNodeConf).toString())
         Assertions.assertThat(startup.cmdLineOptions.configFile).isEqualTo(rootDirectory / customNodeConf)
     }
 
-    @Test(timeout=3_000)
+    @Test
     @Ignore
     fun `test logs are written to correct location correctly if verbose flag set`() {
         val node = NodeStartupCli()

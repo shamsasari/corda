@@ -40,41 +40,41 @@ abstract class P2PMQSecurityTest : MQSecurityTest() {
         }.withMessageContaining(address).withMessageContaining("CREATE_DURABLE_QUEUE")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `consume message from P2P queue`() {
         assertConsumeAttackFails("$P2P_PREFIX${alice.info.singleIdentity().owningKey.toStringShort()}")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `consume message from peer queue`() {
         val bobParty = startBobAndCommunicateWithAlice()
         assertConsumeAttackFails("$PEERS_PREFIX${bobParty.owningKey.toStringShort()}")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `send message to address of peer which has been communicated with`() {
         val bobParty = startBobAndCommunicateWithAlice()
         assertSendAttackFails("$PEERS_PREFIX${bobParty.owningKey.toStringShort()}")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create queue for peer which has not been communicated with`() {
         val bob = startNode(BOB_NAME)
         assertAllQueueCreationAttacksFail("$PEERS_PREFIX${bob.info.singleIdentity().owningKey.toStringShort()}")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create queue for unknown peer`() {
         val invalidPeerQueue = "$PEERS_PREFIX${generateKeyPair().public.toStringShort()}"
         assertAllQueueCreationAttacksFail(invalidPeerQueue)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `consume message from RPC requests queue`() {
         assertConsumeAttackFailsNonexistent(RPCApi.RPC_SERVER_QUEUE_NAME)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `consume message from logged in user's RPC queue`() {
         val user1Queue = loginToRPCAndGetClientQueue()
         assertConsumeAttackFailsNonexistent(user1Queue)

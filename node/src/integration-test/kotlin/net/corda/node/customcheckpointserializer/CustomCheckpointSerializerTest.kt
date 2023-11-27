@@ -46,27 +46,27 @@ class CustomCheckpointSerializerTest(private val compression: CordaSerialization
             )
     )
 
-    @Test(timeout=300_000)
+    @Test
     fun `test custom checkpoint serialization`() {
         testBrokenMapSerialization(DifficultToSerialize.BrokenMapClass())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test custom checkpoint serialization using interface`() {
         testBrokenMapSerialization(DifficultToSerialize.BrokenMapInterfaceImpl())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test custom checkpoint serialization using abstract class`() {
         testBrokenMapSerialization(DifficultToSerialize.BrokenMapAbstractImpl())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test custom checkpoint serialization using final class`() {
         testBrokenMapSerialization(DifficultToSerialize.BrokenMapFinal())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `test PublicKey serializer has not been overridden`() {
 
         val publicKey = generateKeyPair().public

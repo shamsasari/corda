@@ -14,7 +14,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 class KMSUtilsTests {
-    @Test(timeout=300_000)
+    @Test
 @Ignore
     fun `should generate certificates with the correct role`() {
         val aliceKey = generateKeyPair()

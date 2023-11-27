@@ -21,7 +21,7 @@ import net.corda.core.internal.messaging.FlowManagerRPCOps as InternalFlowManage
 
 class FlowManagerRPCOpsTest {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `net_corda_core_internal_messaging_FlowManagerRPCOps can be accessed using the MultiRPCClient`() {
         val user = User("user", "password", setOf(Permissions.all()))
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
@@ -43,7 +43,7 @@ class FlowManagerRPCOpsTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `net_corda_core_messaging_flows_FlowManagerRPCOps can be accessed using the MultiRPCClient`() {
         val user = User("user", "password", setOf(Permissions.all()))
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {

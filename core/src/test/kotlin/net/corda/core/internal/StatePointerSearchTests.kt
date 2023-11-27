@@ -42,7 +42,7 @@ class StatePointerSearchTests {
         override val participants: List<AbstractParty> get() = listOf()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `find pointer in state with generic type`() {
         val linearPointer = LinearPointer(UniqueIdentifier(), LinearState::class.java)
         val testState = StateWithGeneric(Amount(100L, Issued(partyAndRef, linearPointer)))
@@ -50,7 +50,7 @@ class StatePointerSearchTests {
         assertEquals(results, setOf(linearPointer))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `find pointers which are inside a list`() {
         val linearPointerOne = LinearPointer(UniqueIdentifier(), LinearState::class.java)
         val linearPointerTwo = LinearPointer(UniqueIdentifier(), LinearState::class.java)
@@ -59,7 +59,7 @@ class StatePointerSearchTests {
         assertEquals(results, setOf(linearPointerOne, linearPointerTwo))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `find pointers which are inside a map`() {
         val linearPointerOne = LinearPointer(UniqueIdentifier(), LinearState::class.java)
         val linearPointerTwo = LinearPointer(UniqueIdentifier(), LinearState::class.java)
@@ -68,7 +68,7 @@ class StatePointerSearchTests {
         assertEquals(results, setOf(linearPointerOne, linearPointerTwo))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `find pointers which are inside a set`() {
         val linearPointer = LinearPointer(UniqueIdentifier(), LinearState::class.java)
         val testState = StateWithSet(setOf(linearPointer))
@@ -76,7 +76,7 @@ class StatePointerSearchTests {
         assertEquals(results, setOf(linearPointer))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `find pointers which are inside nested iterables`() {
         val linearPointer = LinearPointer(UniqueIdentifier(), LinearState::class.java)
         val testState = StateWithListOfList(listOf(listOf(linearPointer)))
@@ -84,7 +84,7 @@ class StatePointerSearchTests {
         assertEquals(results, setOf(linearPointer))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `ignore static fields`() {
         val results = StatePointerSearch(StateWithStaticField(1)).search()
         assertThat(results).isEmpty()

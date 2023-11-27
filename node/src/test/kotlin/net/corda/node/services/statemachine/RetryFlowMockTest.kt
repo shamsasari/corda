@@ -76,13 +76,13 @@ class RetryFlowMockTest {
         StaffedFlowHospital.DatabaseEndocrinologist.customConditions.clear()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Single retry`() {
         assertEquals(Unit, nodeA.startFlow(RetryFlow(1)).get())
         assertEquals(2, RetryFlow.count)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Retry does not set senderUUID`() {
         val messagesSent = Collections.synchronizedList(mutableListOf<Message>())
         val partyB = nodeB.info.legalIdentities.first()
@@ -99,7 +99,7 @@ class RetryFlowMockTest {
     }
 
     @Ignore("CORDA-4045: Disable flaky test")
-    @Test(timeout=300_000)
+    @Test
 	fun `Restart does not set senderUUID`() {
         val messagesSent = Collections.synchronizedList(mutableListOf<Message>())
         val partyB = nodeB.info.legalIdentities.first()
@@ -131,7 +131,7 @@ class RetryFlowMockTest {
         assertNotNull(messagesSent.singleOrNull { it.senderUUID != null })
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Early end session message does not hang receiving flow`() {
         val partyB = nodeB.info.legalIdentities.first()
         assertThatExceptionOfType(UnexpectedFlowEndException::class.java).isThrownBy {
@@ -139,13 +139,13 @@ class RetryFlowMockTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Retry duplicate insert`() {
         assertEquals(Unit, nodeA.startFlow(RetryInsertFlow(1)).get())
         assertEquals(2, RetryInsertFlow.count)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Patient records do not leak in hospital`() {
         assertEquals(Unit, nodeA.startFlow(RetryFlow(1)).get())
         // Need to make sure the state machine has finished.  Otherwise this test is flakey.
@@ -154,7 +154,7 @@ class RetryFlowMockTest {
         assertEquals(2, RetryFlow.count)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Patient records do not leak in hospital when using killFlow`() {
         // Make sure we have seen an update from the hospital, and thus the flow went there.
         val alice = TestIdentity(CordaX500Name.parse("L=London,O=Alice Ltd,OU=Trade,C=GB")).party

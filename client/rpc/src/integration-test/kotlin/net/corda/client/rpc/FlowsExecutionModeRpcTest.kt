@@ -25,7 +25,7 @@ class FlowsExecutionModeTests : NodeBasedTest() {
         client = CordaRPCClient(node.node.configuration.rpcOptions.address)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flows draining mode can be enabled and queried`() {
         asALoggerUser { rpcOps ->
             val newValue = true
@@ -37,7 +37,7 @@ class FlowsExecutionModeTests : NodeBasedTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flows draining mode can be disabled and queried`() {
         asALoggerUser { rpcOps ->
             rpcOps.setFlowsDrainingModeEnabled(true)
@@ -50,7 +50,7 @@ class FlowsExecutionModeTests : NodeBasedTest() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `node starts with flows draining mode disabled`() {
         asALoggerUser { rpcOps ->
             val defaultStartingMode = rpcOps.isFlowsDrainingModeEnabled()

@@ -57,7 +57,7 @@ class ZipBombDetectorTest(private val case : TestCase) {
         }
     }
 
-    @Test(timeout=10_000)
+    @Test
     fun test() {
         (javaClass.classLoader.getResourceAsStream(case.zipResource) ?:
             throw IllegalStateException("Missing test resource file ${case.zipResource}"))

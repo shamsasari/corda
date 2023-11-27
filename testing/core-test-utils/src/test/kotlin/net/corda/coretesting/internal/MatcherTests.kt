@@ -7,7 +7,7 @@ import org.junit.Test
 import kotlin.test.assertEquals
 
 class MatcherTests {
-    @Test(timeout=300_000)
+    @Test
 	fun `nested items indent`() {
         val nestedMap = mapOf(
                 "a" to mapOf(

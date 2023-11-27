@@ -29,7 +29,7 @@ class FingerPrinterTestingTests {
         const val VERBOSE = true
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testingTest() {
         val fpt = FingerPrinterTesting()
         val descriptorBasedSerializerRegistry = DefaultDescriptorBasedSerializerRegistry()
@@ -42,7 +42,7 @@ class FingerPrinterTestingTests {
         assertEquals("1", fpt.fingerprint(typeModel.inspect(String::class.java)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun worksAsReplacement() {
         data class C(val a: Int, val b: Long)
 

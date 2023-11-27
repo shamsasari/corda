@@ -18,7 +18,7 @@ class InternalMockNetworkIntegrationTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `does not leak non-daemon threads`() {
         val quasar = projectRootDir / "lib" / "quasar.jar"
         val quasarOptions = "m"

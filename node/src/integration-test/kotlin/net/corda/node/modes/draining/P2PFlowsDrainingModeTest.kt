@@ -52,7 +52,7 @@ class P2PFlowsDrainingModeTest {
         executor!!.shutdown()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flows draining mode suspends consumption of initial session messages`() {
         driver(DriverParameters(startNodesInProcess = false, portAllocation = portAllocation, notarySpecs = emptyList())) {
             val (initiatedNode, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -85,7 +85,7 @@ class P2PFlowsDrainingModeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17:Fixme - timed out")
 	fun `terminate node waiting for pending flows`() {
 
@@ -112,7 +112,7 @@ class P2PFlowsDrainingModeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `terminate resets persistent draining mode property when waiting for pending flows`() {
 
         driver(DriverParameters(portAllocation = portAllocation, notarySpecs = emptyList())) {
@@ -136,7 +136,7 @@ class P2PFlowsDrainingModeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `disabling draining mode cancels draining shutdown`() {
 
         driver(DriverParameters(portAllocation = portAllocation, notarySpecs = emptyList())) {

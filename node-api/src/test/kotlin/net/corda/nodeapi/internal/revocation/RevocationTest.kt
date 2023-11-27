@@ -113,19 +113,19 @@ class RevocationTest(private val revocationMode: RevocationConfig.Mode) {
         if (revocationMode in modes) assertFailsWith(CertificateException::class, ::doRevocationCheck) else doRevocationCheck()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ok with empty CRLs`() {
         doRevocationCheck()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `soft fail with revoked TLS certificate`() {
         tlsCRL.writeCRL(tlsCRLIssuerCert, tlsCRLIssuerKeyPair.private, true, tlsCert)
 
         assertFailsFor(RevocationConfig.Mode.SOFT_FAIL, RevocationConfig.Mode.HARD_FAIL)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `hard fail with unavailable CRL in TLS certificate`() {
         tlsCert = X509Utilities.createCertificate(
                 CertificateType.TLS, nodeCACert, nodeCAKeyPair, X500Principal("CN=tls"), tlsKeyPair.public,
@@ -136,7 +136,7 @@ class RevocationTest(private val revocationMode: RevocationConfig.Mode) {
         assertFailsFor(RevocationConfig.Mode.HARD_FAIL)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `hard fail with invalid CRL issuer in TLS certificate`() {
         tlsCert = X509Utilities.createCertificate(
                 CertificateType.TLS, nodeCACert, nodeCAKeyPair, X500Principal("CN=tls"), tlsKeyPair.public,
@@ -146,7 +146,7 @@ class RevocationTest(private val revocationMode: RevocationConfig.Mode) {
         assertFailsFor(RevocationConfig.Mode.HARD_FAIL)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `hard fail without CRL issuer in TLS certificate`() {
         tlsCert = X509Utilities.createCertificate(
                 CertificateType.TLS, nodeCACert, nodeCAKeyPair, X500Principal("CN=tls"), tlsKeyPair.public,
@@ -156,7 +156,7 @@ class RevocationTest(private val revocationMode: RevocationConfig.Mode) {
         assertFailsFor(RevocationConfig.Mode.HARD_FAIL)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ok with other certificate in TLS CRL`() {
         val otherKeyPair = Crypto.generateKeyPair(Crypto.ECDSA_SECP256R1_SHA256)
         val otherCert = X509Utilities.createCertificate(
@@ -168,14 +168,14 @@ class RevocationTest(private val revocationMode: RevocationConfig.Mode) {
         doRevocationCheck()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `soft fail with revoked node CA certificate`() {
         doormanCRL.writeCRL(doormanCert, doormanKeyPair.private, false, nodeCACert)
 
         assertFailsFor(RevocationConfig.Mode.SOFT_FAIL, RevocationConfig.Mode.HARD_FAIL)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `hard fail with unavailable CRL in node CA certificate`() {
         nodeCACert = X509Utilities.createCertificate(
                 CertificateType.NODE_CA, doormanCert, doormanKeyPair, X500Principal("CN=node"), nodeCAKeyPair.public,
@@ -185,7 +185,7 @@ class RevocationTest(private val revocationMode: RevocationConfig.Mode) {
         assertFailsFor(RevocationConfig.Mode.HARD_FAIL)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ok with other certificate in doorman CRL`() {
         val otherKeyPair = Crypto.generateKeyPair(Crypto.ECDSA_SECP256R1_SHA256)
         val otherCert = X509Utilities.createCertificate(

@@ -39,7 +39,7 @@ class FXSwap {
     val outStateBad3 = UniversalContract.State(listOf(DUMMY_NOTARY), transferBad3)
 
     val inState = UniversalContract.State(listOf(DUMMY_NOTARY), contract)
-    @Test(timeout=300_000)
+    @Test
 	fun `issue - signature`() {
 
         transaction {
@@ -59,7 +59,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun execute() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -76,7 +76,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - reversed order`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -93,7 +93,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - not authorized`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -105,7 +105,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - before maturity`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -117,7 +117,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - outState mismatch 1`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -128,7 +128,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - outState mismatch 2`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -140,7 +140,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - outState mismatch 3`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -152,7 +152,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `execute - outState mismatch 4`() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, inState)
@@ -164,7 +164,7 @@ class FXSwap {
         }
     }
 
-    @Test(timeout=300_000) @Ignore
+    @Test @Ignore
     fun `pretty print`() {
         println ( prettyPrint(contract) )
     }

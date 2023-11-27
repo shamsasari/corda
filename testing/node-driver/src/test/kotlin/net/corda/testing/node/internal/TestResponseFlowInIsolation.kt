@@ -61,7 +61,7 @@ class TestResponseFlowInIsolation {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun test() {
         // This method returns the Responder flow object used by node B.
         // We tell node B to respond to BadInitiator with Responder.

@@ -8,7 +8,7 @@ import kotlin.test.assertEquals
 
 class CordaErrorContextProviderTest {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `check that correct URL is returned from context provider`() {
         val context = CordaErrorContextProvider()
         val version = CordaVersion.releaseVersion.substringBefore("-") // Remove SNAPSHOT if present

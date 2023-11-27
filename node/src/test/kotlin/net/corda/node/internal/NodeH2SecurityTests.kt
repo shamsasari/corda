@@ -30,7 +30,7 @@ import kotlin.test.assertFailsWith
 
 class NodeH2SecurityTests {
 
-    @Test(timeout=300_000)
+    @Test
     fun `h2 server on the host name requires non-default database password`() {
         hikaryProperties.setProperty("dataSource.url", "jdbc:h2:file:my_file")
         hikaryProperties.setProperty("dataSource.password", "")
@@ -43,7 +43,7 @@ class NodeH2SecurityTests {
         assertThat(exception.message).contains("Database password is required for H2 server listening on ")
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `h2 server on the host IP requires non-default database password`() {
         hikaryProperties.setProperty("dataSource.url", "jdbc:h2:file:my_file")
         hikaryProperties.setProperty("dataSource.password", "")
@@ -56,7 +56,7 @@ class NodeH2SecurityTests {
         assertThat(exception.message).contains("Database password is required for H2 server listening on")
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `h2 server on the host name requires non-blank database password`() {
         hikaryProperties.setProperty("dataSource.url", "jdbc:h2:file:my_file")
         hikaryProperties.setProperty("dataSource.password", " ")
@@ -69,7 +69,7 @@ class NodeH2SecurityTests {
         assertThat(exception.message).contains("Database password is required for H2 server listening on")
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `h2 server on the host IP requires non-blank database password`() {
         hikaryProperties.setProperty("dataSource.url", "jdbc:h2:file:my_file")
         hikaryProperties.setProperty("dataSource.password", " ")
@@ -83,7 +83,7 @@ class NodeH2SecurityTests {
         assertThat(exception.message).contains("Database password is required for H2 server listening on")
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `h2 server on localhost runs with the default database password`() {
         hikaryProperties.setProperty("dataSource.url", "jdbc:h2:file:dir/file;")
         hikaryProperties.setProperty("dataSource.password", "")
@@ -95,7 +95,7 @@ class NodeH2SecurityTests {
         verify(dataSource, atLeast(1)).connection
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `h2 server to loopback IP runs with the default database password`() {
         hikaryProperties.setProperty("dataSource.url", "jdbc:h2:file:dir/file;")
         hikaryProperties.setProperty("dataSource.password", "")
@@ -107,7 +107,7 @@ class NodeH2SecurityTests {
         verify(dataSource, atLeast(1)).connection
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `h2 server set allowedClasses system properties`() {
         System.setProperty("h2.allowedClasses", "*")
         hikaryProperties.setProperty("dataSource.url", "jdbc:h2:file:dir/file;")

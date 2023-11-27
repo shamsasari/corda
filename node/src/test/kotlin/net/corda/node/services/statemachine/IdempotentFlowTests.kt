@@ -52,7 +52,7 @@ class IdempotentFlowTests {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `restarting idempotent flow does not replay any part of its parent flow`() {
         nodeA.services.startFlow(SideEffectFlow()).resultFuture.get()
         assertEquals(1, executionCounter.get())

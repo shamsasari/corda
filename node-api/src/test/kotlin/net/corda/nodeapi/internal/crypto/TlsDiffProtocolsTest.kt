@@ -83,7 +83,7 @@ class TlsDiffProtocolsTest(private val serverAlgo: String, private val clientAlg
     @JvmField
     val tempFolder = TemporaryFolder()
 
-    @Test(timeout=300_000)
+    @Test
 	fun testClientServerTlsExchange() {
 
         //System.setProperty("javax.net.debug", "all")

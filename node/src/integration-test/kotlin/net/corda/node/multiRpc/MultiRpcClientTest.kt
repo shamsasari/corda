@@ -56,7 +56,7 @@ class MultiRpcClientTest {
         prevRpcClientSerializationEnv?.let { _rpcClientSerializationEnv.set(prevRpcClientSerializationEnv) }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `can connect to custom RPC interface`() {
 
         // Allocate named port to be used for RPC interaction
@@ -97,7 +97,7 @@ class MultiRpcClientTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `ensure onError populated on disconnect`() {
 
         // Allocate named port to be used for RPC interaction

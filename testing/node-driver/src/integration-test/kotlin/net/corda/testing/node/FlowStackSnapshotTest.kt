@@ -224,7 +224,7 @@ fun assertFrame(expectedMethod: String, expectedEmpty: Boolean, frame: StackSnap
         "criteria (specifically: extra objects are introduced to the quasar stack by th Jacoco agent). You can however " +
         "run these tests via an IDE.")
 class FlowStackSnapshotTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `flowStackSnapshot contains full frames when methods with side effects are called`() {
         driver(DriverParameters(startNodesInProcess = true)) {
             val a = startNode(rpcUsers = listOf(User(Constants.USER, Constants.PASSWORD, setOf(startFlow<SideEffectFlow>())))).get()
@@ -239,7 +239,7 @@ class FlowStackSnapshotTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flowStackSnapshot contains empty frames when methods with no side effects are called`() {
         driver(DriverParameters(startNodesInProcess = true)) {
             val a = startNode(rpcUsers = listOf(User(Constants.USER, Constants.PASSWORD, setOf(startFlow<NoSideEffectFlow>())))).get()
@@ -254,7 +254,7 @@ class FlowStackSnapshotTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `persistFlowStackSnapshot persists empty frames to a file when methods with no side effects are called`() {
         driver(DriverParameters(startNodesInProcess = true)) {
             val a = startNode(rpcUsers = listOf(User(Constants.USER, Constants.PASSWORD, setOf(startFlow<PersistingNoSideEffectFlow>())))).get()
@@ -270,7 +270,7 @@ class FlowStackSnapshotTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `persistFlowStackSnapshot persists multiple snapshots in different files`() {
         driver(DriverParameters(startNodesInProcess = true)) {
             val a = startNode(rpcUsers = listOf(User(Constants.USER, Constants.PASSWORD, setOf(startFlow<MultiplePersistingSideEffectFlow>())))).get()
@@ -284,7 +284,7 @@ class FlowStackSnapshotTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flowStackSnapshot object is serializable`() {
         val mockNet = MockNetwork(emptyList(), threadPerNode = true)
         val node = mockNet.createPartyNode()
@@ -301,7 +301,7 @@ class FlowStackSnapshotTest {
         assertNull(thrown)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `persistFlowStackSnapshot stack traces are aligned with stack objects`() {
         driver(DriverParameters(startNodesInProcess = true)) {
             val a = startNode(rpcUsers = listOf(User(Constants.USER, Constants.PASSWORD, setOf(startFlow<PersistingSideEffectFlow>())))).get()

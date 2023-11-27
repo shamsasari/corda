@@ -5,7 +5,7 @@ import org.junit.Test
 
 open class CliBackwardsCompatibleTest(val clazz: Class<*>) {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `should always be backwards compatible`() {
         checkBackwardsCompatibility(clazz)
     }

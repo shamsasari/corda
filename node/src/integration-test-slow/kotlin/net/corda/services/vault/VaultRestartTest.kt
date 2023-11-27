@@ -18,7 +18,7 @@ import org.junit.Test
 
 class VaultRestartTest {
 
-    @Test(timeout=300_000)
+    @Test
 	fun `restart and query vault after adding some cash states`() {
         driver(DriverParameters(inMemoryDB = false, startNodesInProcess = false, isDebug = true,
                                 extraCordappPackagesToScan = listOf("net.corda.finance", "migration"))) {

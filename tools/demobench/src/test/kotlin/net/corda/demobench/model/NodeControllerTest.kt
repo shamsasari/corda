@@ -15,7 +15,7 @@ class NodeControllerTest {
     private val node1Name = "Organisation 1"
     private val organisation2Name = "Organisation 2"
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test unique nodes after validate`() {
         val data = NodeData()
         data.legalName.value = node1Name
@@ -23,7 +23,7 @@ class NodeControllerTest {
         assertNull(controller.validate(data))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `register notary`() {
         assertFalse(controller.hasNotary())
         val config = createConfig(organisation = "Name", notary = NotaryService(false))
@@ -31,7 +31,7 @@ class NodeControllerTest {
         assertTrue(controller.hasNotary())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `register non notary`() {
         assertFalse(controller.hasNotary())
         val config = createConfig(organisation = "Name")
@@ -39,7 +39,7 @@ class NodeControllerTest {
         assertFalse(controller.hasNotary())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test unique key after validate`() {
         val data = NodeData()
         data.legalName.value = node1Name
@@ -49,7 +49,7 @@ class NodeControllerTest {
         assertTrue(controller.keyExists("organisation1"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test matching name after validate`() {
         val data = NodeData()
         data.legalName.value = node1Name
@@ -63,7 +63,7 @@ class NodeControllerTest {
         assertTrue(controller.nameExists("organisation 1"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test node system properties`() {
         val data = NodeData()
         data.legalName.value = node1Name
@@ -73,14 +73,14 @@ class NodeControllerTest {
         assertFalse(systemProperties["co.paralleluniverse.fibers.verifyInstrumentation"] as Boolean)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test register unique nodes`() {
         val config = createConfig(organisation = organisation2Name)
         assertTrue(controller.register(config))
         assertFalse(controller.register(config))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test unique key after register`() {
         val config = createConfig(organisation = organisation2Name)
         assertFalse(controller.keyExists("organisation2"))
@@ -88,7 +88,7 @@ class NodeControllerTest {
         assertTrue(controller.keyExists("organisation2"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test matching name after register`() {
         val config = createConfig(organisation = organisation2Name)
         assertFalse(controller.nameExists("Organisation 2"))
@@ -100,7 +100,7 @@ class NodeControllerTest {
         assertTrue(controller.nameExists("organisation 2"))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test valid ports`() {
         assertFalse(controller.isPortValid(NodeController.minPort - 1))
         assertTrue(controller.isPortValid(NodeController.minPort))
@@ -108,7 +108,7 @@ class NodeControllerTest {
         assertFalse(controller.isPortValid(NodeController.maxPort + 1))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test P2P port is max`() {
         val portNumber = NodeController.firstPort + 1234
         val config = createConfig(p2pPort = portNumber)
@@ -117,7 +117,7 @@ class NodeControllerTest {
         assertEquals(portNumber + 1, controller.nextPort)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test rpc port is max`() {
         val portNumber = NodeController.firstPort + 7777
         val config = createConfig(rpcPort = portNumber)
@@ -126,7 +126,7 @@ class NodeControllerTest {
         assertEquals(portNumber + 1, controller.nextPort)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test web port is max`() {
         val portNumber = NodeController.firstPort + 2356
         val config = createConfig(webPort = portNumber)
@@ -135,7 +135,7 @@ class NodeControllerTest {
         assertEquals(portNumber + 1, controller.nextPort)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test H2 port is max`() {
         val portNumber = NodeController.firstPort + 3478
         val config = createConfig(h2port = portNumber)
@@ -144,7 +144,7 @@ class NodeControllerTest {
         assertEquals(portNumber + 1, controller.nextPort)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `dispose node`() {
         val config = createConfig(organisation = "MyName")
         controller.register(config)

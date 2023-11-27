@@ -45,7 +45,7 @@ class CashPaymentFlowTests {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `pay some cash`() {
         val payTo = aliceNode.info.singleIdentity()
         val expectedPayment = 500.DOLLARS
@@ -82,7 +82,7 @@ class CashPaymentFlowTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `pay more than we have`() {
         val payTo = aliceNode.info.singleIdentity()
         val expected = 4000.DOLLARS
@@ -94,7 +94,7 @@ class CashPaymentFlowTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `pay zero cash`() {
         val payTo = aliceNode.info.singleIdentity()
         val expected = 0.DOLLARS

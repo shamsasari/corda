@@ -8,7 +8,7 @@ class NodeDiagnosticsServiceTest {
 
     private val diagnosticsService = NodeDiagnosticsService()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `platform version info correctly returned from diagnostics service`() {
         val info = diagnosticsService.nodeVersionInfo()
         assertEquals(CordaVersion.releaseVersion, info.releaseVersion)

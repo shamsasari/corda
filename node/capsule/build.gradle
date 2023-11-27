@@ -27,8 +27,10 @@ dependencies {
     compileOnly "co.paralleluniverse:capsule:$capsule_version"
     testImplementation "co.paralleluniverse:capsule:$capsule_version"
 
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
     testImplementation "junit:junit:$junit_version"
+
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junit_jupiter_version"
 }
 
 jar.enabled = false
@@ -40,20 +42,19 @@ capsule {
 def nodeProject = project(':node')
 
 configurations.runtimeOnly.canBeResolved = true
-task buildCordaJAR(type: FatCapsule, dependsOn: [
-        nodeProject.tasks.named('jar'),
-    ]) {
+tasks.register('buildCordaJAR', FatCapsule) {
+    dependsOn(nodeProject.tasks.named('jar'))
     applicationClass 'net.corda.node.Corda'
     archiveBaseName = 'corda'
     archiveVersion = corda_release_version
     archiveClassifier = jdkClassifier
     archiveName = archiveFileName.get()
     applicationSource = files(
-        nodeProject.configurations.runtimeClasspath,
-        nodeProject.tasks.jar,
-        nodeProject.buildDir.toString() + '/resources/main/corda-reference.conf',
-        "$rootDir/config/dev/log4j2.xml",
-        'NOTICE' // Copy CDDL notice
+            nodeProject.configurations.runtimeClasspath,
+            nodeProject.tasks.jar,
+            nodeProject.buildDir.toString() + '/resources/main/corda-reference.conf',
+            "$rootDir/config/dev/log4j2.xml",
+            'NOTICE' // Copy CDDL notice
     )
     from configurations.capsuleRuntime.files.collect { zipTree(it) }
     with jar

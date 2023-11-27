@@ -67,7 +67,7 @@ class TLSAuthenticationTests {
             "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256"
     )
 
-    @Test(timeout=300_000)
+    @Test
 	fun `All EC R1`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.ECDSA_SECP256R1_SHA256,
@@ -83,7 +83,7 @@ class TLSAuthenticationTests {
         testConnect(serverSocket, clientSocket, "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `All RSA`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.RSA_SHA256,
@@ -100,7 +100,7 @@ class TLSAuthenticationTests {
     }
 
     // Server's public key type is the one selected if users use different key types (e.g RSA and EC R1).
-    @Test(timeout=300_000)
+    @Test
 	fun `Server RSA - Client EC R1 - CAs all EC R1`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.ECDSA_SECP256R1_SHA256,
@@ -115,7 +115,7 @@ class TLSAuthenticationTests {
         testConnect(serverSocket, clientSocket, "TLS_ECDHE_RSA_WITH_AES_128_GCM_SHA256") // Server's key type is selected.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Server EC R1 - Client RSA - CAs all EC R1`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.ECDSA_SECP256R1_SHA256,
@@ -130,7 +130,7 @@ class TLSAuthenticationTests {
         testConnect(serverSocket, clientSocket, "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256") // Server's key type is selected.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Server EC R1 - Client EC R1 - CAs all RSA`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.RSA_SHA256,
@@ -145,7 +145,7 @@ class TLSAuthenticationTests {
         testConnect(serverSocket, clientSocket, "TLS_ECDHE_ECDSA_WITH_AES_128_GCM_SHA256")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Server EC R1 - Client RSA - Mixed CAs`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.ECDSA_SECP256R1_SHA256,
@@ -165,7 +165,7 @@ class TLSAuthenticationTests {
     //
     // However, the server is still free to ignore this order and pick what it thinks is best,
     // see https://security.stackexchange.com/questions/121608 for more information.
-    @Test(timeout=300_000)
+    @Test
 	fun `TLS cipher suite order matters - client wins`() {
         val (serverSocketFactory, clientSocketFactory) = buildTLSFactories(
                 rootCAScheme = Crypto.ECDSA_SECP256R1_SHA256,

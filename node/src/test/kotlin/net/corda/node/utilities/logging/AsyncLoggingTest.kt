@@ -5,7 +5,7 @@ import kotlin.test.assertTrue
 
 
 class AsyncLoggingTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `async logging is configured`() {
         assertTrue(AsyncLoggerContextSelectorNoThreadLocal.isSelected())
     }

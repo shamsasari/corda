@@ -73,7 +73,7 @@ class FlowSoftLocksTests {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow reserves fungible states with its own flow id and then manually releases them`() {
         val vaultStates = fillVault(aliceNode, 10)!!.states.map { it.ref }.toSet()
         val softLockActions = arrayOf(
@@ -85,7 +85,7 @@ class FlowSoftLocksTests {
         assertEquals(vaultStates, queryCashStates(QueryCriteria.SoftLockingType.UNLOCKED_ONLY, aliceNode.services.vaultService))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow reserves fungible states with its own flow id and by default releases them when completing`() {
         val vaultStates = fillVault(aliceNode, 10)!!.states.map { it.ref }.toSet()
         val softLockActions = arrayOf(
@@ -96,7 +96,7 @@ class FlowSoftLocksTests {
         assertEquals(vaultStates, queryCashStates(QueryCriteria.SoftLockingType.UNLOCKED_ONLY, aliceNode.services.vaultService))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow reserves fungible states with its own flow id and by default releases them when errors`() {
         val vaultStates = fillVault(aliceNode, 10)!!.states.map { it.ref }.toSet()
         val softLockActions = arrayOf(
@@ -116,7 +116,7 @@ class FlowSoftLocksTests {
         LockingUnlockingFlow.throwOnlyOnce = true
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow reserves fungible states with random id and then manually releases them`() {
         val randomId = UUID.randomUUID()
         val vaultStates = fillVault(aliceNode, 10)!!.states.map { it.ref }.toSet()
@@ -129,7 +129,7 @@ class FlowSoftLocksTests {
         assertEquals(vaultStates, queryCashStates(QueryCriteria.SoftLockingType.UNLOCKED_ONLY, aliceNode.services.vaultService))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow reserves fungible states with random id and does not release them upon completing`() {
         val randomId = UUID.randomUUID()
         val vaultStates = fillVault(aliceNode, 10)!!.states.map { it.ref }.toSet()
@@ -141,7 +141,7 @@ class FlowSoftLocksTests {
         assertEquals(vaultStates, queryCashStates(QueryCriteria.SoftLockingType.LOCKED_ONLY, aliceNode.services.vaultService))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow only releases by default reserved states with flow id upon completing`() {
         // lock with flow id and random id, dont manually release any. At the end, check that only flow id ones got unlocked.
         val randomId = UUID.randomUUID()
@@ -158,7 +158,7 @@ class FlowSoftLocksTests {
         assertEquals(randomIdStates, queryCashStates(QueryCriteria.SoftLockingType.LOCKED_ONLY, aliceNode.services.vaultService))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow reserves fungible states with flow id and random id, then releases the flow id ones - assert the random id ones are still locked`() {
         val randomId = UUID.randomUUID()
         val vaultStates = fillVault(aliceNode, 10)!!.states.map { it.ref }.toList()
@@ -175,7 +175,7 @@ class FlowSoftLocksTests {
         assertEquals(randomIdStates, queryCashStates(QueryCriteria.SoftLockingType.LOCKED_ONLY, aliceNode.services.vaultService))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow reserves fungible states with flow id and random id, then releases the random id ones - assert the flow id ones are still locked inside the flow`() {
         val randomId = UUID.randomUUID()
         val vaultStates = fillVault(aliceNode, 10)!!.states.map { it.ref }.toList()
@@ -191,7 +191,7 @@ class FlowSoftLocksTests {
         assertEquals(flowIdStates + randomIdStates, queryCashStates(QueryCriteria.SoftLockingType.UNLOCKED_ONLY, aliceNode.services.vaultService))
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow soft locks fungible state upon creation`() {
         var lockedStates = 0
         CreateFungibleStateFLow.hook = { vaultService ->
@@ -203,7 +203,7 @@ class FlowSoftLocksTests {
         assertEquals(1, lockedStates)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `when flow soft locks, then errors and retries from previous checkpoint, softLockedStates are reverted back correctly`() {
         val randomId = UUID.randomUUID()
         val vaultStates = fillVault(aliceNode, 10)!!.states.map { it.ref }.toList()

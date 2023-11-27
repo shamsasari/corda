@@ -16,7 +16,7 @@ import org.junit.Test
 
 class FlowExternalOperationStartFlowTest : AbstractFlowExternalOperationTest() {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `starting a flow inside of a flow that starts a future will succeed`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -29,7 +29,7 @@ class FlowExternalOperationStartFlowTest : AbstractFlowExternalOperationTest() {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `multiple flows can be started and their futures joined from inside a flow`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)

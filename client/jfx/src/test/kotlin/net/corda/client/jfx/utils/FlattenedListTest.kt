@@ -21,7 +21,7 @@ class FlattenedListTest {
         replayedList = ReplayedList(flattenedList)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addWorks() {
         assertEquals(replayedList.size, 1)
         assertEquals(replayedList[0], 1234)
@@ -54,7 +54,7 @@ class FlattenedListTest {
         assertEquals(replayedList[5], 34)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun removeWorks() {
         val firstRemoved = sourceList.removeAt(0)
         assertEquals(firstRemoved.get(), 1234)
@@ -76,7 +76,7 @@ class FlattenedListTest {
         assertEquals(replayedList.size, 0)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun updatingObservableWorks() {
         assertEquals(replayedList[0], 1234)
         sourceList[0].set(4321)
@@ -92,7 +92,7 @@ class FlattenedListTest {
         assertEquals(replayedList[1], 8765)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun reusingObservableWorks() {
         val observable = SimpleObjectProperty(12)
         sourceList.add(observable)

@@ -87,7 +87,7 @@ class NetworkBootstrapperRunnerTests {
         return Pair(NetworkBootstrapperRunner(mockBootstrapper), mockBootstrapper)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when defaults are run bootstrapper is called correctly`() {
         val (runner, mockBootstrapper) = getRunner()
         val exitCode = runner.runProgram()
@@ -95,7 +95,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when base directory is specified it is passed through to the bootstrapper`() {
         val (runner, mockBootstrapper) = getRunner()
         val tempDir = createTempDir()
@@ -105,7 +105,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when no copy flag is specified it is passed through to the bootstrapper`() {
         val (runner, mockBootstrapper) = getRunner()
         runner.noCopy = true
@@ -114,7 +114,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when copy cordapps is specified it is passed through to the bootstrapper`() {
         val (runner, mockBootstrapper) = getRunner()
         runner.copyCordapps = CopyCordapps.No
@@ -123,7 +123,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when min platform version is specified it is passed through to the bootstrapper`() {
         val (runner, mockBootstrapper) = getRunner()
         runner.minimumPlatformVersion = 1
@@ -132,7 +132,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when min platform version is invalid it fails to run with a sensible error message`() {
         val runner = getRunner().first
         runner.minimumPlatformVersion = 0
@@ -140,7 +140,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals("The --minimum-platform-version parameter must be at least 1", exception.message)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when max message size is specified it is passed through to the bootstrapper`() {
         val (runner, mockBootstrapper) = getRunner()
         runner.maxMessageSize = 1
@@ -149,7 +149,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when max message size is invalid it fails to run with a sensible error message`() {
         val runner = getRunner().first
         runner.maxMessageSize = 0
@@ -157,7 +157,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals("The --max-message-size parameter must be at least 1", exception.message)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when max transaction size is specified it is passed through to the bootstrapper`() {
         val (runner, mockBootstrapper) = getRunner()
         runner.maxTransactionSize = 1
@@ -166,7 +166,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when max transaction size is invalid it fails to run with a sensible error message`() {
         val runner = getRunner().first
         runner.maxTransactionSize = 0
@@ -174,7 +174,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals("The --max-transaction-size parameter must be at least 1", exception.message)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when event horizon is specified it is passed through to the bootstrapper`() {
         val (runner, mockBootstrapper) = getRunner()
         runner.eventHorizon = 7.days
@@ -183,7 +183,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when event horizon is invalid it fails to run with a sensible error message`() {
         val runner = getRunner().first
         runner.eventHorizon = (-7).days
@@ -191,7 +191,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals("The --event-horizon parameter must be a positive value", exception.message)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when a network parameters is specified the values are passed through to the bootstrapper`() {
         val (runner, mockBootstrapper) = getRunner()
         val conf = correctNetworkFile.copyToTestDir()
@@ -206,7 +206,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when a package is specified in the network parameters file it is passed through to the bootstrapper`() {
         val (runner, mockBootstrapper) = getRunner()
         val conf = aliceConfigFile.copyToTestDir()
@@ -218,7 +218,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when a package is specified in the network parameters file it is passed through to the bootstrapper EC`() {
         val (runner, mockBootstrapper) = getRunner()
         val conf = aliceConfigFile.copyToTestDir(dirAliceEC)
@@ -230,7 +230,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when a package is specified in the network parameters file it is passed through to the bootstrapper DSA`() {
         val (runner, mockBootstrapper) = getRunner()
         val conf = aliceConfigFile.copyToTestDir(dirAliceDSA)
@@ -242,7 +242,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(0, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when packages overlap that the bootstrapper fails with a sensible message`() {
         val (runner, _) = getRunner()
         val conf = packageOverlapConfigFile.copyToTestDir()
@@ -253,7 +253,7 @@ class NetworkBootstrapperRunnerTests {
         assertEquals(1, exitCode)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test when keyfile does not exist then bootstrapper fails with a sensible message`() {
         val (runner, _) = getRunner()
         runner.networkParametersFile = dirAlice / "filename-that-doesnt-exist"

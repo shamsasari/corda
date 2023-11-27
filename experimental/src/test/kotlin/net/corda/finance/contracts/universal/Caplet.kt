@@ -51,7 +51,7 @@ class Caplet {
     val stateFixed = UniversalContract.State(listOf(DUMMY_NOTARY), contractFixed)
 
     val stateFinal = UniversalContract.State(listOf(DUMMY_NOTARY), contractFinal)
-    @Test(timeout=300_000)
+    @Test
 	fun issue() {
         transaction {
             output(UNIVERSAL_PROGRAM_ID, stateStart)
@@ -66,7 +66,7 @@ class Caplet {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun execute() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateFixed)
@@ -82,7 +82,7 @@ class Caplet {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun fixing() {
         transaction {
             input(UNIVERSAL_PROGRAM_ID, stateStart)
@@ -121,7 +121,7 @@ class Caplet {
         }
     }
 
-    @Test(timeout=300_000) @Ignore
+    @Test @Ignore
     fun `pretty print`() {
         println ( prettyPrint(contract) )
 

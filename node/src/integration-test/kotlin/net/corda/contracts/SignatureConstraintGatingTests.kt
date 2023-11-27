@@ -21,7 +21,7 @@ class SignatureConstraintGatingTests {
     @JvmField
     val tempFolder = TemporaryFolder()
 
-    @Test(timeout=300_000)
+    @Test
 	fun `signature constraints can be used with up to the maximum allowed number of (RSA) keys`() {
         tempFolder.root.toPath().let {path ->
             val financeCordapp = cordappWithPackages("net.corda.finance.contracts", "net.corda.finance.schemas")
@@ -41,7 +41,7 @@ class SignatureConstraintGatingTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `signature constraints can be used with up to the maximum allowed number of (EC) keys`() {
         tempFolder.root.toPath().let {path ->
             val financeCordapp = cordappWithPackages("net.corda.finance.contracts", "net.corda.finance.schemas")
@@ -61,7 +61,7 @@ class SignatureConstraintGatingTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `signature constraints cannot be used with more than the maximum allowed number of keys`() {
         tempFolder.root.toPath().let {path ->
             val financeCordapp = cordappWithPackages("net.corda.finance.contracts", "net.corda.finance.schemas")

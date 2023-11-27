@@ -65,7 +65,7 @@ class FlowParallelMessagingTests {
     }
 
 
-    @Test(timeout=300_000)
+    @Test
     fun `messages can be exchanged in parallel using sendAll & receiveAll between multiple parties successfully`() {
         val messages = mapOf(
                 recipientParty1 to MessageType.REPLY,
@@ -79,7 +79,7 @@ class FlowParallelMessagingTests {
         assertEquals("ok", result)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `flow exceptions from counterparties during receiveAll are handled properly`() {
         val messages = mapOf(
                 recipientParty1 to MessageType.REPLY,
@@ -93,7 +93,7 @@ class FlowParallelMessagingTests {
                 .hasMessage("graceful failure")
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `runtime exceptions from counterparties during receiveAll are handled properly`() {
         val messages = mapOf(
                 recipientParty1 to MessageType.REPLY,
@@ -106,7 +106,7 @@ class FlowParallelMessagingTests {
                 .isInstanceOf(UnexpectedFlowEndException::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `initial session messages and existing session messages can be sent together using sendAll`() {
         val flow = senderNode.services.startFlow(StagedSenderFlow(listOf(recipientParty1, recipientParty2)))
 
@@ -116,7 +116,7 @@ class FlowParallelMessagingTests {
         assertEquals("ok", result)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `messages can be exchanged successfully even between anonymous parties`() {
         val senderAnonymousParty = senderNode.createConfidentialIdentity(senderParty)
         val firstRecipientAnonymousParty = recipientNode1.createConfidentialIdentity(recipientParty1)
@@ -138,7 +138,7 @@ class FlowParallelMessagingTests {
         assertEquals("ok", result)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `a flow cannot invoke receiveAll with duplicate sessions`() {
         val flow = senderNode.services.startFlow(InvalidReceiveFlow(listOf(recipientParty1), String::class.java))
 

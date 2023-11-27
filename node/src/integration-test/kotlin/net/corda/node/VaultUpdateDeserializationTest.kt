@@ -60,7 +60,7 @@ class VaultUpdateDeserializationTest {
      * The ledger will not record any transactions, and the flow must be retried by the sender upon installing the correct contract jar
      * version at the receiver and re-starting the node.
      */
-    @Test(timeout=300_000)
+    @Test
     fun `Notarised transaction fails completely upon receiver deserialization failure collecting signatures when using incompatible contract jar`() {
         driver(driverParameters(listOf(flowVersion1, contractVersion1))) {
             val alice = startNode(NodeParameters(additionalCordapps = listOf(flowVersion1, contractVersion1)),
@@ -113,7 +113,7 @@ class VaultUpdateDeserializationTest {
      * Test original deserialization failure behaviour by setting a new configurable java system property.
      * The ledger will enter an inconsistent state from which is cannot auto-recover.
      */
-    @Test(timeout=300_000)
+    @Test
     fun `Notarised transaction when using incompatible contract jar and overriden system property`() {
         driver(driverParameters(listOf(flowVersion1, contractVersion1))) {
             val alice = startNode(NodeParameters(additionalCordapps = listOf(flowVersion1, contractVersion1)),
@@ -150,7 +150,7 @@ class VaultUpdateDeserializationTest {
      * Test that a deserialization error is raised where the receiver node of a finality flow has an incompatible contract jar.
      * The ledger will be temporarily inconsistent until the correct contract jar version is installed and the receiver node is re-started.
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `un-notarised transaction is hospitalized at receiver upon deserialization failure in vault update when using incompatible contract jar`() {
         driver(driverParameters(emptyList())) {
             val alice = startNode(NodeParameters(additionalCordapps = listOf(flowVersion1, contractVersion1)),
@@ -195,7 +195,7 @@ class VaultUpdateDeserializationTest {
      * Test original deserialization failure behaviour by setting a new configurable java system property.
      * The ledger will enter an inconsistent state from which is cannot auto-recover.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `un-notarised transaction ignores deserialization failure in vault update when using incompatible contract jar and overriden system property`() {
         driver(driverParameters(emptyList())) {
             val alice = startNode(NodeParameters(additionalCordapps = listOf(flowVersion1, contractVersion1)),

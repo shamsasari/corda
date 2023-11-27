@@ -59,7 +59,7 @@ class FlowFrameworkPersistenceTests {
         mockNet.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `newly added flow is preserved on restart`() {
         aliceNode.services.startFlow(NoOpFlow(nonTerminating = true))
         aliceNode.internals.acceptableLiveFiberCountOnStop = 1
@@ -67,7 +67,7 @@ class FlowFrameworkPersistenceTests {
         assertThat(restoredFlow.flowStarted).isTrue()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flow restarted just after receiving payload`() {
         val bob = bobNode.info.singleIdentity()
         bobNode.registerCordappFlowFactory(SendFlow::class) { InitiatedReceiveFlow(it)
@@ -84,7 +84,7 @@ class FlowFrameworkPersistenceTests {
         assertThat(restoredFlow.receivedPayloads[0]).isEqualTo("Hello")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `flow loaded from checkpoint will respond to messages from before start`() {
         val alice = aliceNode.info.singleIdentity()
         aliceNode.registerCordappFlowFactory(ReceiveFlow::class) { InitiatedSendFlow("Hello", it) }
@@ -94,7 +94,7 @@ class FlowFrameworkPersistenceTests {
     }
 
     @Ignore("Some changes in startup order make this test's assumptions fail.")
-    @Test(timeout=300_000)
+    @Test
 	fun `flow with send will resend on interrupted restart`() {
         val receivedSessionMessages: List<SessionTransfer> = mutableListOf<SessionTransfer>().also { messages ->
             receivedSessionMessagesObservable().forEach { messages += it }

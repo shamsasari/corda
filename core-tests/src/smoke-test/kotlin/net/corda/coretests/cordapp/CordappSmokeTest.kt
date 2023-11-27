@@ -73,7 +73,7 @@ class CordappSmokeTest {
         notary.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `FlowContent appName returns the filename of the CorDapp jar`() {
         val baseDir = factory.baseDirectory(aliceConfig)
         val cordappsDir = (baseDir / CORDAPPS_DIR_NAME).createDirectories()
@@ -102,7 +102,7 @@ class CordappSmokeTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `empty cordapps directory`() {
         (factory.baseDirectory(aliceConfig) / CORDAPPS_DIR_NAME).createDirectories()
         factory.create(aliceConfig).close()

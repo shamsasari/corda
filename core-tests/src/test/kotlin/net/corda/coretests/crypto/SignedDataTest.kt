@@ -25,7 +25,7 @@ class SignedDataTest {
     val data = "Just a simple test string"
     lateinit var serialized: SerializedBytes<String>
 
-    @Test(timeout=300_000)
+    @Test
 	fun `make sure correctly signed data is released`() {
         val keyPair = generateKeyPair()
         val sig = keyPair.private.sign(serialized.bytes, keyPair.public)
@@ -35,7 +35,7 @@ class SignedDataTest {
         assertEquals(data, unwrappedData)
     }
 
-    @Test(expected = SignatureException::class, timeout=300_000)
+    @Test(expected = SignatureException::class)
     fun `make sure incorrectly signed data raises an exception`() {
         val keyPairA = generateKeyPair()
         val keyPairB = generateKeyPair()

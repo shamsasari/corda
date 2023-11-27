@@ -134,7 +134,7 @@ class NodeVaultServiceTest {
 
     class FungibleFoo(override val amount: Amount<Currency>, override val participants: List<AbstractParty>) : FungibleState<Currency>
 
-    @Test(timeout=300_000)
+    @Test
 	fun `fungible state selection test`() {
         val issuerParty = services.myInfo.legalIdentities.first()
         val fungibleFoo = FungibleFoo(100.DOLLARS, listOf(issuerParty))
@@ -159,7 +159,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `duplicate insert of transaction does not fail`() {
         database.transaction {
             val cash = Cash()
@@ -172,7 +172,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `can query with page size max-integer`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 3, DUMMY_CASH_ISSUER)
@@ -183,7 +183,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `states not local to instance`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 3, DUMMY_CASH_ISSUER)
@@ -208,7 +208,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `states for refs`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 3, DUMMY_CASH_ISSUER)
@@ -222,7 +222,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `states soft locking reserve and release`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 3, DUMMY_CASH_ISSUER)
@@ -264,7 +264,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `soft locking attempt concurrent reserve`() {
         val backgroundExecutor = Executors.newFixedThreadPool(2)
         val countDown = CountDownLatch(2)
@@ -325,7 +325,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `soft locking partial reserve states fails`() {
         val softLockId1 = UUID.randomUUID()
         val softLockId2 = UUID.randomUUID()
@@ -353,7 +353,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `attempt to lock states already soft locked by me`() {
         val softLockId1 = UUID.randomUUID()
         val criteriaByLockId1 = VaultQueryCriteria(softLockingCondition = SoftLockingCondition(SoftLockingType.SPECIFIED, listOf(softLockId1)))
@@ -379,7 +379,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `lock additional states to some already soft locked by me`() {
 
         val softLockId1 = UUID.randomUUID()
@@ -406,7 +406,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `softLockRelease - correctly releases n locked states`() {
         fun queryStates(softLockingType: SoftLockingType) =
             vaultService.queryBy<Cash.State>(VaultQueryCriteria(softLockingCondition = SoftLockingCondition(softLockingType))).states
@@ -447,7 +447,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unconsumedStatesForSpending exact amount`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 1, DUMMY_CASH_ISSUER)
@@ -466,7 +466,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unconsumedStatesForSpending from two issuer parties`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 1, DUMMY_CASH_ISSUER)
@@ -483,7 +483,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unconsumedStatesForSpending from specific issuer party and refs`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 1, DUMMY_CASH_ISSUER)
@@ -505,7 +505,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unconsumedStatesForSpending insufficient amount`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 1, DUMMY_CASH_ISSUER)
@@ -522,7 +522,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `unconsumedStatesForSpending small amount`() {
         database.transaction {
             vaultFiller.fillWithSomeTestCash(100.DOLLARS, issuerServices, 2, DUMMY_CASH_ISSUER)
@@ -540,7 +540,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `states soft locking query granularity`() {
         database.transaction {
             listOf(USD, GBP, CHF).forEach {
@@ -575,7 +575,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun addNoteToTransaction() {
         val megaCorpServices = MockServices(cordappPackages, MEGA_CORP.name, mock(), MEGA_CORP_KEY)
         database.transaction {
@@ -607,7 +607,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `is ownable state relevant`() {
         val myAnonymousIdentity = services.keyManagementService.freshKeyAndCert(identity, false)
         val myKeys = services.keyManagementService.filterMyKeys(listOf(identity.owningKey, myAnonymousIdentity.owningKey)).toSet()
@@ -635,7 +635,7 @@ class NodeVaultServiceTest {
     }
 
     // TODO: Unit test linear state relevancy checks
-    @Test(timeout=300_000)
+    @Test
 	fun `correct updates are generated for general transactions`() {
         val notary = identity.party
         val vaultSubscriber = TestSubscriber<Vault.Update<*>>().apply {
@@ -680,7 +680,7 @@ class NodeVaultServiceTest {
         assertEquals(observedUpdates, listOf(expectedIssueUpdate, expectedMoveUpdate))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `correct updates are generated when changing notaries`() {
         val service = vaultService
         val notary = identity.party
@@ -745,7 +745,7 @@ class NodeVaultServiceTest {
         assertEquals(observedUpdates, listOf(expectedIssueUpdate, expectedNotaryChangeUpdate, expectedMoveUpdate))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun observerMode() {
         fun countCash(): Long {
             return database.transaction {
@@ -777,7 +777,7 @@ class NodeVaultServiceTest {
         assertEquals(currentCashStates + 1, countCash())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `insert equal cash states issued by single transaction`() {
         val nodeIdentity = MEGA_CORP
         val coins = listOf(1.DOLLARS, 1.DOLLARS).map { it.issuedBy(nodeIdentity.ref(1)) }
@@ -800,7 +800,7 @@ class NodeVaultServiceTest {
         assertThat(recordedStates).isEqualTo(coins.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `insert different cash states issued by single transaction`() {
         val nodeIdentity = MEGA_CORP
         val coins = listOf(2.DOLLARS, 1.DOLLARS).map { it.issuedBy(nodeIdentity.ref(1)) }
@@ -823,7 +823,7 @@ class NodeVaultServiceTest {
         assertThat(recordedStates).isEqualTo(coins.size)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test state relevance criteria`() {
         fun createTx(number: Int, vararg participants: Party): SignedTransaction {
             return services.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).apply {
@@ -862,7 +862,7 @@ class NodeVaultServiceTest {
         // We should never see 2 or 7.
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Unique column constraint failing causes linear state to not persist to vault`() {
         fun createTx(): SignedTransaction {
             return services.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).apply {
@@ -880,7 +880,7 @@ class NodeVaultServiceTest {
         })
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Unique column constraint failing causes fungible state to not persist to vault`() {
         fun createTx(): SignedTransaction {
             return services.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).apply {
@@ -901,7 +901,7 @@ class NodeVaultServiceTest {
         })
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Unique column constraint failing causes all states in transaction to fail`() {
         fun createTx(): SignedTransaction {
             return services.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).apply {
@@ -923,7 +923,7 @@ class NodeVaultServiceTest {
         })
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `Vault queries return all states by default`() {
         fun createTx(number: Int, vararg participants: Party): SignedTransaction {
             return services.signInitialTransaction(TransactionBuilder(DUMMY_NOTARY).apply {
@@ -950,7 +950,7 @@ class NodeVaultServiceTest {
         // We should never see 2 or 7.
     }
 
-    @Test(timeout=300_000)
+    @Test
 @Ignore
     fun `trackByCriteria filters updates and snapshots`() {
         /*
@@ -989,7 +989,7 @@ class NodeVaultServiceTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test concurrent update of contract state type mappings`() {
         // no registered contract state types at start-up.
         assertEquals(0, vaultService.contractStateTypeMappings.size)

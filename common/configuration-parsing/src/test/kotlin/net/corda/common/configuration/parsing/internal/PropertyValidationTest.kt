@@ -7,7 +7,7 @@ import org.junit.Test
 
 class PropertyValidationTest {
 
-    @Test(timeout=300_000)
+    @Test
 	fun absent_value() {
 
         val key = "a.b.c"
@@ -26,7 +26,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun missing_value() {
 
         val key = "a.b.c"
@@ -45,7 +45,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun absent_list_value() {
 
         val key = "a.b.c"
@@ -64,7 +64,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun missing_list_value() {
 
         val key = "a.b.c"
@@ -83,7 +83,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun whole_list_validation_valid_value() {
 
         val key = "a.b.c"
@@ -97,7 +97,7 @@ class PropertyValidationTest {
         assertThat(property.validate(configuration, Configuration.Options.defaults).errors).isEmpty()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun whole_list_validation_invalid_value() {
 
         val key = "a.b.c"
@@ -125,7 +125,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun wrong_type() {
 
         val key = "a.b.c"
@@ -145,7 +145,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun wrong_floating_numeric_type_when_integer_expected() {
 
         val key = "a.b.c"
@@ -165,7 +165,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun integer_numeric_type_when_floating_expected_works() {
 
         val key = "a.b.c"
@@ -177,7 +177,7 @@ class PropertyValidationTest {
         assertThat(property.validate(configuration, Configuration.Options.defaults).isValid).isTrue()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun wrong_element_type_for_list() {
 
         val key = "a.b.c"
@@ -197,7 +197,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun list_type_when_declared_single() {
 
         val key = "a.b.c"
@@ -217,7 +217,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun single_type_when_declared_list() {
 
         val key = "a.b.c"
@@ -237,7 +237,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun wrong_type_in_nested_property() {
 
         val key = "a.b.c"
@@ -260,7 +260,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun absent_value_in_nested_property() {
 
         val key = "a.b.c"
@@ -283,7 +283,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun missing_value_in_nested_property() {
 
         val key = "a.b.c"
@@ -306,7 +306,7 @@ class PropertyValidationTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun nested_property_without_schema_does_not_validate() {
 
         val key = "a.b.c"
@@ -320,7 +320,7 @@ class PropertyValidationTest {
         assertThat(property.validate(configuration, Configuration.Options.defaults).isValid).isTrue()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun valid_mapped_property() {
 
         val key = "a"
@@ -336,7 +336,7 @@ class PropertyValidationTest {
         assertThat(property.validate(configuration, Configuration.Options.defaults).isValid).isTrue()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun invalid_mapped_property() {
 
         val key = "a.b.c"

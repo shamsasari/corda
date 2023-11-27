@@ -109,7 +109,7 @@ class StandaloneCordaRPClientTest {
     }
 
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test attachments`() {
         val attachment = InputStreamAndHash.createInMemoryTestZip(attachmentSize, 1)
         assertFalse(rpcProxy.attachmentExists(attachment.sha256))
@@ -124,7 +124,7 @@ class StandaloneCordaRPClientTest {
     }
 
     @Ignore("CORDA-1520 - After switching from Kryo to AMQP this test won't work")
-    @Test(timeout=300_000)
+    @Test
 	fun `test wrapped attachments`() {
         val attachment = InputStreamAndHash.createInMemoryTestZip(attachmentSize, 1)
         assertFalse(rpcProxy.attachmentExists(attachment.sha256))
@@ -138,13 +138,13 @@ class StandaloneCordaRPClientTest {
         assertEquals(attachment.sha256, hash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test starting flow`() {
         rpcProxy.startFlow(::CashIssueFlow, 127.POUNDS, OpaqueBytes.of(0), notaryNodeIdentity)
                 .returnValue.getOrThrow(timeout)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test starting tracked flow`() {
         var trackCount = 0
         val handle = rpcProxy.startTrackedFlow(
@@ -161,12 +161,12 @@ class StandaloneCordaRPClientTest {
         assertNotEquals(0, trackCount)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test network map`() {
         assertEquals(notaryConfig.legalName, notaryNodeIdentity.name)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test state machines`() {
         val (stateMachines, updates) = rpcProxy.stateMachinesFeed()
         assertEquals(0, stateMachines.size)
@@ -188,7 +188,7 @@ class StandaloneCordaRPClientTest {
         assertEquals(1, updateCount.get())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test vault track by`() {
         val (vault, vaultUpdates) = rpcProxy.vaultTrackBy<Cash.State>(paging = PageSpecification(DEFAULT_PAGE_NUM))
         assertEquals(0, vault.totalStatesAvailable)
@@ -211,7 +211,7 @@ class StandaloneCordaRPClientTest {
         assertEquals(629.POUNDS, cashBalance[Currency.getInstance("GBP")])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test vault query by`() {
         // Now issue some cash
         rpcProxy.startFlow(::CashIssueFlow, 629.POUNDS, OpaqueBytes.of(0), notaryNodeIdentity)
@@ -237,7 +237,7 @@ class StandaloneCordaRPClientTest {
         assertEquals(629.POUNDS, cashBalances[Currency.getInstance("GBP")])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test cash balances`() {
         val startCash = rpcProxy.getCashBalances()
         println(startCash)
@@ -252,7 +252,7 @@ class StandaloneCordaRPClientTest {
         assertEquals(629.DOLLARS, balance)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test kill flow without killFlow permission`() {
         exception.expect(PermissionException::class.java)
         exception.expectMessage(MatchesPattern(Pattern.compile("User not authorized to perform RPC call .*killFlow.*")))
@@ -264,7 +264,7 @@ class StandaloneCordaRPClientTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test kill flow with killFlow permission`() {
         val flowHandle = rpcProxy.startFlow(::SleepingFlow, 1.minutes)
         notary.connect(rpcUser).use { connection ->

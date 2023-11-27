@@ -48,7 +48,7 @@ class ContractUpgradeFlowTest : WithContracts, WithFinality {
     private val bob = bobNode.info.singleIdentity()
     private val notary = mockNet.defaultNotaryIdentity
 
-    @Test(timeout=300_000)
+    @Test
 	fun `2 parties contract upgrade`() {
         // Create dummy contract.
         val signedByA = aliceNode.signDummyContract(alice.ref(1), 0, bob.ref(1))
@@ -118,7 +118,7 @@ class ContractUpgradeFlowTest : WithContracts, WithFinality {
                     { it.state.data },
                     expectation)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `upgrade Cash to v2`() {
         // Create some cash.
         val cashFlowResult = aliceNode.issueCash()

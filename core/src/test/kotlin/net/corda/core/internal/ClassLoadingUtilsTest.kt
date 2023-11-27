@@ -65,7 +65,7 @@ class ClassLoadingUtilsTest {
     @Suppress("unused")
     class ConcreteClassWithNonEmptyConstructor(private val someData: Int): BaseInterface2
 
-    @Test(timeout=300_000)
+    @Test
 	fun predicateClassAreLoadedSuccessfully() {
         val classes = createInstancesOfClassesImplementing(BaseInterface::class.java.classLoader, BaseInterface::class.java)
 
@@ -76,12 +76,12 @@ class ClassLoadingUtilsTest {
             .doesNotContain(AbstractClass::class.java.name)
     }
 
-    @Test(expected = IllegalArgumentException::class,timeout=300_000)
+    @Test(expected = IllegalArgumentException::class)
     fun throwsExceptionWhenClassDoesNotContainProperConstructors() {
         createInstancesOfClassesImplementing(BaseInterface::class.java.classLoader, BaseInterface2::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `thread context class loader is adjusted, during the function execution`() {
         val result = executeWithThreadContextClassLoader(temporaryClassLoader) {
             assertThat(Thread.currentThread().contextClassLoader).isEqualTo(temporaryClassLoader)
@@ -92,7 +92,7 @@ class ClassLoadingUtilsTest {
         assertThat(Thread.currentThread().contextClassLoader).isNotEqualTo(temporaryClassLoader)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `thread context class loader is set to the initial, even in case of a failure`() {
         assertThatThrownBy { executeWithThreadContextClassLoader(temporaryClassLoader) {
             throw RuntimeException()
@@ -101,7 +101,7 @@ class ClassLoadingUtilsTest {
         assertThat(Thread.currentThread().contextClassLoader).isNotEqualTo(temporaryClassLoader)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test locating classes inside attachment`() {
         val jarData = with(ByteArrayOutputStream()) {
             val internalName = STANDALONE_CLASS_NAME.asInternalName
@@ -128,7 +128,7 @@ class ClassLoadingUtilsTest {
     }
 
     @Ignore("Using System.gc in this test which has no guarantees when/if gc occurs.")
-    @Test(timeout=300_000)
+    @Test
     @Suppress("ExplicitGarbageCollectionCall", "UNUSED_VALUE")
     fun `test weak reference removed from map`() {
         val jarData = with(ByteArrayOutputStream()) {
@@ -159,7 +159,7 @@ class ClassLoadingUtilsTest {
     }
 
     @Ignore("Using System.gc in this test which has no guarantees when/if gc occurs.")
-    @Test(timeout=300_000)
+    @Test
     @Suppress("ExplicitGarbageCollectionCall", "UNUSED_VALUE")
     fun `test adding same attachment twice then removing`() {
         val jarData = with(ByteArrayOutputStream()) {
@@ -201,7 +201,7 @@ class ClassLoadingUtilsTest {
     }
 
     @Ignore("Using System.gc in this test which has no guarantees when/if gc occurs.")
-    @Test(timeout=300_000)
+    @Test
     @Suppress("ExplicitGarbageCollectionCall", "UNUSED_VALUE")
     fun `test adding two different attachments then removing`() {
         val jarData1 = with(ByteArrayOutputStream()) {

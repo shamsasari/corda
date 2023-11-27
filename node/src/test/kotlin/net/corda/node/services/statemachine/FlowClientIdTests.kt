@@ -76,7 +76,7 @@ class FlowClientIdTests {
         StaffedFlowHospital.onFlowErrorPropagated.clear()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `no new flow starts if the client id provided pre exists`() {
         var counter = 0
         ResultFlow.hook = { counter++ }
@@ -86,7 +86,7 @@ class FlowClientIdTests {
         Assert.assertEquals(1, counter)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow's result gets persisted if the flow is started with a client id`() {
         val clientId = UUID.randomUUID().toString()
         aliceNode.services.startFlowWithClientId(clientId, ResultFlow(10)).resultFuture.getOrThrow()
@@ -96,7 +96,7 @@ class FlowClientIdTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow's result is retrievable after flow's lifetime, when flow is started with a client id - different parameters are ignored`() {
         val clientId = UUID.randomUUID().toString()
         val handle0 = aliceNode.services.startFlowWithClientId(clientId, ResultFlow(5))
@@ -114,7 +114,7 @@ class FlowClientIdTests {
         Assert.assertEquals(result0, result1)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `if flow's result is not found in the database an IllegalStateException is thrown`() {
         val clientId = UUID.randomUUID().toString()
         val handle0 = aliceNode.services.startFlowWithClientId(clientId, ResultFlow(5))
@@ -131,7 +131,7 @@ class FlowClientIdTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow returning null gets retrieved after flow's lifetime when started with client id`() {
         val clientId = UUID.randomUUID().toString()
         aliceNode.services.startFlowWithClientId(clientId, ResultFlow(null)).resultFuture.getOrThrow()
@@ -140,7 +140,7 @@ class FlowClientIdTests {
         assertNull(flowResult)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow returning Unit gets retrieved after flow's lifetime when started with client id`() {
         val clientId = UUID.randomUUID().toString()
         aliceNode.services.startFlowWithClientId(clientId, ResultFlow(Unit)).resultFuture.getOrThrow()
@@ -149,7 +149,7 @@ class FlowClientIdTests {
         assertEquals(Unit, flowResult)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow's result is available if reconnect after flow had retried from previous checkpoint, when flow is started with a client id`() {
         var firstRun = true
         ResultFlow.hook = {
@@ -165,7 +165,7 @@ class FlowClientIdTests {
         Assert.assertEquals(result0, result1)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow's result is available if reconnect during flow's retrying from previous checkpoint, when flow is started with a client id`() {
         var firstRun = true
         val waitForSecondRequest = Semaphore(0)
@@ -196,7 +196,7 @@ class FlowClientIdTests {
         Assert.assertEquals(result0, result1)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `failing flow's exception is available after flow's lifetime if flow is started with a client id`() {
         var counter = 0
         ResultFlow.hook = {
@@ -222,7 +222,7 @@ class FlowClientIdTests {
         assertEquals(1, counter)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `failed flow's exception is available after flow's lifetime on node start if flow was started with a client id`() {
         var counter = 0
         ResultFlow.hook = {
@@ -250,7 +250,7 @@ class FlowClientIdTests {
         assertEquals(1, counter)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `killing a flow, sets the flow status to killed and adds an exception to the database`() {
         var counter = 0
         val waitUntilFlowIsRunning = Semaphore(0)
@@ -288,7 +288,7 @@ class FlowClientIdTests {
         assertTrue(aliceNode.hasException(flowHandle0!!.id))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `killing a hospitalized flow, sets the flow status to killed and adds an exception to the database`() {
         val clientId = UUID.randomUUID().toString()
 
@@ -310,7 +310,7 @@ class FlowClientIdTests {
         assertTrue(aliceNode.hasException(flowHandle0!!.id))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `killing a flow twice does nothing`() {
         val clientId = UUID.randomUUID().toString()
 
@@ -336,7 +336,7 @@ class FlowClientIdTests {
         assertTrue(aliceNode.hasException(flowHandle0!!.id))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow's client id mapping gets removed upon request`() {
         val clientId = UUID.randomUUID().toString()
         var counter = 0
@@ -354,7 +354,7 @@ class FlowClientIdTests {
         Assert.assertEquals(2, counter)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `removing a client id result clears resources properly`() {
         val clientId = UUID.randomUUID().toString()
         aliceNode.services.startFlowWithClientId(clientId, ResultFlow(5)).resultFuture.getOrThrow()
@@ -377,7 +377,7 @@ class FlowClientIdTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `removing a client id exception clears resources properly`() {
         val clientId = UUID.randomUUID().toString()
         ResultFlow.hook = { throw IllegalStateException() }
@@ -403,7 +403,7 @@ class FlowClientIdTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow's client id mapping can only get removed once the flow gets removed`() {
         val clientId = UUID.randomUUID().toString()
         var tries = 0
@@ -433,7 +433,7 @@ class FlowClientIdTests {
         Assert.assertEquals(maxTries, failedRemovals)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `only one flow starts upon concurrent requests with the same client id`() {
         val requests = 2
         val counter = AtomicInteger(0)
@@ -480,7 +480,7 @@ class FlowClientIdTests {
         Assert.assertEquals(10, resultsCounter.get())
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `on node start -running- flows with client id are hook-able`() {
         val clientId = UUID.randomUUID().toString()
         var firstRun = true
@@ -516,7 +516,7 @@ class FlowClientIdTests {
         Assert.assertEquals(5, flowHandle1.resultFuture.getOrThrow(20.seconds))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `on node start -completed- flows with client id are hook-able`() {
         val clientId = UUID.randomUUID().toString()
         var counter = 0
@@ -538,7 +538,7 @@ class FlowClientIdTests {
         Assert.assertEquals(5, result1)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `On 'startFlowInternal' throwing, subsequent request with same client id does not get de-duplicated and starts a new flow`() {
         val clientId = UUID.randomUUID().toString()
         var firstRequest = true
@@ -562,7 +562,7 @@ class FlowClientIdTests {
         assertEquals(1, counter)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `if flow fails to serialize its result then the result gets converted to an exception result`() {
         val clientId = UUID.randomUUID().toString()
         assertFailsWith<CordaRuntimeException> {
@@ -586,7 +586,7 @@ class FlowClientIdTests {
      * The below test does not follow a valid path. Normally it should error and propagate.
      * However, we want to assert that a flow that fails to serialize its result its retriable.
      */
-    @Test(timeout = 300_000)
+    @Test
     fun `flow failing to serialize its result gets retried and succeeds if returning a different result`() {
         val clientId = UUID.randomUUID().toString()
         // before the hospital schedules a [Event.Error] we manually schedule a [Event.RetryFlowFromSafePoint]
@@ -597,7 +597,7 @@ class FlowClientIdTests {
         assertEquals(5, result)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `flow that fails does not retain its checkpoint nor its exception in the database if not started with a client id`() {
         assertFailsWith<IllegalStateException> {
             aliceNode.services.startFlow(ExceptionFlow { IllegalStateException("another exception") }).resultFuture.getOrThrow()
@@ -611,7 +611,7 @@ class FlowClientIdTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `subsequent request to failed flow that cannot find a 'DBFlowException' in the database, fails with 'IllegalStateException'`() {
         ResultFlow.hook = {
             // just throwing a different exception from the one expected out of startFlowWithClientId second call below ([IllegalStateException])
@@ -639,7 +639,7 @@ class FlowClientIdTests {
         assertEquals("Flow's ${flowHandle0!!.id} exception was not found in the database. Something is very wrong.", e.message)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `completed flow started with a client id nulls its flow state in database after its lifetime`() {
         val clientId = UUID.randomUUID().toString()
         val flowHandle = aliceNode.services.startFlowWithClientId(clientId, ResultFlow(5))
@@ -651,7 +651,7 @@ class FlowClientIdTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `failed flow started with a client id nulls its flow state in database after its lifetime`() {
         val clientId = UUID.randomUUID().toString()
         ResultFlow.hook = { throw IllegalStateException() }
@@ -668,7 +668,7 @@ class FlowClientIdTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattachFlowWithClientId can retrieve existing flow future`() {
         val clientId = UUID.randomUUID().toString()
         val flowHandle = aliceNode.services.startFlowWithClientId(clientId, ResultFlow(10))
@@ -680,7 +680,7 @@ class FlowClientIdTests {
         assertEquals(flowHandle.resultFuture.get(), reattachedFlowHandle?.resultFuture?.get())
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattachFlowWithClientId can retrieve a null result from a flow future`() {
         val clientId = UUID.randomUUID().toString()
         val flowHandle = aliceNode.services.startFlowWithClientId(clientId, ResultFlow(null))
@@ -692,7 +692,7 @@ class FlowClientIdTests {
         assertEquals(flowHandle.resultFuture.get(), reattachedFlowHandle?.resultFuture?.get())
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattachFlowWithClientId can retrieve result from completed flow`() {
         val clientId = UUID.randomUUID().toString()
         val flowHandle = aliceNode.services.startFlowWithClientId(clientId, ResultFlow(10))
@@ -706,12 +706,12 @@ class FlowClientIdTests {
         assertEquals(flowHandle.resultFuture.get(), reattachedFlowHandle?.resultFuture?.get())
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattachFlowWithClientId returns null if no flow matches the client id`() {
         assertEquals(null, aliceNode.smm.reattachFlowWithClientId<Int>(UUID.randomUUID().toString(), aliceNode.user))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattachFlowWithClientId can retrieve exception from existing flow future`() {
         ResultFlow.hook = { throw IllegalStateException("Bla bla bla") }
         val clientId = UUID.randomUUID().toString()
@@ -727,7 +727,7 @@ class FlowClientIdTests {
         }.withMessage("Bla bla bla")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattachFlowWithClientId can retrieve exception from completed flow`() {
         ResultFlow.hook = { throw IllegalStateException("Bla bla bla") }
         val clientId = UUID.randomUUID().toString()
@@ -745,7 +745,7 @@ class FlowClientIdTests {
         }.withMessage("java.lang.IllegalStateException: Bla bla bla")
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `reattachFlowWithClientId can retrieve exception from killed flow`() {
         val clientId = UUID.randomUUID().toString()
         var flowHandle0: FlowStateMachineHandle<Unit>
@@ -761,7 +761,7 @@ class FlowClientIdTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `finishedFlowsWithClientIds returns completed flows with client ids`() {
         val clientIds = listOf("a", "b", "c", "d", "e")
         val lock = CountDownLatch(1)
@@ -805,7 +805,7 @@ class FlowClientIdTests {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `finishedFlowsWithClientIds returns exception for killed flows`() {
         val clientId = UUID.randomUUID().toString()
         var flowHandle0: FlowStateMachineHandle<Unit>

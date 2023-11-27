@@ -47,7 +47,7 @@ class IdentitySyncFlowTests {
         mockNet.stopNodes()
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17: class cast exception")
 	fun `sync confidential identities`() {
         // Set up values we'll need
@@ -76,7 +76,7 @@ class IdentitySyncFlowTests {
         assertEquals(expected, actual)
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17: class cast exception")
 	fun `don't offer other's identities confidential identities`() {
         // Set up values we'll need

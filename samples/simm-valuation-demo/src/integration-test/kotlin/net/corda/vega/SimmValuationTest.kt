@@ -29,7 +29,7 @@ class SimmValuationTest {
         const val testTradeId = "trade1"
     }
 
-    @Test(timeout=300_000)
+    @Test
     @Ignore("TODO JDK17: Fixme - Stage 2")
 	fun `runs SIMM valuation demo`() {
         driver(DriverParameters(isDebug = true,

@@ -32,7 +32,7 @@ class RpcServerObservableSerializerTests {
         return subMap
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun canSerializerBeRegistered() {
         val sf = SerializerFactoryBuilder.build(AllWhitelist, javaClass.classLoader)
 
@@ -43,7 +43,7 @@ class RpcServerObservableSerializerTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun canAssociateWithContext() {
         val observable = TestObservableContext(
                 subscriptionMap(),
@@ -58,7 +58,7 @@ class RpcServerObservableSerializerTests {
         assertEquals(observable, newContext.properties[RpcServerObservableSerializer.RpcObservableContextKey])
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun serialiseFakeObservable() {
         val testClientAddress = "clientAddres"
         val observable = TestObservableContext(

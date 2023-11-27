@@ -9,7 +9,7 @@ import kotlin.concurrent.thread
 import kotlin.test.assertFailsWith
 
 class NodeStartupTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `test that you cant start two nodes in the same directory`() {
         val dir = Files.createTempDirectory("node_startup_test")
         val latch = CountDownLatch(1)

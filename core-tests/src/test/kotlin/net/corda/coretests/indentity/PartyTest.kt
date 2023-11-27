@@ -11,7 +11,7 @@ import kotlin.test.assertEquals
 import kotlin.test.assertNotEquals
 
 class PartyTest {
-    @Test(timeout=300_000)
+    @Test
 	fun equality() {
         val key = entropyToKeyPair(BigInteger.valueOf(20170207L)).public
         val differentKey = entropyToKeyPair(BigInteger.valueOf(7201702L)).public

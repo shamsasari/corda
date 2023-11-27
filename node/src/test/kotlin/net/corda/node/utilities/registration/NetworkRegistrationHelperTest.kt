@@ -89,7 +89,7 @@ class NetworkRegistrationHelperTest {
         fs.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `successful registration`() {
         assertThat(config.signingCertificateStore.getOptional()).isNull()
         assertThat(config.p2pSslOptions.keyStore.getOptional()).isNull()
@@ -128,7 +128,7 @@ class NetworkRegistrationHelperTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `missing truststore`() {
         val nodeCaCertPath = createCertPath()
         assertThatThrownBy {
@@ -136,7 +136,7 @@ class NetworkRegistrationHelperTest {
         }.hasMessageContaining("This file must contain the root CA cert of your compatibility zone. Please contact your CZ operator.")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `node CA with incorrect cert role`() {
         val nodeCaCertPath = createCertPath(type = CertificateType.TLS)
         saveNetworkTrustStore(CORDA_ROOT_CA to nodeCaCertPath.last())
@@ -146,7 +146,7 @@ class NetworkRegistrationHelperTest {
                 .withMessageContaining(CertificateType.TLS.toString())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `node CA with incorrect subject`() {
         val invalidName = CordaX500Name("Foo", "MU", "GB")
         val nodeCaCertPath = createCertPath(legalName = invalidName)
@@ -157,7 +157,7 @@ class NetworkRegistrationHelperTest {
                 .withMessageContaining(invalidName.toString())
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `multiple certificates are copied to the node's trust store`() {
         val extraTrustedCertAlias = "trusted_test"
         val extraTrustedCert = createSelfSignedCACertificate(
@@ -177,7 +177,7 @@ class NetworkRegistrationHelperTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `wrong root cert in truststore`() {
         val wrongRootCert = createSelfSignedCACertificate(
                 X500Principal("O=Foo,L=MU,C=GB"),
@@ -190,7 +190,7 @@ class NetworkRegistrationHelperTest {
         }.isInstanceOf(CertPathValidatorException::class.java)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `create service identity cert`() {
         assertThat(config.signingCertificateStore.getOptional()).isNull()
         assertThat(config.p2pSslOptions.keyStore.getOptional()).isNull()
@@ -216,7 +216,7 @@ class NetworkRegistrationHelperTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `successful registration with symbolic link for certificates directory`() {
         assertThat(config.signingCertificateStore.getOptional()).isNull()
         assertThat(config.p2pSslOptions.keyStore.getOptional()).isNull()
@@ -230,7 +230,7 @@ class NetworkRegistrationHelperTest {
         createRegistrationHelper(rootAndIntermediateCA = rootAndIntermediateCA).generateKeysAndRegister()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `successful registration for notary node`() {
         val notaryServiceLegalName = DUMMY_NOTARY_NAME
         val notaryNodeConfig = createNotaryNodeConfiguration(notaryServiceLegalName = notaryServiceLegalName)
@@ -266,7 +266,7 @@ class NetworkRegistrationHelperTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `notary registration fails when no separate notary service identity configured`() {
         val notaryNodeConfig = createNotaryNodeConfiguration(notaryServiceLegalName = null)
         assertThat(notaryNodeConfig.notary).isNotNull
@@ -277,7 +277,7 @@ class NetworkRegistrationHelperTest {
                 .hasMessageContaining("notary service legal name must be provided")
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `notary registration fails when notary service identity configured with same legal name as node`() {
         val notaryNodeConfig = createNotaryNodeConfiguration(notaryServiceLegalName = config.myLegalName)
         assertThat(notaryNodeConfig.notary).isNotNull

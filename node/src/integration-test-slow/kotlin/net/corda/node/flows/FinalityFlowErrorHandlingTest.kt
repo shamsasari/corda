@@ -32,7 +32,7 @@ class FinalityFlowErrorHandlingTest : StateMachineErrorHandlingTest() {
      * Throws an exception after recording an issuance transaction but before broadcasting the transaction to observer sessions.
      *
      */
-    @Test(timeout = 300_000)
+    @Test
     @Ignore("TODO JDK17: Fixme")
     fun `error after recording an issuance transaction inside of FinalityFlow generates recovery metadata`() {
         startDriver(notarySpec = NotarySpec(DUMMY_NOTARY_NAME, validating = false),

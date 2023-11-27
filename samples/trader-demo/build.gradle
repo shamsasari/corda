@@ -1,3 +1,5 @@
+import net.corda.plugins.Cordform
+
 apply plugin: 'org.jetbrains.kotlin.jvm'
 apply plugin: 'idea'
 apply plugin: 'net.corda.plugins.quasar-utils'
@@ -60,17 +62,15 @@ dependencies {
     }
 
     testImplementation "io.reactivex:rxjava:$rxjava_version"
-    testImplementation "org.junit.jupiter:junit-jupiter-api:${junit_jupiter_version}"
+    testImplementation "org.junit.jupiter:junit-jupiter:$junit_jupiter_version"
     testImplementation "junit:junit:$junit_version"
 
-    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:${junit_vintage_version}"
-    testRuntimeOnly "org.junit.jupiter:junit-jupiter-engine:${junit_jupiter_version}"
-    testRuntimeOnly "org.junit.platform:junit-platform-launcher:${junit_platform_version}"
+    testRuntimeOnly "org.junit.vintage:junit-vintage-engine:$junit_jupiter_version"
 
     testImplementation "org.assertj:assertj-core:$assertj_version"
 }
 
-task integrationTest(type: Test, dependsOn: []) {
+tasks.register('integrationTest', Test) {
     testClassesDirs = sourceSets.integrationTest.output.classesDirs
     classpath = sourceSets.integrationTest.runtimeClasspath
 
@@ -79,7 +79,7 @@ task integrationTest(type: Test, dependsOn: []) {
 }
 
 configurations.cordaCordapp.canBeResolved = true
-task deployNodes(type: net.corda.plugins.Cordform) {
+tasks.register('deployNodes', Cordform) {
     def users = [['username': "demo", 'password': "demo", 'permissions': ["ALL"]]]
     nodeDefaults {
         projectCordapp {
@@ -92,7 +92,7 @@ task deployNodes(type: net.corda.plugins.Cordform) {
     }
     node {
         name "O=Notary Node,L=Zurich,C=CH"
-        notary = [validating : true,
+        notary = [validating      : true,
                   serviceLegalName: "O=Notary Service,L=Zurich,C=CH"
         ]
         p2pPort 10002
@@ -100,7 +100,7 @@ task deployNodes(type: net.corda.plugins.Cordform) {
             address "localhost:10003"
             adminAddress "localhost:10004"
         }
-        extraConfig = ['h2Settings.address' : 'localhost:10014']
+        extraConfig = ['h2Settings.address': 'localhost:10014']
     }
     node {
         name "O=Bank A,L=London,C=GB"
@@ -110,7 +110,7 @@ task deployNodes(type: net.corda.plugins.Cordform) {
             address "localhost:10006"
             adminAddress "localhost:10007"
         }
-        extraConfig = ['h2Settings.address' : 'localhost:10015']
+        extraConfig = ['h2Settings.address': 'localhost:10015']
     }
     node {
         name "O=Bank B,L=New York,C=US"
@@ -120,7 +120,7 @@ task deployNodes(type: net.corda.plugins.Cordform) {
             address "localhost:10009"
             adminAddress "localhost:10010"
         }
-        extraConfig = ['h2Settings.address' : 'localhost:10016']
+        extraConfig = ['h2Settings.address': 'localhost:10016']
     }
     node {
         name "O=BankOfCorda,L=New York,C=US"
@@ -130,9 +130,9 @@ task deployNodes(type: net.corda.plugins.Cordform) {
             address "localhost:10012"
             adminAddress "localhost:10013"
         }
-        extraConfig = ['h2Settings.address' : 'localhost:10017']
+        extraConfig = ['h2Settings.address': 'localhost:10017']
     }
-    
+
     //All other nodes should be using LoggingBuyerFlow as it is a subclass of BuyerFlow
     node {
         name "O=NonLogging Bank,L=London,C=GB"
@@ -142,7 +142,7 @@ task deployNodes(type: net.corda.plugins.Cordform) {
             address "localhost:10026"
             adminAddress "localhost:10027"
         }
-        extraConfig = ['h2Settings.address' : 'localhost:10035']
+        extraConfig = ['h2Settings.address': 'localhost:10035']
         flowOverride("net.corda.traderdemo.flow.SellerFlow", "net.corda.traderdemo.flow.BuyerFlow")
     }
 }
@@ -168,16 +168,18 @@ idea {
     }
 }
 
-task runBank(type: JavaExec, dependsOn: jar) {
+tasks.register('runBank', JavaExec) {
+    dependsOn jar
     classpath = sourceSets.test.runtimeClasspath
-    main = 'net.corda.traderdemo.TraderDemoKt'
+    mainClass = 'net.corda.traderdemo.TraderDemoKt'
     args '--role'
     args 'BANK'
 }
 
-task runSeller(type: JavaExec, dependsOn: jar) {
+tasks.register('runSeller', JavaExec) {
+    dependsOn jar
     classpath = sourceSets.test.runtimeClasspath
-    main = 'net.corda.traderdemo.TraderDemoKt'
+    mainClass = 'net.corda.traderdemo.TraderDemoKt'
     args '--role'
     args 'SELLER'
 }

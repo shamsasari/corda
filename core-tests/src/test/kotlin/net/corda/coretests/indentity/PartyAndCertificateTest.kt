@@ -33,13 +33,13 @@ class PartyAndCertificateTest {
         Crypto.registerProviders()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `reject a path with no roles`() {
         val path = X509Utilities.buildCertPath(DEV_ROOT_CA.certificate)
         assertFailsWith<IllegalArgumentException> { PartyAndCertificate(path) }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `kryo serialisation`() {
         val original = getTestPartyAndCertificate(Party(
                 CordaX500Name(organisation = "Test Corp", locality = "Madrid", country = "ES"),
@@ -50,7 +50,7 @@ class PartyAndCertificateTest {
         assertThat(copy.certificate).isEqualTo(original.certificate)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `jdk serialization`() {
         val identity = getTestPartyAndCertificate(Party(
                 CordaX500Name(organisation = "Test Corp", locality = "Madrid", country = "ES"),

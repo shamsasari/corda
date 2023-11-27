@@ -101,7 +101,7 @@ class CheckpointDumperImplTest {
         baseDirectory.deleteRecursively()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testDumpCheckpoints() {
         val dumper = CheckpointDumperImpl(checkpointStorage, database, services, baseDirectory, corDappDirectories)
         dumper.update(mockAfterStartEvent)
@@ -116,7 +116,7 @@ class CheckpointDumperImplTest {
 	    checkDumpFile()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `Checkpoint dumper doesn't output completed checkpoints`() {
         val dumper = CheckpointDumperImpl(checkpointStorage, database, services, baseDirectory, corDappDirectories)
         dumper.update(mockAfterStartEvent)
@@ -156,7 +156,7 @@ class CheckpointDumperImplTest {
 
     // This test will only succeed when the VM startup includes the "checkpoint-agent":
     // -javaagent:tools/checkpoint-agent/build/libs/checkpoint-agent.jar
-    @Test(timeout=300_000)
+    @Test
 	fun testDumpCheckpointsAndAgentDiagnostics() {
         val dumper = CheckpointDumperImpl(checkpointStorage, database, services, Paths.get("."), Paths.get("cordapps"))
         dumper.update(mockAfterStartEvent)

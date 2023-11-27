@@ -15,7 +15,7 @@ import java.time.Duration
 
 @Ignore("TODO JDK17: Fixme")
 class DuplicateSerializerLogTest{
-    @Test(timeout=300_000)
+    @Test
     fun `check duplicate serialisers are logged`() {
         driver {
             val node = startNode(startInSameProcess = false).getOrThrow()

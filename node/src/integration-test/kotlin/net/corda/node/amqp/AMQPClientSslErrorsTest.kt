@@ -143,7 +143,7 @@ class AMQPClientSslErrorsTest(@Suppress("unused") private val iteration: Int) {
         )
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun trivialClientServerExchange() {
         // SSL works quite differently in JDK 11 and re-work is needed
         assumeFalse(JavaVersion.isVersionAtLeast(JavaVersion.Java_11))
@@ -181,7 +181,7 @@ class AMQPClientSslErrorsTest(@Suppress("unused") private val iteration: Int) {
         assertFalse(serverThread.isActive)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun amqpClientServerConnect() {
         // SSL works quite differently in JDK 11 and re-work is needed
         assumeFalse(JavaVersion.isVersionAtLeast(JavaVersion.Java_11))
@@ -204,7 +204,7 @@ class AMQPClientSslErrorsTest(@Suppress("unused") private val iteration: Int) {
         assertFalse(serverThread.isActive)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun amqpClientServerHandshakeTimeout() {
         // SSL works quite differently in JDK 11 and re-work is needed
         assumeFalse(JavaVersion.isVersionAtLeast(JavaVersion.Java_11))

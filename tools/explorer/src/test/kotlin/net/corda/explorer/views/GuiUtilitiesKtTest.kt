@@ -6,7 +6,7 @@ import java.text.DecimalFormatSymbols
 import java.util.*
 
 class GuiUtilitiesKtTest {
-    @Test(timeout=300_000)
+    @Test
 	fun `test to string with suffix`() {
         //Required for this test to be independent of the default Locale.
         val ds = DecimalFormatSymbols(Locale.getDefault()).decimalSeparator

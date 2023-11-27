@@ -72,7 +72,7 @@ class QuickRPCRequestTests : AbstractRPCTest() {
         pool.shutdown()
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `quick RPCs by-pass the standard RPC thread pool`() {
         /*
             1. Set up a node with N RPC threads

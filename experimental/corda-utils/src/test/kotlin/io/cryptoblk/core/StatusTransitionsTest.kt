@@ -102,7 +102,7 @@ class StatusTransitionsTest {
         private val ledgerServices = MockServices(ALICE_ID, BOB_ID, BIGCORP_ID)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `basic correct cases`() {
         ledgerServices.ledger  {
             transaction {
@@ -134,7 +134,7 @@ class StatusTransitionsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `disallowed output`() {
         ledgerServices.ledger {
             transaction {
@@ -147,7 +147,7 @@ class StatusTransitionsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `disallowed command`() {
         ledgerServices.ledger {
             transaction {
@@ -160,7 +160,7 @@ class StatusTransitionsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `disallowed signer`() {
         ledgerServices.ledger {
             transaction {
@@ -173,7 +173,7 @@ class StatusTransitionsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `irrelevant commands fail`() {
         ledgerServices.ledger {
             transaction {
@@ -185,7 +185,7 @@ class StatusTransitionsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `multiple relevant commands accepted`() {
         ledgerServices.ledger {
             transaction {
@@ -199,7 +199,7 @@ class StatusTransitionsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `multiple relevant commands failed`() {
         ledgerServices.ledger {
             transaction {
@@ -213,7 +213,7 @@ class StatusTransitionsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `multiple inputs failed`() {
         ledgerServices.ledger {
             transaction {
@@ -227,7 +227,7 @@ class StatusTransitionsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `multiple outputs failed`() {
         ledgerServices.ledger {
             transaction {
@@ -241,7 +241,7 @@ class StatusTransitionsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `role change signer correct`() {
         ledgerServices.ledger {
             transaction {
@@ -274,7 +274,7 @@ class StatusTransitionsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `multiple signers disallowed`() {
         ledgerServices.ledger {
             transaction {
@@ -287,7 +287,7 @@ class StatusTransitionsTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `spend disallowed`() {
         ledgerServices.ledger {
             transaction {

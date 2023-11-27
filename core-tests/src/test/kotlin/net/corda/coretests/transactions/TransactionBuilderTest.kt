@@ -85,7 +85,7 @@ class TransactionBuilderTest {
                 .getLatestContractAttachments("net.corda.testing.contracts.DummyContract")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `bare minimum issuance tx`() {
         val outputState = TransactionState(
                 data = DummyState(),
@@ -102,7 +102,7 @@ class TransactionBuilderTest {
         assertThat(wtx.networkParametersHash).isEqualTo(networkParametersService.currentHash)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `automatic hash constraint`() {
         doReturn(unsignedAttachment).whenever(attachments).openAttachment(contractAttachmentId)
 
@@ -114,7 +114,7 @@ class TransactionBuilderTest {
         assertThat(wtx.outputs).containsOnly(outputState.copy(constraint = HashAttachmentConstraint(contractAttachmentId)))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `reference states`() {
         doReturn(unsignedAttachment).whenever(attachments).openAttachment(contractAttachmentId)
 
@@ -136,7 +136,7 @@ class TransactionBuilderTest {
         assertThat(wtx.references).containsOnly(referenceStateRef)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `automatic signature constraint`() {
         val aliceParty = TestIdentity(ALICE_NAME).party
         val bobParty = TestIdentity(BOB_NAME).party
@@ -173,7 +173,7 @@ class TransactionBuilderTest {
         override val signerKeys: List<PublicKey> get() = parties.map { it.owningKey }
     }, DummyContract.PROGRAM_ID, signerKeys = parties.map { it.owningKey })
 
-    @Test(timeout=300_000)
+    @Test
     fun `list accessors are mutable copies`() {
         val inputState1 = TransactionState(DummyState(), DummyContract.PROGRAM_ID, notary)
         val inputStateRef1 = StateRef(SecureHash.randomSHA256(), 0)
@@ -203,7 +203,7 @@ class TransactionBuilderTest {
         assertThat(builder.referenceStates()).hasSize(1)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `copy makes copy except lockId`() {
         val inputState = TransactionState(DummyState(), DummyContract.PROGRAM_ID, notary)
         val inputStateRef = StateRef(SecureHash.randomSHA256(), 0)
@@ -231,7 +231,7 @@ class TransactionBuilderTest {
         assertThat(builder.referenceStates()).isEqualTo(copy.referenceStates())
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `copy makes deep copy of lists`() {
         val inputState1 = TransactionState(DummyState(), DummyContract.PROGRAM_ID, notary)
         val inputStateRef1 = StateRef(SecureHash.randomSHA256(), 0)
@@ -270,7 +270,7 @@ class TransactionBuilderTest {
     }
 
     @Ignore
-    @Test(timeout=300_000, expected = TransactionVerificationException.UnsupportedHashTypeException::class)
+    @Test(expected = TransactionVerificationException.UnsupportedHashTypeException::class)
     fun `throws with non-default hash algorithm`() {
         HashAgility.init()
         try {
@@ -292,7 +292,7 @@ class TransactionBuilderTest {
         }
     }
 
-    @Test(timeout=300_000, expected = Test.None::class)
+    @Test
     fun `allows non-default hash algorithm`() {
         HashAgility.init(txHashAlgoName = DigestService.sha2_384.hashAlgorithm)
         assertThat(services.digestService).isEqualTo(DigestService.sha2_384)
@@ -315,7 +315,7 @@ class TransactionBuilderTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `toWireTransaction fails if no scheme is registered with schemeId`() {
         val outputState = TransactionState(
                 data = DummyState(),

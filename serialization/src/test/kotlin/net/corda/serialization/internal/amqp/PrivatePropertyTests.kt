@@ -18,7 +18,7 @@ class PrivatePropertyTests {
     private val factory = testDefaultFactoryNoEvolution(registry)
     val typeModel = ConfigurableLocalTypeModel(WhitelistBasedTypeModelConfiguration(factory.whitelist, factory))
 
-    @Test(timeout=300_000)
+    @Test
 	fun testWithOnePrivateProperty() {
         data class C(private val b: String)
 
@@ -27,7 +27,7 @@ class PrivatePropertyTests {
         assertEquals(c1, c2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testWithOnePrivatePropertyBoolean() {
         data class C(private val b: Boolean)
 
@@ -36,7 +36,7 @@ class PrivatePropertyTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testWithOnePrivatePropertyNullableNotNull() {
         data class C(private val b: String?)
 
@@ -45,7 +45,7 @@ class PrivatePropertyTests {
         assertEquals(c1, c2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testWithOnePrivatePropertyNullableNull() {
         data class C(private val b: String?)
 
@@ -54,7 +54,7 @@ class PrivatePropertyTests {
         assertEquals(c1, c2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testWithOnePublicOnePrivateProperty() {
         data class C(val a: Int, private val b: Int)
 
@@ -63,7 +63,7 @@ class PrivatePropertyTests {
         assertEquals(c1, c2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testWithInheritance() {
         open class B(val a: String, protected val b: String)
         class D (a: String, b: String) : B (a, b) {
@@ -80,7 +80,7 @@ class PrivatePropertyTests {
         assertEquals(d1, d2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testMultiArgSetter() {
         @Suppress("UNUSED")
         data class C(private var a: Int, var b: Int) {
@@ -99,7 +99,7 @@ class PrivatePropertyTests {
         assertEquals(44, c2.b)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testBadTypeArgSetter() {
         @Suppress("UNUSED")
         data class C(private var a: Int, val b: Int) {
@@ -118,7 +118,7 @@ class PrivatePropertyTests {
                         "yet underlying type is int")
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testWithOnePublicOnePrivateProperty2() {
         data class C(val a: Int, private val b: Int)
 
@@ -135,7 +135,7 @@ class PrivatePropertyTests {
         assertTrue(typeInformation.properties["b"] is LocalPropertyInformation.PrivateConstructorPairedProperty)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun testGetterMakesAPublicReader() {
         data class C(val a: Int, private val b: Int) {
             @Suppress("UNUSED")
@@ -157,7 +157,7 @@ class PrivatePropertyTests {
     }
 
     @Suppress("UNCHECKED_CAST")
-    @Test(timeout=300_000)
+    @Test
 	fun testNested() {
         data class Inner(private val a: Int)
         data class Outer(private val i: Inner)
@@ -179,7 +179,7 @@ class PrivatePropertyTests {
     // Reproduces CORDA-1134
     //
     @Suppress("UNCHECKED_CAST")
-    @Test(timeout=300_000)
+    @Test
 	fun allCapsProprtyNotPrivate() {
         data class C (val CCC: String)
         val typeInformation = typeModel.inspect(C::class.java)

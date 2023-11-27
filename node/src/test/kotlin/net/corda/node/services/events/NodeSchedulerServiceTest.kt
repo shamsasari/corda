@@ -172,17 +172,17 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due now`() {
         assertStarted(schedule(mark))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the past`() {
         assertStarted(schedule(mark - 1.days))
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future`() {
         val event = schedule(mark + 1.days)
         assertWaitingFor(event)
@@ -190,7 +190,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(event)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future and schedule another earlier`() {
         val event2 = schedule(mark + 2.days)
         val event1 = schedule(mark + 1.days)
@@ -202,7 +202,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(event2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future and schedule another later`() {
         val event1 = schedule(mark + 1.days)
         val event2 = schedule(mark + 2.days)
@@ -214,7 +214,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(event2)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future and schedule another for same time`() {
         val eventA = schedule(mark + 1.days)
         val eventB = schedule(mark + 1.days)
@@ -223,7 +223,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(eventB)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future and schedule another for same time then unschedule second`() {
         val eventA = schedule(mark + 1.days)
         val eventB = schedule(mark + 1.days)
@@ -235,7 +235,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(eventA)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future and schedule another for same time then unschedule original`() {
         val eventA = schedule(mark + 1.days)
         val eventB = schedule(mark + 1.days)
@@ -247,7 +247,7 @@ class NodeSchedulerServiceTest : NodeSchedulerServiceTestBase() {
         assertStarted(eventB)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test activity due in the future then unschedule`() {
         database.transaction {
             scheduler.unscheduleStateActivity(schedule(mark + 1.days).stateRef)
@@ -280,7 +280,7 @@ class NodeSchedulerPersistenceTest : NodeSchedulerServiceTestBase() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that correct item is returned`() {
         val dataSourceProps = MockServices.makeTestDataSourceProperties()
         val database = configureDatabase(dataSourceProps, databaseConfig, { null }, { null })
@@ -296,7 +296,7 @@ class NodeSchedulerPersistenceTest : NodeSchedulerServiceTestBase() {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `test that schedule is persisted`() {
         Assume.assumeFalse(IS_S390X)
         val dataSourceProps = MockServices.makeTestDataSourceProperties()
@@ -336,7 +336,7 @@ class NodeSchedulerPersistenceTest : NodeSchedulerServiceTestBase() {
     }
 
     @Ignore("Temporarily")
-    @Test(timeout=300_000)
+    @Test
 	fun `test that if schedule is updated then the flow is invoked on the correct schedule`() {
         val dataSourceProps = MockServices.makeTestDataSourceProperties()
         val timeInTheFuture = mark + 1.days

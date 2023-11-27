@@ -16,7 +16,7 @@ class ClassCarpentingTypeLoaderTests {
     private val remoteTypeCarpenter = SchemaBuildingRemoteTypeCarpenter(carpenter)
     private val typeLoader = ClassCarpentingTypeLoader(remoteTypeCarpenter, carpenter.classloader)
 
-    @Test(timeout=300_000)
+    @Test
 	fun `carpent some related classes`() {
         val addressInformation = RemoteTypeInformation.Composable(
                 "address",

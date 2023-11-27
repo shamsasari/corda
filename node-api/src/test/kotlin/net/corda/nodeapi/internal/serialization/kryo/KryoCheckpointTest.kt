@@ -13,7 +13,7 @@ class KryoCheckpointTest {
     /**
      * This test just ensures that the checkpoints still work in light of [LinkedHashMapEntrySerializer].
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `linked hash map can checkpoint without error`() {
         var lastKey = ""
         val dummyMap = linkedMapOf<String, Long>()
@@ -29,7 +29,7 @@ class KryoCheckpointTest {
         assertEquals(testSize.toString(), lastKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `empty linked hash map can checkpoint without error`() {
         val dummyMap = linkedMapOf<String, Long>()
         val it = dummyMap.iterator()
@@ -45,7 +45,7 @@ class KryoCheckpointTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `linked hash map with null values can checkpoint without error`() {
         val dummyMap = linkedMapOf<String?, Long?>().apply {
             put("foo", 2L)
@@ -71,7 +71,7 @@ class KryoCheckpointTest {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
     fun `linked hash map keys can checkpoint without error`() {
         var lastKey = ""
         val dummyMap = linkedMapOf<String, Long>()
@@ -87,7 +87,7 @@ class KryoCheckpointTest {
         assertEquals(testSize.toString(), lastKey)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `linked hash map values can checkpoint without error`() {
         var lastValue = 0L
         val dummyMap = linkedMapOf<String, Long>()
@@ -103,7 +103,7 @@ class KryoCheckpointTest {
         assertEquals(testSize, lastValue)
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `linked hash map values can checkpoint without error, even with repeats`() {
         var lastValue = "0"
         val dummyMap = linkedMapOf<String, String>()
@@ -120,7 +120,7 @@ class KryoCheckpointTest {
     }
 
     @Ignore("Kryo optimizes boxed primitives so this does not work.  Need to customise ReferenceResolver to stop it doing it.")
-    @Test(timeout = 300_000)
+    @Test
     fun `linked hash map values can checkpoint without error, even with repeats for boxed primitives`() {
         var lastValue = 0L
         val dummyMap = linkedMapOf<String, Long>()
@@ -139,7 +139,7 @@ class KryoCheckpointTest {
     /**
      * This test just ensures that the checkpoints still work in light of [LinkedHashMapEntrySerializer].
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `linked hash set can checkpoint without error`() {
         var result: Any = 0L
         val dummySet = linkedSetOf<Any>().apply { addAll(0..testSize) }
@@ -155,7 +155,7 @@ class KryoCheckpointTest {
     /**
      * This test just ensures that the checkpoints still work in light of [LinkedListItrSerializer].
      */
-    @Test(timeout=300_000)
+    @Test
 	fun `linked list can checkpoint without error`() {
         var result: Any = 0L
         val dummyList = LinkedList<Long>().apply { addAll(0..testSize) }

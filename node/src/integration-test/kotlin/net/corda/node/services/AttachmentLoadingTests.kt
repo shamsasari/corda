@@ -44,7 +44,7 @@ class AttachmentLoadingTests {
         fun loadFromIsolated(className: String): Class<*> = Class.forName(className, false, isolatedClassLoader)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `contracts downloaded from the network are not executed`() {
         driver(DriverParameters(
                 startNodesInProcess = false,
@@ -67,7 +67,7 @@ class AttachmentLoadingTests {
         }
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `contract is executed if installed locally`() {
         driver(DriverParameters(
                 startNodesInProcess = false,

@@ -51,7 +51,7 @@ import kotlin.test.assertTrue
 
 class KillFlowTest {
 
-    @Test(timeout = 300_000)
+    @Test
     fun `a killed flow will end when it reaches the next suspension point`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -68,7 +68,7 @@ class KillFlowTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `a killed flow will propagate the killed error to counter parties when it reaches the next suspension point`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob, charlie) = listOf(ALICE_NAME, BOB_NAME, CHARLIE_NAME)
@@ -115,7 +115,7 @@ class KillFlowTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `killing a flow that is sleeping ends the flow immediately`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -135,7 +135,7 @@ class KillFlowTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `killing a flow suspended in send + receive + sendAndReceive ends the flow immediately`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = false)) {
             val (alice, bob) = listOf(ALICE_NAME, BOB_NAME)
@@ -171,7 +171,7 @@ class KillFlowTest {
         assertEquals(1, startFlow(::GetNumberOfCheckpointsFlow).returnValue.getOrThrow(20.seconds))
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `killing a flow suspended in waitForLedgerCommit ends the flow immediately`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -191,7 +191,7 @@ class KillFlowTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `killing a flow suspended in await ends the flow immediately`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -211,7 +211,7 @@ class KillFlowTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `killing a hospitalized flow ends the flow immediately`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val alice = startNode(providedName = ALICE_NAME).getOrThrow()
@@ -231,7 +231,7 @@ class KillFlowTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `a killed flow will propagate the killed error to counter parties if it was suspended`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob, charlie) = listOf(ALICE_NAME, BOB_NAME, CHARLIE_NAME)
@@ -269,7 +269,7 @@ class KillFlowTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `a killed initiated flow will propagate the killed error to the initiator and its counter parties`() {
         driver(DriverParameters(notarySpecs = emptyList(), startNodesInProcess = true)) {
             val (alice, bob, charlie) = listOf(ALICE_NAME, BOB_NAME, CHARLIE_NAME)
@@ -308,7 +308,7 @@ class KillFlowTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `killing a flow releases soft lock`() {
         driver(DriverParameters(startNodesInProcess = true)) {
             val alice = startNode(

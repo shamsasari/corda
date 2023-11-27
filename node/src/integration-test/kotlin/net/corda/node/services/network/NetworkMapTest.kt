@@ -65,7 +65,7 @@ class NetworkMapTest {
         networkMapServer.close()
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `parameters update test`() {
         internalDriver(
                 portAllocation = portAllocation,
@@ -124,7 +124,7 @@ class NetworkMapTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Can hotload parameters if the notary changes`() {
         internalDriver(
                 portAllocation = portAllocation,
@@ -146,7 +146,7 @@ class NetworkMapTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `If only the notary changes but parameters were not accepted, the node will still shut down on the flag day`() {
         internalDriver(
                 portAllocation = portAllocation,
@@ -171,7 +171,7 @@ class NetworkMapTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `Can not hotload parameters if non-hotloadable parameter changes and the node will shut down`() {
         internalDriver(
                 portAllocation = portAllocation,
@@ -206,7 +206,7 @@ class NetworkMapTest {
         return alice
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `nodes process additions and removals from the network map correctly (and also download the network parameters)`() {
         internalDriver(
                 portAllocation = portAllocation,
@@ -236,7 +236,7 @@ class NetworkMapTest {
         }
     }
 
-    @Test(timeout = 300_000)
+    @Test
     fun `test node heartbeat`() {
         internalDriver(
                 portAllocation = portAllocation,

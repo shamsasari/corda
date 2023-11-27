@@ -11,7 +11,7 @@ import java.util.concurrent.TimeUnit
 class NodeStartupPerformanceTests {
 
     // Measure the startup time of nodes. Note that this includes an RPC roundtrip, which causes e.g. Kryo initialisation.
-    @Test(timeout=300_000)
+    @Test
 	fun `single node startup time`() {
         driver {
             val times = ArrayList<Long>()

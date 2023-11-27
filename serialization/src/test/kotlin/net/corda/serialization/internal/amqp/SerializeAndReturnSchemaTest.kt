@@ -19,7 +19,7 @@ class SerializeAndReturnSchemaTest {
     // indeed give us the correct schema back. This is more useful in support of other
     // tests rather than by itself but for those to be reliable this also needs
     // testing
-    @Test(timeout=300_000)
+    @Test
 	fun getSchema() {
         data class C(val a: Int, val b: Int)
 

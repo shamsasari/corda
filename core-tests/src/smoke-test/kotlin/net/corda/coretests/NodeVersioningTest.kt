@@ -56,13 +56,13 @@ class NodeVersioningTest {
         notary.close()
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `platform version in manifest file`() {
         val manifest = JarFile(factory.cordaJar.toFile()).manifest
         assertThat(manifest.mainAttributes.getValue("Corda-Platform-Version").toInt()).isEqualTo(PLATFORM_VERSION)
     }
 
-    @Test(timeout=300_000)
+    @Test
 	fun `platform version from RPC`() {
         val cordappsDir = (factory.baseDirectory(aliceConfig) / NodeProcess.CORDAPPS_DIR_NAME).createDirectories()
         // Find the jar file for the smoke tests of this module
