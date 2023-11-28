@@ -1,7 +1,15 @@
 repositories {
     maven {
         url "$artifactory_contextUrl/corda-dependencies"
+        authentication {
+            BasicAuthentication
+        }
+        credentials {
+            username = findProperty('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
+            password = findProperty('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
+        }
     }
+
 }
 
 ext {
