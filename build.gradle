@@ -193,26 +193,6 @@ buildscript {
             mavenCentral()
             jcenter()
         }
-        maven {
-            url "${artifactory_contextUrl}/corda-dependencies-dev"
-            authentication {
-                basic(BasicAuthentication)
-            }
-            credentials {
-                username = findProperty('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
-                password = findProperty('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
-            }
-        }
-        maven {
-            url "${artifactory_contextUrl}/corda-dependencies"
-            authentication {
-                BasicAuthentication
-            }
-            credentials {
-                username = findProperty('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
-                password = findProperty('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
-            }
-        }
     }
     dependencies {
         classpath "org.jetbrains.kotlin:kotlin-gradle-plugin:$kotlin_version"
@@ -459,26 +439,6 @@ allprojects {
             }
             mavenCentral()
             jcenter()
-        }
-        maven {
-            url "${artifactory_contextUrl}/corda-dependencies-dev"
-            authentication {
-                basic(BasicAuthentication)
-            }
-            credentials {
-                username = findProperty('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
-                password = findProperty('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
-            }
-        }
-        maven {
-            url "${artifactory_contextUrl}/corda-dependencies"
-            authentication {
-                BasicAuthentication
-            }
-            credentials {
-                username = findProperty('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
-                password = findProperty('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
-            }
         }
     }
 
