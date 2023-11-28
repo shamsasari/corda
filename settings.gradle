@@ -23,6 +23,16 @@ pluginManagement {
             gradlePluginPortal()
             maven { url "${artifactory_contextUrl}/corda-dependencies" }
         }
+        maven {
+            url "https://software.r3.com/artifactory/corda-dependencies-dev"
+            authentication {
+                BasicAuthentication
+            }
+            credentials {
+                username = settings.ext.find('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
+                password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
+            }
+        }
     }
 }
 // The project is named 'corda-project' and not 'corda' because if this is named the same as the
