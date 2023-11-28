@@ -21,25 +21,25 @@ pluginManagement {
         } else {
             mavenLocal()
             gradlePluginPortal()
-        }
-        maven {
-            url "${artifactory_contextUrl}/corda-dependencies-dev"
-            authentication {
-                BasicAuthentication
+            maven {
+                url "${artifactory_contextUrl}/corda-dependencies-dev"
+                authentication {
+                    BasicAuthentication
+                }
+                credentials {
+                    username = settings.ext.find('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
+                    password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
+                }
             }
-            credentials {
-                username = settings.ext.find('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
-                password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
-            }
-        }
-        maven {
-            url "${artifactory_contextUrl}/corda-dependencies"
-            authentication {
-                BasicAuthentication
-            }
-            credentials {
-                username = settings.ext.find('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
-                password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
+            maven {
+                url "${artifactory_contextUrl}/corda-dependencies"
+                authentication {
+                    BasicAuthentication
+                }
+                credentials {
+                    username = settings.ext.find('cordaArtifactoryUsername') ?: System.getenv('CORDA_ARTIFACTORY_USERNAME')
+                    password = settings.ext.find('cordaArtifactoryPassword') ?: System.getenv('CORDA_ARTIFACTORY_PASSWORD')
+                }
             }
         }
     }
