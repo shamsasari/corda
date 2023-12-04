@@ -455,7 +455,16 @@ data class RPCDriverDSL(
             username: String = rpcTestUser.username,
             password: String = rpcTestUser.password
     ): CordaFuture<Process> {
-        val process = ProcessUtilities.startJavaProcess<RandomRpcUser>(listOf(rpcOpsClass.name, rpcAddress.toString(), username, password))
+        val moduleOpens = listOf(
+                "--add-opens", "java.base/java.time=ALL-UNNAMED", "--add-opens", "java.base/java.io=ALL-UNNAMED",
+                "--add-opens", "java.base/java.util=ALL-UNNAMED", "--add-opens", "java.base/java.net=ALL-UNNAMED",
+                "--add-opens", "java.base/java.nio=ALL-UNNAMED", "--add-opens", "java.base/java.lang.invoke=ALL-UNNAMED",
+                "--add-opens", "java.base/java.security.cert=ALL-UNNAMED", "--add-opens", "java.base/javax.net.ssl=ALL-UNNAMED",
+                "--add-opens", "java.base/java.util.concurrent=ALL-UNNAMED", "--add-opens", "java.sql/java.sql=ALL-UNNAMED",
+                "--add-opens", "java.base/java.lang=ALL-UNNAMED"
+        );
+        val process = ProcessUtilities.startJavaProcess<RandomRpcUser>(listOf(rpcOpsClass.name, rpcAddress.toString(), username, password),
+                extraJvmArguments = moduleOpens)
         driverDSL.shutdownManager.registerProcessShutdown(process)
         return doneFuture(process)
     }

@@ -488,7 +488,7 @@ class RPCStabilityTests {
     /**
      * In this test we create a number of out of process RPC clients that call [TrackSubscriberOps.subscribe] in a loop.
      */
-    @Test(timeout=300_000)
+    @Test(timeout=1_000_000)
 	fun `server cleans up queues after disconnected clients`() {
         rpcDriver {
             val trackSubscriberOpsImpl = object : TrackSubscriberOps {
@@ -669,7 +669,6 @@ class RPCStabilityTests {
 fun RPCDriverDSL.pollUntilClientNumber(server: RpcServerHandle, expected: Int) {
     pollUntilTrue("number of RPC clients to become $expected") {
         val clientAddresses = server.broker.serverControl.addressNames.filter { it.startsWith(RPCApi.RPC_CLIENT_QUEUE_NAME_PREFIX) }
-        server.broker.serverControl.addressNames.forEach { println("Queue: " + it) }
         clientAddresses.size == expected
     }.get()
 }

@@ -327,7 +327,7 @@ class DBTransactionStorageLedgerRecoveryTests {
     }
 
     @Test(timeout = 300_000)
-    @Ignore("TODO JDK17:Fixme datetime format issue")
+
     fun `test lightweight serialization and deserialization of hashed distribution list payload`() {
         val hashedDistList = HashedDistributionList(
                 ALL_VISIBLE,
