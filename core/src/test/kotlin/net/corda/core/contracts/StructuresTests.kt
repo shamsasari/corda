@@ -21,7 +21,6 @@ class AttachmentTest {
 
     @Test(timeout=300_000)
     @Suppress("ThrowsCount")
-//    @Ignore("TODO JDK17: Line too long no longer thrown?")
 	fun `openAsJAR does not leak file handle if attachment has corrupted manifest`() {
         var closeCalls = 0
         val inputStream = spy(ByteArrayOutputStream().apply {
