@@ -34,6 +34,7 @@ import org.bouncycastle.crypto.util.PrivateKeyInfoFactory
 import org.bouncycastle.crypto.util.SubjectPublicKeyInfoFactory
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPrivateKey
 import org.bouncycastle.jcajce.provider.asymmetric.ec.BCECPublicKey
+import org.bouncycastle.jcajce.provider.asymmetric.ec.CachingBCECPublicKey
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPrivateKey
 import org.bouncycastle.jcajce.provider.asymmetric.edec.BCEdDSAPublicKey
 import org.bouncycastle.jcajce.provider.asymmetric.rsa.BCRSAPrivateKey
@@ -975,7 +976,12 @@ object Crypto {
     }
 
     private val interner = PrivateInterner<PublicKey>()
-    private fun internPublicKey(key: PublicKey): PublicKey = PublicKeyCache.cachePublicKey(interner.intern(key))
+    private fun internPublicKey(key: PublicKey): PublicKey {
+        val pk = if(key is BCECPublicKey) {
+            CachingBCECPublicKey(key)
+        } else key
+        return PublicKeyCache.cachePublicKey(interner.intern(pk))
+    }
 
     /**
      * Convert a public key to a supported implementation.
