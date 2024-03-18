@@ -43,15 +43,14 @@ import org.objenesis.instantiator.ObjectInstantiator
 import org.objenesis.strategy.InstantiatorStrategy
 import org.objenesis.strategy.StdInstantiatorStrategy
 import org.slf4j.Logger
-import java.io.BufferedInputStream
 import java.io.ByteArrayOutputStream
-import java.io.FileInputStream
 import java.io.InputStream
+import java.lang.invoke.SerializedLambda
 import java.lang.reflect.Modifier.isPublic
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.cert.CertPath
-import java.security.cert.X509Certificate
+import java.security.cert.Certificate
 import java.util.*
 
 object DefaultKryoCustomizer {
@@ -87,21 +86,19 @@ object DefaultKryoCustomizer {
                 }
             })
 
-            // Required for HashCheckingStream (de)serialization.
-            // Note that return type should be specifically set to InputStream, otherwise it may not work,
-            // i.e. val aStream : InputStream = HashCheckingStream(...).
             addDefaultSerializer(InputStream::class.java, InputStreamSerializer)
             addDefaultSerializer(SerializeAsToken::class.java, SerializeAsTokenSerializer<SerializeAsToken>())
             addDefaultSerializer(Logger::class.java, LoggerSerializer)
-            addDefaultSerializer(X509Certificate::class.java, X509CertificateSerializer)
+            addDefaultSerializer(LinkedHashMapIteratorSerializer.getIterator()::class.java.superclass, LinkedHashMapIteratorSerializer)
+            addDefaultSerializer(PublicKey::class.java, PublicKeySerializer)
+            addDefaultSerializer(PrivateKey::class.java, PrivateKeySerializer)
+            addDefaultSerializer(Certificate::class.java, CertificateSerializer)
+            addDefaultSerializer(CertPath::class.java, CertPathSerializer)
 
             // WARNING: reordering the registrations here will cause a change in the serialized form, since classes
             // with custom serializers get written as registration ids. This will break backwards-compatibility.
             // Please add any new registrations to the end.
 
-            addDefaultSerializer(LinkedHashMapIteratorSerializer.getIterator()::class.java.superclass, LinkedHashMapIteratorSerializer)
-            addDefaultSerializer(PublicKey::class.java, PublicKeySerializer)
-            addDefaultSerializer(PrivateKey::class.java, PrivateKeySerializer)
             register(LinkedHashMapEntrySerializer.getEntry()::class.java, LinkedHashMapEntrySerializer)
             register(LinkedListItrSerializer.getListItr()::class.java, LinkedListItrSerializer)
             register(Arrays.asList("").javaClass, ArraysAsListSerializer())
@@ -115,17 +112,12 @@ object DefaultKryoCustomizer {
             ImmutableSortedSetSerializer.registerSerializers(this)
             ImmutableMapSerializer.registerSerializers(this)
             ImmutableMultimapSerializer.registerSerializers(this)
-            // InputStream subclasses whitelisting, required for attachments.
-            register(BufferedInputStream::class.java, InputStreamSerializer)
-            register(Class.forName("sun.net.www.protocol.jar.JarURLConnection\$JarURLInputStream"), InputStreamSerializer)
             // Exceptions. We don't bother sending the stack traces as the client will fill in its own anyway.
             register(Array<StackTraceElement>::class, read = { _, _ -> emptyArray() }, write = { _, _, _ -> })
             // This ensures a NonEmptySetSerializer is constructed with an initial value.
             register(NonEmptySet::class.java, NonEmptySetSerializer)
             register(BitSet::class.java, BitSetSerializer())
             register(Class::class.java, ClassSerializer)
-            register(FileInputStream::class.java, InputStreamSerializer)
-            register(CertPath::class.java, CertPathSerializer)
             register(NotaryChangeWireTransaction::class.java, NotaryChangeWireTransactionSerializer)
             register(PartyAndCertificate::class.java, PartyAndCertificateSerializer)
 
@@ -135,7 +127,7 @@ object DefaultKryoCustomizer {
             // Used by the remote verifier, and will possibly be removed in future.
             register(ContractAttachment::class.java, ContractAttachmentSerializer)
 
-            register(java.lang.invoke.SerializedLambda::class.java)
+//            register(SerializedLambda::class.java)
             register(ClosureSerializer.Closure::class.java, CordaClosureSerializer)
             register(ContractUpgradeWireTransaction::class.java, ContractUpgradeWireTransactionSerializer)
             register(ContractUpgradeFilteredTransaction::class.java, ContractUpgradeFilteredTransactionSerializer)

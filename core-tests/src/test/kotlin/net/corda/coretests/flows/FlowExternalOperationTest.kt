@@ -256,8 +256,7 @@ class FlowExternalOperationTest : AbstractFlowExternalOperationTest() {
 
         @Suspendable
         override fun testCode() {
-            val e = createException()
-            await<Nothing>(ExternalOperation(serviceHub, (SerializableLambda2 { _, _ -> throw e })))
+            await<Nothing>(ExternalOperation(serviceHub, (SerializableLambda2 { _, _ -> throw createException() })))
         }
 
         private fun createException() = when (exceptionType) {

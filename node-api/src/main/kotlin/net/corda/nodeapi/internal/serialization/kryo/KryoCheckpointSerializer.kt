@@ -1,13 +1,21 @@
 package net.corda.nodeapi.internal.serialization.kryo
 
+import co.paralleluniverse.fibers.CustomFiberWriter
+import co.paralleluniverse.fibers.CustomFiberWriterSerializer
 import co.paralleluniverse.fibers.Fiber
-import co.paralleluniverse.io.serialization.kryo.KryoSerializer
+import co.paralleluniverse.fibers.FiberWriter
+import co.paralleluniverse.fibers.ThreadLocalSerializer
+import co.paralleluniverse.io.serialization.kryo.KryoUtil
+import co.paralleluniverse.io.serialization.kryo.ReplaceableObjectKryo
+import com.esotericsoftware.kryo.ClassResolver
 import com.esotericsoftware.kryo.Kryo
 import com.esotericsoftware.kryo.KryoException
+import com.esotericsoftware.kryo.Registration
 import com.esotericsoftware.kryo.Serializer
 import com.esotericsoftware.kryo.io.Input
 import com.esotericsoftware.kryo.io.Output
 import com.esotericsoftware.kryo.serializers.ClosureSerializer
+import com.esotericsoftware.kryo.serializers.FieldSerializer
 import net.corda.core.internal.uncheckedCast
 import net.corda.core.serialization.CheckpointCustomSerializer
 import net.corda.core.serialization.ClassWhitelist
@@ -25,6 +33,8 @@ import net.corda.serialization.internal.CordaSerializationMagic
 import net.corda.serialization.internal.QuasarWhitelist
 import net.corda.serialization.internal.SectionId
 import net.corda.serialization.internal.encodingNotPermittedFormat
+import org.objenesis.strategy.SerializingInstantiatorStrategy
+import java.lang.reflect.InaccessibleObjectException
 import java.util.concurrent.ConcurrentHashMap
 
 val kryoMagic = CordaSerializationMagic("corda".toByteArray() + byteArrayOf(0, 0))
@@ -42,16 +52,12 @@ private object AutoCloseableSerialisationDetector : Serializer<AutoCloseable>() 
 
 object KryoCheckpointSerializer : CheckpointSerializer {
     private val kryoPoolsForContexts = ConcurrentHashMap<Triple<ClassWhitelist, ClassLoader, Iterable<CheckpointCustomSerializer<*,*>>>, KryoPool>()
+
     private fun getPool(context: CheckpointSerializationContext): KryoPool {
         return kryoPoolsForContexts.computeIfAbsent(Triple(context.whitelist, context.deserializationClassLoader, context.checkpointCustomSerializers)) {
             KryoPool {
-                val classResolver = CordaClassResolver(context)
-                val serializer = Fiber.getFiberSerializer(classResolver,false) as KryoSerializer
-                // TODO The ClassResolver can only be set in the Kryo constructor and Quasar doesn't provide us with a way of doing that
-                val field = Kryo::class.java.getDeclaredField("classResolver").apply { isAccessible = true }
-                serializer.kryo.apply {
-                    field.set(this, classResolver)
-                    // don't allow overriding the public key serializer for checkpointing
+                val kryo = newFiberKryo(context)
+                kryo.apply {
                     DefaultKryoCustomizer.customize(this)
                     addDefaultSerializer(AutoCloseable::class.java, AutoCloseableSerialisationDetector)
                     register(ClosureSerializer.Closure::class.java, CordaClosureSerializer)
@@ -66,6 +72,39 @@ object KryoCheckpointSerializer : CheckpointSerializer {
                 }
             }
         }
+    }
+
+    private fun newFiberKryo(context: CheckpointSerializationContext): Kryo {
+//        val kryo = ReplaceableObjectKryoReplacement(CordaClassResolver(context))
+        val kryo = Kryo(CordaClassResolver(context), null)
+        // This Kryo 5 optimisation is buggy for Kotlin classes - disable it!
+        // See https://github.com/EsotericSoftware/kryo/issues/864
+        kryo.setOptimizedGenerics(false)
+        kryo.isRegistrationRequired = false
+        kryo.instantiatorStrategy = SerializingInstantiatorStrategy()
+        KryoUtil.registerCommonClasses(kryo)
+
+        val fiberSerializer = Class.forName("co.paralleluniverse.fibers.Fiber\$FiberSerializer")
+                .getConstructor(java.lang.Boolean.TYPE)
+                .apply { isAccessible = true }
+                .newInstance(false) as Serializer<*>
+
+        val fiberWriterSerializer = Class.forName("co.paralleluniverse.fibers.FiberWriterSerializer")
+                .getConstructor()
+                .apply { isAccessible = true }
+                .newInstance() as Serializer<*>
+
+        kryo.addDefaultSerializer(Fiber::class.java, fiberSerializer)
+        kryo.addDefaultSerializer(ThreadLocal::class.java, ThreadLocalSerializer())
+        kryo.addDefaultSerializer(FiberWriter::class.java, fiberWriterSerializer)
+        kryo.addDefaultSerializer(CustomFiberWriter::class.java, CustomFiberWriterSerializer())
+//        kryo.register(Fiber::class.java)
+//        kryo.register(ThreadLocal::class.java)
+//        kryo.register(InheritableThreadLocal::class.java)
+//        kryo.register(ThreadLocalSerializer.DEFAULT::class.java)
+//        kryo.register(FiberWriter::class.java)
+
+        return kryo
     }
 
     /**
@@ -166,6 +205,131 @@ object KryoCheckpointSerializer : CheckpointSerializer {
                     withoutReferences { writeClassAndObject(this, obj) }
                 }
             })
+        }
+    }
+
+    private class ReplaceableObjectKryoReplacement(classResolver: ClassResolver) : ReplaceableObjectKryo(classResolver) {
+        companion object {
+            private val defaultSerializersField = Kryo::class.java.getDeclaredField("defaultSerializers").apply { isAccessible = true }
+        }
+
+        // These are only modified via their setters, so it's safe to have a local copy
+        private var autoReset = true
+        private var maxDepth = Int.MAX_VALUE
+//        private defaultSerializers: List<DefaultSerializerEntry>
+
+        override fun setAutoReset(autoReset: Boolean) {
+            super.setAutoReset(autoReset)
+            this.autoReset = autoReset
+        }
+
+        override fun setMaxDepth(maxDepth: Int) {
+            super.setMaxDepth(maxDepth)
+            this.maxDepth = maxDepth
+        }
+
+//        override fun getDefaultSerializer(type: Class<*>): Serializer<*> {
+//            if (isAssociatedWithSerializer(type)) {
+//                val serializerForAnnotation = getDefaultSerializerForAnnotatedType(type)
+//                if (serializerForAnnotation != null) return serializerForAnnotation
+//
+//                {
+//                    var i = 0
+//                    val n = defaultSerializers.size
+//                    while (i < n) {
+//                        val entry = defaultSerializers[i]
+//                        if (entry.type.isAssignableFrom(type) && entry.serializerFactory.isSupported(type)) return entry.serializerFactory.newSerializer(this, type)
+//                        i++
+//                    }
+//                }
+//
+//                return newDefaultSerializer(type)
+//            } else {
+//                return super.getDefaultSerializer(type)
+//            }
+//        }
+
+        override fun writeClass(output: Output, type: Class<*>?): Registration? {
+            return if (isAssociatedWithSerializer(type)) {
+                try {
+                    classResolver.writeClass(output, type)
+                } finally {
+                    if (depth == 0 && autoReset) reset()
+                }
+            } else {
+//                println("writeClass: replacement hack for ${type?.name} ${type?.let { classResolver.getRegistration(it) }} ${type?.let { getDefaultSerializer(it) }}")
+                super.writeClass(output, type)
+            }
+        }
+
+        override fun writeObject(output: Output, obj: Any, serializer: Serializer<Any>) {
+            if (isAssociatedWithSerializer(obj.javaClass)) {
+                beginObject()
+                try {
+                    if (references && writeReferenceOrNull(output, obj, false)) return
+                    println("writeObject=${obj.javaClass.name} ${System.identityHashCode(obj).toString(16)}")
+                    serializer.write(this, output, obj)
+                } finally {
+                    if (/*--depth == 0 && */autoReset) reset()
+                }
+            } else {
+//                println("writeObject: replacement hack for ${obj.javaClass.name} ${classResolver.getRegistration(obj.javaClass)} ${getDefaultSerializer(obj.javaClass)}")
+                super.writeObject(output, obj, serializer)
+            }
+        }
+
+        override fun writeClassAndObject(output: Output, obj: Any?) {
+            if (isAssociatedWithSerializer(obj?.javaClass)) {
+                beginObject()
+                try {
+                    if (obj == null) {
+                        writeClass(output, null)
+                        return
+                    }
+                    val registration = writeClass(output, obj.javaClass)
+                    if (references && writeReferenceOrNull(output, obj, false)) return
+                    registration!!.serializer.write(this, output, obj)
+                } finally {
+                    if (/*--depth == 0 && */autoReset) reset()
+                }
+            } else {
+                val javaClass = obj?.javaClass
+//                println("writeClassAndObject: replacement hack for ${javaClass?.name} ${javaClass?.let { classResolver.getRegistration(it) }} ${javaClass?.let { getDefaultSerializer(it) }}")
+                super.writeClassAndObject(output, obj)
+            }
+        }
+
+        private fun isAssociatedWithSerializer(type: Class<*>?): Boolean {
+            return type == null || classResolver.getRegistration(type) != null || getDefaultSerializer(type) !is FieldSerializer
+        }
+
+        private fun beginObject() {
+            if (depth == maxDepth) throw KryoException("Max depth exceeded: $depth")
+//            depth++
+        }
+
+        private fun writeReferenceOrNull(output: Output, obj: Any?, mayBeNull: Boolean): Boolean {
+            if (obj == null) {
+                output.writeByte(NULL)
+                return true
+            }
+            if (!referenceResolver.useReferences(obj.javaClass)) {
+                if (mayBeNull) {
+                    output.writeByte(NOT_NULL)
+                }
+                return false
+            }
+            // Determine if this object has already been seen in this object graph.
+            val id = referenceResolver.getWrittenId(obj)
+            // If not the first time encountered, only write reference ID.
+            if (id != -1) {
+                output.writeVarInt(id + 2, true) // + 2 because 0 and 1 are used for NULL and NOT_NULL.
+                return true
+            }
+            // Otherwise write NOT_NULL and then the object bytes.
+            referenceResolver.addWrittenObject(obj)
+            output.writeByte(NOT_NULL)
+            return false
         }
     }
 }

@@ -36,8 +36,8 @@ import java.lang.reflect.InvocationTargetException
 import java.security.PrivateKey
 import java.security.PublicKey
 import java.security.cert.CertPath
+import java.security.cert.Certificate
 import java.security.cert.CertificateFactory
-import java.security.cert.X509Certificate
 import javax.annotation.concurrent.ThreadSafe
 import kotlin.reflect.KClass
 import kotlin.reflect.KMutableProperty
@@ -156,8 +156,6 @@ class ImmutableClassSerializer<T : Any>(val klass: KClass<T>) : Serializer<T>() 
     }
 }
 
-// TODO This is a temporary inefficient serializer for sending InputStreams through RPC. This may be done much more
-// efficiently using Artemis's large message feature.
 object InputStreamSerializer : Serializer<InputStream>() {
     override fun write(kryo: Kryo, output: Output, stream: InputStream) {
         val buffer = ByteArray(4096)
@@ -297,8 +295,8 @@ object PrivateKeySerializer : Serializer<PrivateKey>() {
     }
 
     override fun read(kryo: Kryo, input: Input, type: Class<out PrivateKey>): PrivateKey {
-        val A = input.readBytesWithLength()
-        return Crypto.decodePrivateKey(A)
+        val encodedKey = input.readBytesWithLength()
+        return Crypto.decodePrivateKey(encodedKey)
     }
 }
 
@@ -306,13 +304,12 @@ object PrivateKeySerializer : Serializer<PrivateKey>() {
 @ThreadSafe
 object PublicKeySerializer : Serializer<PublicKey>() {
     override fun write(kryo: Kryo, output: Output, obj: PublicKey) {
-        // TODO: Instead of encoding to the default X509 format, we could have a custom per key type (space-efficient) serialiser.
         output.writeBytesWithLength(Crypto.encodePublicKey(obj))
     }
 
     override fun read(kryo: Kryo, input: Input, type: Class<out PublicKey>): PublicKey {
-        val A = input.readBytesWithLength()
-        return Crypto.decodePublicKey(A)
+        val encodedKey = input.readBytesWithLength()
+        return Crypto.decodePublicKey(encodedKey)
     }
 }
 
@@ -450,12 +447,14 @@ object CertPathSerializer : Serializer<CertPath>() {
 }
 
 @ThreadSafe
-object X509CertificateSerializer : Serializer<X509Certificate>() {
-    override fun read(kryo: Kryo, input: Input, type: Class<out X509Certificate>): X509Certificate {
-        return CertificateFactory.getInstance("X.509").generateCertificate(input.readBytesWithLength().inputStream()) as X509Certificate
+object CertificateSerializer : Serializer<Certificate>() {
+    override fun read(kryo: Kryo, input: Input, type: Class<out Certificate>): Certificate {
+        val factory = CertificateFactory.getInstance(input.readString())
+        return factory.generateCertificate(input.readBytesWithLength().inputStream())
     }
 
-    override fun write(kryo: Kryo, output: Output, obj: X509Certificate) {
+    override fun write(kryo: Kryo, output: Output, obj: Certificate) {
+        output.writeString(obj.type)
         output.writeBytesWithLength(obj.encoded)
     }
 }

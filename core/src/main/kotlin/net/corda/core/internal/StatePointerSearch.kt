@@ -4,7 +4,9 @@ import net.corda.core.contracts.ContractState
 import net.corda.core.contracts.StatePointer
 import org.apache.commons.lang3.reflect.FieldUtils
 import java.lang.reflect.Field
-import java.util.*
+import java.util.ArrayDeque
+import java.util.Collections
+import java.util.IdentityHashMap
 
 /**
  * Uses reflection to search for instances of [StatePointer] within a [ContractState].
@@ -30,18 +32,15 @@ class StatePointerSearch(val state: ContractState) {
 
     // Helper for adding all fields to the queue.
     private fun addAllFields(obj: Any) {
+        // Don't reflect into JDK classes
+        if (obj.javaClass.isJdkClass) return
         val fields = FieldUtils.getAllFieldsList(obj::class.java)
-
         fields.mapNotNullTo(fieldQueue) { field ->
             if (field.isSynthetic || field.isStatic) return@mapNotNullTo null
             // Ignore classes which have not been loaded.
             // Assumption: all required state classes are already loaded.
-            val packageName = field.type.packageNameOrNull
-            if (packageName == null) {
-                null
-            } else {
-                FieldWithObject(obj, field)
-            }
+            field.type.packageNameOrNull ?: return@mapNotNullTo null
+            FieldWithObject(obj, field)
         }
     }
 

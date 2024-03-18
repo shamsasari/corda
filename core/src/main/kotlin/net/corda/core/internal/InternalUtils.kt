@@ -326,7 +326,11 @@ inline fun <T, R : Any> Stream<T>.mapNotNull(crossinline transform: (T) -> R?): 
 /** Similar to [Collectors.toSet] except the Set is guaranteed to be ordered. */
 fun <T> Stream<T>.toSet(): Set<T> = collect(toCollection { LinkedHashSet<T>() })
 
-val Class<*>.isJdkClass: Boolean get() = module.name?.startsWith("java.") == true
+val Class<*>.isJdkClass: Boolean
+    get() {
+        val moduleName = module.name
+        return moduleName != null && (moduleName.startsWith("java.") || moduleName.startsWith("jdk."))
+    }
 
 fun <T> Class<T>.castIfPossible(obj: Any): T? = if (isInstance(obj)) cast(obj) else null
 
