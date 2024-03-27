@@ -51,9 +51,8 @@ class CompositeKey private constructor(val threshold: Int, children: List<NodeAn
             val listOfChildren = sequenceOfChildren.objects.toList()
             listOfChildren.forEach { childAsn1 ->
                 require(childAsn1 is ASN1Sequence) { "Child key is not in ASN1 format" }
-                val childSeq = childAsn1 as ASN1Sequence
-                val key = Crypto.decodePublicKey((childSeq.getObjectAt(0) as DERBitString).bytes)
-                val weight = ASN1Integer.getInstance(childSeq.getObjectAt(1))
+                val key = Crypto.decodePublicKey((childAsn1.getObjectAt(0) as DERBitString).bytes)
+                val weight = ASN1Integer.getInstance(childAsn1.getObjectAt(1))
                 builder.addKey(key, weight.positiveValue.toInt())
             }
             return builder.build(threshold)
